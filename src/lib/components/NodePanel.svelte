@@ -15,7 +15,7 @@
 		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
 </script>
 
-<aside class="bg-panel h-full overflow-y-auto rounded-lg p-4">
+<aside class="bg-panel h-full min-h-0 overflow-y-auto rounded-lg p-4">
 	<h2 class="mb-4 text-base font-semibold">Node details</h2>
 
 	{#if node}
