@@ -19,8 +19,12 @@ export interface GraphNode {
 	uri?: string;
 	discogsUrl?: string;
 	resource_url?: string;
-	// urls?: string[];
-	// profile?: string;
+	profile?: string;
+	realname?: string | null;
+	urls?: string[];
+	namevariations?: string[];
+	groups?: { id: number; name: string }[];
+	members?: { id: number; name: string; active?: boolean }[];
 	meta?: {
 		year?: number | string;
 		role?: string;

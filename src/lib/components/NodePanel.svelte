@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatUrlDomain, stripDiscogsWikiMarkup } from '$lib/discogs/format';
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
 	import NodeLoadActions from '$lib/components/NodeLoadActions.svelte';
 	import { graphStore } from '$lib/graph/store.svelte';
@@ -10,9 +11,24 @@
 	const websiteUrl = $derived(node ? getDiscogsWebsiteUrl(node) : null);
 	const apiUrl = $derived(node ? getDiscogsProxyUrl(node) : null);
 	const loadActions = $derived(node ? getContextMenuActions(node) : []);
+	const profileText = $derived(
+		node?.type === 'artist' && node.profile ? stripDiscogsWikiMarkup(node.profile) : null
+	);
 
 	const actionClass =
 		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
+
+	function formatMemberName(member: { name: string; active?: boolean }): string {
+		return member.active === false ? `${member.name} (inactive)` : member.name;
+	}
+
+	$effect(() => {
+		const selected = graphStore.selectedNode;
+
+		if (selected?.type === 'artist') {
+			graphStore.ensureArtistDetails(selected.id);
+		}
+	});
 </script>
 
 <aside class="bg-panel h-full min-h-0 overflow-y-auto rounded-lg p-4">
@@ -56,11 +72,58 @@
 				<dd class="m-0 text-gray-200">{node.meta.genres.join(', ')}</dd>
 			{/if}
 
+			{#if node.type === 'artist'}
+				{#if node.realname}
+					<dt class="text-muted">Real name</dt>
+					<dd class="m-0 text-gray-200">{node.realname}</dd>
+				{/if}
+
+				{#if node.namevariations?.length}
+					<dt class="text-muted">Name variations</dt>
+					<dd class="m-0 text-gray-200">{node.namevariations.join(', ')}</dd>
+				{/if}
+
+				{#if node.members?.length}
+					<dt class="text-muted">Members</dt>
+					<dd class="m-0 text-gray-200">{node.members.map(formatMemberName).join(', ')}</dd>
+				{/if}
+
+				{#if node.groups?.length}
+					<dt class="text-muted">Groups</dt>
+					<dd class="m-0 text-gray-200">{node.groups.map((group) => group.name).join(', ')}</dd>
+				{/if}
+
+				{#if node.urls?.length}
+					<dt class="text-muted">URLs</dt>
+					<dd class="m-0 space-y-1">
+						{#each node.urls as url (url)}
+							<a
+								href={url}
+								title={url}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="text-accent block hover:underline"
+							>
+								{formatUrlDomain(url)}
+							</a>
+						{/each}
+					</dd>
+				{/if}
+			{/if}
+
 			{#if node.discogsId}
 				<dt class="text-muted">Discogs ID</dt>
 				<dd class="m-0 text-gray-200">{node.discogsId}</dd>
 			{/if}
 		</dl>
+
+		{#if node.type === 'artist' && graphStore.isArtistDetailsLoading(node.id)}
+			<p class="text-muted mt-2 text-sm">Loading artist details…</p>
+		{/if}
+
+		{#if profileText}
+			<div class="text-muted mt-3 whitespace-pre-wrap text-sm">{profileText}</div>
+		{/if}
 
 		<div class="mt-4 flex flex-col gap-2">
 			{#if node.type !== 'track' && loadActions.length > 0}

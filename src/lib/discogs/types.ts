@@ -48,10 +48,12 @@ export interface ArtistGroup {
 export interface Artist {
 	id: number;
 	name: string;
+	realname?: string | null;
 	profile?: string;
 	uri?: string;
 	resource_url?: string;
 	releases_url?: string;
+	urls?: string[];
 	members?: ArtistMember[];
 	groups?: ArtistGroup[];
 	namevariations?: string[];
