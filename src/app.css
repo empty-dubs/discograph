@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+
+@theme {
+	--color-surface: #12121f;
+	--color-canvas: #1a1a2e;
+	--color-panel: #2a2a3e;
+	--color-panel-hover: #353550;
+	--color-border: #444444;
+	--color-accent: #4a90d9;
+	--color-muted: #888888;
+	--color-warning: #e8943a;
+	--color-danger: #e74c3c;
+}
+
+@layer base {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	body {
+		margin: 0;
+		font-family:
+			system-ui,
+			-apple-system,
+			sans-serif;
+		background: var(--color-surface);
+		color: #eeeeee;
+	}
+}
