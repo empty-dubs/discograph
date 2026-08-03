@@ -14,7 +14,7 @@ import {
 
 import { ALL_NODE_TYPES } from './constants';
 
-import type { RateLimitInfo, SearchResult, SearchType } from '$lib/discogs/types';
+import type { Artist, RateLimitInfo, SearchResult, SearchType } from '$lib/discogs/types';
 
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from './types';
 
@@ -32,6 +32,8 @@ class GraphStore {
 	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
 	expansionChildren = $state<Map<string, Set<string>>>(new Map());
 	viewResetToken = $state(0);
+	artistDetailsFetched = $state<Set<string>>(new Set());
+	artistDetailsLoading = $state<Set<string>>(new Set());
 
 	get nodeList(): GraphNode[] {
 		return Array.from(this.nodes.values());
@@ -206,6 +208,8 @@ class GraphStore {
 		this.releasePages = new Map();
 		this.expansionChildren = new Map();
 		this.visibleTypes = new Set(ALL_NODE_TYPES);
+		this.artistDetailsFetched = new Set();
+		this.artistDetailsLoading = new Set();
 		this.viewResetToken++;
 	}
 
@@ -232,6 +236,68 @@ class GraphStore {
 
 	selectNode(id: string | null) {
 		this.selectedId = id;
+	}
+
+	private setArtistDetailsLoading(id: string, isLoading: boolean) {
+		const next = new Set(this.artistDetailsLoading);
+
+		if (isLoading) {
+			next.add(id);
+		} else {
+			next.delete(id);
+		}
+
+		this.artistDetailsLoading = next;
+	}
+
+	private mergeArtistDetails(nodeId: string, artist: Artist) {
+		const existing = this.nodes.get(nodeId);
+
+		if (!existing) return;
+
+		const next = new Map(this.nodes);
+
+		next.set(nodeId, {
+			...existing,
+			profile: artist.profile,
+			realname: artist.realname ?? undefined,
+			urls: artist.urls,
+			namevariations: artist.namevariations,
+			groups: artist.groups?.map(({ id, name }) => ({ id, name })),
+			members: artist.members?.map(({ id, name, active }) => ({ id, name, active }))
+		});
+
+		this.nodes = next;
+	}
+
+	private markArtistDetailsFetched(nodeId: string) {
+		this.artistDetailsFetched = new Set(this.artistDetailsFetched).add(nodeId);
+	}
+
+	async ensureArtistDetails(nodeId: string) {
+		const { type, discogsId } = this.parseNodeId(nodeId);
+
+		if (type !== 'artist' || discogsId === null) return;
+		if (this.artistDetailsFetched.has(nodeId) || this.artistDetailsLoading.has(nodeId)) return;
+
+		this.setArtistDetailsLoading(nodeId, true);
+		this.error = null;
+
+		try {
+			const artist = await discogs.getArtist(discogsId);
+
+			this.updateRateLimit();
+			this.mergeArtistDetails(nodeId, artist);
+			this.markArtistDetailsFetched(nodeId);
+		} catch (err) {
+			this.error = err instanceof Error ? err.message : 'Failed to load artist details';
+		} finally {
+			this.setArtistDetailsLoading(nodeId, false);
+		}
+	}
+
+	isArtistDetailsLoading(nodeId: string): boolean {
+		return this.artistDetailsLoading.has(nodeId);
 	}
 
 	async search(query: string, type?: SearchType) {
@@ -396,6 +462,7 @@ class GraphStore {
 						const artist = await discogs.getArtist(discogsId);
 						this.updateRateLimit();
 						this.applyPatchFromExpansion(nodeId, buildFromArtist(artist));
+						this.markArtistDetailsFetched(nodeId);
 						break;
 					}
 					case 'release': {
