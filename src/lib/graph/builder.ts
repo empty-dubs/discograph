@@ -198,13 +198,8 @@ export function buildFromArtistReleases(releases: ArtistRelease[], artistId: num
 	return { nodes, links };
 }
 
-export function buildFromRelease(release: Release): GraphPatch {
-	const nodes: GraphNode[] = [
-		releaseNode(release, {
-			year: release.year ?? release.released,
-			genres: release.genres
-		})
-	];
+export function buildArtistsFromRelease(release: Release): GraphPatch {
+	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const releaseNodeId = nodeId('release', release.id);
 
@@ -237,6 +232,14 @@ export function buildFromRelease(release: Release): GraphPatch {
 		}
 	}
 
+	return { nodes, links };
+}
+
+export function buildLabelsFromRelease(release: Release): GraphPatch {
+	const nodes: GraphNode[] = [];
+	const links: GraphLink[] = [];
+	const releaseNodeId = nodeId('release', release.id);
+
 	for (const label of release.labels ?? []) {
 		nodes.push(labelNode(label));
 		links.push({
@@ -246,6 +249,24 @@ export function buildFromRelease(release: Release): GraphPatch {
 			type: 'on_label'
 		});
 	}
+
+	return { nodes, links };
+}
+
+export function buildFromRelease(release: Release): GraphPatch {
+	const artistPatch = buildArtistsFromRelease(release);
+	const labelPatch = buildLabelsFromRelease(release);
+	const releaseNodeId = nodeId('release', release.id);
+
+	const nodes: GraphNode[] = [
+		releaseNode(release, {
+			year: release.year ?? release.released,
+			genres: release.genres
+		}),
+		...artistPatch.nodes,
+		...labelPatch.nodes
+	];
+	const links: GraphLink[] = [...artistPatch.links, ...labelPatch.links];
 
 	if (release.master_id) {
 		nodes.push(masterStubFromRelease(release));

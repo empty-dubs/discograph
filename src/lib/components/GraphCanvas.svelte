@@ -1,17 +1,23 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import GraphContextMenu from '$lib/components/GraphContextMenu.svelte';
 	import { ForceGraph } from '$lib/graph/force-graph';
 	import { graphStore } from '$lib/graph/store.svelte';
 
 	let container = $state<HTMLDivElement | null>(null);
 	let tooltip = $state<{ x: number; y: number; text: string } | null>(null);
+	let contextMenu = $state<{ nodeId: string; x: number; y: number } | null>(null);
 	let graph: ForceGraph | null = null;
 
 	onMount(() => {
 		graph = new ForceGraph(container!, {
 			onNodeClick: (id) => {
+				contextMenu = null;
 				graphStore.selectNode(id);
-				graphStore.expandNode(id);
+			},
+			onNodeContextMenu: (id, event) => {
+				graphStore.selectNode(id);
+				contextMenu = { nodeId: id, x: event.clientX, y: event.clientY };
 			},
 			onTooltip: (t) => {
 				tooltip = t;
@@ -42,9 +48,19 @@
 			}
 		}
 
+		void graphStore.visibleTypes;
+	});
+
+	$effect(() => {
+		if (graph && graphStore.visibleNodeList.length > 0) {
+			graph.updateHighlight({
+				selectedId: graphStore.selectedId,
+				seedId: graphStore.seedId
+			});
+		}
+
 		void graphStore.selectedId;
 		void graphStore.seedId;
-		void graphStore.visibleTypes;
 	});
 
 	$effect(() => {
@@ -67,6 +83,17 @@
 		</div>
 	{/if}
 </div>
+
+{#if contextMenu}
+	<GraphContextMenu
+		nodeId={contextMenu.nodeId}
+		x={contextMenu.x}
+		y={contextMenu.y}
+		onClose={() => {
+			contextMenu = null;
+		}}
+	/>
+{/if}
 
 {#if tooltip}
 	<div
