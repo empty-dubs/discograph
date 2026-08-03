@@ -44,6 +44,7 @@ interface ForceGraphTooltip {
 
 interface ForceGraphOptions {
 	onNodeClick: (nodeId: string) => void;
+	onNodeContextMenu?: (nodeId: string, event: MouseEvent) => void;
 	onTooltip: (tooltip: ForceGraphTooltip | null) => void;
 }
 
@@ -70,6 +71,7 @@ export class ForceGraph {
 
 	private dragBehavior: DragBehavior<SVGGElement, SimulationNode, SimulationNode | SubjectPosition> =
 		drag<SVGGElement, SimulationNode>()
+			.filter(event => event.button === 0)
 			.on('start', (event, d) => {
 				if (!event.active) this.simulation?.alphaTarget(0.5).restart();
 				d.fx = d.x;
@@ -194,16 +196,18 @@ export class ForceGraph {
 		nodeGroups
 			.select('circle')
 			.attr('r', d => NODE_RADIUS[d.type])
-			.attr('fill', d => NODE_COLORS[d.type])
-			.attr('stroke', d =>
-				d.id === highlight.selectedId || d.id === highlight.seedId ? '#fff' : 'none'
-			)
-			.attr('stroke-width', d => (d.id === highlight.seedId ? 3 : 2));
+			.attr('fill', d => NODE_COLORS[d.type]);
 
-		const { onNodeClick, onTooltip } = this.options;
+		this.applyHighlight(highlight);
+
+		const { onNodeClick, onNodeContextMenu, onTooltip } = this.options;
 
 		nodeGroups
 			.on('click', (_, d) => onNodeClick(d.id))
+			.on('contextmenu', (event, d) => {
+				event.preventDefault();
+				onNodeContextMenu?.(d.id, event);
+			})
 			.on('mouseenter', (event, d) => {
 				const meta = [d.type, d.meta?.year ? String(d.meta.year) : null, d.meta?.role ?? null]
 					.filter(Boolean)
@@ -251,6 +255,20 @@ export class ForceGraph {
 
 		this.simulation.force('center', forceCenter(this.width / 2, this.height / 2));
 		this.simulation.alpha(0.5).restart();
+	}
+
+	updateHighlight(highlight: ForceGraphHighlight) {
+		this.applyHighlight(highlight);
+	}
+
+	private applyHighlight(highlight: ForceGraphHighlight) {
+		this.gNodes
+			?.selectAll<SVGGElement, SimulationNode>('g.node')
+			.select('circle')
+			.attr('stroke', d =>
+				d.id === highlight.selectedId || d.id === highlight.seedId ? '#fff' : 'none'
+			)
+			.attr('stroke-width', d => (d.id === highlight.seedId ? 3 : 2));
 	}
 
 	clear() {

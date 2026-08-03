@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
+	import NodeLoadActions from '$lib/components/NodeLoadActions.svelte';
 	import { graphStore } from '$lib/graph/store.svelte';
+	import { getContextMenuActions } from '$lib/graph/menu';
 	import { NODE_COLORS } from '$lib/graph/constants';
 
 	const node = $derived(graphStore.selectedNode);
 
 	const websiteUrl = $derived(node ? getDiscogsWebsiteUrl(node) : null);
 	const apiUrl = $derived(node ? getDiscogsProxyUrl(node) : null);
+	const loadActions = $derived(node ? getContextMenuActions(node) : []);
 
 	const actionClass =
 		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
@@ -60,23 +63,11 @@
 		</dl>
 
 		<div class="mt-4 flex flex-col gap-2">
-			{#if node.type !== 'track'}
-				<button
-					type="button"
-					class="{actionClass} bg-accent cursor-pointer border-none text-white"
-					disabled={graphStore.isLoading(node.id) ||
-						graphStore.isExpanded(node.id) ||
-						graphStore.isRateLimited}
-					onclick={() => graphStore.expandNode(node.id)}
-				>
-					{graphStore.isLoading(node.id)
-						? 'Loading…'
-						: graphStore.isExpanded(node.id)
-							? 'Expanded'
-							: 'Load children'}
-				</button>
+			{#if node.type !== 'track' && loadActions.length > 0}
+				<NodeLoadActions nodeId={node.id} />
+			{/if}
 
-				{#if graphStore.hasChildren(node.id)}
+			{#if node.type !== 'track' && graphStore.hasChildren(node.id)}
 					<button
 						type="button"
 						class="{actionClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
@@ -85,8 +76,9 @@
 					>
 						Collapse children
 					</button>
-				{/if}
+			{/if}
 
+			{#if node.type !== 'track'}
 				<button
 					type="button"
 					class="{actionClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
