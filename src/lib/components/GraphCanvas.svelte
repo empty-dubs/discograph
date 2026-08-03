@@ -70,7 +70,7 @@
 </script>
 
 <div
-	class="bg-canvas relative h-full min-h-[400px] w-full overflow-hidden rounded-lg"
+	class="bg-canvas relative h-full w-full overflow-hidden rounded-lg"
 	bind:this={container}
 	role="img"
 	aria-label="Discogs relationship graph"
