@@ -13,6 +13,7 @@ import type {
 	MasterVersion,
 	Release,
 	ReleaseArtist,
+	ReleaseCompany,
 	SearchResult,
 	SearchType,
 	Sublabel
@@ -48,7 +49,7 @@ type ArtistNodeSource =
 	| ArtistGroup
 	| MasterArtist;
 
-type LabelNodeSource = SearchResult | Label | Sublabel | LabelRef;
+type LabelNodeSource = SearchResult | Label | Sublabel | LabelRef | ReleaseCompany;
 
 type MasterNodeSource = SearchResult | MasterVersion | Master;
 
@@ -247,6 +248,17 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 			source: releaseNodeId,
 			target: nodeId('label', label.id),
 			type: 'on_label'
+		});
+	}
+
+	for (const company of release.companies ?? []) {
+		nodes.push(labelNode(company));
+		links.push({
+			id: linkId(releaseNodeId, 'company_on', nodeId('label', company.id)),
+			source: releaseNodeId,
+			target: nodeId('label', company.id),
+			type: 'company_on',
+			label: company.entity_type_name
 		});
 	}
 

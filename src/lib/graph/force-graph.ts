@@ -53,6 +53,12 @@ interface ForceGraphHighlight {
 	seedId: string | null;
 }
 
+function formatEdgeTooltip(link: SimulationLink): string {
+	const type = link.type.replace(/_/g, ' ');
+
+	return link.label ? `${type} (${link.label})` : type;
+}
+
 export class ForceGraph {
 	private container: HTMLElement;
 	private options: ForceGraphOptions;
@@ -135,11 +141,22 @@ export class ForceGraph {
 			)
 			.on('tick', () => {
 				this.gLinks
-					?.selectAll<SVGLineElement, SimulationLink>('line')
-					.attr('x1', d => (d.source as SimulationNode).x ?? 0)
-					.attr('y1', d => (d.source as SimulationNode).y ?? 0)
-					.attr('x2', d => (d.target as SimulationNode).x ?? 0)
-					.attr('y2', d => (d.target as SimulationNode).y ?? 0);
+					?.selectAll<SVGGElement, SimulationLink>('g.link')
+					.each(function (d) {
+						const source = d.source as SimulationNode;
+						const target = d.target as SimulationNode;
+						const x1 = source.x ?? 0;
+						const y1 = source.y ?? 0;
+						const x2 = target.x ?? 0;
+						const y2 = target.y ?? 0;
+
+						select(this)
+							.selectAll('line')
+							.attr('x1', x1)
+							.attr('y1', y1)
+							.attr('x2', x2)
+							.attr('y2', y2);
+					});
 
 				this.gNodes
 					?.selectAll<SVGGElement, SimulationNode>('g.node')
@@ -171,13 +188,53 @@ export class ForceGraph {
 
 		this.simulationLinks = links.map(link => ({ ...link }));
 
+		const { onNodeClick, onNodeContextMenu, onTooltip } = this.options;
+
 		this.gLinks
-			.selectAll<SVGLineElement, SimulationLink>('line')
+			.selectAll<SVGGElement, SimulationLink>('g.link')
 			.data(this.simulationLinks, d => d.id)
-			.join('line')
-			.attr('stroke', '#999')
-			.attr('stroke-opacity', 0.6)
-			.attr('stroke-width', 1.5);
+			.join(
+				enter => {
+					const g = enter.append('g').attr('class', 'link').style('cursor', 'default');
+
+					g.append('line')
+						.attr('class', 'link-visible')
+						.attr('stroke', '#999')
+						.attr('stroke-opacity', 0.6)
+						.attr('stroke-width', 1.5)
+						.attr('pointer-events', 'none');
+
+					g.append('line')
+						.attr('class', 'link-hit')
+						.attr('stroke', 'transparent')
+						.attr('stroke-width', 10)
+						.attr('pointer-events', 'stroke');
+
+					return g;
+				},
+				update => update,
+				exit => exit.remove()
+			)
+			.on('mouseenter', (event, d) => {
+				this.tooltipText = formatEdgeTooltip(d);
+				onTooltip({
+					x: event.clientX,
+					y: event.clientY,
+					text: this.tooltipText
+				});
+			})
+			.on('mousemove', event => {
+				if (!this.tooltipText) return;
+				onTooltip({
+					x: event.clientX,
+					y: event.clientY,
+					text: this.tooltipText
+				});
+			})
+			.on('mouseleave', () => {
+				this.tooltipText = null;
+				onTooltip(null);
+			});
 
 		const nodeGroups = this.gNodes
 			.selectAll<SVGGElement, SimulationNode>('g.node')
@@ -199,8 +256,6 @@ export class ForceGraph {
 			.attr('fill', d => NODE_COLORS[d.type]);
 
 		this.applyHighlight(highlight);
-
-		const { onNodeClick, onNodeContextMenu, onTooltip } = this.options;
 
 		nodeGroups
 			.on('click', (_, d) => onNodeClick(d.id))
@@ -277,7 +332,7 @@ export class ForceGraph {
 		this.simulationNodes = [];
 		this.simulationLinks = [];
 
-		this.gLinks.selectAll('line').remove();
+		this.gLinks.selectAll('g.link').remove();
 		this.gNodes.selectAll('g.node').remove();
 		this.gLabels.selectAll('text').remove();
 

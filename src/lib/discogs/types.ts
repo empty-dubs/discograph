@@ -133,6 +133,15 @@ export interface Track {
 	type_?: string;
 }
 
+export interface ReleaseCompany {
+	id: number;
+	name: string;
+	catno?: string;
+	entity_type?: string;
+	entity_type_name?: string;
+	resource_url?: string;
+}
+
 export interface Release {
 	id: number;
 	title: string;
@@ -143,6 +152,7 @@ export interface Release {
 	uri?: string;
 	resource_url?: string;
 	labels?: LabelRef[];
+	companies?: ReleaseCompany[];
 	extraartists?: ReleaseArtist[];
 	tracklist?: Track[];
 	master_id?: number;
