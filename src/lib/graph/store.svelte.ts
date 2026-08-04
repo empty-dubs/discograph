@@ -14,7 +14,7 @@ import {
 
 import { ALL_NODE_TYPES } from './constants';
 
-import type { Artist, RateLimitInfo, SearchResult, SearchType } from '$lib/discogs/types';
+import type { Artist, Label, RateLimitInfo, SearchResult, SearchType } from '$lib/discogs/types';
 
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from './types';
 
@@ -34,6 +34,8 @@ class GraphStore {
 	viewResetToken = $state(0);
 	artistDetailsFetched = $state<Set<string>>(new Set());
 	artistDetailsLoading = $state<Set<string>>(new Set());
+	labelDetailsFetched = $state<Set<string>>(new Set());
+	labelDetailsLoading = $state<Set<string>>(new Set());
 
 	get nodeList(): GraphNode[] {
 		return Array.from(this.nodes.values());
@@ -210,6 +212,8 @@ class GraphStore {
 		this.visibleTypes = new Set(ALL_NODE_TYPES);
 		this.artistDetailsFetched = new Set();
 		this.artistDetailsLoading = new Set();
+		this.labelDetailsFetched = new Set();
+		this.labelDetailsLoading = new Set();
 		this.viewResetToken++;
 	}
 
@@ -298,6 +302,68 @@ class GraphStore {
 
 	isArtistDetailsLoading(nodeId: string): boolean {
 		return this.artistDetailsLoading.has(nodeId);
+	}
+
+	private setLabelDetailsLoading(id: string, isLoading: boolean) {
+		const next = new Set(this.labelDetailsLoading);
+
+		if (isLoading) {
+			next.add(id);
+		} else {
+			next.delete(id);
+		}
+
+		this.labelDetailsLoading = next;
+	}
+
+	private mergeLabelDetails(nodeId: string, label: Label) {
+		const existing = this.nodes.get(nodeId);
+
+		if (!existing) return;
+
+		const next = new Map(this.nodes);
+
+		next.set(nodeId, {
+			...existing,
+			profile: label.profile,
+			urls: label.urls,
+			parent_label: label.parent_label
+				? { id: label.parent_label.id, name: label.parent_label.name }
+				: undefined,
+			sublabels: label.sublabels?.map(({ id, name }) => ({ id, name }))
+		});
+
+		this.nodes = next;
+	}
+
+	private markLabelDetailsFetched(nodeId: string) {
+		this.labelDetailsFetched = new Set(this.labelDetailsFetched).add(nodeId);
+	}
+
+	async ensureLabelDetails(nodeId: string) {
+		const { type, discogsId } = this.parseNodeId(nodeId);
+
+		if (type !== 'label' || discogsId === null) return;
+		if (this.labelDetailsFetched.has(nodeId) || this.labelDetailsLoading.has(nodeId)) return;
+
+		this.setLabelDetailsLoading(nodeId, true);
+		this.error = null;
+
+		try {
+			const label = await discogs.getLabel(discogsId);
+
+			this.updateRateLimit();
+			this.mergeLabelDetails(nodeId, label);
+			this.markLabelDetailsFetched(nodeId);
+		} catch (err) {
+			this.error = err instanceof Error ? err.message : 'Failed to load label details';
+		} finally {
+			this.setLabelDetailsLoading(nodeId, false);
+		}
+	}
+
+	isLabelDetailsLoading(nodeId: string): boolean {
+		return this.labelDetailsLoading.has(nodeId);
 	}
 
 	async search(query: string, type?: SearchType) {
@@ -496,6 +562,7 @@ class GraphStore {
 						const label = await discogs.getLabel(discogsId);
 						this.updateRateLimit();
 						this.applyPatchFromExpansion(nodeId, buildFromLabel(label));
+						this.markLabelDetailsFetched(nodeId);
 						break;
 					}
 					case 'release': {
