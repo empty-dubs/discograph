@@ -4,6 +4,7 @@ export type EdgeType =
 	| 'member_of'
 	| 'released'
 	| 'on_label'
+	| 'company_on'
 	| 'has_track'
 	| 'credited_on'
 	| 'version_of'
