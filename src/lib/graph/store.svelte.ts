@@ -27,6 +27,9 @@ class GraphStore {
 	selectedId = $state<string | null>(null);
 	rateLimit = $state<RateLimitInfo>({ limit: null, used: null, remaining: null });
 	error = $state<string | null>(null);
+	searchQuery = $state('');
+	searchType = $state<SearchType | ''>('');
+	searching = $state(false);
 	searchResults = $state<SearchResult[]>([]);
 	releasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
 	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
@@ -365,10 +368,17 @@ class GraphStore {
 	}
 
 	async search(query: string, type?: SearchType) {
+		const trimmed = query.trim();
+
+		if (!trimmed || this.searching || this.isRateLimited) return [];
+
+		this.searchQuery = trimmed;
+		this.searchType = type ?? '';
 		this.error = null;
+		this.searching = true;
 
 		try {
-			const response = await discogs.search(query, type);
+			const response = await discogs.search(trimmed, type);
 
 			this.updateRateLimit();
 			this.searchResults = response.results;
@@ -378,6 +388,8 @@ class GraphStore {
 			this.error = err instanceof Error ? err.message : 'Search failed';
 			this.searchResults = [];
 			return [];
+		} finally {
+			this.searching = false;
 		}
 	}
 
