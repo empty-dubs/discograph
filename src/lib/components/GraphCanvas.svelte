@@ -94,7 +94,7 @@
 
 {#if tooltip}
 	<div
-		class="pointer-events-none fixed z-[100] max-w-[280px] rounded bg-black/85 px-2.5 py-1.5 text-xs text-white"
+		class="pointer-events-none fixed z-100 max-w-70 rounded bg-black/85 px-2.5 py-1.5 text-xs text-white"
 		style:left="{tooltip.x + 12}px"
 		style:top="{tooltip.y + 12}px"
 	>

@@ -40,7 +40,7 @@
 {#if nodeId && hasActions}
 	<div
 		data-graph-context-menu
-		class="border-border bg-panel fixed z-[110] min-w-[180px] overflow-hidden rounded-md border py-1 shadow-lg"
+		class="border-border bg-panel fixed z-110 min-w-45 overflow-hidden rounded-md border py-1 shadow-lg"
 		style:left="{x}px"
 		style:top="{y}px"
 		role="menu"
