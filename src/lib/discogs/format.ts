@@ -27,10 +27,21 @@ export function stripDiscogsWikiMarkup(text: string): string {
 	return result.trim();
 }
 
-export function formatUrlDomain(url: string): string {
+export function parseDiscogsExternalUrl(raw: string): { href: string; display: string } | null {
+	const match = raw.trim().match(/(?:https?:\/\/[^\s]+|www\.[^\s]+)/i);
+	if (!match) return null;
+
+	let href = match[0].replace(/[.,;:!?)]+$/, '');
+	if (/^www\./i.test(href)) href = `https://${href}`;
+
 	try {
-		return new URL(url).hostname.replace(/^www\./i, '');
+		const display = new URL(href).hostname.replace(/^www\./i, '');
+		return { href, display };
 	} catch {
-		return url;
+		return null;
 	}
+}
+
+export function formatUrlDomain(url: string): string {
+	return parseDiscogsExternalUrl(url)?.display ?? url;
 }

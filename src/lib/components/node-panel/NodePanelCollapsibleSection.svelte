@@ -1,20 +1,35 @@
 <script lang="ts">
+	import { getContext, setContext } from 'svelte';
 	import type { Snippet } from 'svelte';
 
+	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from './accordion';
+
 	interface Props {
+		id: string;
 		title: string;
 		show?: boolean;
 		children: Snippet;
 	}
 
-	let { title, show = true, children }: Props = $props();
+	let { id, title, show = true, children }: Props = $props();
+
+	const accordion = getContext<NodePanelAccordion>(NODE_PANEL_ACCORDION_KEY);
+	const open = $derived(accordion.openSectionId === id);
 </script>
 
 {#if show}
-	<details class="border-border/50 border-b py-1.5 text-sm last:border-b-0">
-		<summary class="text-muted cursor-pointer list-none select-none [&::-webkit-details-marker]:hidden">
+	<div class="border-border/50 border-b py-1.5 text-sm last:border-b-0">
+		<button
+			type="button"
+			class="text-muted w-full cursor-pointer border-none bg-transparent p-0 text-left text-sm select-none"
+			aria-expanded={open}
+			onclick={() => accordion.toggle(id)}
+		>
 			{title}
-		</summary>
-		<div class="pt-1.5 pb-0.5 text-gray-200">{@render children()}</div>
-	</details>
+		</button>
+
+		{#if open}
+			<div class="pt-1.5 pb-0.5 text-gray-200">{@render children()}</div>
+		{/if}
+	</div>
 {/if}

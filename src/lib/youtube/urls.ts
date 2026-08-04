@@ -2,6 +2,10 @@ import type { GraphLink, GraphNode } from '$lib/graph/types';
 
 const YOUTUBE_SEARCH_BASE = 'https://www.youtube.com/results';
 
+function stripDiscogsDisambiguation(name: string): string {
+	return name.replace(/\s*\(\d+\)$/, '').trim();
+}
+
 export function resolveArtistDisplayName(
 	node: GraphNode,
 	links: GraphLink[],
@@ -23,14 +27,14 @@ export function getYouTubeSearchUrl(
 	node: Pick<GraphNode, 'type' | 'displayName' | 'meta'>,
 	artistDisplayName?: string | null
 ): string | null {
-	const parts: string[] = [node.displayName];
+	const parts: string[] = [stripDiscogsDisambiguation(node.displayName)];
 
 	if (node.type === 'artist') {
 		parts.push('music');
 	} else if (node.type === 'label') {
 		parts.push('record label');
 	} else if (node.type === 'release' || node.type === 'master') {
-		if (artistDisplayName) parts.push(artistDisplayName);
+		if (artistDisplayName) parts.push(stripDiscogsDisambiguation(artistDisplayName));
 		const year = node.meta?.year;
 		if (year != null && year !== '') parts.push(String(year));
 	}
