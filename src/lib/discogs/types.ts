@@ -97,6 +97,7 @@ export interface Label {
 	uri?: string;
 	resource_url?: string;
 	releases_url?: string;
+	urls?: string[];
 	sublabels?: Sublabel[];
 	parent_label?: LabelRef;
 }

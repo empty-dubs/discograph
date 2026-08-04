@@ -25,6 +25,8 @@ export interface GraphNode {
 	namevariations?: string[];
 	groups?: { id: number; name: string }[];
 	members?: { id: number; name: string; active?: boolean }[];
+	parent_label?: { id: number; name: string };
+	sublabels?: { id: number; name: string }[];
 	meta?: {
 		year?: number | string;
 		role?: string;

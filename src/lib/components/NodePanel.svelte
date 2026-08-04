@@ -12,7 +12,9 @@
 	const apiUrl = $derived(node ? getDiscogsProxyUrl(node) : null);
 	const loadActions = $derived(node ? getContextMenuActions(node) : []);
 	const profileText = $derived(
-		node?.type === 'artist' && node.profile ? stripDiscogsWikiMarkup(node.profile) : null
+		(node?.type === 'artist' || node?.type === 'label') && node.profile
+			? stripDiscogsWikiMarkup(node.profile)
+			: null
 	);
 
 	const actionClass =
@@ -27,6 +29,10 @@
 
 		if (selected?.type === 'artist') {
 			graphStore.ensureArtistDetails(selected.id);
+		}
+
+		if (selected?.type === 'label') {
+			graphStore.ensureLabelDetails(selected.id);
 		}
 	});
 </script>
@@ -92,23 +98,35 @@
 					<dt class="text-muted">Groups</dt>
 					<dd class="m-0 text-gray-200">{node.groups.map((group) => group.name).join(', ')}</dd>
 				{/if}
+			{/if}
 
-				{#if node.urls?.length}
-					<dt class="text-muted">URLs</dt>
-					<dd class="m-0 space-y-1">
-						{#each node.urls as url (url)}
-							<a
-								href={url}
-								title={url}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="text-accent block hover:underline"
-							>
-								{formatUrlDomain(url)}
-							</a>
-						{/each}
-					</dd>
+			{#if node.type === 'label'}
+				{#if node.parent_label}
+					<dt class="text-muted">Parent label</dt>
+					<dd class="m-0 text-gray-200">{node.parent_label.name}</dd>
 				{/if}
+
+				{#if node.sublabels?.length}
+					<dt class="text-muted">Sublabels</dt>
+					<dd class="m-0 text-gray-200">{node.sublabels.map((sublabel) => sublabel.name).join(', ')}</dd>
+				{/if}
+			{/if}
+
+			{#if (node.type === 'artist' || node.type === 'label') && node.urls?.length}
+				<dt class="text-muted">URLs</dt>
+				<dd class="m-0 space-y-1">
+					{#each node.urls as url (url)}
+						<a
+							href={url}
+							title={url}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-accent block hover:underline"
+						>
+							{formatUrlDomain(url)}
+						</a>
+					{/each}
+				</dd>
 			{/if}
 
 			{#if node.discogsId}
@@ -119,6 +137,10 @@
 
 		{#if node.type === 'artist' && graphStore.isArtistDetailsLoading(node.id)}
 			<p class="text-muted mt-2 text-sm">Loading artist details…</p>
+		{/if}
+
+		{#if node.type === 'label' && graphStore.isLabelDetailsLoading(node.id)}
+			<p class="text-muted mt-2 text-sm">Loading label details…</p>
 		{/if}
 
 		{#if profileText}
