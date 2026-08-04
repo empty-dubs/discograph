@@ -1,6 +1,6 @@
 <script lang="ts">
 	import GraphCanvas from './GraphCanvas.svelte';
-	import NodePanel from './NodePanel.svelte';
+	import NodePanel from './node-panel/NodePanel.svelte';
 </script>
 
 <div
