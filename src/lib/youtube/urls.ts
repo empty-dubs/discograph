@@ -23,8 +23,6 @@ export function getYouTubeSearchUrl(
 	node: Pick<GraphNode, 'type' | 'displayName' | 'meta'>,
 	artistDisplayName?: string | null
 ): string | null {
-	if (node.type === 'track') return null;
-
 	const parts: string[] = [node.displayName];
 
 	if (node.type === 'artist') {

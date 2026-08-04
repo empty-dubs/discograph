@@ -1,11 +1,10 @@
-export type NodeType = 'artist' | 'label' | 'release' | 'master' | 'track';
+export type NodeType = 'artist' | 'label' | 'release' | 'master';
 
 export type EdgeType =
 	| 'member_of'
 	| 'released'
 	| 'on_label'
 	| 'company_on'
-	| 'has_track'
 	| 'credited_on'
 	| 'version_of'
 	| 'sublabel_of';
@@ -31,8 +30,6 @@ export interface GraphNode {
 	meta?: {
 		year?: number | string;
 		role?: string;
-		position?: string;
-		duration?: string;
 		genres?: string[];
 	};
 }

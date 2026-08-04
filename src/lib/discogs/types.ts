@@ -126,13 +126,6 @@ export interface ReleaseArtist {
 	tracks?: string;
 }
 
-export interface Track {
-	position: string;
-	title: string;
-	duration?: string;
-	type_?: string;
-}
-
 export interface ReleaseCompany {
 	id: number;
 	name: string;
@@ -154,7 +147,6 @@ export interface Release {
 	labels?: LabelRef[];
 	companies?: ReleaseCompany[];
 	extraartists?: ReleaseArtist[];
-	tracklist?: Track[];
 	master_id?: number;
 	master_url?: string;
 	genres?: string[];

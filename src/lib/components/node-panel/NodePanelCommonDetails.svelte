@@ -26,14 +26,6 @@
 		<NodeDetailRow label="Role">{node.meta.role}</NodeDetailRow>
 	{/if}
 
-	{#if node.meta?.position}
-		<NodeDetailRow label="Position">{node.meta.position}</NodeDetailRow>
-	{/if}
-
-	{#if node.meta?.duration}
-		<NodeDetailRow label="Duration">{node.meta.duration}</NodeDetailRow>
-	{/if}
-
 	{#if node.meta?.genres?.length}
 		<NodeDetailRow label="Genres">{node.meta.genres.join(', ')}</NodeDetailRow>
 	{/if}

@@ -28,11 +28,11 @@
 </script>
 
 <div class="flex flex-col gap-2">
-	{#if node.type !== 'track' && loadActions.length > 0}
+	{#if loadActions.length > 0}
 		<NodeLoadActions nodeId={node.id} />
 	{/if}
 
-	{#if node.type !== 'track' && graphStore.hasChildren(node.id)}
+	{#if graphStore.hasChildren(node.id)}
 		<button
 			type="button"
 			class="{actionClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
@@ -43,16 +43,14 @@
 		</button>
 	{/if}
 
-	{#if node.type !== 'track'}
-		<button
-			type="button"
-			class="{actionClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-			disabled={graphStore.isLoading(node.id) || graphStore.isRateLimited}
-			onclick={() => graphStore.seedFromNode(node)}
-		>
-			Reset graph to this node
-		</button>
-	{/if}
+	<button
+		type="button"
+		class="{actionClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
+		disabled={graphStore.isLoading(node.id) || graphStore.isRateLimited}
+		onclick={() => graphStore.seedFromNode(node)}
+	>
+		Reset graph to this node
+	</button>
 
 	{#if graphStore.hasMoreReleases(node.id)}
 		<button
