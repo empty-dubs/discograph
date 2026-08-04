@@ -4,6 +4,7 @@
 
 	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
+	import NodePanelItemList from './NodePanelItemList.svelte';
 	import NodePanelSearchableList from './NodePanelSearchableList.svelte';
 	import NodePanelUrls from './NodePanelUrls.svelte';
 
@@ -47,7 +48,7 @@
 	<NodePanelCommonDetails {node} variant="header" />
 </dl>
 
-<NodePanelCollapsibleSection show={showProfile} title="Profile">
+<NodePanelCollapsibleSection id="profile" show={showProfile} title="Profile">
 	{#if isProfileLoading}
 		<p class="text-muted m-0 text-sm">Loading details…</p>
 	{/if}
@@ -60,18 +61,15 @@
 	<NodePanelCommonDetails {node} variant="meta" />
 </dl>
 
-<NodePanelCollapsibleSection show={showRealName} title="Real name">
+<NodePanelCollapsibleSection id="real-name" show={showRealName} title="Real name">
 	{node.realname}
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection show={showNameVariations} title="Name variations">
-	<NodePanelSearchableList
-		searchType="artist"
-		items={(node.namevariations ?? []).map((name) => ({ label: name, query: name }))}
-	/>
+<NodePanelCollapsibleSection id="name-variations" show={showNameVariations} title="Name variations">
+	<NodePanelItemList items={node.namevariations ?? []} />
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection show={showMembers} title="Members">
+<NodePanelCollapsibleSection id="members" show={showMembers} title="Members">
 	<NodePanelSearchableList
 		searchType="artist"
 		items={(node.members ?? []).map((member) => ({
@@ -81,14 +79,14 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection show={showGroups} title="Groups">
+<NodePanelCollapsibleSection id="groups" show={showGroups} title="Groups">
 	<NodePanelSearchableList
 		searchType="artist"
 		items={(node.groups ?? []).map((group) => ({ label: group.name, query: group.name }))}
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection show={showParentLabel} title="Parent label">
+<NodePanelCollapsibleSection id="parent-label" show={showParentLabel} title="Parent label">
 	{#if node.parent_label}
 		<NodePanelSearchableList
 			searchType="label"
@@ -97,7 +95,7 @@
 	{/if}
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection show={showSublabels} title="Sublabels">
+<NodePanelCollapsibleSection id="sublabels" show={showSublabels} title="Sublabels">
 	<NodePanelSearchableList
 		searchType="label"
 		items={(node.sublabels ?? []).map((sublabel) => ({
@@ -107,7 +105,7 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection show={showUrls} title="Links">
+<NodePanelCollapsibleSection id="urls" show={showUrls} title="Links">
 	{#if node.urls}
 		<NodePanelUrls urls={node.urls} />
 	{/if}

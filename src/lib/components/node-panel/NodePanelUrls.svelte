@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatUrlDomain } from '$lib/discogs/format';
+	import { parseDiscogsExternalUrl } from '$lib/discogs/format';
 
 	interface Props {
 		urls: string[];
@@ -10,14 +10,19 @@
 
 <div class="space-y-1">
 	{#each urls as url (url)}
-		<a
-			href={url}
-			title={url}
-			target="_blank"
-			rel="noopener noreferrer"
-			class="text-accent block hover:underline"
-		>
-			{formatUrlDomain(url)}
-		</a>
+		{@const parsed = parseDiscogsExternalUrl(url)}
+		{#if parsed}
+			<a
+				href={parsed.href}
+				title={url}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="text-accent block hover:underline"
+			>
+				{parsed.display}
+			</a>
+		{:else}
+			<div class="text-gray-200">{url}</div>
+		{/if}
 	{/each}
 </div>
