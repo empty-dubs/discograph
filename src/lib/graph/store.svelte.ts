@@ -48,7 +48,6 @@ class GraphStore {
 	get pinnedIds(): Set<string> {
 		const pinned = new Set<string>();
 
-		if (this.seedId) pinned.add(this.seedId);
 		if (this.selectedId) pinned.add(this.selectedId);
 
 		return pinned;
@@ -90,7 +89,6 @@ class GraphStore {
 		const [type, rawId] = id.split(':');
 
 		if (!type || !rawId) return { type: 'artist', discogsId: null };
-		if (type === 'track') return { type: 'track', discogsId: null };
 
 		const discogsId = Number(rawId);
 
@@ -401,7 +399,7 @@ class GraphStore {
 	}
 
 	async seedFromNode(node: GraphNode) {
-		if (node.discogsId === null || node.type === 'track') return;
+		if (node.discogsId === null) return;
 
 		await this.seedFromResult({
 			id: node.discogsId,

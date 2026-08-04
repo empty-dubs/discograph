@@ -5,14 +5,14 @@ export const DISCOGS_API_ORIGIN = 'https://api.discogs.com';
 
 export const API_BASE = '/api/discogs';
 
-export const API_SEGMENTS: Record<Exclude<NodeType, 'track'>, string> = {
+export const API_SEGMENTS: Record<NodeType, string> = {
 	artist: 'artists',
 	label: 'labels',
 	release: 'releases',
 	master: 'masters'
 };
 
-export const WEB_SEGMENTS: Record<Exclude<NodeType, 'track'>, string> = {
+export const WEB_SEGMENTS: Record<NodeType, string> = {
 	artist: 'artist',
 	label: 'label',
 	release: 'release',

@@ -7,8 +7,7 @@
 		artist: 'Artists',
 		label: 'Labels',
 		master: 'Masters',
-		release: 'Releases',
-		track: 'Tracks'
+		release: 'Releases'
 	};
 </script>
 

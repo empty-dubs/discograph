@@ -50,7 +50,6 @@ interface ForceGraphOptions {
 
 interface ForceGraphHighlight {
 	selectedId: string | null;
-	seedId: string | null;
 }
 
 function formatEdgeTooltip(link: SimulationLink): string {
@@ -289,10 +288,7 @@ export class ForceGraph {
 
 		this.gLabels
 			.selectAll<SVGTextElement, SimulationNode>('text')
-			.data(
-				this.simulationNodes.filter(n => n.type !== 'track'),
-				d => d.id
-			)
+			.data(this.simulationNodes, d => d.id)
 			.join('text')
 			.text(d =>
 				d.displayName.length > 24 ? `${d.displayName.slice(0, 22)}…` : d.displayName
@@ -320,10 +316,8 @@ export class ForceGraph {
 		this.gNodes
 			?.selectAll<SVGGElement, SimulationNode>('g.node')
 			.select('circle')
-			.attr('stroke', d =>
-				d.id === highlight.selectedId || d.id === highlight.seedId ? '#fff' : 'none'
-			)
-			.attr('stroke-width', d => (d.id === highlight.seedId ? 3 : 2));
+			.attr('stroke', d => (d.id === highlight.selectedId ? '#fff' : 'none'))
+			.attr('stroke-width', d => (d.id === highlight.selectedId ? 2 : 0));
 	}
 
 	clear() {

@@ -265,59 +265,6 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 	return { nodes, links };
 }
 
-export function buildFromRelease(release: Release): GraphPatch {
-	const artistPatch = buildArtistsFromRelease(release);
-	const labelPatch = buildLabelsFromRelease(release);
-	const releaseNodeId = nodeId('release', release.id);
-
-	const nodes: GraphNode[] = [
-		releaseNode(release, {
-			year: release.year ?? release.released,
-			genres: release.genres
-		}),
-		...artistPatch.nodes,
-		...labelPatch.nodes
-	];
-	const links: GraphLink[] = [...artistPatch.links, ...labelPatch.links];
-
-	if (release.master_id) {
-		nodes.push(masterStubFromRelease(release));
-		links.push({
-			id: linkId(releaseNodeId, 'version_of', nodeId('master', release.master_id)),
-			source: releaseNodeId,
-			target: nodeId('master', release.master_id),
-			type: 'version_of'
-		});
-	}
-
-	for (const track of release.tracklist ?? []) {
-		if (track.type_ && track.type_ !== 'track') continue;
-
-		const trackNodeId = nodeId('track', `${release.id}:${track.position}`);
-
-		nodes.push({
-			id: trackNodeId,
-			type: 'track',
-			discogsId: null,
-			name: track.title,
-			displayName: track.title,
-			meta: {
-				position: track.position,
-				duration: track.duration
-			}
-		});
-
-		links.push({
-			id: linkId(releaseNodeId, 'has_track', trackNodeId),
-			source: releaseNodeId,
-			target: trackNodeId,
-			type: 'has_track'
-		});
-	}
-
-	return { nodes, links };
-}
-
 export function buildFromLabel(label: Label): GraphPatch {
 	const nodes: GraphNode[] = [labelNode(label)];
 	const links: GraphLink[] = [];

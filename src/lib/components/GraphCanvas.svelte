@@ -40,8 +40,7 @@
 		if (graph) {
 			if (nodes.length > 0) {
 				graph.update(nodes, links, {
-					selectedId: graphStore.selectedId,
-					seedId: graphStore.seedId
+					selectedId: graphStore.selectedId
 				});
 			} else {
 				graph.clear();
@@ -54,13 +53,11 @@
 	$effect(() => {
 		if (graph && graphStore.visibleNodeList.length > 0) {
 			graph.updateHighlight({
-				selectedId: graphStore.selectedId,
-				seedId: graphStore.seedId
+				selectedId: graphStore.selectedId
 			});
 		}
 
 		void graphStore.selectedId;
-		void graphStore.seedId;
 	});
 
 	$effect(() => {
