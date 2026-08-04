@@ -20,7 +20,7 @@
         <p class="text-muted {headerTextClass}">Explore music relationships from Discogs</p>
     </div>
 
-    <div class="flex-1 max-w-[640px] min-w-[280px]">
+    <div class="flex-1 max-w-160 min-w-70">
         <DiscogsSearchForm />
         {#if rateLimitText}
             <p class="text-muted {headerTextClass}" class:text-warning={graphStore.isRateLimited}>
