@@ -13,27 +13,20 @@
 	const fieldClass =
 		'rounded-md border border-border bg-panel px-3 py-2 text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50';
 
-	let query = $state('');
-	let type = $state<SearchType | ''>('');
-	let searching = $state(false);
 	let emptyMessage = $state<string | null>(null);
 
 	async function handleSearch(event: Event) {
 		event.preventDefault();
 
-		if (!query.trim() || searching || graphStore.isRateLimited) return;
-
-		searching = true;
 		emptyMessage = null;
 
-		try {
-			const results = await graphStore.search(query.trim(), type || undefined);
+		const results = await graphStore.search(
+			graphStore.searchQuery,
+			graphStore.searchType || undefined
+		);
 
-			if (results.length === 0) {
-				emptyMessage = 'No results found';
-			}
-		} finally {
-			searching = false;
+		if (results.length === 0 && graphStore.searchQuery.trim()) {
+			emptyMessage = 'No results found';
 		}
 	}
 
@@ -48,14 +41,14 @@
 		type="search"
 		class="{fieldClass} min-w-0 flex-1"
 		placeholder="Search Discogs…"
-		bind:value={query}
-		disabled={searching || graphStore.isRateLimited}
+		bind:value={graphStore.searchQuery}
+		disabled={graphStore.searching || graphStore.isRateLimited}
 	/>
 
 	<select
 		class="{fieldClass} cursor-pointer"
-		bind:value={type}
-		disabled={searching || graphStore.isRateLimited}
+		bind:value={graphStore.searchType}
+		disabled={graphStore.searching || graphStore.isRateLimited}
 	>
 		{#each typeOptions as option}
 			<option value={option.value}>{option.label}</option>
@@ -65,9 +58,9 @@
 	<button
 		type="submit"
 		class="{fieldClass} border-accent bg-accent cursor-pointer text-white"
-		disabled={searching || !query.trim() || graphStore.isRateLimited}
+		disabled={graphStore.searching || !graphStore.searchQuery.trim() || graphStore.isRateLimited}
 	>
-		{searching ? 'Searching…' : 'Search'}
+		{graphStore.searching ? 'Searching…' : 'Search'}
 	</button>
 </form>
 

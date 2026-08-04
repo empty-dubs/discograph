@@ -4,6 +4,7 @@
 
 	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
+	import NodePanelSearchableList from './NodePanelSearchableList.svelte';
 	import NodePanelUrls from './NodePanelUrls.svelte';
 
 	import type { GraphNode } from '$lib/graph/types';
@@ -64,23 +65,46 @@
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection show={showNameVariations} title="Name variations">
-	{node.namevariations?.join(', ')}
+	<NodePanelSearchableList
+		searchType="artist"
+		items={(node.namevariations ?? []).map((name) => ({ label: name, query: name }))}
+	/>
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection show={showMembers} title="Members">
-	{node.members?.map(formatMemberName).join(', ')}
+	<NodePanelSearchableList
+		searchType="artist"
+		items={(node.members ?? []).map((member) => ({
+			label: formatMemberName(member),
+			query: member.name
+		}))}
+	/>
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection show={showGroups} title="Groups">
-	{node.groups?.map((group) => group.name).join(', ')}
+	<NodePanelSearchableList
+		searchType="artist"
+		items={(node.groups ?? []).map((group) => ({ label: group.name, query: group.name }))}
+	/>
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection show={showParentLabel} title="Parent label">
-	{node.parent_label?.name}
+	{#if node.parent_label}
+		<NodePanelSearchableList
+			searchType="label"
+			items={[{ label: node.parent_label.name, query: node.parent_label.name }]}
+		/>
+	{/if}
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection show={showSublabels} title="Sublabels">
-	{node.sublabels?.map((sublabel) => sublabel.name).join(', ')}
+	<NodePanelSearchableList
+		searchType="label"
+		items={(node.sublabels ?? []).map((sublabel) => ({
+			label: sublabel.name,
+			query: sublabel.name
+		}))}
+	/>
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection show={showUrls} title="Links">
