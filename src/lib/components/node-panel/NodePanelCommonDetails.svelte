@@ -6,32 +6,35 @@
 
 	interface Props {
 		node: GraphNode;
+		variant?: 'header' | 'meta';
 	}
 
-	let { node }: Props = $props();
+	let { node, variant = 'header' }: Props = $props();
 </script>
 
-<NodeDetailRow label="Name">{node.displayName}</NodeDetailRow>
+{#if variant === 'header'}
+	<NodeDetailRow label="Name">{node.displayName}</NodeDetailRow>
 
-<dt class="text-muted">Type</dt>
-<NodeTypeBadge type={node.type} />
+	<dt class="text-muted">Type</dt>
+	<NodeTypeBadge type={node.type} />
+{:else}
+	{#if node.meta?.year}
+		<NodeDetailRow label="Year">{node.meta.year}</NodeDetailRow>
+	{/if}
 
-{#if node.meta?.year}
-	<NodeDetailRow label="Year">{node.meta.year}</NodeDetailRow>
-{/if}
+	{#if node.meta?.role}
+		<NodeDetailRow label="Role">{node.meta.role}</NodeDetailRow>
+	{/if}
 
-{#if node.meta?.role}
-	<NodeDetailRow label="Role">{node.meta.role}</NodeDetailRow>
-{/if}
+	{#if node.meta?.position}
+		<NodeDetailRow label="Position">{node.meta.position}</NodeDetailRow>
+	{/if}
 
-{#if node.meta?.position}
-	<NodeDetailRow label="Position">{node.meta.position}</NodeDetailRow>
-{/if}
+	{#if node.meta?.duration}
+		<NodeDetailRow label="Duration">{node.meta.duration}</NodeDetailRow>
+	{/if}
 
-{#if node.meta?.duration}
-	<NodeDetailRow label="Duration">{node.meta.duration}</NodeDetailRow>
-{/if}
-
-{#if node.meta?.genres?.length}
-	<NodeDetailRow label="Genres">{node.meta.genres.join(', ')}</NodeDetailRow>
+	{#if node.meta?.genres?.length}
+		<NodeDetailRow label="Genres">{node.meta.genres.join(', ')}</NodeDetailRow>
+	{/if}
 {/if}
