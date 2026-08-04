@@ -1,7 +1,7 @@
 <script lang="ts">
 	import NodePanelActions from './NodePanelActions.svelte';
+	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
 	import NodePanelDetails from './NodePanelDetails.svelte';
-	import NodePanelProfile from './NodePanelProfile.svelte';
 	import { graphStore } from '$lib/graph/store.svelte';
 
 	const node = $derived(graphStore.selectedNode);
@@ -24,8 +24,10 @@
 
 	{#if node}
 		<NodePanelDetails {node} />
-		<NodePanelProfile {node} />
-		<NodePanelActions {node} />
+
+		<NodePanelCollapsibleSection title="Explore">
+			<NodePanelActions {node} />
+		</NodePanelCollapsibleSection>
 	{:else}
 		<p class="text-muted m-0 text-sm">Click a node in the graph to see its details.</p>
 	{/if}
