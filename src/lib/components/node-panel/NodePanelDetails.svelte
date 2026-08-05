@@ -33,6 +33,7 @@
 	const showNameVariations = $derived(
 		node.type === 'artist' && (node.namevariations?.length ?? 0) > 0
 	);
+	const showAliases = $derived(node.type === 'artist' && (node.aliases?.length ?? 0) > 0);
 	const showMembers = $derived(node.type === 'artist' && (node.members?.length ?? 0) > 0);
 	const showGroups = $derived(node.type === 'artist' && (node.groups?.length ?? 0) > 0);
 	const showParentLabel = $derived(node.type === 'label' && Boolean(node.parent_label));
@@ -67,6 +68,13 @@
 
 <NodePanelCollapsibleSection id="name-variations" show={showNameVariations} title="Name variations">
 	<NodePanelItemList items={node.namevariations ?? []} />
+</NodePanelCollapsibleSection>
+
+<NodePanelCollapsibleSection id="aliases" show={showAliases} title="Aliases">
+	<NodePanelSearchableList
+		searchType="artist"
+		items={(node.aliases ?? []).map((alias) => ({ label: alias.name, query: alias.name }))}
+	/>
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection id="members" show={showMembers} title="Members">
