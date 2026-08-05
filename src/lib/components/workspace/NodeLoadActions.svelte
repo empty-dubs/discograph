@@ -86,3 +86,14 @@
 		Load main release
 	</button>
 {/if}
+
+{#if actions.includes('companies')}
+	<button
+		type="button"
+		class={itemClass}
+		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		onclick={() => run(() => graphStore.loadRelatedCompanies(nodeId))}
+	>
+		Load related companies
+	</button>
+{/if}

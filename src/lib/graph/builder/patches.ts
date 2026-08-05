@@ -148,6 +148,15 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 		});
 	}
 
+	return { nodes, links };
+}
+
+export function buildCompaniesFromRelease(release: Release): GraphPatch {
+	const nodes: GraphNode[] = [];
+	const links: GraphLink[] = [];
+	const releaseNodeId = nodeId('release', release.id);
+	const nodeType: NodeType = 'label';
+
 	for (const company of release.companies ?? []) {
 		const edgeType: EdgeType = 'company_on';
 		const targetNode = nodeId(nodeType, company.id);

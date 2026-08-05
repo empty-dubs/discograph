@@ -8,5 +8,6 @@ export {
 	buildFromMasterVersions,
 	buildMainReleaseFromMaster,
 	buildLabelsFromRelease,
+	buildCompaniesFromRelease,
 	buildFromSearchResult
 } from './patches';

@@ -10,6 +10,7 @@ import {
 	buildFromMasterVersions,
 	buildMainReleaseFromMaster,
 	buildLabelsFromRelease,
+	buildCompaniesFromRelease,
 	buildFromSearchResult
 } from './builder';
 
@@ -802,6 +803,27 @@ class GraphStore {
 				}
 			},
 			'Failed to load related labels'
+		);
+	}
+
+	async loadRelatedCompanies(nodeId: string) {
+		const { type, discogsId } = this.parseNodeId(nodeId);
+
+		if (discogsId === null) return;
+
+		await this.runLoad(
+			nodeId,
+			async () => {
+				switch (type) {
+					case 'release': {
+						const release = await discogs.getRelease(discogsId);
+						this.updateRateLimit();
+						this.applyPatchFromExpansion(nodeId, buildCompaniesFromRelease(release));
+						break;
+					}
+				}
+			},
+			'Failed to load related companies'
 		);
 	}
 
