@@ -22,12 +22,9 @@
 		isArtistOrLabel && node.profile ? stripDiscogsWikiMarkup(node.profile) : null
 	);
 
-	const isProfileLoading = $derived(
-		(node.type === 'artist' && graphStore.isArtistDetailsLoading(node.id)) ||
-			(node.type === 'label' && graphStore.isLabelDetailsLoading(node.id))
-	);
+	const isDetailsLoading = $derived(graphStore.isDetailsLoading(node.id));
 
-	const showProfile = $derived(isArtistOrLabel && (Boolean(profileText) || isProfileLoading));
+	const showProfile = $derived(isArtistOrLabel && Boolean(profileText));
 
 	const showRealName = $derived(node.type === 'artist' && Boolean(node.realname));
 	const showNameVariations = $derived(
@@ -40,12 +37,6 @@
 	const showSublabels = $derived(node.type === 'label' && (node.sublabels?.length ?? 0) > 0);
 	const showUrls = $derived(isArtistOrLabel && (node.urls?.length ?? 0) > 0);
 
-	const isMasterDetailsLoading = $derived(
-		node.type === 'master' && graphStore.isMasterDetailsLoading(node.id)
-	);
-	const isReleaseDetailsLoading = $derived(
-		node.type === 'release' && graphStore.isReleaseDetailsLoading(node.id)
-	);
 	const showMainRelease = $derived(node.type === 'master' && Boolean(node.main_release));
 	const showLinkedMaster = $derived(node.type === 'release' && Boolean(node.linked_master));
 	const showArtists = $derived(
@@ -70,18 +61,15 @@
 
 <NodePanelCommonDetails {node}/>
 
+{#if isDetailsLoading}
+	<p class="text-muted m-0 text-sm">Loading details…</p>
+{/if}
+
 <NodePanelCollapsibleSection id="profile" show={showProfile} title="Profile">
-	{#if isProfileLoading}
-		<p class="text-muted m-0 text-sm">Loading details…</p>
-	{/if}
 	{#if profileText}
 		<div class="text-muted whitespace-pre-wrap text-sm">{profileText}</div>
 	{/if}
 </NodePanelCollapsibleSection>
-
-{#if isMasterDetailsLoading || isReleaseDetailsLoading}
-	<p class="text-muted m-0 text-sm">Loading details…</p>
-{/if}
 
 <NodePanelCollapsibleSection id="main-release" show={showMainRelease} title="Main release">
 	{#if node.main_release}
