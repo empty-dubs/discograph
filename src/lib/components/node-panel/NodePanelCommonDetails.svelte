@@ -14,16 +14,10 @@
 
 {#if variant === 'header'}
 	<NodeDetailRow label="Name">{node.displayName}</NodeDetailRow>
-
-	<dt class="text-muted">Type</dt>
 	<NodeTypeBadge type={node.type} />
 {:else}
 	{#if node.meta?.year}
 		<NodeDetailRow label="Year">{node.meta.year}</NodeDetailRow>
-	{/if}
-
-	{#if node.meta?.role}
-		<NodeDetailRow label="Role">{node.meta.role}</NodeDetailRow>
 	{/if}
 
 	{#if node.meta?.genres?.length}

@@ -10,6 +10,7 @@
 	let { type }: Props = $props();
 </script>
 
+<dt class="text-muted">Type</dt>
 <dd
 	class="type-badge m-0 inline-block rounded px-2 py-0.5 text-sm capitalize"
 	style:--badge-color={NODE_COLORS[type]}
