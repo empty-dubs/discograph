@@ -1,7 +1,7 @@
 <script lang="ts">
 	import GraphCanvas from './GraphCanvas.svelte';
 	import GraphLegend from './GraphLegend.svelte';
-	import NodePanel from '../node-panel/NodePanel.svelte';
+	import NodePanel from './node-panel/NodePanel.svelte';
 	import { graphStore } from '$lib/graph/store.svelte';
 </script>
 
