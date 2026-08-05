@@ -97,3 +97,14 @@
 		Load related companies
 	</button>
 {/if}
+
+{#if actions.includes('credited_artists')}
+	<button
+		type="button"
+		class={itemClass}
+		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		onclick={() => run(() => graphStore.loadRelatedCreditedArtists(nodeId))}
+	>
+		Load credited artists
+	</button>
+{/if}

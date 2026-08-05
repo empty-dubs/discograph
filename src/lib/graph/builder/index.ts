@@ -2,6 +2,7 @@ export {
 	buildFromArtist,
 	buildFromArtistReleases,
 	buildArtistsFromRelease,
+	buildCreditedArtistsFromRelease,
 	buildFromLabel,
 	buildFromLabelReleases,
 	buildFromMaster,

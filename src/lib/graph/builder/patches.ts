@@ -108,6 +108,15 @@ export function buildArtistsFromRelease(release: Release): GraphPatch {
 		}
 	}
 
+	return { nodes, links };
+}
+
+export function buildCreditedArtistsFromRelease(release: Release): GraphPatch {
+	const nodes: GraphNode[] = [];
+	const links: GraphLink[] = [];
+	const releaseNodeId = nodeId('release', release.id);
+	const nodeType: NodeType = 'artist';
+
 	for (const extra of release.extraartists ?? []) {
 		const extraId = extra.id;
 
