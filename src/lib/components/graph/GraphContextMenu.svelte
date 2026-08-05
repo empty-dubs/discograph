@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import NodeLoadActions from '$lib/components/NodeLoadActions.svelte';
+	import NodeLoadActions from './NodeLoadActions.svelte';
 	import { graphStore } from '$lib/graph/store.svelte';
-	import { getContextMenuActions } from '$lib/graph/menu';
+	import { getContextMenuActions } from './menu';
 
 	interface Props {
 		nodeId: string | null;

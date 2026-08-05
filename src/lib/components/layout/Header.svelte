@@ -1,5 +1,5 @@
 <script lang="ts">
-	import DiscogsSearchForm from '$lib/components/DiscogsSearchForm.svelte';
+	import DiscogsSearchForm from './DiscogsSearchForm.svelte';
 
 	import { graphStore } from '$lib/graph/store.svelte';
 

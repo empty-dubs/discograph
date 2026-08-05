@@ -1,8 +1,8 @@
 <script lang="ts">
-	import NodeLoadActions from '$lib/components/NodeLoadActions.svelte';
+	import NodeLoadActions from '../graph/NodeLoadActions.svelte';
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
 	import { graphStore } from '$lib/graph/store.svelte';
-	import { getContextMenuActions } from '$lib/graph/menu';
+	import { getContextMenuActions } from '../graph/menu';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 
 	import type { GraphNode } from '$lib/graph/types';

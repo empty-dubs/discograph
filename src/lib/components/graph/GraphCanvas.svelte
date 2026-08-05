@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import GraphContextMenu from '$lib/components/GraphContextMenu.svelte';
+	import GraphContextMenu from './GraphContextMenu.svelte';
 	import { ForceGraph } from '$lib/graph/force-graph';
 	import { graphStore } from '$lib/graph/store.svelte';
 

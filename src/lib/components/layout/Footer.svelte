@@ -1,5 +1,5 @@
 <script lang="ts">
-	import GraphLegend from '$lib/components/GraphLegend.svelte';
+	import GraphLegend from '../graph/GraphLegend.svelte';
 
 	import { graphStore } from '$lib/graph/store.svelte';
 </script>
