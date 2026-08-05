@@ -45,6 +45,12 @@ export interface ArtistGroup {
 	resource_url?: string;
 }
 
+export interface ArtistAlias {
+	id: number;
+	name: string;
+	resource_url?: string;
+}
+
 export interface Artist {
 	id: number;
 	name: string;
@@ -56,6 +62,7 @@ export interface Artist {
 	urls?: string[];
 	members?: ArtistMember[];
 	groups?: ArtistGroup[];
+	aliases?: ArtistAlias[];
 	namevariations?: string[];
 }
 

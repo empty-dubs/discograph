@@ -269,6 +269,7 @@ class GraphStore {
 			urls: artist.urls,
 			namevariations: artist.namevariations,
 			groups: artist.groups?.map(({ id, name }) => ({ id, name })),
+			aliases: artist.aliases?.map(({ id, name }) => ({ id, name })),
 			members: artist.members?.map(({ id, name, active }) => ({ id, name, active }))
 		});
 
