@@ -142,6 +142,13 @@ export interface ReleaseCompany {
 	resource_url?: string;
 }
 
+export interface ReleaseFormat {
+	name: string;
+	qty?: string;
+	descriptions?: string[];
+	text?: string;
+}
+
 export interface Release {
 	id: number;
 	title: string;
@@ -158,6 +165,16 @@ export interface Release {
 	master_url?: string;
 	genres?: string[];
 	styles?: string[];
+	country?: string;
+	notes?: string;
+	tracklist?: DiscogsTrack[];
+	formats?: ReleaseFormat[];
+}
+
+export interface DiscogsTrack {
+	position: string;
+	title: string;
+	duration?: string;
 }
 
 export interface MasterArtist {
@@ -185,6 +202,8 @@ export interface Master {
 	styles?: string[];
 	versions_url?: string;
 	main_release?: number;
+	main_release_url?: string;
+	tracklist?: DiscogsTrack[];
 }
 
 export interface MasterVersionsResponse {

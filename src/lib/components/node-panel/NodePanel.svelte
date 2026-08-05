@@ -36,6 +36,14 @@
 		if (selected?.type === 'label') {
 			graphStore.ensureLabelDetails(selected.id);
 		}
+
+		if (selected?.type === 'master') {
+			graphStore.ensureMasterDetails(selected.id);
+		}
+
+		if (selected?.type === 'release') {
+			graphStore.ensureReleaseDetails(selected.id);
+		}
 	});
 
 	$effect(() => {

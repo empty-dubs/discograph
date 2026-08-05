@@ -14,7 +14,7 @@ import {
 
 import { ALL_NODE_TYPES } from './constants';
 
-import type { Artist, Label, RateLimitInfo, SearchResult, SearchType } from '$lib/discogs/types';
+import type { Artist, Label, Master, RateLimitInfo, Release, ReleaseFormat, SearchResult, SearchType } from '$lib/discogs/types';
 
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from './types';
 
@@ -39,6 +39,10 @@ class GraphStore {
 	artistDetailsLoading = $state<Set<string>>(new Set());
 	labelDetailsFetched = $state<Set<string>>(new Set());
 	labelDetailsLoading = $state<Set<string>>(new Set());
+	masterDetailsFetched = $state<Set<string>>(new Set());
+	masterDetailsLoading = $state<Set<string>>(new Set());
+	releaseDetailsFetched = $state<Set<string>>(new Set());
+	releaseDetailsLoading = $state<Set<string>>(new Set());
 
 	get nodeList(): GraphNode[] {
 		return Array.from(this.nodes.values());
@@ -215,6 +219,10 @@ class GraphStore {
 		this.artistDetailsLoading = new Set();
 		this.labelDetailsFetched = new Set();
 		this.labelDetailsLoading = new Set();
+		this.masterDetailsFetched = new Set();
+		this.masterDetailsLoading = new Set();
+		this.releaseDetailsFetched = new Set();
+		this.releaseDetailsLoading = new Set();
 		this.viewResetToken++;
 	}
 
@@ -366,6 +374,209 @@ class GraphStore {
 
 	isLabelDetailsLoading(nodeId: string): boolean {
 		return this.labelDetailsLoading.has(nodeId);
+	}
+
+	private setMasterDetailsLoading(id: string, isLoading: boolean) {
+		const next = new Set(this.masterDetailsLoading);
+
+		if (isLoading) {
+			next.add(id);
+		} else {
+			next.delete(id);
+		}
+
+		this.masterDetailsLoading = next;
+	}
+
+	private async resolveMainReleaseTitle(id: number): Promise<string> {
+		const releaseNodeId = `release:${id}`;
+		const existing = this.nodes.get(releaseNodeId);
+
+		if (existing) return existing.displayName;
+
+		try {
+			const release = await discogs.getRelease(id);
+			this.updateRateLimit();
+			return release.title;
+		} catch {
+			return `Release ${id}`;
+		}
+	}
+
+	private async mergeMasterDetails(nodeId: string, master: Master) {
+		const existing = this.nodes.get(nodeId);
+
+		if (!existing) return;
+
+		const mainRelease = master.main_release
+			? {
+					id: master.main_release,
+					title: await this.resolveMainReleaseTitle(master.main_release)
+				}
+			: undefined;
+
+		const next = new Map(this.nodes);
+
+		next.set(nodeId, {
+			...existing,
+			artists: master.artists?.map(({ id, name }) => ({ id, name })),
+			tracklist: master.tracklist?.map(({ position, title, duration }) => ({
+				position,
+				title,
+				duration
+			})),
+			main_release: mainRelease,
+			meta: {
+				...existing.meta,
+				year: master.year ?? existing.meta?.year,
+				genres: master.genres ?? existing.meta?.genres,
+				styles: master.styles
+			}
+		});
+
+		this.nodes = next;
+	}
+
+	private markMasterDetailsFetched(nodeId: string) {
+		this.masterDetailsFetched = new Set(this.masterDetailsFetched).add(nodeId);
+	}
+
+	async ensureMasterDetails(nodeId: string) {
+		const { type, discogsId } = this.parseNodeId(nodeId);
+
+		if (type !== 'master' || discogsId === null) return;
+		if (this.masterDetailsFetched.has(nodeId) || this.masterDetailsLoading.has(nodeId)) return;
+
+		this.setMasterDetailsLoading(nodeId, true);
+		this.error = null;
+
+		try {
+			const master = await discogs.getMaster(discogsId);
+
+			this.updateRateLimit();
+			await this.mergeMasterDetails(nodeId, master);
+			this.markMasterDetailsFetched(nodeId);
+		} catch (err) {
+			this.error = err instanceof Error ? err.message : 'Failed to load master details';
+		} finally {
+			this.setMasterDetailsLoading(nodeId, false);
+		}
+	}
+
+	isMasterDetailsLoading(nodeId: string): boolean {
+		return this.masterDetailsLoading.has(nodeId);
+	}
+
+	private setReleaseDetailsLoading(id: string, isLoading: boolean) {
+		const next = new Set(this.releaseDetailsLoading);
+
+		if (isLoading) {
+			next.add(id);
+		} else {
+			next.delete(id);
+		}
+
+		this.releaseDetailsLoading = next;
+	}
+
+	private formatReleaseFormats(formats: ReleaseFormat[]): string {
+		return formats
+			.map((format) => [format.name, ...(format.descriptions ?? [])].filter(Boolean).join(', '))
+			.join(' / ');
+	}
+
+	private async resolveMasterTitle(id: number): Promise<string> {
+		const masterNodeId = `master:${id}`;
+		const existing = this.nodes.get(masterNodeId);
+
+		if (existing) return existing.displayName;
+
+		try {
+			const master = await discogs.getMaster(id);
+			this.updateRateLimit();
+			return master.title;
+		} catch {
+			return `Master ${id}`;
+		}
+	}
+
+	private async mergeReleaseDetails(nodeId: string, release: Release) {
+		const existing = this.nodes.get(nodeId);
+
+		if (!existing) return;
+
+		const linkedMaster = release.master_id
+			? {
+					id: release.master_id,
+					title: await this.resolveMasterTitle(release.master_id)
+				}
+			: undefined;
+
+		const next = new Map(this.nodes);
+
+		next.set(nodeId, {
+			...existing,
+			artists: (release.artists ?? [])
+				.filter((artist): artist is typeof artist & { id: number } => artist.id !== undefined)
+				.map(({ id, name }) => ({ id, name })),
+			labels: release.labels?.map(({ id, name, catno }) => ({ id, name, catno })),
+			credits: (release.extraartists ?? [])
+				.filter((artist): artist is typeof artist & { id: number } => artist.id !== undefined)
+				.map(({ id, name, role }) => ({ id, name, role })),
+			companies: release.companies?.map(({ id, name, entity_type_name }) => ({
+				id,
+				name,
+				entity_type_name
+			})),
+			tracklist: release.tracklist?.map(({ position, title, duration }) => ({
+				position,
+				title,
+				duration
+			})),
+			notes: release.notes,
+			linked_master: linkedMaster,
+			meta: {
+				...existing.meta,
+				year: release.year ?? existing.meta?.year,
+				genres: release.genres ?? existing.meta?.genres,
+				styles: release.styles,
+				released: release.released_formatted ?? release.released,
+				country: release.country,
+				format: release.formats?.length ? this.formatReleaseFormats(release.formats) : undefined
+			}
+		});
+
+		this.nodes = next;
+	}
+
+	private markReleaseDetailsFetched(nodeId: string) {
+		this.releaseDetailsFetched = new Set(this.releaseDetailsFetched).add(nodeId);
+	}
+
+	async ensureReleaseDetails(nodeId: string) {
+		const { type, discogsId } = this.parseNodeId(nodeId);
+
+		if (type !== 'release' || discogsId === null) return;
+		if (this.releaseDetailsFetched.has(nodeId) || this.releaseDetailsLoading.has(nodeId)) return;
+
+		this.setReleaseDetailsLoading(nodeId, true);
+		this.error = null;
+
+		try {
+			const release = await discogs.getRelease(discogsId);
+
+			this.updateRateLimit();
+			await this.mergeReleaseDetails(nodeId, release);
+			this.markReleaseDetailsFetched(nodeId);
+		} catch (err) {
+			this.error = err instanceof Error ? err.message : 'Failed to load release details';
+		} finally {
+			this.setReleaseDetailsLoading(nodeId, false);
+		}
+	}
+
+	isReleaseDetailsLoading(nodeId: string): boolean {
+		return this.releaseDetailsLoading.has(nodeId);
 	}
 
 	async search(query: string, type?: SearchType) {

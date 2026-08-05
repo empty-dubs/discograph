@@ -40,8 +40,31 @@
 	const showSublabels = $derived(node.type === 'label' && (node.sublabels?.length ?? 0) > 0);
 	const showUrls = $derived(isArtistOrLabel && (node.urls?.length ?? 0) > 0);
 
+	const isMasterDetailsLoading = $derived(
+		node.type === 'master' && graphStore.isMasterDetailsLoading(node.id)
+	);
+	const isReleaseDetailsLoading = $derived(
+		node.type === 'release' && graphStore.isReleaseDetailsLoading(node.id)
+	);
+	const showMainRelease = $derived(node.type === 'master' && Boolean(node.main_release));
+	const showLinkedMaster = $derived(node.type === 'release' && Boolean(node.linked_master));
+	const showArtists = $derived(
+		(node.type === 'master' || node.type === 'release') && (node.artists?.length ?? 0) > 0
+	);
+	const showLabels = $derived(node.type === 'release' && (node.labels?.length ?? 0) > 0);
+	const showCredits = $derived(node.type === 'release' && (node.credits?.length ?? 0) > 0);
+	const showCompanies = $derived(node.type === 'release' && (node.companies?.length ?? 0) > 0);
+	const showTracklist = $derived(
+		(node.type === 'master' || node.type === 'release') && (node.tracklist?.length ?? 0) > 0
+	);
+	const showNotes = $derived(node.type === 'release' && Boolean(node.notes));
+
 	function formatMemberName(member: { name: string; active?: boolean }): string {
 		return member.active === false ? `${member.name} (inactive)` : member.name;
+	}
+
+	function formatTrack(track: { position: string; title: string; duration?: string }): string {
+		return `${track.position}. ${track.title}${track.duration ? ` (${track.duration})` : ''}`;
 	}
 </script>
 
@@ -62,6 +85,82 @@
 	<NodePanelCommonDetails {node} variant="meta" />
 </dl>
 
+{#if isMasterDetailsLoading || isReleaseDetailsLoading}
+	<p class="text-muted m-0 text-sm">Loading details…</p>
+{/if}
+
+<NodePanelCollapsibleSection id="main-release" show={showMainRelease} title="Main release">
+	{#if node.main_release}
+		<NodePanelSearchableList
+			searchType="release"
+			items={[{ label: node.main_release.title, query: node.main_release.title }]}
+		/>
+	{/if}
+</NodePanelCollapsibleSection>
+
+<NodePanelCollapsibleSection id="linked-master" show={showLinkedMaster} title="Master">
+	{#if node.linked_master}
+		<NodePanelSearchableList
+			searchType="master"
+			items={[{ label: node.linked_master.title, query: node.linked_master.title }]}
+		/>
+	{/if}
+</NodePanelCollapsibleSection>
+
+<NodePanelCollapsibleSection id="artists" show={showArtists} title="Artists">
+	<NodePanelSearchableList
+		searchType="artist"
+		items={(node.artists ?? []).map((artist) => ({
+			key: String(artist.id),
+			label: artist.name,
+			query: artist.name
+		}))}
+	/>
+</NodePanelCollapsibleSection>
+
+<NodePanelCollapsibleSection id="labels" show={showLabels} title="Labels">
+	<NodePanelSearchableList
+		searchType="label"
+		items={(node.labels ?? []).map((label) => ({
+			key: `${label.id}-${label.catno ?? ''}`,
+			label: label.catno ? `${label.name} (${label.catno})` : label.name,
+			query: label.name
+		}))}
+	/>
+</NodePanelCollapsibleSection>
+
+<NodePanelCollapsibleSection id="credits" show={showCredits} title="Credits">
+	<NodePanelSearchableList
+		searchType="artist"
+		items={(node.credits ?? []).map((credit, index) => ({
+			key: `${credit.id}-${credit.role ?? ''}-${index}`,
+			label: credit.role ? `${credit.name} — ${credit.role}` : credit.name,
+			query: credit.name
+		}))}
+	/>
+</NodePanelCollapsibleSection>
+
+<NodePanelCollapsibleSection id="companies" show={showCompanies} title="Companies">
+	<NodePanelSearchableList
+		searchType="label"
+		items={(node.companies ?? []).map((company, index) => ({
+			key: `${company.id}-${company.entity_type_name ?? ''}-${index}`,
+			label: company.entity_type_name
+				? `${company.name} — ${company.entity_type_name}`
+				: company.name,
+			query: company.name
+		}))}
+	/>
+</NodePanelCollapsibleSection>
+
+<NodePanelCollapsibleSection id="tracklist" show={showTracklist} title="Track list">
+	<NodePanelItemList items={(node.tracklist ?? []).map(formatTrack)} />
+</NodePanelCollapsibleSection>
+
+<NodePanelCollapsibleSection id="notes" show={showNotes} title="Notes">
+	<div class="text-muted whitespace-pre-wrap text-sm">{node.notes}</div>
+</NodePanelCollapsibleSection>
+
 <NodePanelCollapsibleSection id="real-name" show={showRealName} title="Real name">
 	{node.realname}
 </NodePanelCollapsibleSection>
@@ -73,7 +172,11 @@
 <NodePanelCollapsibleSection id="aliases" show={showAliases} title="Aliases">
 	<NodePanelSearchableList
 		searchType="artist"
-		items={(node.aliases ?? []).map((alias) => ({ label: alias.name, query: alias.name }))}
+		items={(node.aliases ?? []).map((alias) => ({
+			key: String(alias.id),
+			label: alias.name,
+			query: alias.name
+		}))}
 	/>
 </NodePanelCollapsibleSection>
 
@@ -81,6 +184,7 @@
 	<NodePanelSearchableList
 		searchType="artist"
 		items={(node.members ?? []).map((member) => ({
+			key: String(member.id),
 			label: formatMemberName(member),
 			query: member.name
 		}))}
@@ -90,7 +194,11 @@
 <NodePanelCollapsibleSection id="groups" show={showGroups} title="Groups">
 	<NodePanelSearchableList
 		searchType="artist"
-		items={(node.groups ?? []).map((group) => ({ label: group.name, query: group.name }))}
+		items={(node.groups ?? []).map((group) => ({
+			key: String(group.id),
+			label: group.name,
+			query: group.name
+		}))}
 	/>
 </NodePanelCollapsibleSection>
 
@@ -107,6 +215,7 @@
 	<NodePanelSearchableList
 		searchType="label"
 		items={(node.sublabels ?? []).map((sublabel) => ({
+			key: String(sublabel.id),
 			label: sublabel.name,
 			query: sublabel.name
 		}))}
