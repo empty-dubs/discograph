@@ -32,6 +32,7 @@ class GraphStore {
 	searching = $state(false);
 	searchResults = $state<SearchResult[]>([]);
 	releasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
+	masterReleasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
 	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
 	expansionChildren = $state<Map<string, Set<string>>>(new Map());
 	viewResetToken = $state(0);
@@ -213,6 +214,7 @@ class GraphStore {
 		this.error = null;
 		this.clearSearchResults();
 		this.releasePages = new Map();
+		this.masterReleasePages = new Map();
 		this.expansionChildren = new Map();
 		this.visibleTypes = new Set(ALL_NODE_TYPES);
 		this.artistDetailsFetched = new Set();
@@ -699,10 +701,13 @@ class GraphStore {
 		this.expanded = nextExpanded;
 
 		const nextReleasePages = new Map(this.releasePages);
+		const nextMasterReleasePages = new Map(this.masterReleasePages);
 		for (const id of toRemove) {
 			nextReleasePages.delete(id);
+			nextMasterReleasePages.delete(id);
 		}
 		this.releasePages = nextReleasePages;
+		this.masterReleasePages = nextMasterReleasePages;
 
 		if (this.selectedId && toRemove.has(this.selectedId)) {
 			this.selectedId = nodeId;
@@ -811,7 +816,10 @@ class GraphStore {
 					case 'artist': {
 						const releases = await discogs.getArtistReleases(discogsId, 1);
 						this.updateRateLimit();
-						this.applyPatchFromExpansion(nodeId, buildFromArtistReleases(releases.releases, discogsId));
+						this.applyPatchFromExpansion(
+							nodeId,
+							buildFromArtistReleases(releases.releases, discogsId, 'release')
+						);
 						this.releasePages = new Map(this.releasePages).set(nodeId, {
 							page: releases.pagination.page,
 							pages: releases.pagination.pages
@@ -821,7 +829,10 @@ class GraphStore {
 					case 'label': {
 						const releases = await discogs.getLabelReleases(discogsId, 1);
 						this.updateRateLimit();
-						this.applyPatchFromExpansion(nodeId, buildFromLabelReleases(releases.releases, discogsId));
+						this.applyPatchFromExpansion(
+							nodeId,
+							buildFromLabelReleases(releases.releases, discogsId, 'release')
+						);
 						this.releasePages = new Map(this.releasePages).set(nodeId, {
 							page: releases.pagination.page,
 							pages: releases.pagination.pages
@@ -844,6 +855,47 @@ class GraphStore {
 		);
 	}
 
+	async loadMasterReleases(nodeId: string) {
+		const { type, discogsId } = this.parseNodeId(nodeId);
+
+		if (discogsId === null) return;
+
+		await this.runLoad(
+			nodeId,
+			async () => {
+				switch (type) {
+					case 'artist': {
+						const releases = await discogs.getArtistReleases(discogsId, 1);
+						this.updateRateLimit();
+						this.applyPatchFromExpansion(
+							nodeId,
+							buildFromArtistReleases(releases.releases, discogsId, 'master')
+						);
+						this.masterReleasePages = new Map(this.masterReleasePages).set(nodeId, {
+							page: releases.pagination.page,
+							pages: releases.pagination.pages
+						});
+						break;
+					}
+					case 'label': {
+						const releases = await discogs.getLabelReleases(discogsId, 1);
+						this.updateRateLimit();
+						this.applyPatchFromExpansion(
+							nodeId,
+							buildFromLabelReleases(releases.releases, discogsId, 'master')
+						);
+						this.masterReleasePages = new Map(this.masterReleasePages).set(nodeId, {
+							page: releases.pagination.page,
+							pages: releases.pagination.pages
+						});
+						break;
+					}
+				}
+			},
+			'Failed to load master releases'
+		);
+	}
+
 	async loadMoreReleases(nodeId: string) {
 		const { type, discogsId } = this.parseNodeId(nodeId);
 
@@ -863,7 +915,10 @@ class GraphStore {
 			if (type === 'artist') {
 				const releases = await discogs.getArtistReleases(discogsId, nextPage);
 				this.updateRateLimit();
-				this.applyPatchFromExpansion(nodeId, buildFromArtistReleases(releases.releases, discogsId));
+				this.applyPatchFromExpansion(
+					nodeId,
+					buildFromArtistReleases(releases.releases, discogsId, 'release')
+				);
 				this.releasePages = new Map(this.releasePages).set(nodeId, {
 					page: releases.pagination.page,
 					pages: releases.pagination.pages
@@ -871,7 +926,10 @@ class GraphStore {
 			} else if (type === 'label') {
 				const releases = await discogs.getLabelReleases(discogsId, nextPage);
 				this.updateRateLimit();
-				this.applyPatchFromExpansion(nodeId, buildFromLabelReleases(releases.releases, discogsId));
+				this.applyPatchFromExpansion(
+					nodeId,
+					buildFromLabelReleases(releases.releases, discogsId, 'release')
+				);
 				this.releasePages = new Map(this.releasePages).set(nodeId, {
 					page: releases.pagination.page,
 					pages: releases.pagination.pages
@@ -894,6 +952,58 @@ class GraphStore {
 
 	hasMoreReleases(nodeId: string): boolean {
 		const paging = this.releasePages.get(nodeId);
+
+		return paging ? paging.page < paging.pages : false;
+	}
+
+	async loadMoreMasterReleases(nodeId: string) {
+		const { type, discogsId } = this.parseNodeId(nodeId);
+
+		if (discogsId === null || (type !== 'artist' && type !== 'label')) return;
+
+		const paging = this.masterReleasePages.get(nodeId);
+
+		if (!paging || paging.page >= paging.pages) return;
+
+		const nextPage = paging.page + 1;
+
+		this.setLoading(nodeId, true);
+
+		this.error = null;
+
+		try {
+			if (type === 'artist') {
+				const releases = await discogs.getArtistReleases(discogsId, nextPage);
+				this.updateRateLimit();
+				this.applyPatchFromExpansion(
+					nodeId,
+					buildFromArtistReleases(releases.releases, discogsId, 'master')
+				);
+				this.masterReleasePages = new Map(this.masterReleasePages).set(nodeId, {
+					page: releases.pagination.page,
+					pages: releases.pagination.pages
+				});
+			} else {
+				const releases = await discogs.getLabelReleases(discogsId, nextPage);
+				this.updateRateLimit();
+				this.applyPatchFromExpansion(
+					nodeId,
+					buildFromLabelReleases(releases.releases, discogsId, 'master')
+				);
+				this.masterReleasePages = new Map(this.masterReleasePages).set(nodeId, {
+					page: releases.pagination.page,
+					pages: releases.pagination.pages
+				});
+			}
+		} catch (err) {
+			this.error = err instanceof Error ? err.message : 'Failed to load more master releases';
+		} finally {
+			this.setLoading(nodeId, false);
+		}
+	}
+
+	hasMoreMasterReleases(nodeId: string): boolean {
+		const paging = this.masterReleasePages.get(nodeId);
 
 		return paging ? paging.page < paging.pages : false;
 	}

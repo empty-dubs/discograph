@@ -1,17 +1,24 @@
 <script lang="ts">
 	import { graphStore } from '$lib/graph/store.svelte';
-	import { getContextMenuActions } from './menu';
+	import { getContextMenuActions, getPanelExploreActions } from './menu';
 
 	interface Props {
 		nodeId: string;
 		layout?: 'menu' | 'stack';
+		actionsSource?: 'menu' | 'panel';
 		onAction?: () => void;
 	}
 
-	let { nodeId, layout = 'stack', onAction }: Props = $props();
+	let { nodeId, layout = 'stack', actionsSource = 'menu', onAction }: Props = $props();
 
 	const node = $derived(graphStore.nodes.get(nodeId) ?? null);
-	const actions = $derived(node ? getContextMenuActions(node) : []);
+	const actions = $derived(
+		node
+			? actionsSource === 'panel'
+				? getPanelExploreActions(node)
+				: getContextMenuActions(node)
+			: []
+	);
 
 	const itemClass = $derived(
 		layout === 'menu'
@@ -44,6 +51,17 @@
 		onclick={() => run(() => graphStore.loadRelatedLabels(nodeId))}
 	>
 		Load related labels
+	</button>
+{/if}
+
+{#if actions.includes('master_releases')}
+	<button
+		type="button"
+		class={itemClass}
+		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		onclick={() => run(() => graphStore.loadMasterReleases(nodeId))}
+	>
+		Load master releases
 	</button>
 {/if}
 

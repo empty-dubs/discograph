@@ -110,10 +110,17 @@ export interface Label {
 export interface LabelRelease {
 	id: number;
 	title: string;
+	type?: 'release' | 'master';
 	year?: string;
 	artist?: string;
 	resource_url?: string;
 	thumb?: string;
+}
+
+export function labelReleaseKind(item: LabelRelease): 'master' | 'release' {
+	if (item.type) return item.type;
+
+	return item.resource_url?.includes('/masters/') ? 'master' : 'release';
 }
 
 export interface LabelReleasesResponse {
