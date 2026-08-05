@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { graphStore } from '$lib/graph/store.svelte';
-	import { getContextMenuActions } from '$lib/graph/menu';
+	import { getContextMenuActions } from './menu';
 
 	interface Props {
 		nodeId: string;
