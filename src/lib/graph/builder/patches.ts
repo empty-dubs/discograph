@@ -257,6 +257,24 @@ export function buildFromMasterVersions(versions: MasterVersion[], masterId: num
 	return { nodes, links };
 }
 
+export function buildMainReleaseFromMaster(release: Release, masterId: number): GraphPatch {
+	const masterNodeId = nodeId('master', masterId);
+	const releaseNodeId = nodeId('release', release.id);
+	const edgeType: EdgeType = 'version_of';
+
+	return {
+		nodes: [releaseNode(release, { year: release.year ?? release.released })],
+		links: [
+			{
+				id: linkId(releaseNodeId, edgeType, masterNodeId),
+				source: releaseNodeId,
+				target: masterNodeId,
+				type: edgeType
+			}
+		]
+	};
+}
+
 export function buildFromMaster(master: Master): GraphPatch {
 	const nodes: GraphNode[] = [
 		masterNode(master, {

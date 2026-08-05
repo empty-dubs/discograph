@@ -8,6 +8,7 @@ import {
 	buildFromLabelReleases,
 	buildFromMaster,
 	buildFromMasterVersions,
+	buildMainReleaseFromMaster,
 	buildLabelsFromRelease,
 	buildFromSearchResult
 } from './builder';
@@ -893,6 +894,40 @@ class GraphStore {
 				}
 			},
 			'Failed to load master releases'
+		);
+	}
+
+	async loadMainRelease(nodeId: string) {
+		const { type, discogsId } = this.parseNodeId(nodeId);
+
+		if (discogsId === null || type !== 'master') return;
+
+		await this.runLoad(
+			nodeId,
+			async () => {
+				let mainReleaseId = this.nodes.get(nodeId)?.main_release?.id;
+
+				if (!mainReleaseId) {
+					const master = await discogs.getMaster(discogsId);
+					this.updateRateLimit();
+					await this.mergeMasterDetails(nodeId, master);
+					this.markMasterDetailsFetched(nodeId);
+					mainReleaseId = master.main_release;
+				}
+
+				if (!mainReleaseId) {
+					this.error = 'This master has no main release';
+					return;
+				}
+
+				const release = await discogs.getRelease(mainReleaseId);
+				this.updateRateLimit();
+				this.applyPatchFromExpansion(
+					nodeId,
+					buildMainReleaseFromMaster(release, discogsId)
+				);
+			},
+			'Failed to load main release'
 		);
 	}
 

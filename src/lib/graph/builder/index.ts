@@ -6,6 +6,7 @@ export {
 	buildFromLabelReleases,
 	buildFromMaster,
 	buildFromMasterVersions,
+	buildMainReleaseFromMaster,
 	buildLabelsFromRelease,
 	buildFromSearchResult
 } from './patches';

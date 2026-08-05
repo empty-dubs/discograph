@@ -75,3 +75,14 @@
 		Load releases
 	</button>
 {/if}
+
+{#if actions.includes('main_release')}
+	<button
+		type="button"
+		class={itemClass}
+		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		onclick={() => run(() => graphStore.loadMainRelease(nodeId))}
+	>
+		Load main release
+	</button>
+{/if}

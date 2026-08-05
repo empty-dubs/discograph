@@ -1,6 +1,6 @@
 import type { GraphNode } from '$lib/graph/types';
 
-export type ContextMenuAction = 'artists' | 'labels' | 'releases' | 'master_releases';
+export type ContextMenuAction = 'artists' | 'labels' | 'releases' | 'master_releases' | 'main_release';
 
 export function getContextMenuActions(node: GraphNode): ContextMenuAction[] {
 	switch (node.type) {
@@ -11,7 +11,7 @@ export function getContextMenuActions(node: GraphNode): ContextMenuAction[] {
 		case 'release':
 			return ['artists', 'labels'];
 		case 'master':
-			return ['artists', 'releases'];
+			return ['artists', 'releases', 'main_release'];
 		default:
 			return [];
 	}
