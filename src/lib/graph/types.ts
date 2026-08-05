@@ -28,10 +28,22 @@ export interface GraphNode {
 	members?: { id: number; name: string; active?: boolean }[];
 	parent_label?: { id: number; name: string };
 	sublabels?: { id: number; name: string }[];
+	artists?: { id: number; name: string }[];
+	tracklist?: { position: string; title: string; duration?: string }[];
+	main_release?: { id: number; title: string };
+	linked_master?: { id: number; title: string };
+	notes?: string;
+	labels?: { id: number; name: string; catno?: string }[];
+	credits?: { id: number; name: string; role?: string }[];
+	companies?: { id: number; name: string; entity_type_name?: string }[];
 	meta?: {
 		year?: number | string;
 		role?: string;
 		genres?: string[];
+		styles?: string[];
+		released?: string;
+		country?: string;
+		format?: string;
 	};
 }
 

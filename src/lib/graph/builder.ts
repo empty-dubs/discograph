@@ -98,12 +98,13 @@ function labelNode(result: LabelNodeSource): GraphNode {
 
 function masterNode(result: MasterNodeSource, meta?: GraphNode['meta']): GraphNode {
 	return {
-		...result,
 		id: nodeId('master', result.id),
 		type: 'master',
 		discogsId: result.id,
 		displayName: getDisplayName(result, 'master'),
 		name: result.title,
+		uri: 'uri' in result ? result.uri : undefined,
+		resource_url: 'resource_url' in result ? result.resource_url : undefined,
 		discogsUrl: getDiscogsUrl(
 			{ uri: 'uri' in result ? result.uri : undefined, id: result.id },
 			WEB_SEGMENTS.master
@@ -129,12 +130,13 @@ function masterStubFromRelease(release: Release): GraphNode {
 
 function releaseNode(result: ReleaseNodeSource, meta?: GraphNode['meta']): GraphNode {
 	return {
-		...result,
 		id: nodeId('release', result.id),
 		type: 'release',
 		discogsId: result.id,
 		displayName: getDisplayName(result, 'release'),
 		name: result.title,
+		uri: 'uri' in result ? result.uri : undefined,
+		resource_url: 'resource_url' in result ? result.resource_url : undefined,
 		discogsUrl: getDiscogsUrl(
 			{ uri: 'uri' in result ? result.uri : undefined, id: result.id },
 			WEB_SEGMENTS.release

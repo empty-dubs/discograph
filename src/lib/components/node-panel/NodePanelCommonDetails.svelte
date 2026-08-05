@@ -29,4 +29,20 @@
 	{#if node.meta?.genres?.length}
 		<NodeDetailRow label="Genres">{node.meta.genres.join(', ')}</NodeDetailRow>
 	{/if}
+
+	{#if node.meta?.styles?.length}
+		<NodeDetailRow label="Styles">{node.meta.styles.join(', ')}</NodeDetailRow>
+	{/if}
+
+	{#if node.meta?.released}
+		<NodeDetailRow label="Released">{node.meta.released}</NodeDetailRow>
+	{/if}
+
+	{#if node.meta?.country}
+		<NodeDetailRow label="Country">{node.meta.country}</NodeDetailRow>
+	{/if}
+
+	{#if node.meta?.format}
+		<NodeDetailRow label="Format">{node.meta.format}</NodeDetailRow>
+	{/if}
 {/if}
