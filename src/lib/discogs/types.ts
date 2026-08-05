@@ -1,5 +1,3 @@
-// export type EntityType = 'artist' | 'label' | 'release' | 'master' | 'track';
-
 export type SearchType = 'artist' | 'label' | 'release' | 'master';
 
 export interface Pagination {
