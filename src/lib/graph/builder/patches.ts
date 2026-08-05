@@ -108,6 +108,15 @@ export function buildArtistsFromRelease(release: Release): GraphPatch {
 		}
 	}
 
+	return { nodes, links };
+}
+
+export function buildCreditedArtistsFromRelease(release: Release): GraphPatch {
+	const nodes: GraphNode[] = [];
+	const links: GraphLink[] = [];
+	const releaseNodeId = nodeId('release', release.id);
+	const nodeType: NodeType = 'artist';
+
 	for (const extra of release.extraartists ?? []) {
 		const extraId = extra.id;
 
@@ -147,6 +156,15 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 			type: edgeType
 		});
 	}
+
+	return { nodes, links };
+}
+
+export function buildCompaniesFromRelease(release: Release): GraphPatch {
+	const nodes: GraphNode[] = [];
+	const links: GraphLink[] = [];
+	const releaseNodeId = nodeId('release', release.id);
+	const nodeType: NodeType = 'label';
 
 	for (const company of release.companies ?? []) {
 		const edgeType: EdgeType = 'company_on';
@@ -255,6 +273,24 @@ export function buildFromMasterVersions(versions: MasterVersion[], masterId: num
 	}
 
 	return { nodes, links };
+}
+
+export function buildMainReleaseFromMaster(release: Release, masterId: number): GraphPatch {
+	const masterNodeId = nodeId('master', masterId);
+	const releaseNodeId = nodeId('release', release.id);
+	const edgeType: EdgeType = 'version_of';
+
+	return {
+		nodes: [releaseNode(release, { year: release.year ?? release.released })],
+		links: [
+			{
+				id: linkId(releaseNodeId, edgeType, masterNodeId),
+				source: releaseNodeId,
+				target: masterNodeId,
+				type: edgeType
+			}
+		]
+	};
 }
 
 export function buildFromMaster(master: Master): GraphPatch {
