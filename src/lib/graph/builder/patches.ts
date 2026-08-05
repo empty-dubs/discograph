@@ -1,13 +1,14 @@
-import type {
-	Artist,
-	ArtistRelease,
-	Label,
-	LabelRelease,
-	Master,
-	MasterVersion,
-	Release,
-	SearchResult,
-	SearchType
+import {
+	labelReleaseKind,
+	type Artist,
+	type ArtistRelease,
+	type Label,
+	type LabelRelease,
+	type Master,
+	type MasterVersion,
+	type Release,
+	type SearchResult,
+	type SearchType
 } from '$lib/discogs/types';
 
 import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
@@ -52,13 +53,18 @@ export function buildFromArtist(artist: Artist): GraphPatch {
 	return { nodes, links };
 }
 
-export function buildFromArtistReleases(releases: ArtistRelease[], artistId: number): GraphPatch {
+export function buildFromArtistReleases(
+	releases: ArtistRelease[],
+	artistId: number,
+	kind?: 'master' | 'release'
+): GraphPatch {
+	const filtered = kind ? releases.filter((item) => item.type === kind) : releases;
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const artistNodeId = nodeId('artist', artistId);
 	const edgeType: EdgeType = 'released';
 
-	for (const item of releases) {
+	for (const item of filtered) {
 		const targetNodeType: NodeType = item.type;
 		const targetNode = nodeId(targetNodeType, item.id);
 
@@ -194,17 +200,30 @@ export function buildFromLabel(label: Label): GraphPatch {
 	return { nodes, links };
 }
 
-export function buildFromLabelReleases(releases: LabelRelease[], labelId: number): GraphPatch {
+export function buildFromLabelReleases(
+	releases: LabelRelease[],
+	labelId: number,
+	kind?: 'master' | 'release'
+): GraphPatch {
+	const filtered = kind
+		? releases.filter((item) => labelReleaseKind(item) === kind)
+		: releases;
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const labelNodeId = nodeId('label', labelId);
 	const edgeType: EdgeType = 'on_label';
-	const releaseNodeType: NodeType = 'release';
 
-	for (const item of releases) {
-		const sourceNode = nodeId(releaseNodeType, item.id);
+	for (const item of filtered) {
+		const itemKind = labelReleaseKind(item);
+		const targetNodeType: NodeType = itemKind;
+		const sourceNode = nodeId(targetNodeType, item.id);
 
-		nodes.push(releaseNode(item, { year: item.year }));
+		if (itemKind === 'master') {
+			nodes.push(masterNode(item, { year: item.year }));
+		} else {
+			nodes.push(releaseNode(item, { year: item.year }));
+		}
+
 		links.push({
 			id: linkId(sourceNode, edgeType, labelNodeId),
 			source: sourceNode,

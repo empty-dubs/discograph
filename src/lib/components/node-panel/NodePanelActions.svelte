@@ -2,7 +2,7 @@
 	import NodeLoadActions from '../workspace/NodeLoadActions.svelte';
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
 	import { graphStore } from '$lib/graph/store.svelte';
-	import { getContextMenuActions } from '../workspace/menu';
+	import { getPanelExploreActions } from '../workspace/menu';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 
 	import type { GraphNode } from '$lib/graph/types';
@@ -15,7 +15,7 @@
 
 	const websiteUrl = $derived(getDiscogsWebsiteUrl(node));
 	const apiUrl = $derived(getDiscogsProxyUrl(node));
-	const loadActions = $derived(getContextMenuActions(node));
+	const loadActions = $derived(getPanelExploreActions(node));
 	const artistDisplayName = $derived(
 		node.type === 'release' || node.type === 'master'
 			? resolveArtistDisplayName(node, graphStore.linkList, (id) => graphStore.nodes.get(id))
@@ -29,7 +29,7 @@
 
 <div class="flex flex-col gap-2">
 	{#if loadActions.length > 0}
-		<NodeLoadActions nodeId={node.id} />
+		<NodeLoadActions nodeId={node.id} actionsSource="panel" />
 	{/if}
 
 	{#if graphStore.hasChildren(node.id)}
@@ -60,6 +60,17 @@
 			onclick={() => graphStore.loadMoreReleases(node.id)}
 		>
 			Load more releases
+		</button>
+	{/if}
+
+	{#if graphStore.hasMoreMasterReleases(node.id)}
+		<button
+			type="button"
+			class="{actionClass} bg-accent cursor-pointer border-none text-white"
+			disabled={graphStore.isLoading(node.id) || graphStore.isRateLimited}
+			onclick={() => graphStore.loadMoreMasterReleases(node.id)}
+		>
+			Load more master releases
 		</button>
 	{/if}
 
