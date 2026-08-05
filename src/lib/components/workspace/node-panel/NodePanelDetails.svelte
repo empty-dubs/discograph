@@ -68,9 +68,7 @@
 	}
 </script>
 
-<dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
-	<NodePanelCommonDetails {node} variant="header" />
-</dl>
+<NodePanelCommonDetails {node}/>
 
 <NodePanelCollapsibleSection id="profile" show={showProfile} title="Profile">
 	{#if isProfileLoading}
@@ -80,10 +78,6 @@
 		<div class="text-muted whitespace-pre-wrap text-sm">{profileText}</div>
 	{/if}
 </NodePanelCollapsibleSection>
-
-<dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
-	<NodePanelCommonDetails {node} variant="meta" />
-</dl>
 
 {#if isMasterDetailsLoading || isReleaseDetailsLoading}
 	<p class="text-muted m-0 text-sm">Loading details…</p>
