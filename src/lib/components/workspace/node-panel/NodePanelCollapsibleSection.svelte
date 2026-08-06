@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+
 	import type { Snippet } from 'svelte';
 
-	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from './accordion';
+	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from '../accordion';
 
 	interface Props {
 		id: string;

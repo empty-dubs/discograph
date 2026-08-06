@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import NodeLoadActions from './NodeLoadActions.svelte';
+
 	import { graphStore } from '$lib/graph/store.svelte';
-	import { getContextMenuActions } from './menu';
+
+	import { getContextMenuActions } from '../menu';
+
+	import NodeLoadActions from './NodeLoadActions.svelte';
 
 	interface Props {
 		nodeId: string | null;
@@ -18,6 +21,8 @@
 	const hasActions = $derived(actions.length > 0);
 
 	function handleKeydown(event: KeyboardEvent) {
+		event.preventDefault();
+
 		if (event.key === 'Escape') onClose();
 	}
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { parseDiscogsExternalUrl } from '$lib/discogs/format';
+	import { parseDiscogsExternalUrl } from '../format';
 
 	interface Props {
 		urls: string[];

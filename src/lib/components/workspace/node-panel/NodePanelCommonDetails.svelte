@@ -1,8 +1,8 @@
 <script lang="ts">
+	import type { GraphNode } from '$lib/graph/types';
+
 	import NodeDetailRow from './NodeDetailRow.svelte';
 	import NodeTypeBadge from './NodeTypeBadge.svelte';
-
-	import type { GraphNode } from '$lib/graph/types';
 
 	interface Props {
 		node: GraphNode;
