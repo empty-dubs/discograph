@@ -43,6 +43,17 @@
 	</button>
 {/if}
 
+{#if actions.includes('aliases')}
+	<button
+		type="button"
+		class={itemClass}
+		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		onclick={() => run(() => graphStore.loadRelatedAliases(nodeId))}
+	>
+		Load artist aliases
+	</button>
+{/if}
+
 {#if actions.includes('labels')}
 	<button
 		type="button"

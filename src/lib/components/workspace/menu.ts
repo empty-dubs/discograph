@@ -7,12 +7,13 @@ export type ContextMenuAction =
 	| 'master_releases'
 	| 'main_release'
 	| 'companies'
-	| 'credited_artists';
+	| 'credited_artists'
+	| 'aliases';
 
 export function getContextMenuActions(node: GraphNode): ContextMenuAction[] {
 	switch (node.type) {
 		case 'artist':
-			return ['artists', 'releases', 'master_releases'];
+			return ['artists', 'aliases', 'releases', 'master_releases'];
 		case 'label':
 			return ['labels', 'releases', 'master_releases'];
 		case 'release':
@@ -27,7 +28,7 @@ export function getContextMenuActions(node: GraphNode): ContextMenuAction[] {
 export function getPanelExploreActions(node: GraphNode): ContextMenuAction[] {
 	switch (node.type) {
 		case 'artist':
-			return ['artists', 'master_releases', 'releases'];
+			return ['artists', 'aliases', 'master_releases', 'releases'];
 		case 'label':
 			return ['labels', 'master_releases', 'releases'];
 		case 'master':

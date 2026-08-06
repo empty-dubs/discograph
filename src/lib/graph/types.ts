@@ -7,7 +7,8 @@ export type EdgeType =
 	| 'company_on'
 	| 'credited_on'
 	| 'version_of'
-	| 'sublabel_of';
+	| 'sublabel_of'
+	| 'alias_of';
 
 export interface GraphNode {
 	id: string;

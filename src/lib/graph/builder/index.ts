@@ -1,5 +1,6 @@
 export {
 	buildFromArtist,
+	buildAliasesFromArtist,
 	buildFromArtistReleases,
 	buildArtistsFromRelease,
 	buildCreditedArtistsFromRelease,
