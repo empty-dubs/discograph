@@ -1,5 +1,6 @@
 import type {
 	Artist,
+	ArtistAlias,
 	ArtistGroup,
 	ArtistMember,
 	Label,
@@ -26,6 +27,7 @@ export type ArtistNodeSource =
 	| (ReleaseArtist & { id: number })
 	| ArtistMember
 	| ArtistGroup
+	| ArtistAlias
 	| MasterArtist;
 
 export type LabelNodeSource = SearchResult | Label | Sublabel | LabelRef | ReleaseCompany;

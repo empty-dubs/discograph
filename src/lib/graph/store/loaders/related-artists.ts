@@ -2,6 +2,7 @@ import * as discogs from '$lib/discogs/client';
 
 import {
 	buildFromArtist,
+	buildAliasesFromArtist,
 	buildArtistsFromRelease,
 	buildCreditedArtistsFromRelease,
 	buildFromMaster
@@ -65,5 +66,28 @@ export async function loadRelatedCreditedArtists(ctx: GraphStoreContext, nodeId:
 			}
 		},
 		'Failed to load credited artists'
+	);
+}
+
+export async function loadRelatedAliases(ctx: GraphStoreContext, nodeId: string) {
+	const { type, discogsId } = ctx.parseNodeId(nodeId);
+
+	if (discogsId === null) return;
+
+	await runLoad(
+		ctx,
+		nodeId,
+		async () => {
+			switch (type) {
+				case 'artist': {
+					const artist = await discogs.getArtist(discogsId);
+					ctx.updateRateLimit();
+					ctx.applyPatchFromExpansion(nodeId, buildAliasesFromArtist(artist));
+					ctx.markArtistDetailsFetched(nodeId);
+					break;
+				}
+			}
+		},
+		'Failed to load related aliases'
 	);
 }

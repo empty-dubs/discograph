@@ -53,6 +53,28 @@ export function buildFromArtist(artist: Artist): GraphPatch {
 	return { nodes, links };
 }
 
+export function buildAliasesFromArtist(artist: Artist): GraphPatch {
+	const nodes: GraphNode[] = [];
+	const links: GraphLink[] = [];
+	const artistNodeId = nodeId('artist', artist.id);
+	const nodeType: NodeType = 'artist';
+	const edgeType: EdgeType = 'alias_of';
+
+	for (const alias of artist.aliases ?? []) {
+		const sourceNode = nodeId(nodeType, alias.id);
+
+		nodes.push(artistNode(alias));
+		links.push({
+			id: linkId(sourceNode, edgeType, artistNodeId),
+			source: sourceNode,
+			target: artistNodeId,
+			type: edgeType
+		});
+	}
+
+	return { nodes, links };
+}
+
 export function buildFromArtistReleases(
 	releases: ArtistRelease[],
 	artistId: number,

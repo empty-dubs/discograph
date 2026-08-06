@@ -7,7 +7,7 @@ import { createDetailsTracker } from './details/create-details-tracker';
 import { mergeLabelDetails } from './details/label';
 import { mergeMasterDetails } from './details/master';
 import { mergeReleaseDetails } from './details/release';
-import { loadRelatedArtists, loadRelatedCreditedArtists } from './loaders/related-artists';
+import { loadRelatedArtists, loadRelatedCreditedArtists, loadRelatedAliases } from './loaders/related-artists';
 import { loadRelatedLabels, loadRelatedCompanies } from './loaders/related-labels';
 
 import {
@@ -460,6 +460,10 @@ class GraphStore implements GraphStoreContext {
 
 	loadRelatedCreditedArtists(nodeId: string) {
 		return loadRelatedCreditedArtists(this, nodeId);
+	}
+
+	loadRelatedAliases(nodeId: string) {
+		return loadRelatedAliases(this, nodeId);
 	}
 
 	loadReleases(nodeId: string) {
