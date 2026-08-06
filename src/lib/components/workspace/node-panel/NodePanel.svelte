@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 
-	import NodePanelActions from './NodePanelActions.svelte';
-	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
-	import NodePanelDetails from './NodePanelDetails.svelte';
-	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from './accordion';
 	import { graphStore } from '$lib/graph/store.svelte';
+
+	import { NODE_PANEL_ACCORDION_KEY } from '../accordion';
+	import type { NodePanelAccordion } from '../accordion';
+
+	import NodePanelDetails from './NodePanelDetails.svelte';
 
 	const node = $derived(graphStore.selectedNode);
 
@@ -59,10 +60,6 @@
 
 	{#if node}
 		<NodePanelDetails {node} />
-
-		<NodePanelCollapsibleSection id="explore" title="Explore">
-			<NodePanelActions {node} />
-		</NodePanelCollapsibleSection>
 	{:else}
 		<p class="text-muted m-0 text-sm">Click a node in the graph to see its details.</p>
 	{/if}

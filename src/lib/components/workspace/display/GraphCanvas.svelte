@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import GraphContextMenu from './GraphContextMenu.svelte';
+
 	import { ForceGraph } from '$lib/graph/force-graph';
 	import { graphStore } from '$lib/graph/store.svelte';
+
+	import GraphContextMenu from './GraphContextMenu.svelte';
 
 	let container = $state<HTMLDivElement | null>(null);
 	let tooltip = $state<{ x: number; y: number; text: string } | null>(null);
@@ -25,6 +27,7 @@
 		});
 
 		const resizeObserver = new ResizeObserver(() => graph?.resize());
+
 		resizeObserver.observe(container!);
 
 		return () => {

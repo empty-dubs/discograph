@@ -27,13 +27,13 @@ export function getContextMenuActions(node: GraphNode): ContextMenuAction[] {
 export function getPanelExploreActions(node: GraphNode): ContextMenuAction[] {
 	switch (node.type) {
 		case 'artist':
-			return ['artists', 'labels', 'master_releases'];
+			return ['artists', 'master_releases', 'releases'];
 		case 'label':
-			return ['labels', 'releases'];
+			return ['labels', 'master_releases', 'releases'];
 		case 'master':
 			return ['artists', 'releases'];
 		case 'release':
-			return ['artists', 'companies', 'credited_artists'];
+			return ['artists', 'labels', 'companies', 'credited_artists'];
 		default:
 			return [];
 	}

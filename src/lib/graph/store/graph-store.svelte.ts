@@ -327,20 +327,12 @@ class GraphStore implements GraphStoreContext {
 		await artistDetailsTracker.ensure(this.artistDetailsCtx(), nodeId);
 	}
 
-	isArtistDetailsLoading(nodeId: string): boolean {
-		return artistDetailsTracker.isLoading(this.artistDetailsCtx(), nodeId);
-	}
-
 	markLabelDetailsFetched(nodeId: string) {
 		labelDetailsTracker.markFetched(this.labelDetailsCtx(), nodeId);
 	}
 
 	async ensureLabelDetails(nodeId: string) {
 		await labelDetailsTracker.ensure(this.labelDetailsCtx(), nodeId);
-	}
-
-	isLabelDetailsLoading(nodeId: string): boolean {
-		return labelDetailsTracker.isLoading(this.labelDetailsCtx(), nodeId);
 	}
 
 	async mergeMasterDetails(nodeId: string, master: import('$lib/discogs/types').Master) {
@@ -355,16 +347,17 @@ class GraphStore implements GraphStoreContext {
 		await masterDetailsTracker.ensure(this.masterDetailsCtx(), nodeId);
 	}
 
-	isMasterDetailsLoading(nodeId: string): boolean {
-		return masterDetailsTracker.isLoading(this.masterDetailsCtx(), nodeId);
-	}
-
 	async ensureReleaseDetails(nodeId: string) {
 		await releaseDetailsTracker.ensure(this.releaseDetailsCtx(), nodeId);
 	}
 
-	isReleaseDetailsLoading(nodeId: string): boolean {
-		return releaseDetailsTracker.isLoading(this.releaseDetailsCtx(), nodeId);
+	isDetailsLoading(nodeId: string): boolean {
+		return (
+			this.artistDetailsLoading.has(nodeId) ||
+			this.labelDetailsLoading.has(nodeId) ||
+			this.masterDetailsLoading.has(nodeId) ||
+			this.releaseDetailsLoading.has(nodeId)
+		);
 	}
 
 	async search(query: string, type?: SearchType) {
