@@ -39,6 +39,8 @@
 		if (graphStore.searchResults.length === 0) return;
 
 		const handleKeydown = (event: KeyboardEvent) => {
+			event.preventDefault();
+
 			if (event.key === 'Escape') graphStore.clearSearchResults();
 		};
 
