@@ -9,33 +9,25 @@
 	}
 
 	let { node }: Props = $props();
+
+	const isMasterOrRelease = $derived(node.type === 'master' || node.type === 'release');
+	const showYear = $derived(isMasterOrRelease && Boolean(node.meta?.year));
+	const showGenres = $derived(isMasterOrRelease && (node.meta?.genres?.length ?? 0) > 0);
+	const showStyles = $derived(isMasterOrRelease && (node.meta?.styles?.length ?? 0) > 0);
+	const showReleaseYear = $derived(isMasterOrRelease && Boolean(node.meta?.released) && (String(node.meta?.released) !== String(node.meta?.year)));
+	const showCountry = $derived(isMasterOrRelease && Boolean(node.meta?.country));
+	const showFormat = $derived(isMasterOrRelease && Boolean(node.meta?.format));
+
+	$inspect(node.meta)
 </script>
 
 <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
 	<NodeDetailRow label="Name">{node.displayName}</NodeDetailRow>
 	<NodeTypeBadge type={node.type} />
-
-	{#if node.meta?.year}
-		<NodeDetailRow label="Year">{node.meta.year}</NodeDetailRow>
-	{/if}
-
-	{#if node.meta?.genres?.length}
-		<NodeDetailRow label="Genres">{node.meta.genres.join(', ')}</NodeDetailRow>
-	{/if}
-
-	{#if node.meta?.styles?.length}
-		<NodeDetailRow label="Styles">{node.meta.styles.join(', ')}</NodeDetailRow>
-	{/if}
-
-	{#if node.meta?.released}
-		<NodeDetailRow label="Released">{node.meta.released}</NodeDetailRow>
-	{/if}
-
-	{#if node.meta?.country}
-		<NodeDetailRow label="Country">{node.meta.country}</NodeDetailRow>
-	{/if}
-
-	{#if node.meta?.format}
-		<NodeDetailRow label="Format">{node.meta.format}</NodeDetailRow>
-	{/if}
+	<NodeDetailRow label="Year" show={showYear}>{node.meta?.year}</NodeDetailRow>
+	<NodeDetailRow label="Genres" show={showGenres}>{node.meta?.genres?.join(', ')}</NodeDetailRow>
+	<NodeDetailRow label="Styles" show={showStyles}>{node.meta?.styles?.join(', ')}</NodeDetailRow>
+	<NodeDetailRow label="Released" show={showReleaseYear}>{node.meta?.released}</NodeDetailRow>
+	<NodeDetailRow label="Country" show={showCountry}>{node.meta?.country}</NodeDetailRow>
+	<NodeDetailRow label="Format" show={showFormat}>{node.meta?.format}</NodeDetailRow>
 </dl>
