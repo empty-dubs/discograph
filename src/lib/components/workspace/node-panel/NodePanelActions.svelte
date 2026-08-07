@@ -6,7 +6,7 @@
 	import type { GraphNode } from '$lib/graph/types';
 
 	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
-	import { getPanelExploreActions } from '../actions/menu';
+	import { LOAD_ACTIONS } from '../actions/constants';
 
 
 	interface Props {
@@ -17,7 +17,7 @@
 
 	const websiteUrl = $derived(getDiscogsWebsiteUrl(node));
 	const apiUrl = $derived(getDiscogsProxyUrl(node));
-	const loadActions = $derived(getPanelExploreActions(node));
+	const loadActions = $derived(LOAD_ACTIONS[node.type]);
 	const artistDisplayName = $derived(
 		node.type === 'release' || node.type === 'master'
 			? resolveArtistDisplayName(node, graphStore.linkList, (id) => graphStore.nodes.get(id))
@@ -31,7 +31,7 @@
 
 <div class="flex flex-col gap-2">
 	{#if loadActions.length > 0}
-		<NodeLoadActions nodeId={node.id} actionsSource="panel" />
+		<NodeLoadActions nodeId={node.id} />
 	{/if}
 
 	{#if graphStore.hasChildren(node.id)}

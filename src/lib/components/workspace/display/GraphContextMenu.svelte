@@ -3,7 +3,7 @@
 
 	import { graphStore } from '$lib/graph/store.svelte';
 
-	import { getContextMenuActions } from '../actions/menu';
+	import { LOAD_ACTIONS } from '../actions/constants';
 
 	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
 
@@ -17,7 +17,7 @@
 	let { nodeId, x, y, onClose }: Props = $props();
 
 	const node = $derived(nodeId ? (graphStore.nodes.get(nodeId) ?? null) : null);
-	const actions = $derived(node ? getContextMenuActions(node) : []);
+	const actions = $derived(node ? LOAD_ACTIONS[node.type] : []);
 	const hasActions = $derived(actions.length > 0);
 
 	function handleKeydown(event: KeyboardEvent) {
