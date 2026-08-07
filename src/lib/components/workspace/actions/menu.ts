@@ -1,6 +1,6 @@
 import type { GraphNode } from '$lib/graph/types';
 
-export type ContextMenuAction =
+type ContextMenuAction =
 	| 'artists'
 	| 'labels'
 	| 'releases'

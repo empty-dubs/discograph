@@ -5,8 +5,8 @@
 
 	import type { GraphNode } from '$lib/graph/types';
 
-	import NodeLoadActions from '../display/NodeLoadActions.svelte';
-	import { getPanelExploreActions } from '../menu';
+	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
+	import { getPanelExploreActions } from '../actions/menu';
 
 
 	interface Props {

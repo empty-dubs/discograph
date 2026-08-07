@@ -3,9 +3,9 @@
 
 	import { graphStore } from '$lib/graph/store.svelte';
 
-	import { getContextMenuActions } from '../menu';
+	import { getContextMenuActions } from '../actions/menu';
 
-	import NodeLoadActions from './NodeLoadActions.svelte';
+	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
 
 	interface Props {
 		nodeId: string | null;
