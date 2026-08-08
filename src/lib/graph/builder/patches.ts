@@ -13,7 +13,7 @@ import {
 
 import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
 
-import { linkId, nodeId } from './ids';
+import { linkId, nodeId } from './compositions';
 import { artistNode, labelNode, masterNode, releaseNode } from './nodes';
 
 export function buildFromArtist(artist: Artist): GraphPatch {

@@ -18,8 +18,7 @@ import type {
 
 import type { GraphNode, NodeType } from '../types';
 
-import { getDisplayName, getDiscogsUrl } from './display';
-import { nodeId } from './ids';
+import { getDisplayName, getDiscogsUrl, nodeId } from './compositions';
 
 export type ArtistNodeSource =
 	| SearchResult

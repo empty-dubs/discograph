@@ -7,8 +7,13 @@
 		loadRelatedArtists,
 		loadRelatedAliases,
 		loadRelatedCreditedArtists
-	} from '$lib/graph/actions/related-artists';
-	import { loadRelatedLabels, loadRelatedCompanies } from '$lib/graph/actions/related-labels';
+	} from '$lib/graph/actions/artists';
+
+	import {
+		loadRelatedLabels,
+		loadRelatedCompanies
+	} from '$lib/graph/actions/labels';
+
 	import {
 		loadReleases,
 		loadMasterReleases,
