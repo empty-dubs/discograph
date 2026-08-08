@@ -1,4 +1,4 @@
-import { discogsApiStore } from '$lib/discogs/api.svelte';
+import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
 import type { GraphContext } from '../store/context';
 

@@ -1,4 +1,4 @@
-import { discogsApiStore } from '$lib/discogs/api.svelte';
+import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
 import type { DetailsTracker, DetailsTrackerConfig, DetailsTrackerContext } from '../types';
 

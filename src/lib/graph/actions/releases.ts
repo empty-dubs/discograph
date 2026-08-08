@@ -5,7 +5,7 @@ import {
 	getMasterVersions,
 	getRelease
 } from '$lib/discogs/client';
-import { discogsApiStore } from '$lib/discogs/api.svelte';
+import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
 import {
 	buildFromArtistReleases,

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import DiscogsSearchForm from './DiscogsSearchForm.svelte';
 
-	import { discogsApiStore } from '$lib/discogs/api.svelte';
+	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
     const headerTextClass = 'mt-1 mb-0 text-sm';
 

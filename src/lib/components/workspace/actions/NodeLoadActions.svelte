@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { graphStore, graphCtx } from '$lib/graph/store.svelte';
-	import { discogsApiStore } from '$lib/discogs/api.svelte';
+	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graphCtx } from '$lib/graph/store/context';
+	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
 	import {
 		loadRelatedArtists,

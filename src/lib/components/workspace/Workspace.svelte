@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { graphStore } from '$lib/graph/store/graph-store.svelte';
 
 	import GraphCanvas from './display/GraphCanvas.svelte';
 	import GraphLegend from './display/GraphLegend.svelte';

@@ -1,4 +1,4 @@
-import { discogsApiStore } from '$lib/discogs/api.svelte';
+import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
 import { graphCtx } from './context';
 import { graphDataStore } from './data-store.svelte';

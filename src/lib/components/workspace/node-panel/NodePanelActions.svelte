@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
-	import { graphStore, graphCtx } from '$lib/graph/store.svelte';
-	import { discogsApiStore } from '$lib/discogs/api.svelte';
+	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graphCtx } from '$lib/graph/store/context';
+	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 	import { loadMoreMasterReleases, loadMoreReleases } from '$lib/graph/actions/releases';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 

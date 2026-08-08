@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SearchType } from '$lib/discogs/types';
-	import { discogsApiStore } from '$lib/discogs/api.svelte';
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+	import { graphStore } from '$lib/graph/store/graph-store.svelte';
 
 	const typeOptions: { value: SearchType | ''; label: string }[] = [
 		{ value: '', label: 'All types' },
