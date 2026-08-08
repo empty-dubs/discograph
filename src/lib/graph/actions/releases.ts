@@ -12,7 +12,7 @@ import {
 	buildFromLabelReleases,
 	buildFromMasterVersions,
 	buildMainReleaseFromMaster
-} from '$lib/graph/builder';
+} from '../builder/patches';
 
 import { runLoad } from './run-load';
 

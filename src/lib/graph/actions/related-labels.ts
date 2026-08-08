@@ -1,6 +1,6 @@
 import { getLabel, getRelease } from '$lib/discogs/client';
 
-import { buildCompaniesFromRelease, buildFromLabel, buildLabelsFromRelease } from '$lib/graph/builder';
+import { buildCompaniesFromRelease, buildFromLabel, buildLabelsFromRelease } from '../builder/patches';
 
 import { runLoad } from './run-load';
 

@@ -6,7 +6,7 @@ import {
 	buildArtistsFromRelease,
 	buildCreditedArtistsFromRelease,
 	buildFromMaster
-} from '$lib/graph/builder';
+} from '../builder/patches';
 
 import { runLoad } from './run-load';
 
