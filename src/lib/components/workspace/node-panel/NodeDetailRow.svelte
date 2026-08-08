@@ -3,11 +3,14 @@
 
 	interface Props {
 		label: string;
+		show?: boolean;
 		children: Snippet;
 	}
 
-	let { label, children }: Props = $props();
+	let { label, show=true, children }: Props = $props();
 </script>
 
-<dt class="text-muted">{label}</dt>
-<dd class="m-0 text-gray-200">{@render children()}</dd>
+{#if show}
+	<dt class="text-muted">{label}</dt>
+	<dd class="m-0 text-gray-200">{@render children()}</dd>
+{/if}

@@ -1,24 +1,17 @@
 <script lang="ts">
 	import { graphStore } from '$lib/graph/store.svelte';
-	import { getContextMenuActions, getPanelExploreActions } from '../menu';
+	import { LOAD_ACTIONS } from './constants';
 
 	interface Props {
 		nodeId: string;
 		layout?: 'menu' | 'stack';
-		actionsSource?: 'menu' | 'panel';
 		onAction?: () => void;
 	}
 
-	let { nodeId, layout = 'stack', actionsSource = 'menu', onAction }: Props = $props();
+	let { nodeId, layout = 'stack', onAction }: Props = $props();
 
 	const node = $derived(graphStore.nodes.get(nodeId) ?? null);
-	const actions = $derived(
-		node
-			? actionsSource === 'panel'
-				? getPanelExploreActions(node)
-				: getContextMenuActions(node)
-			: []
-	);
+	const actions = $derived(node ? LOAD_ACTIONS[node.type] : []);
 
 	const itemClass = $derived(
 		layout === 'menu'

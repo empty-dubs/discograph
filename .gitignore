@@ -25,3 +25,4 @@ vite.config.ts.timestamp-*
 # local
 docs
 git-update-routine.sh
+.vscode
