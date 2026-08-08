@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { graphStore } from '$lib/graph/store/graph-store.svelte';
 
 	import { LOAD_ACTIONS } from '../actions/constants';
 

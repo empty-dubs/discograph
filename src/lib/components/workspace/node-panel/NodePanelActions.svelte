@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graphCtx } from '$lib/graph/store/context';
+	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+	import { loadMoreMasterReleases, loadMoreReleases } from '$lib/graph/actions/releases';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 
 	import type { GraphNode } from '$lib/graph/types';
@@ -48,7 +51,7 @@
 	<button
 		type="button"
 		class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-		disabled={graphStore.isLoading(node.id) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
 		onclick={() => graphStore.seedFromNode(node)}
 	>
 		Reset graph to this node
@@ -58,8 +61,8 @@
 		<button
 			type="button"
 			class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-			disabled={graphStore.isLoading(node.id) || graphStore.isRateLimited}
-			onclick={() => graphStore.loadMoreReleases(node.id)}
+			disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
+			onclick={() => loadMoreReleases(graphCtx, node.id)}
 		>
 			Load more releases
 		</button>
@@ -69,8 +72,8 @@
 		<button
 			type="button"
 			class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-			disabled={graphStore.isLoading(node.id) || graphStore.isRateLimited}
-			onclick={() => graphStore.loadMoreMasterReleases(node.id)}
+			disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
+			onclick={() => loadMoreMasterReleases(graphCtx, node.id)}
 		>
 			Load more master releases
 		</button>

@@ -1,4 +1,4 @@
-import * as discogs from '$lib/discogs/client';
+import { getMaster } from '$lib/discogs/client';
 
 import type { Release, ReleaseFormat } from '$lib/discogs/types';
 
@@ -17,8 +17,7 @@ async function resolveMasterTitle(ctx: DetailsTrackerContext, id: number): Promi
 	if (existing) return existing.displayName;
 
 	try {
-		const master = await discogs.getMaster(id);
-		ctx.updateRateLimit();
+		const master = await getMaster(id);
 		return master.title;
 	} catch {
 		return `Master ${id}`;

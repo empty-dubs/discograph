@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ALL_NODE_TYPES, NODE_COLORS } from '$lib/graph/constants';
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { graphStore } from '$lib/graph/store/graph-store.svelte';
 	import type { NodeType } from '$lib/graph/types';
 
 	const labels: Record<NodeType, string> = {

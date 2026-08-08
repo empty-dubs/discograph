@@ -1,12 +1,12 @@
 <script lang="ts">
 	import DiscogsSearchForm from './DiscogsSearchForm.svelte';
 
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
     const headerTextClass = 'mt-1 mb-0 text-sm';
 
 	const rateLimitText = $derived.by(() => {
-		const { limit, remaining } = graphStore.rateLimit;
+		const { limit, remaining } = discogsApiStore.rateLimit;
 
 		if (limit === null || remaining === null) return null;
 
@@ -23,13 +23,13 @@
     <div class="flex-1 max-w-160 min-w-70">
         <DiscogsSearchForm />
         {#if rateLimitText}
-            <p class="text-muted {headerTextClass}" class:text-warning={graphStore.isRateLimited}>
+            <p class="text-muted {headerTextClass}" class:text-warning={discogsApiStore.isRateLimited}>
                 {rateLimitText}
             </p>
         {/if}
 
-        {#if graphStore.error}
-            <p class="text-danger {headerTextClass}">{graphStore.error}</p>
+        {#if discogsApiStore.error}
+            <p class="text-danger {headerTextClass}">{discogsApiStore.error}</p>
         {/if}
     </div>
 </header>

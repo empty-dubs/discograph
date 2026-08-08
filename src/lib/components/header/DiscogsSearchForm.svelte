@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { SearchType } from '$lib/discogs/types';
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+	import { graphStore } from '$lib/graph/store/graph-store.svelte';
 
 	const typeOptions: { value: SearchType | ''; label: string }[] = [
 		{ value: '', label: 'All types' },
@@ -20,28 +21,28 @@
 
 		emptyMessage = null;
 
-		const results = await graphStore.search(
-			graphStore.searchQuery,
-			graphStore.searchType || undefined
+		const results = await discogsApiStore.search(
+			discogsApiStore.searchQuery,
+			discogsApiStore.searchType || undefined
 		);
 
-		if (results.length === 0 && graphStore.searchQuery.trim()) {
+		if (results.length === 0 && discogsApiStore.searchQuery.trim()) {
 			emptyMessage = 'No results found';
 		}
 	}
 
-	async function pickResult(result: (typeof graphStore.searchResults)[number]) {
+	async function pickResult(result: (typeof discogsApiStore.searchResults)[number]) {
 		await graphStore.seedFromResult(result);
 		emptyMessage = null;
 	}
 
 	$effect(() => {
-		if (graphStore.searchResults.length === 0) return;
+		if (discogsApiStore.searchResults.length === 0) return;
 
 		const handleKeydown = (event: KeyboardEvent) => {
 			event.preventDefault();
 
-			if (event.key === 'Escape') graphStore.clearSearchResults();
+			if (event.key === 'Escape') discogsApiStore.clearSearchResults();
 		};
 
 		document.addEventListener('keydown', handleKeydown);
@@ -49,8 +50,8 @@
 	});
 
 	$effect(() => {
-		if (!graphStore.searchQuery.trim()) {
-			graphStore.clearSearchResults();
+		if (!discogsApiStore.searchQuery.trim()) {
+			discogsApiStore.clearSearchResults();
 			emptyMessage = null;
 		}
 	});
@@ -62,14 +63,14 @@
 			type="search"
 			class="{fieldClass} min-w-0 flex-1"
 			placeholder="Search Discogs…"
-			bind:value={graphStore.searchQuery}
-			disabled={graphStore.searching || graphStore.isRateLimited}
+			bind:value={discogsApiStore.searchQuery}
+			disabled={discogsApiStore.searching || discogsApiStore.isRateLimited}
 		/>
 
 		<select
 			class="{fieldClass} cursor-pointer"
-			bind:value={graphStore.searchType}
-			disabled={graphStore.searching || graphStore.isRateLimited}
+			bind:value={discogsApiStore.searchType}
+			disabled={discogsApiStore.searching || discogsApiStore.isRateLimited}
 		>
 			{#each typeOptions as option}
 				<option value={option.value}>{option.label}</option>
@@ -79,9 +80,9 @@
 		<button
 			type="submit"
 			class="{fieldClass} border-accent bg-accent cursor-pointer text-white"
-			disabled={graphStore.searching || !graphStore.searchQuery.trim() || graphStore.isRateLimited}
+			disabled={discogsApiStore.searching || !discogsApiStore.searchQuery.trim() || discogsApiStore.isRateLimited}
 		>
-			{graphStore.searching ? 'Searching…' : 'Search'}
+			{discogsApiStore.searching ? 'Searching…' : 'Search'}
 		</button>
 	</form>
 
@@ -89,11 +90,11 @@
 		<p class="text-muted mt-2 text-sm">{emptyMessage}</p>
 	{/if}
 
-	{#if graphStore.searchResults.length > 0}
+	{#if discogsApiStore.searchResults.length > 0}
 		<ul
 			class="border-border bg-panel absolute top-full right-0 left-0 z-50 mt-2 max-h-40 overflow-y-auto rounded-md border shadow-lg"
 		>
-			{#each graphStore.searchResults as result (result.id + result.type)}
+			{#each discogsApiStore.searchResults as result (result.id + result.type)}
 				<li class="border-border border-t first:border-t-0">
 					<button
 						type="button"

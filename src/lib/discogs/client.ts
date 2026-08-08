@@ -7,23 +7,10 @@ import type {
 	LabelReleasesResponse,
 	Master,
 	MasterVersionsResponse,
-	RateLimitInfo,
 	Release,
 	SearchResponse,
 	SearchType
 } from './types';
-
-function parseRateLimitHeaders(headers: Headers): RateLimitInfo {
-	const limit = headers.get('x-discogs-ratelimit');
-	const used = headers.get('x-discogs-ratelimit-used');
-	const remaining = headers.get('x-discogs-ratelimit-remaining');
-
-	return {
-		limit: limit ? Number(limit) : null,
-		used: used ? Number(used) : null,
-		remaining: remaining ? Number(remaining) : null
-	};
-}
 
 export class DiscogsClientError extends Error {
 	constructor(
@@ -33,12 +20,6 @@ export class DiscogsClientError extends Error {
 		super(message);
 		this.name = 'DiscogsClientError';
 	}
-}
-
-let lastRateLimit: RateLimitInfo = { limit: null, used: null, remaining: null };
-
-export function getLastRateLimit(): RateLimitInfo {
-	return lastRateLimit;
 }
 
 async function request<T>(
@@ -57,7 +38,9 @@ async function request<T>(
 
 	const response = await fetch(url);
 
-	lastRateLimit = parseRateLimitHeaders(response.headers);
+	const { discogsApiStore } = await import('./api-store.svelte');
+
+	discogsApiStore.updateFromHeaders(response.headers);
 
 	if (!response.ok) {
 		let message = `Request failed (${response.status})`;

@@ -1,16 +1,6 @@
+import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+
 import type { DetailsTracker, DetailsTrackerConfig, DetailsTrackerContext } from '../types';
-
-function setDetailsLoading(ctx: DetailsTrackerContext, id: string, isLoading: boolean) {
-	const next = new Set(ctx.getLoading());
-
-	if (isLoading) {
-		next.add(id);
-	} else {
-		next.delete(id);
-	}
-
-	ctx.setLoadingSet(next);
-}
 
 export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): DetailsTracker<T> {
 	return {
@@ -18,30 +8,30 @@ export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): Detail
 			const { type, discogsId } = ctx.parseNodeId(nodeId);
 
 			if (type !== config.nodeType || discogsId === null) return;
-			if (ctx.getFetched().has(nodeId) || ctx.getLoading().has(nodeId)) return;
+			if (ctx.isFetched(nodeId) || ctx.isLoading(nodeId)) return;
 
-			setDetailsLoading(ctx, nodeId, true);
-			ctx.setError(null);
+			ctx.setStatus(nodeId, 'loading');
 
-			try {
-				const entity = await config.fetch(discogsId);
+			const entity = await discogsApiStore.withRequest(
+				() => config.fetch(discogsId),
+				config.errorMessage
+			);
 
-				ctx.updateRateLimit();
-				await config.merge(ctx, nodeId, entity);
-				ctx.setFetched(new Set(ctx.getFetched()).add(nodeId));
-			} catch (err) {
-				ctx.setError(err instanceof Error ? err.message : config.errorMessage);
-			} finally {
-				setDetailsLoading(ctx, nodeId, false);
+			if (!entity) {
+				ctx.setStatus(nodeId, 'idle');
+				return;
 			}
+
+			await config.merge(ctx, nodeId, entity);
+			ctx.setStatus(nodeId, 'fetched');
 		},
 
 		isLoading(ctx, nodeId) {
-			return ctx.getLoading().has(nodeId);
+			return ctx.isLoading(nodeId);
 		},
 
 		markFetched(ctx, nodeId) {
-			ctx.setFetched(new Set(ctx.getFetched()).add(nodeId));
+			ctx.setStatus(nodeId, 'fetched');
 		},
 
 		async merge(ctx, nodeId, entity) {
