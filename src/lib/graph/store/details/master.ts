@@ -1,4 +1,4 @@
-import * as discogs from '$lib/discogs/client';
+import { getRelease } from '$lib/discogs/client';
 
 import type { Master } from '$lib/discogs/types';
 
@@ -14,7 +14,7 @@ async function resolveMainReleaseTitle(
 	if (existing) return existing.displayName;
 
 	try {
-		const release = await discogs.getRelease(id);
+		const release = await getRelease(id);
 		return release.title;
 	} catch {
 		return `Release ${id}`;

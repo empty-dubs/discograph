@@ -1,45 +1,22 @@
-import type { SearchResult, SearchType } from '$lib/discogs/types';
+import type { Master } from '$lib/discogs/types';
 
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
+import type { GraphContext } from './context';
 
 export interface ParsedNodeId {
 	type: NodeType;
 	discogsId: number | null;
 }
 
-export interface GraphStoreContext {
-	nodes: Map<string, GraphNode>;
-	links: Map<string, GraphLink>;
-	loading: Set<string>;
-	releasePages: Map<string, { page: number; pages: number }>;
-	masterReleasePages: Map<string, { page: number; pages: number }>;
-	expanded: Set<string>;
-	expansionChildren: Map<string, Set<string>>;
-	seedId: string | null;
-	selectedId: string | null;
-
-	readonly linkList: GraphLink[];
-
-	parseNodeId(id: string): ParsedNodeId;
-	applyPatch(patch: GraphPatch): void;
-	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch): void;
-	runLoad(nodeId: string, fn: () => Promise<void>, errorMessage: string): Promise<void>;
-	setLoading(id: string, isLoading: boolean): void;
-	clearGraph(): void;
-	markArtistDetailsFetched(nodeId: string): void;
-	markLabelDetailsFetched(nodeId: string): void;
-	mergeMasterDetails(nodeId: string, master: import('$lib/discogs/types').Master): Promise<void>;
-	markMasterDetailsFetched(nodeId: string): void;
-}
+export type GraphStoreContext = GraphContext;
 
 export interface DetailsTrackerContext {
 	readonly nodes: Map<string, GraphNode>;
 	parseNodeId(id: string): ParsedNodeId;
 	setNodes(nodes: Map<string, GraphNode>): void;
-	getFetched(): Set<string>;
-	setFetched(fetched: Set<string>): void;
-	getLoading(): Set<string>;
-	setLoadingSet(loading: Set<string>): void;
+	isFetched(nodeId: string): boolean;
+	isLoading(nodeId: string): boolean;
+	setStatus(nodeId: string, status: import('./details-store.svelte').DetailStatus): void;
 }
 
 export type EntityMergeFn<T> = (
@@ -60,4 +37,41 @@ export interface DetailsTracker<T> {
 	isLoading(ctx: DetailsTrackerContext, nodeId: string): boolean;
 	markFetched(ctx: DetailsTrackerContext, nodeId: string): void;
 	merge(ctx: DetailsTrackerContext, nodeId: string, entity: T): Promise<void>;
+}
+
+export interface GraphFacade {
+	readonly nodes: Map<string, GraphNode>;
+	readonly links: Map<string, GraphLink>;
+	readonly nodeList: GraphNode[];
+	readonly linkList: GraphLink[];
+	readonly visibleNodeList: GraphNode[];
+	readonly visibleLinkList: GraphLink[];
+	readonly typeCounts: Record<NodeType, number>;
+	readonly selectedNode: GraphNode | null;
+	readonly selectedId: string | null;
+	readonly seedId: string | null;
+	readonly visibleTypes: Set<NodeType>;
+	readonly viewResetToken: number;
+	readonly releasePages: Map<string, { page: number; pages: number }>;
+	readonly masterReleasePages: Map<string, { page: number; pages: number }>;
+
+	parseNodeId(id: string): ParsedNodeId;
+	applyPatch(patch: GraphPatch): void;
+	clearGraph(): void;
+	selectNode(id: string | null): void;
+	isTypeVisible(type: NodeType): boolean;
+	toggleType(type: NodeType): void;
+	collapseNode(nodeId: string): void;
+	hasChildren(nodeId: string): boolean;
+	isLoading(nodeId: string): boolean;
+	hasMoreReleases(nodeId: string): boolean;
+	hasMoreMasterReleases(nodeId: string): boolean;
+	isDetailsLoading(nodeId: string): boolean;
+	seedFromResult(result: import('$lib/discogs/types').SearchResult): void;
+	seedFromNode(node: GraphNode): Promise<void>;
+	ensureArtistDetails(nodeId: string): Promise<void>;
+	ensureLabelDetails(nodeId: string): Promise<void>;
+	ensureMasterDetails(nodeId: string): Promise<void>;
+	ensureReleaseDetails(nodeId: string): Promise<void>;
+	mergeMasterDetails(nodeId: string, master: Master): Promise<void>;
 }

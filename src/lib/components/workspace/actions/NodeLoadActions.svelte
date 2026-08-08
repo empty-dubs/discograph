@@ -1,6 +1,19 @@
 <script lang="ts">
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { graphStore, graphCtx } from '$lib/graph/store.svelte';
 	import { discogsApiStore } from '$lib/discogs/api.svelte';
+
+	import {
+		loadRelatedArtists,
+		loadRelatedAliases,
+		loadRelatedCreditedArtists
+	} from '$lib/graph/actions/related-artists';
+	import { loadRelatedLabels, loadRelatedCompanies } from '$lib/graph/actions/related-labels';
+	import {
+		loadReleases,
+		loadMasterReleases,
+		loadMainRelease
+	} from '$lib/graph/actions/releases';
+
 	import { LOAD_ACTIONS } from './constants';
 
 	interface Props {
@@ -16,7 +29,7 @@
 
 	const itemClass = $derived(
 		layout === 'menu'
-			? 'hover:bg-panel-hover block w-full border-none bg-transparent px-3 py-2 text-left text-sm text-gray-200'
+			? 'hover:bg-panel-hover block w-full border-none bg-transparent px-3 py-2 text-left text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent'
 			: 'border-border bg-panel-hover cursor-pointer rounded-md border px-3 py-2 text-sm text-gray-300 disabled:cursor-not-allowed disabled:opacity-50'
 	);
 
@@ -31,7 +44,7 @@
 		type="button"
 		class={itemClass}
 		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => graphStore.loadRelatedArtists(nodeId))}
+		onclick={() => run(() => loadRelatedArtists(graphCtx, nodeId))}
 	>
 		Load related artists
 	</button>
@@ -42,7 +55,7 @@
 		type="button"
 		class={itemClass}
 		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => graphStore.loadRelatedAliases(nodeId))}
+		onclick={() => run(() => loadRelatedAliases(graphCtx, nodeId))}
 	>
 		Load artist aliases
 	</button>
@@ -53,7 +66,7 @@
 		type="button"
 		class={itemClass}
 		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => graphStore.loadRelatedLabels(nodeId))}
+		onclick={() => run(() => loadRelatedLabels(graphCtx, nodeId))}
 	>
 		Load related labels
 	</button>
@@ -64,7 +77,7 @@
 		type="button"
 		class={itemClass}
 		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => graphStore.loadMasterReleases(nodeId))}
+		onclick={() => run(() => loadMasterReleases(graphCtx, nodeId))}
 	>
 		Load master releases
 	</button>
@@ -75,7 +88,7 @@
 		type="button"
 		class={itemClass}
 		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => graphStore.loadReleases(nodeId))}
+		onclick={() => run(() => loadReleases(graphCtx, nodeId))}
 	>
 		Load releases
 	</button>
@@ -86,7 +99,7 @@
 		type="button"
 		class={itemClass}
 		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => graphStore.loadMainRelease(nodeId))}
+		onclick={() => run(() => loadMainRelease(graphCtx, nodeId))}
 	>
 		Load main release
 	</button>
@@ -97,7 +110,7 @@
 		type="button"
 		class={itemClass}
 		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => graphStore.loadRelatedCompanies(nodeId))}
+		onclick={() => run(() => loadRelatedCompanies(graphCtx, nodeId))}
 	>
 		Load related companies
 	</button>
@@ -108,7 +121,7 @@
 		type="button"
 		class={itemClass}
 		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => graphStore.loadRelatedCreditedArtists(nodeId))}
+		onclick={() => run(() => loadRelatedCreditedArtists(graphCtx, nodeId))}
 	>
 		Load credited artists
 	</button>

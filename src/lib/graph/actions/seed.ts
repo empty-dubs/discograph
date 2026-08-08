@@ -5,26 +5,30 @@ import { buildFromSearchResult } from '../builder';
 import type { GraphNode } from '../types';
 import type { SearchResult } from '$lib/discogs/types';
 
-import type { GraphStoreContext } from './types';
+import type { GraphContext } from '../store/context';
 
-export function seedFromResult(ctx: GraphStoreContext, result: SearchResult) {
-	ctx.clearGraph();
+export function seedFromResult(ctx: GraphContext, result: SearchResult) {
+	ctx.data.clear();
+	ctx.expansion.clear();
+	ctx.progress.clear();
+	ctx.details.clear();
+	ctx.ui.clear();
 	discogsApiStore.clearError();
+	discogsApiStore.clearSearchResults();
 
 	const patch = buildFromSearchResult(result);
 
-	ctx.applyPatch(patch);
+	ctx.data.applyPatch(patch);
 
 	const seedNodeId = patch.nodes[0]?.id;
 
 	if (!seedNodeId) return;
 
-	ctx.seedId = seedNodeId;
-	ctx.selectedId = seedNodeId;
-	discogsApiStore.clearSearchResults();
+	ctx.ui.seedId = seedNodeId;
+	ctx.ui.selectedId = seedNodeId;
 }
 
-export async function seedFromNode(ctx: GraphStoreContext, node: GraphNode) {
+export async function seedFromNode(ctx: GraphContext, node: GraphNode) {
 	if (node.discogsId === null) return;
 
 	seedFromResult(ctx, {

@@ -1,474 +1,159 @@
-import * as discogs from '$lib/discogs/client';
-
-import { ALL_NODE_TYPES } from '../constants';
-
-import { mergeArtistDetails } from './details/artist';
-import { createDetailsTracker } from './details/create-details-tracker';
-import { mergeLabelDetails } from './details/label';
-import { mergeMasterDetails } from './details/master';
-import { mergeReleaseDetails } from './details/release';
-import { loadRelatedArtists, loadRelatedCreditedArtists, loadRelatedAliases } from './loaders/related-artists';
-import { loadRelatedLabels, loadRelatedCompanies } from './loaders/related-labels';
-
-import {
-	collectDescendants,
-	findRemovableDescendants,
-	hasExpansionChildren
-} from './expansion';
-
-import {
-	filterVisibleLinks,
-	filterVisibleNodes,
-	mergePatch,
-	parseNodeId
-} from './graph-core';
-
-
-import {
-	hasMoreMasterReleases,
-	hasMoreReleases,
-	loadMainRelease,
-	loadMasterReleases,
-	loadMoreMasterReleases,
-	loadMoreReleases,
-	loadReleases
-} from './loaders/releases';
-
-import { runLoad } from './run-load';
-import { seedFromNode, seedFromResult } from './search';
-
 import { discogsApiStore } from '$lib/discogs/api.svelte';
+
+import { graphCtx } from './context';
+import { graphDataStore } from './data-store.svelte';
+import { detailsStore } from './details-store.svelte';
+import { expansionStore } from './expansion-store.svelte';
+import { expansionProgressStore } from './expansion-progress-store.svelte';
+import { graphUiStore } from './ui-store.svelte';
+
+import { seedFromNode, seedFromResult } from '../actions/seed';
 
 import type { SearchResult } from '$lib/discogs/types';
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
-import type { DetailsTrackerContext, GraphStoreContext } from './types';
+import type { GraphFacade } from './types';
 
-const artistDetailsTracker = createDetailsTracker({
-	nodeType: 'artist',
-	fetch: discogs.getArtist,
-	merge: mergeArtistDetails,
-	errorMessage: 'Failed to load artist details'
-});
-
-const labelDetailsTracker = createDetailsTracker({
-	nodeType: 'label',
-	fetch: discogs.getLabel,
-	merge: mergeLabelDetails,
-	errorMessage: 'Failed to load label details'
-});
-
-const masterDetailsTracker = createDetailsTracker({
-	nodeType: 'master',
-	fetch: discogs.getMaster,
-	merge: mergeMasterDetails,
-	errorMessage: 'Failed to load master details'
-});
-
-const releaseDetailsTracker = createDetailsTracker({
-	nodeType: 'release',
-	fetch: discogs.getRelease,
-	merge: mergeReleaseDetails,
-	errorMessage: 'Failed to load release details'
-});
-
-class GraphStore implements GraphStoreContext {
-	nodes = $state<Map<string, GraphNode>>(new Map());
-	links = $state<Map<string, GraphLink>>(new Map());
-	expanded = $state<Set<string>>(new Set());
-	loading = $state<Set<string>>(new Set());
-	seedId = $state<string | null>(null);
-	selectedId = $state<string | null>(null);
-	releasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
-	masterReleasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
-	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
-	expansionChildren = $state<Map<string, Set<string>>>(new Map());
-	viewResetToken = $state(0);
-	artistDetailsFetched = $state<Set<string>>(new Set());
-	artistDetailsLoading = $state<Set<string>>(new Set());
-	labelDetailsFetched = $state<Set<string>>(new Set());
-	labelDetailsLoading = $state<Set<string>>(new Set());
-	masterDetailsFetched = $state<Set<string>>(new Set());
-	masterDetailsLoading = $state<Set<string>>(new Set());
-	releaseDetailsFetched = $state<Set<string>>(new Set());
-	releaseDetailsLoading = $state<Set<string>>(new Set());
-
-	get nodeList(): GraphNode[] {
-		return Array.from(this.nodes.values());
+class GraphStore implements GraphFacade {
+	get nodes() {
+		return graphDataStore.nodes;
 	}
 
-	get linkList(): GraphLink[] {
-		return Array.from(this.links.values());
+	get links() {
+		return graphDataStore.links;
 	}
 
-	get pinnedIds(): Set<string> {
-		const pinned = new Set<string>();
-
-		if (this.selectedId) pinned.add(this.selectedId);
-
-		return pinned;
+	get nodeList() {
+		return graphDataStore.nodeList;
 	}
 
-	get visibleNodeList(): GraphNode[] {
-		return filterVisibleNodes(this.nodeList, this.visibleTypes, this.pinnedIds);
+	get linkList() {
+		return graphDataStore.linkList;
 	}
 
-	get visibleLinkList(): GraphLink[] {
-		const visibleNodeIds = new Set(this.visibleNodeList.map((n) => n.id));
-
-		return filterVisibleLinks(this.linkList, visibleNodeIds);
+	get visibleNodeList() {
+		return graphUiStore.visibleNodeList;
 	}
 
-	get typeCounts(): Record<NodeType, number> {
-		const counts = Object.fromEntries(ALL_NODE_TYPES.map((t) => [t, 0])) as Record<NodeType, number>;
-
-		for (const node of this.nodeList) {
-			counts[node.type]++;
-		}
-
-		return counts;
+	get visibleLinkList() {
+		return graphUiStore.visibleLinkList;
 	}
 
-	get selectedNode(): GraphNode | null {
-		return this.selectedId ? (this.nodes.get(this.selectedId) ?? null) : null;
+	get typeCounts() {
+		return graphUiStore.typeCounts;
+	}
+
+	get selectedNode() {
+		return graphUiStore.selectedNode;
+	}
+
+	get selectedId() {
+		return graphUiStore.selectedId;
+	}
+
+	get seedId() {
+		return graphUiStore.seedId;
+	}
+
+	get visibleTypes() {
+		return graphUiStore.visibleTypes;
+	}
+
+	get viewResetToken() {
+		return graphUiStore.viewResetToken;
+	}
+
+	get releasePages() {
+		return expansionProgressStore.releasePages;
+	}
+
+	get masterReleasePages() {
+		return expansionProgressStore.masterReleasePages;
 	}
 
 	parseNodeId(id: string) {
-		return parseNodeId(id);
+		return graphDataStore.parseNodeId(id);
 	}
 
 	applyPatch(patch: GraphPatch) {
-		const nextNodes = new Map(this.nodes);
-		const nextLinks = new Map(this.links);
-
-		mergePatch(nextNodes, nextLinks, patch);
-
-		this.nodes = nextNodes;
-		this.links = nextLinks;
-	}
-
-	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch) {
-		const currentNodeIds = new Set(this.nodes.keys());
-
-		this.applyPatch(patch);
-
-		const newNodeIds = [...this.nodes.keys()].filter((id) => id !== parentNodeId && !currentNodeIds.has(id));
-
-		if (newNodeIds.length === 0) return;
-
-		const parentChildMap = new Map(this.expansionChildren);
-		const childNodeIds = new Set(parentChildMap.get(parentNodeId) ?? []);
-
-		for (const id of newNodeIds) {
-			childNodeIds.add(id);
-		}
-
-		parentChildMap.set(parentNodeId, childNodeIds);
-		this.expansionChildren = parentChildMap;
-	}
-
-	setLoading(id: string, isLoading: boolean) {
-		const next = new Set(this.loading);
-
-		if (isLoading) {
-			next.add(id);
-		} else {
-			next.delete(id);
-		}
-
-		this.loading = next;
-	}
-
-	runLoad(nodeId: string, fn: () => Promise<void>, errorMessage: string) {
-		return runLoad(this, nodeId, fn, errorMessage);
+		graphDataStore.applyPatch(patch);
 	}
 
 	clearGraph() {
-		this.nodes = new Map();
-		this.links = new Map();
-		this.expanded = new Set();
-		this.loading = new Set();
-		this.seedId = null;
-		this.selectedId = null;
+		graphDataStore.clear();
+		expansionStore.clear();
+		expansionProgressStore.clear();
+		detailsStore.clear();
+		graphUiStore.clear();
 		discogsApiStore.clearError();
 		discogsApiStore.clearSearchResults();
-		this.releasePages = new Map();
-		this.masterReleasePages = new Map();
-		this.expansionChildren = new Map();
-		this.visibleTypes = new Set(ALL_NODE_TYPES);
-		this.artistDetailsFetched = new Set();
-		this.artistDetailsLoading = new Set();
-		this.labelDetailsFetched = new Set();
-		this.labelDetailsLoading = new Set();
-		this.masterDetailsFetched = new Set();
-		this.masterDetailsLoading = new Set();
-		this.releaseDetailsFetched = new Set();
-		this.releaseDetailsLoading = new Set();
-		this.viewResetToken++;
-	}
-
-	isTypeVisible(type: NodeType): boolean {
-		return this.visibleTypes.has(type);
-	}
-
-	toggleType(type: NodeType) {
-		const visibleTypes = new Set(this.visibleTypes);
-
-		if (visibleTypes.has(type)) {
-			if (visibleTypes.size <= 1) return;
-			visibleTypes.delete(type);
-		} else {
-			visibleTypes.add(type);
-		}
-
-		this.visibleTypes = visibleTypes;
 	}
 
 	selectNode(id: string | null) {
-		this.selectedId = id;
+		graphUiStore.selectNode(id);
 	}
 
-	private createDetailsCtx(
-		getFetched: () => Set<string>,
-		setFetched: (fetched: Set<string>) => void,
-		getLoading: () => Set<string>,
-		setLoadingSet: (loading: Set<string>) => void
-	): DetailsTrackerContext {
-		return {
-			nodes: this.nodes,
-			parseNodeId: (id) => this.parseNodeId(id),
-			setNodes: (nodes) => {
-				this.nodes = nodes;
-			},
-			getFetched,
-			setFetched,
-			getLoading,
-			setLoadingSet
-		};
+	isTypeVisible(type: NodeType) {
+		return graphUiStore.isTypeVisible(type);
 	}
 
-	private artistDetailsCtx(): DetailsTrackerContext {
-		return this.createDetailsCtx(
-			() => this.artistDetailsFetched,
-			(fetched) => {
-				this.artistDetailsFetched = fetched;
-			},
-			() => this.artistDetailsLoading,
-			(loading) => {
-				this.artistDetailsLoading = loading;
-			}
-		);
-	}
-
-	private labelDetailsCtx(): DetailsTrackerContext {
-		return this.createDetailsCtx(
-			() => this.labelDetailsFetched,
-			(fetched) => {
-				this.labelDetailsFetched = fetched;
-			},
-			() => this.labelDetailsLoading,
-			(loading) => {
-				this.labelDetailsLoading = loading;
-			}
-		);
-	}
-
-	private masterDetailsCtx(): DetailsTrackerContext {
-		return this.createDetailsCtx(
-			() => this.masterDetailsFetched,
-			(fetched) => {
-				this.masterDetailsFetched = fetched;
-			},
-			() => this.masterDetailsLoading,
-			(loading) => {
-				this.masterDetailsLoading = loading;
-			}
-		);
-	}
-
-	private releaseDetailsCtx(): DetailsTrackerContext {
-		return this.createDetailsCtx(
-			() => this.releaseDetailsFetched,
-			(fetched) => {
-				this.releaseDetailsFetched = fetched;
-			},
-			() => this.releaseDetailsLoading,
-			(loading) => {
-				this.releaseDetailsLoading = loading;
-			}
-		);
-	}
-
-	markArtistDetailsFetched(nodeId: string) {
-		artistDetailsTracker.markFetched(this.artistDetailsCtx(), nodeId);
-	}
-
-	async ensureArtistDetails(nodeId: string) {
-		await artistDetailsTracker.ensure(this.artistDetailsCtx(), nodeId);
-	}
-
-	markLabelDetailsFetched(nodeId: string) {
-		labelDetailsTracker.markFetched(this.labelDetailsCtx(), nodeId);
-	}
-
-	async ensureLabelDetails(nodeId: string) {
-		await labelDetailsTracker.ensure(this.labelDetailsCtx(), nodeId);
-	}
-
-	async mergeMasterDetails(nodeId: string, master: import('$lib/discogs/types').Master) {
-		await masterDetailsTracker.merge(this.masterDetailsCtx(), nodeId, master);
-	}
-
-	markMasterDetailsFetched(nodeId: string) {
-		masterDetailsTracker.markFetched(this.masterDetailsCtx(), nodeId);
-	}
-
-	async ensureMasterDetails(nodeId: string) {
-		await masterDetailsTracker.ensure(this.masterDetailsCtx(), nodeId);
-	}
-
-	async ensureReleaseDetails(nodeId: string) {
-		await releaseDetailsTracker.ensure(this.releaseDetailsCtx(), nodeId);
-	}
-
-	isDetailsLoading(nodeId: string): boolean {
-		return (
-			this.artistDetailsLoading.has(nodeId) ||
-			this.labelDetailsLoading.has(nodeId) ||
-			this.masterDetailsLoading.has(nodeId) ||
-			this.releaseDetailsLoading.has(nodeId)
-		);
-	}
-
-	seedFromResult(result: SearchResult) {
-		seedFromResult(this, result);
-	}
-
-	async seedFromNode(node: GraphNode) {
-		await seedFromNode(this, node);
+	toggleType(type: NodeType) {
+		graphUiStore.toggleType(type);
 	}
 
 	collapseNode(nodeId: string) {
-		if (!this.expansionChildren.has(nodeId)) return;
-
-		const descendants = collectDescendants(this.expansionChildren, nodeId);
-		const toRemove = findRemovableDescendants(nodeId, descendants, this.linkList);
-
-		if (toRemove.size === 0) {
-			const nextExpanded = new Set(this.expanded);
-			nextExpanded.delete(nodeId);
-			this.expanded = nextExpanded;
-			return;
-		}
-
-		const nextNodes = new Map(this.nodes);
-		const nextLinks = new Map(this.links);
-
-		for (const id of toRemove) {
-			nextNodes.delete(id);
-		}
-
-		for (const [linkId, link] of nextLinks) {
-			if (toRemove.has(link.source) || toRemove.has(link.target)) {
-				nextLinks.delete(linkId);
+		expansionStore.collapseNode(nodeId, {
+			onNodesRemoved: (nodeIds) => {
+				expansionProgressStore.clearNodes(nodeIds);
 			}
-		}
-
-		this.nodes = nextNodes;
-		this.links = nextLinks;
-
-		const nextChildren = new Map(this.expansionChildren);
-		for (const id of toRemove) {
-			nextChildren.delete(id);
-		}
-		const parentChildren = new Set(nextChildren.get(nodeId) ?? []);
-		for (const id of toRemove) {
-			parentChildren.delete(id);
-		}
-		if (parentChildren.size === 0) {
-			nextChildren.delete(nodeId);
-		} else {
-			nextChildren.set(nodeId, parentChildren);
-		}
-		this.expansionChildren = nextChildren;
-
-		const nextExpanded = new Set(this.expanded);
-		nextExpanded.delete(nodeId);
-		for (const id of toRemove) {
-			nextExpanded.delete(id);
-		}
-		this.expanded = nextExpanded;
-
-		const nextReleasePages = new Map(this.releasePages);
-		const nextMasterReleasePages = new Map(this.masterReleasePages);
-		for (const id of toRemove) {
-			nextReleasePages.delete(id);
-			nextMasterReleasePages.delete(id);
-		}
-		this.releasePages = nextReleasePages;
-		this.masterReleasePages = nextMasterReleasePages;
-
-		if (this.selectedId && toRemove.has(this.selectedId)) {
-			this.selectedId = nodeId;
-		}
-		if (this.seedId && toRemove.has(this.seedId)) {
-			this.seedId = nodeId;
-		}
+		});
 	}
 
-	hasChildren(nodeId: string): boolean {
-		return hasExpansionChildren(nodeId, this.expansionChildren, this.nodes);
+	hasChildren(nodeId: string) {
+		return expansionStore.hasChildren(nodeId);
 	}
 
-	loadRelatedArtists(nodeId: string) {
-		return loadRelatedArtists(this, nodeId);
+	isLoading(nodeId: string) {
+		return expansionProgressStore.isLoading(nodeId);
 	}
 
-	loadRelatedLabels(nodeId: string) {
-		return loadRelatedLabels(this, nodeId);
+	hasMoreReleases(nodeId: string) {
+		return expansionProgressStore.hasMoreReleases(nodeId);
 	}
 
-	loadRelatedCompanies(nodeId: string) {
-		return loadRelatedCompanies(this, nodeId);
+	hasMoreMasterReleases(nodeId: string) {
+		return expansionProgressStore.hasMoreMasterReleases(nodeId);
 	}
 
-	loadRelatedCreditedArtists(nodeId: string) {
-		return loadRelatedCreditedArtists(this, nodeId);
+	isDetailsLoading(nodeId: string) {
+		return detailsStore.isDetailsLoading(nodeId);
 	}
 
-	loadRelatedAliases(nodeId: string) {
-		return loadRelatedAliases(this, nodeId);
+	seedFromResult(result: SearchResult) {
+		seedFromResult(graphCtx, result);
 	}
 
-	loadReleases(nodeId: string) {
-		return loadReleases(this, nodeId);
+	async seedFromNode(node: GraphNode) {
+		await seedFromNode(graphCtx, node);
 	}
 
-	loadMasterReleases(nodeId: string) {
-		return loadMasterReleases(this, nodeId);
+	async ensureArtistDetails(nodeId: string) {
+		await detailsStore.ensureArtistDetails(nodeId);
 	}
 
-	loadMainRelease(nodeId: string) {
-		return loadMainRelease(this, nodeId);
+	async ensureLabelDetails(nodeId: string) {
+		await detailsStore.ensureLabelDetails(nodeId);
 	}
 
-	loadMoreReleases(nodeId: string) {
-		return loadMoreReleases(this, nodeId);
+	async ensureMasterDetails(nodeId: string) {
+		await detailsStore.ensureMasterDetails(nodeId);
 	}
 
-	hasMoreReleases(nodeId: string): boolean {
-		return hasMoreReleases(this, nodeId);
+	async ensureReleaseDetails(nodeId: string) {
+		await detailsStore.ensureReleaseDetails(nodeId);
 	}
 
-	loadMoreMasterReleases(nodeId: string) {
-		return loadMoreMasterReleases(this, nodeId);
-	}
-
-	hasMoreMasterReleases(nodeId: string): boolean {
-		return hasMoreMasterReleases(this, nodeId);
-	}
-
-	isLoading(nodeId: string): boolean {
-		return this.loading.has(nodeId);
+	async mergeMasterDetails(nodeId: string, master: import('$lib/discogs/types').Master) {
+		await detailsStore.mergeMasterDetails(nodeId, master);
 	}
 }
 

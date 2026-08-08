@@ -35,6 +35,17 @@ class DiscogsApiStore {
 		this.searchResults = [];
 	}
 
+	async withRequest<T>(fn: () => Promise<T>, errorMessage: string): Promise<T | null> {
+		this.clearError();
+
+		try {
+			return await fn();
+		} catch (err) {
+			this.setError(err instanceof Error ? err.message : errorMessage);
+			return null;
+		}
+	}
+
 	async search(query: string, type?: SearchType): Promise<SearchResult[]> {
 		const trimmed = query.trim();
 
@@ -42,7 +53,6 @@ class DiscogsApiStore {
 
 		this.searchQuery = trimmed;
 		this.searchType = type ?? '';
-		this.clearError();
 		this.searching = true;
 
 		try {

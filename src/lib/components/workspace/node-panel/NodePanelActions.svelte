@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { graphStore, graphCtx } from '$lib/graph/store.svelte';
 	import { discogsApiStore } from '$lib/discogs/api.svelte';
+	import { loadMoreMasterReleases, loadMoreReleases } from '$lib/graph/actions/releases';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 
 	import type { GraphNode } from '$lib/graph/types';
@@ -60,7 +61,7 @@
 			type="button"
 			class="{buttonClass} bg-accent cursor-pointer border-none text-white"
 			disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
-			onclick={() => graphStore.loadMoreReleases(node.id)}
+			onclick={() => loadMoreReleases(graphCtx, node.id)}
 		>
 			Load more releases
 		</button>
@@ -71,7 +72,7 @@
 			type="button"
 			class="{buttonClass} bg-accent cursor-pointer border-none text-white"
 			disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
-			onclick={() => graphStore.loadMoreMasterReleases(node.id)}
+			onclick={() => loadMoreMasterReleases(graphCtx, node.id)}
 		>
 			Load more master releases
 		</button>
