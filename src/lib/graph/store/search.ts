@@ -1,46 +1,15 @@
-import * as discogs from '$lib/discogs/client';
+import { discogsApiStore } from '$lib/discogs/api.svelte';
 
 import { buildFromSearchResult } from '../builder';
 
 import type { GraphNode } from '../types';
-import type { SearchResult, SearchType } from '$lib/discogs/types';
+import type { SearchResult } from '$lib/discogs/types';
 
 import type { GraphStoreContext } from './types';
 
-export async function searchStore(
-	ctx: GraphStoreContext,
-	query: string,
-	type: SearchType | undefined,
-	setSearching: (searching: boolean) => void
-) {
-	const trimmed = query.trim();
-
-	if (!trimmed || ctx.searching || ctx.isRateLimited) return [];
-
-	ctx.searchQuery = trimmed;
-	ctx.searchType = type ?? '';
-	ctx.error = null;
-	setSearching(true);
-
-	try {
-		const response = await discogs.search(trimmed, type);
-
-		ctx.updateRateLimit();
-		ctx.searchResults = response.results;
-
-		return response.results;
-	} catch (err) {
-		ctx.error = err instanceof Error ? err.message : 'Search failed';
-		ctx.searchResults = [];
-		return [];
-	} finally {
-		setSearching(false);
-	}
-}
-
 export function seedFromResult(ctx: GraphStoreContext, result: SearchResult) {
 	ctx.clearGraph();
-	ctx.error = null;
+	discogsApiStore.clearError();
 
 	const patch = buildFromSearchResult(result);
 
@@ -52,7 +21,7 @@ export function seedFromResult(ctx: GraphStoreContext, result: SearchResult) {
 
 	ctx.seedId = seedNodeId;
 	ctx.selectedId = seedNodeId;
-	ctx.clearSearchResults();
+	discogsApiStore.clearSearchResults();
 }
 
 export async function seedFromNode(ctx: GraphStoreContext, node: GraphNode) {

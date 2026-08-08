@@ -1,3 +1,5 @@
+import { discogsApiStore } from '$lib/discogs/api.svelte';
+
 import type { GraphStoreContext } from './types';
 
 export async function runLoad(
@@ -13,12 +15,12 @@ export async function runLoad(
 	if (discogsId === null) return;
 
 	ctx.setLoading(nodeId, true);
-	ctx.error = null;
+	discogsApiStore.clearError();
 
 	try {
 		await fn();
 	} catch (err) {
-		ctx.error = err instanceof Error ? err.message : errorMessage;
+		discogsApiStore.setError(err instanceof Error ? err.message : errorMessage);
 	} finally {
 		ctx.setLoading(nodeId, false);
 	}

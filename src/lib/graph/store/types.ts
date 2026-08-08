@@ -13,27 +13,19 @@ export interface GraphStoreContext {
 	loading: Set<string>;
 	releasePages: Map<string, { page: number; pages: number }>;
 	masterReleasePages: Map<string, { page: number; pages: number }>;
-	error: string | null;
-	searchQuery: string;
-	searchType: SearchType | '';
-	searchResults: SearchResult[];
-	searching: boolean;
 	expanded: Set<string>;
 	expansionChildren: Map<string, Set<string>>;
 	seedId: string | null;
 	selectedId: string | null;
 
 	readonly linkList: GraphLink[];
-	readonly isRateLimited: boolean;
 
 	parseNodeId(id: string): ParsedNodeId;
-	updateRateLimit(): void;
 	applyPatch(patch: GraphPatch): void;
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch): void;
 	runLoad(nodeId: string, fn: () => Promise<void>, errorMessage: string): Promise<void>;
 	setLoading(id: string, isLoading: boolean): void;
 	clearGraph(): void;
-	clearSearchResults(): void;
 	markArtistDetailsFetched(nodeId: string): void;
 	markLabelDetailsFetched(nodeId: string): void;
 	mergeMasterDetails(nodeId: string, master: import('$lib/discogs/types').Master): Promise<void>;
@@ -42,10 +34,7 @@ export interface GraphStoreContext {
 
 export interface DetailsTrackerContext {
 	readonly nodes: Map<string, GraphNode>;
-	getError(): string | null;
-	setError(error: string | null): void;
 	parseNodeId(id: string): ParsedNodeId;
-	updateRateLimit(): void;
 	setNodes(nodes: Map<string, GraphNode>): void;
 	getFetched(): Set<string>;
 	setFetched(fetched: Set<string>): void;

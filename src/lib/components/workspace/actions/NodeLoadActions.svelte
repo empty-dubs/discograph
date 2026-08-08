@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { graphStore } from '$lib/graph/store.svelte';
+	import { discogsApiStore } from '$lib/discogs/api.svelte';
 	import { LOAD_ACTIONS } from './constants';
 
 	interface Props {
@@ -29,7 +30,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
 		onclick={() => run(() => graphStore.loadRelatedArtists(nodeId))}
 	>
 		Load related artists
@@ -40,7 +41,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
 		onclick={() => run(() => graphStore.loadRelatedAliases(nodeId))}
 	>
 		Load artist aliases
@@ -51,7 +52,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
 		onclick={() => run(() => graphStore.loadRelatedLabels(nodeId))}
 	>
 		Load related labels
@@ -62,7 +63,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
 		onclick={() => run(() => graphStore.loadMasterReleases(nodeId))}
 	>
 		Load master releases
@@ -73,7 +74,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
 		onclick={() => run(() => graphStore.loadReleases(nodeId))}
 	>
 		Load releases
@@ -84,7 +85,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
 		onclick={() => run(() => graphStore.loadMainRelease(nodeId))}
 	>
 		Load main release
@@ -95,7 +96,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
 		onclick={() => run(() => graphStore.loadRelatedCompanies(nodeId))}
 	>
 		Load related companies
@@ -106,7 +107,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
 		onclick={() => run(() => graphStore.loadRelatedCreditedArtists(nodeId))}
 	>
 		Load credited artists

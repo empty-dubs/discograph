@@ -35,9 +35,11 @@ import {
 } from './loaders/releases';
 
 import { runLoad } from './run-load';
-import { searchStore, seedFromNode, seedFromResult } from './search';
+import { seedFromNode, seedFromResult } from './search';
 
-import type { RateLimitInfo, SearchResult, SearchType } from '$lib/discogs/types';
+import { discogsApiStore } from '$lib/discogs/api.svelte';
+
+import type { SearchResult } from '$lib/discogs/types';
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
 import type { DetailsTrackerContext, GraphStoreContext } from './types';
 
@@ -76,12 +78,6 @@ class GraphStore implements GraphStoreContext {
 	loading = $state<Set<string>>(new Set());
 	seedId = $state<string | null>(null);
 	selectedId = $state<string | null>(null);
-	rateLimit = $state<RateLimitInfo>({ limit: null, used: null, remaining: null });
-	error = $state<string | null>(null);
-	searchQuery = $state('');
-	searchType = $state<SearchType | ''>('');
-	searching = $state(false);
-	searchResults = $state<SearchResult[]>([]);
 	releasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
 	masterReleasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
 	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
@@ -134,14 +130,6 @@ class GraphStore implements GraphStoreContext {
 
 	get selectedNode(): GraphNode | null {
 		return this.selectedId ? (this.nodes.get(this.selectedId) ?? null) : null;
-	}
-
-	get isRateLimited(): boolean {
-		return this.rateLimit.remaining !== null && this.rateLimit.remaining <= 0;
-	}
-
-	updateRateLimit() {
-		this.rateLimit = discogs.getLastRateLimit();
 	}
 
 	parseNodeId(id: string) {
@@ -201,8 +189,8 @@ class GraphStore implements GraphStoreContext {
 		this.loading = new Set();
 		this.seedId = null;
 		this.selectedId = null;
-		this.error = null;
-		this.clearSearchResults();
+		discogsApiStore.clearError();
+		discogsApiStore.clearSearchResults();
 		this.releasePages = new Map();
 		this.masterReleasePages = new Map();
 		this.expansionChildren = new Map();
@@ -216,10 +204,6 @@ class GraphStore implements GraphStoreContext {
 		this.releaseDetailsFetched = new Set();
 		this.releaseDetailsLoading = new Set();
 		this.viewResetToken++;
-	}
-
-	clearSearchResults() {
-		this.searchResults = [];
 	}
 
 	isTypeVisible(type: NodeType): boolean {
@@ -251,12 +235,7 @@ class GraphStore implements GraphStoreContext {
 	): DetailsTrackerContext {
 		return {
 			nodes: this.nodes,
-			getError: () => this.error,
-			setError: (error) => {
-				this.error = error;
-			},
 			parseNodeId: (id) => this.parseNodeId(id),
-			updateRateLimit: () => this.updateRateLimit(),
 			setNodes: (nodes) => {
 				this.nodes = nodes;
 			},
@@ -358,12 +337,6 @@ class GraphStore implements GraphStoreContext {
 			this.masterDetailsLoading.has(nodeId) ||
 			this.releaseDetailsLoading.has(nodeId)
 		);
-	}
-
-	async search(query: string, type?: SearchType) {
-		return searchStore(this, query, type, (searching) => {
-			this.searching = searching;
-		});
 	}
 
 	seedFromResult(result: SearchResult) {

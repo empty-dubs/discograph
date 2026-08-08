@@ -18,7 +18,6 @@ async function resolveMasterTitle(ctx: DetailsTrackerContext, id: number): Promi
 
 	try {
 		const master = await discogs.getMaster(id);
-		ctx.updateRateLimit();
 		return master.title;
 	} catch {
 		return `Master ${id}`;

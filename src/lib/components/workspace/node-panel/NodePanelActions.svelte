@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
 	import { graphStore } from '$lib/graph/store.svelte';
+	import { discogsApiStore } from '$lib/discogs/api.svelte';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 
 	import type { GraphNode } from '$lib/graph/types';
@@ -48,7 +49,7 @@
 	<button
 		type="button"
 		class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-		disabled={graphStore.isLoading(node.id) || graphStore.isRateLimited}
+		disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
 		onclick={() => graphStore.seedFromNode(node)}
 	>
 		Reset graph to this node
@@ -58,7 +59,7 @@
 		<button
 			type="button"
 			class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-			disabled={graphStore.isLoading(node.id) || graphStore.isRateLimited}
+			disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
 			onclick={() => graphStore.loadMoreReleases(node.id)}
 		>
 			Load more releases
@@ -69,7 +70,7 @@
 		<button
 			type="button"
 			class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-			disabled={graphStore.isLoading(node.id) || graphStore.isRateLimited}
+			disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
 			onclick={() => graphStore.loadMoreMasterReleases(node.id)}
 		>
 			Load more master releases

@@ -18,14 +18,12 @@ export async function loadRelatedLabels(ctx: GraphStoreContext, nodeId: string) 
 			switch (type) {
 				case 'label': {
 					const label = await discogs.getLabel(discogsId);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(nodeId, buildFromLabel(label));
 					ctx.markLabelDetailsFetched(nodeId);
 					break;
 				}
 				case 'release': {
 					const release = await discogs.getRelease(discogsId);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(nodeId, buildLabelsFromRelease(release));
 					break;
 				}
@@ -47,7 +45,6 @@ export async function loadRelatedCompanies(ctx: GraphStoreContext, nodeId: strin
 			switch (type) {
 				case 'release': {
 					const release = await discogs.getRelease(discogsId);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(nodeId, buildCompaniesFromRelease(release));
 					break;
 				}

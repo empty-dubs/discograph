@@ -15,7 +15,6 @@ async function resolveMainReleaseTitle(
 
 	try {
 		const release = await discogs.getRelease(id);
-		ctx.updateRateLimit();
 		return release.title;
 	} catch {
 		return `Release ${id}`;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { graphStore } from '$lib/graph/store.svelte';
+	import { discogsApiStore } from '$lib/discogs/api.svelte';
 
 	import type { SearchType } from '$lib/discogs/types';
 
@@ -22,8 +22,8 @@
 		<button
 			type="button"
 			class="hover:bg-panel-hover block w-full rounded border-none bg-transparent px-0 py-0.5 text-left disabled:cursor-not-allowed disabled:opacity-50"
-			disabled={graphStore.searching || graphStore.isRateLimited}
-			onclick={() => graphStore.search(query ?? '', searchType || undefined)}
+			disabled={discogsApiStore.searching || discogsApiStore.isRateLimited}
+			onclick={() => discogsApiStore.search(query ?? '', searchType || undefined)}
 		>
 			{label}
 		</button>

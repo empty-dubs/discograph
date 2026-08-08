@@ -24,20 +24,17 @@ export async function loadRelatedArtists(ctx: GraphStoreContext, nodeId: string)
 			switch (type) {
 				case 'artist': {
 					const artist = await discogs.getArtist(discogsId);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(nodeId, buildFromArtist(artist));
 					ctx.markArtistDetailsFetched(nodeId);
 					break;
 				}
 				case 'release': {
 					const release = await discogs.getRelease(discogsId);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(nodeId, buildArtistsFromRelease(release));
 					break;
 				}
 				case 'master': {
 					const master = await discogs.getMaster(discogsId);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(nodeId, buildFromMaster(master));
 					break;
 				}
@@ -59,7 +56,6 @@ export async function loadRelatedCreditedArtists(ctx: GraphStoreContext, nodeId:
 			switch (type) {
 				case 'release': {
 					const release = await discogs.getRelease(discogsId);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(nodeId, buildCreditedArtistsFromRelease(release));
 					break;
 				}
@@ -81,7 +77,6 @@ export async function loadRelatedAliases(ctx: GraphStoreContext, nodeId: string)
 			switch (type) {
 				case 'artist': {
 					const artist = await discogs.getArtist(discogsId);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(nodeId, buildAliasesFromArtist(artist));
 					ctx.markArtistDetailsFetched(nodeId);
 					break;

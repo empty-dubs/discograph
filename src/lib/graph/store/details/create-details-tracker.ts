@@ -1,3 +1,5 @@
+import { discogsApiStore } from '$lib/discogs/api.svelte';
+
 import type { DetailsTracker, DetailsTrackerConfig, DetailsTrackerContext } from '../types';
 
 function setDetailsLoading(ctx: DetailsTrackerContext, id: string, isLoading: boolean) {
@@ -21,16 +23,15 @@ export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): Detail
 			if (ctx.getFetched().has(nodeId) || ctx.getLoading().has(nodeId)) return;
 
 			setDetailsLoading(ctx, nodeId, true);
-			ctx.setError(null);
+			discogsApiStore.clearError();
 
 			try {
 				const entity = await config.fetch(discogsId);
 
-				ctx.updateRateLimit();
 				await config.merge(ctx, nodeId, entity);
 				ctx.setFetched(new Set(ctx.getFetched()).add(nodeId));
 			} catch (err) {
-				ctx.setError(err instanceof Error ? err.message : config.errorMessage);
+				discogsApiStore.setError(err instanceof Error ? err.message : config.errorMessage);
 			} finally {
 				setDetailsLoading(ctx, nodeId, false);
 			}

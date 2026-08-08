@@ -1,4 +1,5 @@
 import * as discogs from '$lib/discogs/client';
+import { discogsApiStore } from '$lib/discogs/api.svelte';
 
 import {
 	buildFromArtistReleases,
@@ -23,7 +24,6 @@ export async function loadReleases(ctx: GraphStoreContext, nodeId: string) {
 			switch (type) {
 				case 'artist': {
 					const releases = await discogs.getArtistReleases(discogsId, 1);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(
 						nodeId,
 						buildFromArtistReleases(releases.releases, discogsId, 'release')
@@ -36,7 +36,6 @@ export async function loadReleases(ctx: GraphStoreContext, nodeId: string) {
 				}
 				case 'label': {
 					const releases = await discogs.getLabelReleases(discogsId, 1);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(
 						nodeId,
 						buildFromLabelReleases(releases.releases, discogsId, 'release')
@@ -49,7 +48,6 @@ export async function loadReleases(ctx: GraphStoreContext, nodeId: string) {
 				}
 				case 'master': {
 					const versions = await discogs.getMasterVersions(discogsId, 1);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(nodeId, buildFromMasterVersions(versions.versions, discogsId));
 					ctx.releasePages = new Map(ctx.releasePages).set(nodeId, {
 						page: versions.pagination.page,
@@ -75,7 +73,6 @@ export async function loadMasterReleases(ctx: GraphStoreContext, nodeId: string)
 			switch (type) {
 				case 'artist': {
 					const releases = await discogs.getArtistReleases(discogsId, 1);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(
 						nodeId,
 						buildFromArtistReleases(releases.releases, discogsId, 'master')
@@ -88,7 +85,6 @@ export async function loadMasterReleases(ctx: GraphStoreContext, nodeId: string)
 				}
 				case 'label': {
 					const releases = await discogs.getLabelReleases(discogsId, 1);
-					ctx.updateRateLimit();
 					ctx.applyPatchFromExpansion(
 						nodeId,
 						buildFromLabelReleases(releases.releases, discogsId, 'master')
@@ -118,19 +114,17 @@ export async function loadMainRelease(ctx: GraphStoreContext, nodeId: string) {
 
 			if (!mainReleaseId) {
 				const master = await discogs.getMaster(discogsId);
-				ctx.updateRateLimit();
 				await ctx.mergeMasterDetails(nodeId, master);
 				ctx.markMasterDetailsFetched(nodeId);
 				mainReleaseId = master.main_release;
 			}
 
 			if (!mainReleaseId) {
-				ctx.error = 'This master has no main release';
+				discogsApiStore.setError('This master has no main release');
 				return;
 			}
 
 			const release = await discogs.getRelease(mainReleaseId);
-			ctx.updateRateLimit();
 			ctx.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
 		},
 		'Failed to load main release'
@@ -149,12 +143,11 @@ export async function loadMoreReleases(ctx: GraphStoreContext, nodeId: string) {
 	const nextPage = paging.page + 1;
 
 	ctx.setLoading(nodeId, true);
-	ctx.error = null;
+	discogsApiStore.clearError();
 
 	try {
 		if (type === 'artist') {
 			const releases = await discogs.getArtistReleases(discogsId, nextPage);
-			ctx.updateRateLimit();
 			ctx.applyPatchFromExpansion(
 				nodeId,
 				buildFromArtistReleases(releases.releases, discogsId, 'release')
@@ -165,7 +158,6 @@ export async function loadMoreReleases(ctx: GraphStoreContext, nodeId: string) {
 			});
 		} else if (type === 'label') {
 			const releases = await discogs.getLabelReleases(discogsId, nextPage);
-			ctx.updateRateLimit();
 			ctx.applyPatchFromExpansion(
 				nodeId,
 				buildFromLabelReleases(releases.releases, discogsId, 'release')
@@ -176,7 +168,6 @@ export async function loadMoreReleases(ctx: GraphStoreContext, nodeId: string) {
 			});
 		} else if (type === 'master') {
 			const versions = await discogs.getMasterVersions(discogsId, nextPage);
-			ctx.updateRateLimit();
 			ctx.applyPatchFromExpansion(nodeId, buildFromMasterVersions(versions.versions, discogsId));
 			ctx.releasePages = new Map(ctx.releasePages).set(nodeId, {
 				page: versions.pagination.page,
@@ -184,7 +175,7 @@ export async function loadMoreReleases(ctx: GraphStoreContext, nodeId: string) {
 			});
 		}
 	} catch (err) {
-		ctx.error = err instanceof Error ? err.message : 'Failed to load more releases';
+		discogsApiStore.setError(err instanceof Error ? err.message : 'Failed to load more releases');
 	} finally {
 		ctx.setLoading(nodeId, false);
 	}
@@ -208,12 +199,11 @@ export async function loadMoreMasterReleases(ctx: GraphStoreContext, nodeId: str
 	const nextPage = paging.page + 1;
 
 	ctx.setLoading(nodeId, true);
-	ctx.error = null;
+	discogsApiStore.clearError();
 
 	try {
 		if (type === 'artist') {
 			const releases = await discogs.getArtistReleases(discogsId, nextPage);
-			ctx.updateRateLimit();
 			ctx.applyPatchFromExpansion(
 				nodeId,
 				buildFromArtistReleases(releases.releases, discogsId, 'master')
@@ -224,7 +214,6 @@ export async function loadMoreMasterReleases(ctx: GraphStoreContext, nodeId: str
 			});
 		} else {
 			const releases = await discogs.getLabelReleases(discogsId, nextPage);
-			ctx.updateRateLimit();
 			ctx.applyPatchFromExpansion(
 				nodeId,
 				buildFromLabelReleases(releases.releases, discogsId, 'master')
@@ -235,7 +224,7 @@ export async function loadMoreMasterReleases(ctx: GraphStoreContext, nodeId: str
 			});
 		}
 	} catch (err) {
-		ctx.error = err instanceof Error ? err.message : 'Failed to load more master releases';
+		discogsApiStore.setError(err instanceof Error ? err.message : 'Failed to load more master releases');
 	} finally {
 		ctx.setLoading(nodeId, false);
 	}
