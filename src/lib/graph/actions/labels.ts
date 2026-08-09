@@ -4,7 +4,7 @@ import { buildCompaniesFromRelease, buildFromLabel, buildLabelsFromRelease } fro
 
 import { runLoad } from './run-load';
 
-import type { GraphContext } from '../store/graph-store.svelte';
+import type { GraphContext } from '../store/graph.svelte';
 
 export async function loadRelatedLabels(ctx: GraphContext, nodeId: string) {
 	const { type, discogsId } = ctx.data.parseNodeId(nodeId);

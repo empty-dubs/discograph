@@ -10,7 +10,7 @@ import type { SearchResult } from '$lib/discogs/types';
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
 import type { GraphFacade } from './types';
 
-class GraphStore implements GraphFacade {
+class Graph implements GraphFacade {
 	readonly data = graphDataStore;
 	readonly ui = graphUiStore;
 	readonly expansion = expansionStore;
@@ -154,9 +154,9 @@ class GraphStore implements GraphFacade {
 	}
 }
 
-export const graphStore = new GraphStore();
+export const graph = new Graph();
 
 export type GraphContext = Pick<
-	GraphStore,
+	Graph,
 	'data' | 'ui' | 'expansion' | 'progress' | 'details'
 >;

@@ -5,7 +5,7 @@ import { buildFromSearchResult } from '../builder/patches';
 import type { GraphNode } from '../types';
 import type { SearchResult } from '$lib/discogs/types';
 
-import type { GraphContext } from '../store/graph-store.svelte';
+import type { GraphContext } from '../store/graph.svelte';
 
 export function resetGraph(ctx: GraphContext) {
 	ctx.data.clear();

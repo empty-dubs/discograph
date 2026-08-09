@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graph } from '$lib/graph/store/graph.svelte';
 	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
 	import {
@@ -29,7 +29,7 @@
 
 	let { nodeId, layout = 'stack', onAction }: Props = $props();
 
-	const node = $derived(graphStore.nodes.get(nodeId) ?? null);
+	const node = $derived(graph.nodes.get(nodeId) ?? null);
 	const actions = $derived(node ? LOAD_ACTIONS[node.type] : []);
 
 	const itemClass = $derived(
@@ -48,8 +48,8 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadRelatedArtists(graphStore, nodeId))}
+		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		onclick={() => run(() => loadRelatedArtists(graph, nodeId))}
 	>
 		Load related artists
 	</button>
@@ -59,8 +59,8 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadRelatedAliases(graphStore, nodeId))}
+		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		onclick={() => run(() => loadRelatedAliases(graph, nodeId))}
 	>
 		Load artist aliases
 	</button>
@@ -70,8 +70,8 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadRelatedLabels(graphStore, nodeId))}
+		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		onclick={() => run(() => loadRelatedLabels(graph, nodeId))}
 	>
 		Load related labels
 	</button>
@@ -81,8 +81,8 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadMasterReleases(graphStore, nodeId))}
+		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		onclick={() => run(() => loadMasterReleases(graph, nodeId))}
 	>
 		Load master releases
 	</button>
@@ -92,8 +92,8 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadReleases(graphStore, nodeId))}
+		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		onclick={() => run(() => loadReleases(graph, nodeId))}
 	>
 		Load releases
 	</button>
@@ -103,8 +103,8 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadMainRelease(graphStore, nodeId))}
+		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		onclick={() => run(() => loadMainRelease(graph, nodeId))}
 	>
 		Load main release
 	</button>
@@ -114,8 +114,8 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadRelatedCompanies(graphStore, nodeId))}
+		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		onclick={() => run(() => loadRelatedCompanies(graph, nodeId))}
 	>
 		Load related companies
 	</button>
@@ -125,8 +125,8 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graphStore.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadRelatedCreditedArtists(graphStore, nodeId))}
+		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		onclick={() => run(() => loadRelatedCreditedArtists(graph, nodeId))}
 	>
 		Load credited artists
 	</button>

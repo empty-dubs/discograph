@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SearchType } from '$lib/discogs/types';
 	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
-	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graph } from '$lib/graph/store/graph.svelte';
 
 	const typeOptions: { value: SearchType | ''; label: string }[] = [
 		{ value: '', label: 'All types' },
@@ -32,7 +32,7 @@
 	}
 
 	async function pickResult(result: (typeof discogsApiStore.searchResults)[number]) {
-		await graphStore.seedFromResult(result);
+		await graph.seedFromResult(result);
 		emptyMessage = null;
 	}
 

@@ -2,23 +2,23 @@
 	import { onMount } from 'svelte';
 
 	import { ForceGraph } from '$lib/graph/force-graph';
-	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graph } from '$lib/graph/store/graph.svelte';
 
 	import GraphContextMenu from './GraphContextMenu.svelte';
 
 	let container = $state<HTMLDivElement | null>(null);
 	let tooltip = $state<{ x: number; y: number; text: string } | null>(null);
 	let contextMenu = $state<{ nodeId: string; x: number; y: number } | null>(null);
-	let graph: ForceGraph | null = null;
+	let forceGraph: ForceGraph | null = null;
 
 	onMount(() => {
-		graph = new ForceGraph(container!, {
+		forceGraph = new ForceGraph(container!, {
 			onNodeClick: (id) => {
 				contextMenu = null;
-				graphStore.selectNode(id);
+				graph.selectNode(id);
 			},
 			onNodeContextMenu: (id, event) => {
-				graphStore.selectNode(id);
+				graph.selectNode(id);
 				contextMenu = { nodeId: id, x: event.clientX, y: event.clientY };
 			},
 			onTooltip: (t) => {
@@ -26,46 +26,46 @@
 			}
 		});
 
-		const resizeObserver = new ResizeObserver(() => graph?.resize());
+		const resizeObserver = new ResizeObserver(() => forceGraph?.resize());
 
 		resizeObserver.observe(container!);
 
 		return () => {
 			resizeObserver.disconnect();
-			graph?.destroy();
+			forceGraph?.destroy();
 		};
 	});
 
 	$effect(() => {
-		const nodes = graphStore.visibleNodeList;
-		const links = graphStore.visibleLinkList;
+		const nodes = graph.visibleNodeList;
+		const links = graph.visibleLinkList;
 
-		if (graph) {
+		if (forceGraph) {
 			if (nodes.length > 0) {
-				graph.update(nodes, links, {
-					selectedId: graphStore.selectedId
+				forceGraph.update(nodes, links, {
+					selectedId: graph.selectedId
 				});
 			} else {
-				graph.clear();
+				forceGraph.clear();
 			}
 		}
 
-		void graphStore.visibleTypes;
+		void graph.visibleTypes;
 	});
 
 	$effect(() => {
-		if (graph && graphStore.visibleNodeList.length > 0) {
-			graph.updateHighlight({
-				selectedId: graphStore.selectedId
+		if (forceGraph && graph.visibleNodeList.length > 0) {
+			forceGraph.updateHighlight({
+				selectedId: graph.selectedId
 			});
 		}
 
-		void graphStore.selectedId;
+		void graph.selectedId;
 	});
 
 	$effect(() => {
-		void graphStore.viewResetToken;
-		graph?.resetZoom();
+		void graph.viewResetToken;
+		forceGraph?.resetZoom();
 	});
 </script>
 
@@ -75,7 +75,7 @@
 	role="img"
 	aria-label="Discogs relationship graph"
 >
-	{#if graphStore.nodeList.length === 0}
+	{#if graph.nodeList.length === 0}
 		<div
 			class="text-muted pointer-events-none absolute inset-0 grid place-items-center text-[0.95rem]"
 		>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graph } from '$lib/graph/store/graph.svelte';
 
 	import { LOAD_ACTIONS } from '../actions/constants';
 
@@ -16,7 +16,7 @@
 
 	let { nodeId, x, y, onClose }: Props = $props();
 
-	const node = $derived(nodeId ? (graphStore.nodes.get(nodeId) ?? null) : null);
+	const node = $derived(nodeId ? (graph.nodes.get(nodeId) ?? null) : null);
 	const actions = $derived(node ? LOAD_ACTIONS[node.type] : []);
 	const hasActions = $derived(actions.length > 0);
 
