@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 
-	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graph } from '$lib/graph/store/graph.svelte';
 
 	import { NODE_PANEL_ACCORDION_KEY } from '../accordion';
 	import type { NodePanelAccordion } from '../accordion';
 
 	import NodePanelDetails from './NodePanelDetails.svelte';
 
-	const node = $derived(graphStore.selectedNode);
+	const node = $derived(graph.selectedNode);
 
 	let openSectionId = $state<string | null>('explore');
 	let selectedNodeId = $state<string | null>(null);
@@ -28,22 +28,22 @@
 	setContext(NODE_PANEL_ACCORDION_KEY, accordion);
 
 	$effect(() => {
-		const selected = graphStore.selectedNode;
+		const selected = graph.selectedNode;
 
 		if (selected?.type === 'artist') {
-			graphStore.ensureArtistDetails(selected.id);
+			graph.ensureArtistDetails(selected.id);
 		}
 
 		if (selected?.type === 'label') {
-			graphStore.ensureLabelDetails(selected.id);
+			graph.ensureLabelDetails(selected.id);
 		}
 
 		if (selected?.type === 'master') {
-			graphStore.ensureMasterDetails(selected.id);
+			graph.ensureMasterDetails(selected.id);
 		}
 
 		if (selected?.type === 'release') {
-			graphStore.ensureReleaseDetails(selected.id);
+			graph.ensureReleaseDetails(selected.id);
 		}
 	});
 

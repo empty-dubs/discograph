@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graph } from '$lib/graph/store/graph.svelte';
 
 	import type { GraphNode } from '$lib/graph/types';
 
@@ -19,7 +19,7 @@
 
 	let { node }: Props = $props();
 
-	const isDetailsLoading = $derived(graphStore.isDetailsLoading(node.id));
+	const isDetailsLoading = $derived(graph.isDetailsLoading(node.id));
 
 	const isArtistOrLabel = $derived(node.type === 'artist' || node.type === 'label');
 	const isMasterOrRelease = $derived(node.type === 'master' || node.type === 'release');

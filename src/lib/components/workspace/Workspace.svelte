@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graph } from '$lib/graph/store/graph.svelte';
 
 	import GraphCanvas from './display/GraphCanvas.svelte';
 	import GraphLegend from './display/GraphLegend.svelte';
@@ -20,7 +20,7 @@
 				<button
 					type="button"
 					class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
-					onclick={() => graphStore.clearGraph()}
+					onclick={() => graph.clearGraph()}
 				>
 					Clear graph
 				</button>

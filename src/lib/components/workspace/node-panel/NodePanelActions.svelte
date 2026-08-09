@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
-	import { graphStore } from '$lib/graph/store/graph-store.svelte';
-	import { graphCtx } from '$lib/graph/store/context';
+	import { graph } from '$lib/graph/store/graph.svelte';
 	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 	import { loadMoreMasterReleases, loadMoreReleases } from '$lib/graph/actions/releases';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
@@ -23,7 +22,7 @@
 	const loadActions = $derived(LOAD_ACTIONS[node.type]);
 	const artistDisplayName = $derived(
 		node.type === 'release' || node.type === 'master'
-			? resolveArtistDisplayName(node, graphStore.linkList, (id) => graphStore.nodes.get(id))
+			? resolveArtistDisplayName(node, graph.linkList, (id) => graph.nodes.get(id))
 			: null
 	);
 	const youtubeUrl = $derived(getYouTubeSearchUrl(node, artistDisplayName));
@@ -37,12 +36,12 @@
 		<NodeLoadActions nodeId={node.id} />
 	{/if}
 
-	{#if graphStore.hasChildren(node.id)}
+	{#if graph.hasChildren(node.id)}
 		<button
 			type="button"
 			class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-			disabled={graphStore.isLoading(node.id)}
-			onclick={() => graphStore.collapseNode(node.id)}
+			disabled={graph.isLoading(node.id)}
+			onclick={() => graph.collapseNode(node.id)}
 		>
 			Collapse children
 		</button>
@@ -51,29 +50,29 @@
 	<button
 		type="button"
 		class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-		disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
-		onclick={() => graphStore.seedFromNode(node)}
+		disabled={graph.isLoading(node.id) || discogsApiStore.isRateLimited}
+		onclick={() => graph.seedFromNode(node)}
 	>
 		Reset graph to this node
 	</button>
 
-	{#if graphStore.hasMoreReleases(node.id)}
+	{#if graph.hasMoreReleases(node.id)}
 		<button
 			type="button"
 			class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-			disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
-			onclick={() => loadMoreReleases(graphCtx, node.id)}
+			disabled={graph.isLoading(node.id) || discogsApiStore.isRateLimited}
+			onclick={() => loadMoreReleases(graph, node.id)}
 		>
 			Load more releases
 		</button>
 	{/if}
 
-	{#if graphStore.hasMoreMasterReleases(node.id)}
+	{#if graph.hasMoreMasterReleases(node.id)}
 		<button
 			type="button"
 			class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-			disabled={graphStore.isLoading(node.id) || discogsApiStore.isRateLimited}
-			onclick={() => loadMoreMasterReleases(graphCtx, node.id)}
+			disabled={graph.isLoading(node.id) || discogsApiStore.isRateLimited}
+			onclick={() => loadMoreMasterReleases(graph, node.id)}
 		>
 			Load more master releases
 		</button>

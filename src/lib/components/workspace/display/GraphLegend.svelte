@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ALL_NODE_TYPES, NODE_COLORS } from '$lib/graph/constants';
-	import { graphStore } from '$lib/graph/store/graph-store.svelte';
+	import { graph } from '$lib/graph/store/graph.svelte';
 	import type { NodeType } from '$lib/graph/types';
 
 	const labels: Record<NodeType, string> = {
@@ -17,13 +17,13 @@
 	aria-label="Node type visibility"
 >
 	{#each ALL_NODE_TYPES as type (type)}
-		{@const visible = graphStore.isTypeVisible(type)}
-		{@const count = graphStore.typeCounts[type]}
+		{@const visible = graph.isTypeVisible(type)}
+		{@const count = graph.typeCounts[type]}
 		<button
 			type="button"
 			class="font-inherit hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit"
 			aria-pressed={visible}
-			onclick={() => graphStore.toggleType(type)}
+			onclick={() => graph.toggleType(type)}
 		>
 			<span
 				class="h-2.5 w-2.5 shrink-0 rounded-full"
