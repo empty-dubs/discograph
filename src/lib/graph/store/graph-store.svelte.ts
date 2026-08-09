@@ -1,160 +1,162 @@
-import { discogsApiStore } from '$lib/discogs/api-store.svelte';
-
-import { graphCtx } from './context';
 import { graphDataStore } from './data-store.svelte';
 import { detailsStore } from './details-store.svelte';
 import { expansionStore } from './expansion-store.svelte';
 import { expansionProgressStore } from './expansion-progress-store.svelte';
 import { graphUiStore } from './ui-store.svelte';
 
-import { seedFromNode, seedFromResult } from '../actions/seed';
+import { resetGraph, seedFromNode, seedFromResult } from '../actions/seed';
 
 import type { SearchResult } from '$lib/discogs/types';
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
 import type { GraphFacade } from './types';
 
 class GraphStore implements GraphFacade {
+	readonly data = graphDataStore;
+	readonly ui = graphUiStore;
+	readonly expansion = expansionStore;
+	readonly progress = expansionProgressStore;
+	readonly details = detailsStore;
+
 	get nodes() {
-		return graphDataStore.nodes;
+		return this.data.nodes;
 	}
 
 	get links() {
-		return graphDataStore.links;
+		return this.data.links;
 	}
 
 	get nodeList() {
-		return graphDataStore.nodeList;
+		return this.data.nodeList;
 	}
 
 	get linkList() {
-		return graphDataStore.linkList;
+		return this.data.linkList;
 	}
 
 	get visibleNodeList() {
-		return graphUiStore.visibleNodeList;
+		return this.ui.visibleNodeList;
 	}
 
 	get visibleLinkList() {
-		return graphUiStore.visibleLinkList;
+		return this.ui.visibleLinkList;
 	}
 
 	get typeCounts() {
-		return graphUiStore.typeCounts;
+		return this.ui.typeCounts;
 	}
 
 	get selectedNode() {
-		return graphUiStore.selectedNode;
+		return this.ui.selectedNode;
 	}
 
 	get selectedId() {
-		return graphUiStore.selectedId;
+		return this.ui.selectedId;
 	}
 
 	get seedId() {
-		return graphUiStore.seedId;
+		return this.ui.seedId;
 	}
 
 	get visibleTypes() {
-		return graphUiStore.visibleTypes;
+		return this.ui.visibleTypes;
 	}
 
 	get viewResetToken() {
-		return graphUiStore.viewResetToken;
+		return this.ui.viewResetToken;
 	}
 
 	get releasePages() {
-		return expansionProgressStore.releasePages;
+		return this.progress.releasePages;
 	}
 
 	get masterReleasePages() {
-		return expansionProgressStore.masterReleasePages;
+		return this.progress.masterReleasePages;
 	}
 
 	parseNodeId(id: string) {
-		return graphDataStore.parseNodeId(id);
+		return this.data.parseNodeId(id);
 	}
 
 	applyPatch(patch: GraphPatch) {
-		graphDataStore.applyPatch(patch);
+		this.data.applyPatch(patch);
 	}
 
 	clearGraph() {
-		graphDataStore.clear();
-		expansionStore.clear();
-		expansionProgressStore.clear();
-		detailsStore.clear();
-		graphUiStore.clear();
-		discogsApiStore.clearError();
-		discogsApiStore.clearSearchResults();
+		resetGraph(this);
 	}
 
 	selectNode(id: string | null) {
-		graphUiStore.selectNode(id);
+		this.ui.selectNode(id);
 	}
 
 	isTypeVisible(type: NodeType) {
-		return graphUiStore.isTypeVisible(type);
+		return this.ui.isTypeVisible(type);
 	}
 
 	toggleType(type: NodeType) {
-		graphUiStore.toggleType(type);
+		this.ui.toggleType(type);
 	}
 
 	collapseNode(nodeId: string) {
-		expansionStore.collapseNode(nodeId, {
+		this.expansion.collapseNode(nodeId, {
 			onNodesRemoved: (nodeIds) => {
-				expansionProgressStore.clearNodes(nodeIds);
+				this.progress.clearNodes(nodeIds);
 			}
 		});
 	}
 
 	hasChildren(nodeId: string) {
-		return expansionStore.hasChildren(nodeId);
+		return this.expansion.hasChildren(nodeId);
 	}
 
 	isLoading(nodeId: string) {
-		return expansionProgressStore.isLoading(nodeId);
+		return this.progress.isLoading(nodeId);
 	}
 
 	hasMoreReleases(nodeId: string) {
-		return expansionProgressStore.hasMoreReleases(nodeId);
+		return this.progress.hasMoreReleases(nodeId);
 	}
 
 	hasMoreMasterReleases(nodeId: string) {
-		return expansionProgressStore.hasMoreMasterReleases(nodeId);
+		return this.progress.hasMoreMasterReleases(nodeId);
 	}
 
 	isDetailsLoading(nodeId: string) {
-		return detailsStore.isDetailsLoading(nodeId);
+		return this.details.isDetailsLoading(nodeId);
 	}
 
 	seedFromResult(result: SearchResult) {
-		seedFromResult(graphCtx, result);
+		seedFromResult(this, result);
 	}
 
 	async seedFromNode(node: GraphNode) {
-		await seedFromNode(graphCtx, node);
+		await seedFromNode(this, node);
 	}
 
 	async ensureArtistDetails(nodeId: string) {
-		await detailsStore.ensureArtistDetails(nodeId);
+		await this.details.ensureArtistDetails(nodeId);
 	}
 
 	async ensureLabelDetails(nodeId: string) {
-		await detailsStore.ensureLabelDetails(nodeId);
+		await this.details.ensureLabelDetails(nodeId);
 	}
 
 	async ensureMasterDetails(nodeId: string) {
-		await detailsStore.ensureMasterDetails(nodeId);
+		await this.details.ensureMasterDetails(nodeId);
 	}
 
 	async ensureReleaseDetails(nodeId: string) {
-		await detailsStore.ensureReleaseDetails(nodeId);
+		await this.details.ensureReleaseDetails(nodeId);
 	}
 
 	async mergeMasterDetails(nodeId: string, master: import('$lib/discogs/types').Master) {
-		await detailsStore.mergeMasterDetails(nodeId, master);
+		await this.details.mergeMasterDetails(nodeId, master);
 	}
 }
 
 export const graphStore = new GraphStore();
+
+export type GraphContext = Pick<
+	GraphStore,
+	'data' | 'ui' | 'expansion' | 'progress' | 'details'
+>;

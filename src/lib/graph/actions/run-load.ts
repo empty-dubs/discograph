@@ -1,6 +1,6 @@
 import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
-import type { GraphContext } from '../store/context';
+import type { GraphContext } from '../store/graph-store.svelte';
 
 export async function runLoad(
 	ctx: GraphContext,

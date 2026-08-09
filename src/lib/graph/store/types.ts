@@ -1,14 +1,11 @@
 import type { Master } from '$lib/discogs/types';
 
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
-import type { GraphContext } from './context';
 
 export interface ParsedNodeId {
 	type: NodeType;
 	discogsId: number | null;
 }
-
-export type GraphStoreContext = GraphContext;
 
 export interface DetailsTrackerContext {
 	readonly nodes: Map<string, GraphNode>;

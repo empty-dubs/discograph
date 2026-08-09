@@ -5,9 +5,9 @@ import { buildFromSearchResult } from '../builder/patches';
 import type { GraphNode } from '../types';
 import type { SearchResult } from '$lib/discogs/types';
 
-import type { GraphContext } from '../store/context';
+import type { GraphContext } from '../store/graph-store.svelte';
 
-export function seedFromResult(ctx: GraphContext, result: SearchResult) {
+export function resetGraph(ctx: GraphContext) {
 	ctx.data.clear();
 	ctx.expansion.clear();
 	ctx.progress.clear();
@@ -15,6 +15,10 @@ export function seedFromResult(ctx: GraphContext, result: SearchResult) {
 	ctx.ui.clear();
 	discogsApiStore.clearError();
 	discogsApiStore.clearSearchResults();
+}
+
+export function seedFromResult(ctx: GraphContext, result: SearchResult) {
+	resetGraph(ctx);
 
 	const patch = buildFromSearchResult(result);
 

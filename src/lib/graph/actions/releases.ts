@@ -16,7 +16,7 @@ import {
 
 import { runLoad } from './run-load';
 
-import type { GraphContext } from '../store/context';
+import type { GraphContext } from '../store/graph-store.svelte';
 
 export async function loadReleases(ctx: GraphContext, nodeId: string) {
 	const { type, discogsId } = ctx.data.parseNodeId(nodeId);
