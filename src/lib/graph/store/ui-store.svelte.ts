@@ -10,6 +10,7 @@ class GraphUiStore {
 	seedId = $state<string | null>(null);
 	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
 	viewResetToken = $state(0);
+	showNodeLabels = $state(true);
 
 	get pinnedIds(): Set<string> {
 		const pinned = new Set<string>();
@@ -60,6 +61,10 @@ class GraphUiStore {
 		this.visibleTypes = visibleTypes;
 	}
 
+	toggleNodeLabels() {
+		this.showNodeLabels = !this.showNodeLabels;
+	}
+
 	selectNode(id: string | null) {
 		this.selectedId = id;
 	}
@@ -68,6 +73,7 @@ class GraphUiStore {
 		this.seedId = null;
 		this.selectedId = null;
 		this.visibleTypes = new Set(ALL_NODE_TYPES);
+		this.showNodeLabels = true;
 		this.viewResetToken++;
 	}
 }

@@ -52,6 +52,10 @@ interface ForceGraphHighlight {
 	selectedId: string | null;
 }
 
+interface ForceGraphUpdateOptions extends ForceGraphHighlight {
+	showNodeLabels: boolean;
+}
+
 function formatEdgeTooltip(link: SimulationLink): string {
 	const type = link.type.replace(/_/g, ' ');
 
@@ -168,7 +172,7 @@ export class ForceGraph {
 			});
 	}
 
-	update(nodes: GraphNode[], links: GraphLink[], highlight: ForceGraphHighlight) {
+	update(nodes: GraphNode[], links: GraphLink[], options: ForceGraphUpdateOptions) {
 		if (!this.simulation || !this.gLinks || !this.gNodes || !this.gLabels) return;
 
 		const nodeMap = new Map(this.simulationNodes.map(n => [n.id, n]));
@@ -254,7 +258,7 @@ export class ForceGraph {
 			.attr('r', d => NODE_RADIUS[d.type])
 			.attr('fill', d => NODE_COLORS[d.type]);
 
-		this.applyHighlight(highlight);
+		this.applyHighlight(options);
 
 		nodeGroups
 			.on('click', (_, d) => onNodeClick(d.id))
@@ -297,6 +301,12 @@ export class ForceGraph {
 			.attr('fill', '#ddd')
 			.attr('text-anchor', 'middle')
 			.attr('pointer-events', 'none');
+
+		if (options.showNodeLabels) {
+			this.gLabels.style('display', null);
+		} else {
+			this.gLabels.style('display', 'none');
+		}
 
 		this.simulation.nodes(this.simulationNodes);
 

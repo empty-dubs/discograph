@@ -66,6 +66,10 @@ class Graph implements GraphFacade {
 		return this.ui.viewResetToken;
 	}
 
+	get showNodeLabels() {
+		return this.ui.showNodeLabels;
+	}
+
 	get releasePages() {
 		return this.progress.releasePages;
 	}
@@ -100,6 +104,10 @@ class Graph implements GraphFacade {
 
 	toggleType(type: NodeType) {
 		this.ui.toggleType(type);
+	}
+
+	toggleNodeLabels() {
+		this.ui.toggleNodeLabels();
 	}
 
 	collapseNode(nodeId: string) {

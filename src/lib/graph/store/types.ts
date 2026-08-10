@@ -52,6 +52,7 @@ export interface GraphFacade {
 	readonly seedId: string | null;
 	readonly visibleTypes: Set<NodeType>;
 	readonly viewResetToken: number;
+	readonly showNodeLabels: boolean;
 	readonly releasePages: Map<string, { page: number; pages: number }>;
 	readonly masterReleasePages: Map<string, { page: number; pages: number }>;
 	readonly loadedActions: Map<string, Set<LoadAction>>;
@@ -62,6 +63,7 @@ export interface GraphFacade {
 	selectNode(id: string | null): void;
 	isTypeVisible(type: NodeType): boolean;
 	toggleType(type: NodeType): void;
+	toggleNodeLabels(): void;
 	collapseNode(nodeId: string): void;
 	hasChildren(nodeId: string): boolean;
 	isLoading(nodeId: string): boolean;

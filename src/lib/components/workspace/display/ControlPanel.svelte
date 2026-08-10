@@ -63,6 +63,17 @@
 				{/if}
 			</button>
 		{/each}
+
+		{#if !graphEmpty}
+			<button
+				type="button"
+				class="font-inherit hover:bg-panel flex cursor-pointer items-center rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+				aria-pressed={graph.showNodeLabels}
+				onclick={() => graph.toggleNodeLabels()}
+			>
+				{graph.showNodeLabels ? 'Hide labels' : 'Show labels'}
+			</button>
+		{/if}
 	</div>
 
 	{#if selectedNode}
