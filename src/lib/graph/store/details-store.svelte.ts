@@ -62,6 +62,10 @@ class DetailsStore {
 		return this.detailsByNodeId.get(nodeId) === 'loading';
 	}
 
+	isDetailsFetched(nodeId: string): boolean {
+		return this.detailsByNodeId.get(nodeId) === 'fetched';
+	}
+
 	markArtistDetailsFetched(nodeId: string) {
 		this.artistTracker.markFetched(this.ctx(), nodeId);
 	}

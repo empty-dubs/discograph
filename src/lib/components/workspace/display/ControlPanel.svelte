@@ -3,7 +3,6 @@
 	import { ALL_NODE_TYPES, NODE_COLORS } from '$lib/graph/constants';
 	import { graph } from '$lib/graph/store/graph.svelte';
 	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
-	import { loadMoreMasterReleases, loadMoreReleases } from '$lib/graph/actions/releases';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 
 	import type { NodeType } from '$lib/graph/types';
@@ -45,8 +44,9 @@
 			{@const count = graph.typeCounts[type]}
 			<button
 				type="button"
-				class="font-inherit hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit"
+				class="font-inherit hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
 				aria-pressed={visible}
+				disabled={graph.isEmpty}
 				onclick={() => graph.toggleType(type)}
 			>
 				<span
@@ -62,6 +62,17 @@
 				{/if}
 			</button>
 		{/each}
+
+		{#if !graph.isEmpty}
+			<button
+				type="button"
+				class="font-inherit hover:bg-panel flex cursor-pointer items-center rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+				aria-pressed={graph.showNodeLabels}
+				onclick={() => graph.toggleNodeLabels()}
+			>
+				{graph.showNodeLabels ? 'Hide labels' : 'Show labels'}
+			</button>
+		{/if}
 	</div>
 
 	{#if selectedNode}
@@ -87,28 +98,6 @@
 			>
 				Reset graph to this node
 			</button>
-
-			{#if graph.hasMoreReleases(selectedNode.id)}
-				<button
-					type="button"
-					class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-					disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
-					onclick={() => loadMoreReleases(graph, selectedNode.id)}
-				>
-					Load more releases
-				</button>
-			{/if}
-
-			{#if graph.hasMoreMasterReleases(selectedNode.id)}
-				<button
-					type="button"
-					class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-					disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
-					onclick={() => loadMoreMasterReleases(graph, selectedNode.id)}
-				>
-					Load more master releases
-				</button>
-			{/if}
 
 			{#if websiteUrl}
 				<a
@@ -145,7 +134,7 @@
 		</div>
 	{/if}
 
-	{#if graph.nodeList.length > 0}
+	{#if !graph.isEmpty}
 		<div>
 			<button
 				type="button"

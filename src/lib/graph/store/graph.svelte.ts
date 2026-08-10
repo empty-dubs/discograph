@@ -6,7 +6,8 @@ import { graphUiStore } from './ui-store.svelte';
 
 import { resetGraph, seedFromNode, seedFromResult } from '../actions/seed';
 
-import type { SearchResult } from '$lib/discogs/types';
+import type { LoadAction } from '$lib/components/workspace/actions/constants';
+import type { SearchResult, Master } from '$lib/discogs/types';
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
 import type { GraphFacade } from './types';
 
@@ -31,6 +32,10 @@ class Graph implements GraphFacade {
 
 	get linkList() {
 		return this.data.linkList;
+	}
+
+	get isEmpty() {
+		return this.data.isEmpty;
 	}
 
 	get visibleNodeList() {
@@ -65,12 +70,20 @@ class Graph implements GraphFacade {
 		return this.ui.viewResetToken;
 	}
 
+	get showNodeLabels() {
+		return this.ui.showNodeLabels;
+	}
+
 	get releasePages() {
 		return this.progress.releasePages;
 	}
 
 	get masterReleasePages() {
 		return this.progress.masterReleasePages;
+	}
+
+	get loadedActions() {
+		return this.progress.loadedActions;
 	}
 
 	parseNodeId(id: string) {
@@ -97,10 +110,15 @@ class Graph implements GraphFacade {
 		this.ui.toggleType(type);
 	}
 
+	toggleNodeLabels() {
+		this.ui.toggleNodeLabels();
+	}
+
 	collapseNode(nodeId: string) {
 		this.expansion.collapseNode(nodeId, {
 			onNodesRemoved: (nodeIds) => {
 				this.progress.clearNodes(nodeIds);
+				this.progress.clearNodeLoadState(nodeId);
 			}
 		});
 	}
@@ -121,8 +139,16 @@ class Graph implements GraphFacade {
 		return this.progress.hasMoreMasterReleases(nodeId);
 	}
 
+	hasLoadedAction(nodeId: string, action: LoadAction) {
+		return this.progress.hasLoadedAction(nodeId, action);
+	}
+
 	isDetailsLoading(nodeId: string) {
 		return this.details.isDetailsLoading(nodeId);
+	}
+
+	isDetailsFetched(nodeId: string) {
+		return this.details.isDetailsFetched(nodeId);
 	}
 
 	seedFromResult(result: SearchResult) {
@@ -149,7 +175,7 @@ class Graph implements GraphFacade {
 		await this.details.ensureReleaseDetails(nodeId);
 	}
 
-	async mergeMasterDetails(nodeId: string, master: import('$lib/discogs/types').Master) {
+	async mergeMasterDetails(nodeId: string, master: Master) {
 		await this.details.mergeMasterDetails(nodeId, master);
 	}
 }

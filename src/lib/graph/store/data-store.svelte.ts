@@ -1,4 +1,5 @@
-import { mergePatch, parseNodeId } from './graph-core';
+import { parseNodeId } from '../operations/transformations';
+import { mergePatch } from '../operations/compositions';
 
 import type { GraphLink, GraphNode, GraphPatch } from '../types';
 
@@ -12,6 +13,10 @@ class GraphDataStore {
 
 	get linkList(): GraphLink[] {
 		return Array.from(this.links.values());
+	}
+
+	get isEmpty(): boolean {
+		return this.nodes.size === 0 && this.links.size === 0;
 	}
 
 	parseNodeId(id: string) {

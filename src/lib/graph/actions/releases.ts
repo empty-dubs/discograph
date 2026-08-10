@@ -115,6 +115,7 @@ export async function loadMainRelease(ctx: GraphContext, nodeId: string) {
 
 		const release = await getRelease(mainReleaseId);
 		ctx.expansion.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
+		ctx.progress.markActionLoaded(nodeId, 'main_release');
 	}, 'Failed to load main release');
 }
 

@@ -25,6 +25,8 @@ export async function loadRelatedLabels(ctx: GraphContext, nodeId: string) {
 				break;
 			}
 		}
+
+		ctx.progress.markActionLoaded(nodeId, 'labels');
 	}, 'Failed to load related labels');
 }
 
@@ -41,5 +43,7 @@ export async function loadRelatedCompanies(ctx: GraphContext, nodeId: string) {
 				break;
 			}
 		}
+
+		ctx.progress.markActionLoaded(nodeId, 'companies');
 	}, 'Failed to load related companies');
 }
