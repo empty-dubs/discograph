@@ -72,6 +72,14 @@
 			>
 				{graph.showNodeLabels ? 'Hide labels' : 'Show labels'}
 			</button>
+
+			<button
+				type="button"
+				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
+				onclick={() => graph.clearGraph()}
+			>
+				Clear graph
+			</button>
 		{/if}
 	</div>
 
@@ -131,18 +139,6 @@
 					View Payload
 				</a>
 			{/if}
-		</div>
-	{/if}
-
-	{#if !graph.isEmpty}
-		<div>
-			<button
-				type="button"
-				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
-				onclick={() => graph.clearGraph()}
-			>
-				Clear graph
-			</button>
 		</div>
 	{/if}
 </div>
