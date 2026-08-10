@@ -18,7 +18,7 @@
 			return openSectionId;
 		},
 		toggle(id: string) {
-			openSectionId = openSectionId === id ? null : id;
+			openSectionId = openSectionId === id ? 'explore' : id;
 		},
 		isOpen(id: string) {
 			return openSectionId === id;
@@ -50,7 +50,7 @@
 	$effect(() => {
 		if (node?.id !== selectedNodeId) {
 			selectedNodeId = node?.id ?? null;
-			openSectionId = null;
+			openSectionId = node?.id ? 'explore' : null;
 		}
 	});
 </script>
