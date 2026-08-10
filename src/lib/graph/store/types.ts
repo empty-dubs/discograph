@@ -59,7 +59,7 @@ export interface GraphFacade {
 
 	parseNodeId(id: string): ParsedNodeId;
 	applyPatch(patch: GraphPatch): void;
-	clearGraph(): void;
+	clear(): void;
 	selectNode(id: string | null): void;
 	isTypeVisible(type: NodeType): boolean;
 	toggleType(type: NodeType): void;
@@ -75,8 +75,6 @@ export interface GraphFacade {
 	): boolean;
 	isDetailsLoading(nodeId: string): boolean;
 	isDetailsFetched(nodeId: string): boolean;
-	seedFromResult(result: SearchResult): void;
-	seedFromNode(node: GraphNode): Promise<void>;
 	ensureArtistDetails(nodeId: string): Promise<void>;
 	ensureLabelDetails(nodeId: string): Promise<void>;
 	ensureMasterDetails(nodeId: string): Promise<void>;

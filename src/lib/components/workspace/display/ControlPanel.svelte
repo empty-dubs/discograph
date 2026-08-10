@@ -3,6 +3,8 @@
 	import { graph } from '$lib/graph/store/graph.svelte';
 	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
+	import { seedFromNode } from '$lib/graph/loaders/seed';
+
 	import type { NodeType } from '$lib/graph/types';
 
 	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
@@ -63,7 +65,10 @@
 			<button
 				type="button"
 				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
-				onclick={() => graph.clearGraph()}
+				onclick={() => {
+					graph.clear();
+					discogsApiStore.clear();
+				}}
 			>
 				Clear graph
 			</button>
@@ -89,7 +94,14 @@
 				type="button"
 				class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
 				disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
-				onclick={() => graph.seedFromNode(selectedNode)}
+				onclick={() => {
+					const newSeedNode = selectedNode;
+
+					graph.clear();
+					discogsApiStore.clear();
+
+					seedFromNode(graph, newSeedNode);
+				}}
 			>
 				Reset graph to this node
 			</button>

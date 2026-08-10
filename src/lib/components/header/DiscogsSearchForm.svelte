@@ -3,6 +3,8 @@
 	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 	import { graph } from '$lib/graph/store/graph.svelte';
 
+	import { seedFromResult } from '$lib/graph/loaders/seed';
+
 	const typeOptions: { value: SearchType | ''; label: string }[] = [
 		{ value: '', label: 'All types' },
 		{ value: 'artist', label: 'Artist' },
@@ -41,7 +43,11 @@
 	}
 
 	async function pickResult(result: (typeof discogsApiStore.searchResults)[number]) {
-		await graph.seedFromResult(result);
+		graph.clear();
+		discogsApiStore.clear();
+
+		await seedFromResult(graph, result);
+
 		emptyMessage = null;
 	}
 
