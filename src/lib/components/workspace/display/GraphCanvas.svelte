@@ -69,15 +69,17 @@
 	});
 </script>
 
-<div
-	class="bg-canvas relative h-full w-full overflow-hidden rounded-lg"
-	bind:this={container}
-	role="img"
-	aria-label="Discogs relationship graph"
->
+<div class="bg-canvas relative h-full w-full overflow-hidden rounded-lg">
+	<div
+		class="h-full w-full"
+		bind:this={container}
+		role="img"
+		aria-label="Discogs relationship graph"
+	></div>
+
 	{#if graph.nodeList.length === 0}
 		<div
-			class="text-muted pointer-events-none absolute inset-0 grid place-items-center text-[0.95rem]"
+			class="text-muted pointer-events-none absolute inset-0 z-10 grid place-items-center text-[0.95rem]"
 		>
 			Search for an artist, label, or release to begin.
 		</div>

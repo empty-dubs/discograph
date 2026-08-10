@@ -10,7 +10,7 @@
 
 	const node = $derived(graph.selectedNode);
 
-	let openSectionId = $state<string | null>('explore');
+	let openSectionId = $state<string | null>(null);
 	let selectedNodeId = $state<string | null>(null);
 
 	const accordion: NodePanelAccordion = {
@@ -50,7 +50,7 @@
 	$effect(() => {
 		if (node?.id !== selectedNodeId) {
 			selectedNodeId = node?.id ?? null;
-			openSectionId = node?.id ? 'explore' : null;
+			openSectionId = null;
 		}
 	});
 </script>

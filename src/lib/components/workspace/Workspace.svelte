@@ -1,8 +1,6 @@
 <script lang="ts">
-	import { graph } from '$lib/graph/store/graph.svelte';
-
+	import ControlPanel from './display/ControlPanel.svelte';
 	import GraphCanvas from './display/GraphCanvas.svelte';
-	import GraphLegend from './display/GraphLegend.svelte';
 	import NodePanel from './node-panel/NodePanel.svelte';
 </script>
 
@@ -13,18 +11,8 @@
 		<div class="min-h-0 flex-1 overflow-hidden">
 			<GraphCanvas />
 		</div>
-		<div class="flex shrink-0 flex-wrap items-center justify-between gap-4">
-			<GraphLegend />
-
-			<div class="flex flex-wrap items-center gap-3">
-				<button
-					type="button"
-					class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
-					onclick={() => graph.clearGraph()}
-				>
-					Clear graph
-				</button>
-			</div>
+		<div class="shrink-0">
+			<ControlPanel />
 		</div>
 	</div>
 	<div class="min-h-50 overflow-hidden md:h-full md:min-h-0">
