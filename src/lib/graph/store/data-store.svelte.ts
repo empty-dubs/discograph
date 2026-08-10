@@ -14,6 +14,10 @@ class GraphDataStore {
 		return Array.from(this.links.values());
 	}
 
+	get isEmpty(): boolean {
+		return this.nodes.size === 0 && this.links.size === 0;
+	}
+
 	parseNodeId(id: string) {
 		return parseNodeId(id);
 	}

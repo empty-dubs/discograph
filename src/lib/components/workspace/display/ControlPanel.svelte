@@ -17,7 +17,6 @@
 	};
 
 	const selectedNode = $derived(graph.selectedNode);
-	const graphEmpty = $derived(graph.nodeList.length === 0);
 
 	const websiteUrl = $derived(selectedNode ? getDiscogsWebsiteUrl(selectedNode) : null);
 	const apiUrl = $derived(selectedNode ? getDiscogsProxyUrl(selectedNode) : null);
@@ -47,7 +46,7 @@
 				type="button"
 				class="font-inherit hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
 				aria-pressed={visible}
-				disabled={graphEmpty}
+				disabled={graph.isEmpty}
 				onclick={() => graph.toggleType(type)}
 			>
 				<span
@@ -64,7 +63,7 @@
 			</button>
 		{/each}
 
-		{#if !graphEmpty}
+		{#if !graph.isEmpty}
 			<button
 				type="button"
 				class="font-inherit hover:bg-panel flex cursor-pointer items-center rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
@@ -135,7 +134,7 @@
 		</div>
 	{/if}
 
-	{#if !graphEmpty}
+	{#if !graph.isEmpty}
 		<div>
 			<button
 				type="button"

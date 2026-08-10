@@ -79,7 +79,7 @@
 		aria-label="Discogs relationship graph"
 	></div>
 
-	{#if graph.nodeList.length === 0}
+	{#if graph.isEmpty}
 		<div
 			class="text-muted pointer-events-none absolute inset-0 z-10 grid place-items-center text-[0.95rem]"
 		>

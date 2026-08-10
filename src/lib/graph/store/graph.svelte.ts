@@ -34,6 +34,10 @@ class Graph implements GraphFacade {
 		return this.data.linkList;
 	}
 
+	get isEmpty() {
+		return this.data.isEmpty;
+	}
+
 	get visibleNodeList() {
 		return this.ui.visibleNodeList;
 	}
