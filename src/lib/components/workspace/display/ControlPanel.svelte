@@ -94,14 +94,7 @@
 				type="button"
 				class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
 				disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
-				onclick={() => {
-					const newSeedNode = selectedNode;
-
-					graph.clear();
-					discogsApiStore.clear();
-
-					seedFromNode(graph, newSeedNode);
-				}}
+				onclick={() => { seedFromNode(graph, selectedNode) }}
 			>
 				Reset graph to this node
 			</button>

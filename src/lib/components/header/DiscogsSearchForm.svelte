@@ -43,9 +43,6 @@
 	}
 
 	async function pickResult(result: (typeof discogsApiStore.searchResults)[number]) {
-		graph.clear();
-		discogsApiStore.clear();
-
 		await seedFromResult(graph, result);
 
 		emptyMessage = null;

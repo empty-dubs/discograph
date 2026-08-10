@@ -1,11 +1,15 @@
+import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+import { graph } from '$lib/graph/store/graph.svelte';
 import { buildFromSearchResult } from '../operations/patches/search';
 
-import type { GraphNode } from '../types';
 import type { SearchResult } from '$lib/discogs/types';
-
 import type { GraphContext } from '../store/graph.svelte';
+import type { GraphNode } from '../types';
 
 export function seedFromResult(ctx: GraphContext, result: SearchResult) {
+	graph.clear();
+	discogsApiStore.clear();
+
 	const patch = buildFromSearchResult(result);
 
 	ctx.data.applyPatch(patch);
