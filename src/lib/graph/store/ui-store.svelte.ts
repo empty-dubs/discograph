@@ -1,6 +1,6 @@
 import { ALL_NODE_TYPES } from '../constants';
 
-import { filterVisibleLinks, filterVisibleNodes } from './graph-core';
+import { filterVisibleLinks, filterVisibleNodes } from '../operations/filters';
 import { graphDataStore } from './data-store.svelte';
 
 import type { GraphNode, NodeType } from '../types';

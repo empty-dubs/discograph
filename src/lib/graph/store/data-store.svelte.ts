@@ -1,4 +1,5 @@
-import { mergePatch, parseNodeId } from './graph-core';
+import { parseNodeId } from '../operations/transformations';
+import { mergePatch } from '../operations/compositions';
 
 import type { GraphLink, GraphNode, GraphPatch } from '../types';
 

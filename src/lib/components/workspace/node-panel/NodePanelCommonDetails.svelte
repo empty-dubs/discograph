@@ -17,8 +17,6 @@
 	const showReleaseYear = $derived(isMasterOrRelease && Boolean(node.meta?.released) && (String(node.meta?.released) !== String(node.meta?.year)));
 	const showCountry = $derived(isMasterOrRelease && Boolean(node.meta?.country));
 	const showFormat = $derived(isMasterOrRelease && Boolean(node.meta?.format));
-
-	$inspect(node.meta)
 </script>
 
 <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
