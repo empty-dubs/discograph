@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
 	import { ALL_NODE_TYPES, NODE_COLORS } from '$lib/graph/constants';
 	import { graph } from '$lib/graph/store/graph.svelte';
 	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
-	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 
 	import type { NodeType } from '$lib/graph/types';
 
@@ -17,17 +15,6 @@
 	};
 
 	const selectedNode = $derived(graph.selectedNode);
-
-	const websiteUrl = $derived(selectedNode ? getDiscogsWebsiteUrl(selectedNode) : null);
-	const apiUrl = $derived(selectedNode ? getDiscogsProxyUrl(selectedNode) : null);
-	const artistDisplayName = $derived(
-		selectedNode?.type === 'release' || selectedNode?.type === 'master'
-			? resolveArtistDisplayName(selectedNode, graph.linkList, (id) => graph.nodes.get(id))
-			: null
-	);
-	const youtubeUrl = $derived(
-		selectedNode ? getYouTubeSearchUrl(selectedNode, artistDisplayName) : null
-	);
 
 	const buttonClass =
 		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
@@ -72,6 +59,14 @@
 			>
 				{graph.showNodeLabels ? 'Hide labels' : 'Show labels'}
 			</button>
+
+			<button
+				type="button"
+				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
+				onclick={() => graph.clearGraph()}
+			>
+				Clear graph
+			</button>
 		{/if}
 	</div>
 
@@ -97,51 +92,6 @@
 				onclick={() => graph.seedFromNode(selectedNode)}
 			>
 				Reset graph to this node
-			</button>
-
-			{#if websiteUrl}
-				<a
-					href={websiteUrl}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="{buttonClass} border-border bg-panel-hover border text-gray-300"
-				>
-					View on Discogs
-				</a>
-			{/if}
-
-			{#if youtubeUrl}
-				<a
-					href={youtubeUrl}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="{buttonClass} border-border bg-panel-hover border text-gray-300"
-				>
-					Search on YouTube
-				</a>
-			{/if}
-
-			{#if apiUrl}
-				<a
-					href={apiUrl}
-					target="_blank"
-					rel="noopener noreferrer"
-					class="{buttonClass} border-border bg-panel-hover border text-sm text-gray-300"
-				>
-					View Payload
-				</a>
-			{/if}
-		</div>
-	{/if}
-
-	{#if !graph.isEmpty}
-		<div>
-			<button
-				type="button"
-				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
-				onclick={() => graph.clearGraph()}
-			>
-				Clear graph
 			</button>
 		</div>
 	{/if}

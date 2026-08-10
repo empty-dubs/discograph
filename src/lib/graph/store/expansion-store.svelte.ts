@@ -2,7 +2,7 @@ import {
 	collectDescendants,
 	findRemovableDescendants,
 	hasExpansionChildren
-} from './expansion';
+} from '../operations/crawlers';
 import { graphDataStore } from './data-store.svelte';
 import { graphUiStore } from './ui-store.svelte';
 

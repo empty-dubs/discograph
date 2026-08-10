@@ -7,6 +7,7 @@
 
 	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
+	import NodePanelExplore from './NodePanelExplore.svelte';
 	import NodePanelItemList from './NodePanelItemList.svelte';
 	import NodePanelSearchableList from './NodePanelSearchableList.svelte';
 	import NodePanelUrls from './NodePanelUrlList.svelte';
@@ -220,4 +221,8 @@
 
 <NodePanelCollapsibleSection id="notes" show={showNotes} title="Notes">
 	<div class="text-muted whitespace-pre-wrap text-sm">{node.notes}</div>
+</NodePanelCollapsibleSection>
+
+<NodePanelCollapsibleSection id="explore" title="Explore">
+	<NodePanelExplore {node} />
 </NodePanelCollapsibleSection>
