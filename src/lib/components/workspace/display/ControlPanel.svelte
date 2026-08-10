@@ -3,7 +3,6 @@
 	import { ALL_NODE_TYPES, NODE_COLORS } from '$lib/graph/constants';
 	import { graph } from '$lib/graph/store/graph.svelte';
 	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
-	import { loadMoreMasterReleases, loadMoreReleases } from '$lib/graph/actions/releases';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 
 	import type { NodeType } from '$lib/graph/types';
@@ -87,28 +86,6 @@
 			>
 				Reset graph to this node
 			</button>
-
-			{#if graph.hasMoreReleases(selectedNode.id)}
-				<button
-					type="button"
-					class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-					disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
-					onclick={() => loadMoreReleases(graph, selectedNode.id)}
-				>
-					Load more releases
-				</button>
-			{/if}
-
-			{#if graph.hasMoreMasterReleases(selectedNode.id)}
-				<button
-					type="button"
-					class="{buttonClass} bg-accent cursor-pointer border-none text-white"
-					disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
-					onclick={() => loadMoreMasterReleases(graph, selectedNode.id)}
-				>
-					Load more master releases
-				</button>
-			{/if}
 
 			{#if websiteUrl}
 				<a

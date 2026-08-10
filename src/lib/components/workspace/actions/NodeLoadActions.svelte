@@ -16,10 +16,16 @@
 	import {
 		loadReleases,
 		loadMasterReleases,
-		loadMainRelease
+		loadMainRelease,
+		loadMoreReleases,
+		loadMoreMasterReleases
 	} from '$lib/graph/actions/releases';
 
-	import { LOAD_ACTIONS } from './constants';
+	import {
+		getMasterReleasesButtonState,
+		getReleasesButtonState,
+		LOAD_ACTIONS
+	} from './constants';
 
 	interface Props {
 		nodeId: string;
@@ -31,6 +37,18 @@
 
 	const node = $derived(graph.nodes.get(nodeId) ?? null);
 	const actions = $derived(node ? LOAD_ACTIONS[node.type] : []);
+
+	const releasesState = $derived(
+		getReleasesButtonState(graph.releasePages, nodeId, graph.hasMoreReleases(nodeId))
+	);
+	const masterReleasesState = $derived(
+		getMasterReleasesButtonState(
+			graph.masterReleasePages,
+			nodeId,
+			graph.hasMoreMasterReleases(nodeId)
+		)
+	);
+	const isBusy = $derived(graph.isLoading(nodeId) || discogsApiStore.isRateLimited);
 
 	const itemClass = $derived(
 		layout === 'menu'
@@ -81,10 +99,15 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadMasterReleases(graph, nodeId))}
+		disabled={isBusy || masterReleasesState.exhausted}
+		onclick={() =>
+			run(() =>
+				masterReleasesState.loaded
+					? loadMoreMasterReleases(graph, nodeId)
+					: loadMasterReleases(graph, nodeId)
+			)}
 	>
-		Load master releases
+		{masterReleasesState.label}
 	</button>
 {/if}
 
@@ -92,10 +115,13 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
-		onclick={() => run(() => loadReleases(graph, nodeId))}
+		disabled={isBusy || releasesState.exhausted}
+		onclick={() =>
+			run(() =>
+				releasesState.loaded ? loadMoreReleases(graph, nodeId) : loadReleases(graph, nodeId)
+			)}
 	>
-		Load releases
+		{releasesState.label}
 	</button>
 {/if}
 
