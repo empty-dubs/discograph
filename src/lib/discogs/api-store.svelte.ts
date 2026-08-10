@@ -35,6 +35,11 @@ class DiscogsApiStore {
 		this.searchResults = [];
 	}
 
+	clear(): void {
+		this.clearError();
+		this.clearSearchResults();
+	}
+
 	async withRequest<T>(fn: () => Promise<T>, errorMessage: string): Promise<T | null> {
 		this.clearError();
 

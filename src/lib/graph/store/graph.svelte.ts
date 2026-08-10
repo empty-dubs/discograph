@@ -4,8 +4,6 @@ import { expansionStore } from './expansion-store.svelte';
 import { expansionProgressStore } from './expansion-progress-store.svelte';
 import { graphUiStore } from './ui-store.svelte';
 
-import { resetGraph, seedFromNode, seedFromResult } from '../loaders/seed';
-
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 import type { SearchResult, Master } from '$lib/discogs/types';
 import type { GraphNode, GraphPatch, NodeType } from '../types';
@@ -94,8 +92,12 @@ class Graph implements GraphFacade {
 		this.data.applyPatch(patch);
 	}
 
-	clearGraph() {
-		resetGraph(this);
+	clear() {
+		this.data.clear();
+		this.expansion.clear();
+		this.progress.clear();
+		this.details.clear();
+		this.ui.clear();
 	}
 
 	selectNode(id: string | null) {
@@ -149,14 +151,6 @@ class Graph implements GraphFacade {
 
 	isDetailsFetched(nodeId: string) {
 		return this.details.isDetailsFetched(nodeId);
-	}
-
-	seedFromResult(result: SearchResult) {
-		seedFromResult(this, result);
-	}
-
-	async seedFromNode(node: GraphNode) {
-		await seedFromNode(this, node);
 	}
 
 	async ensureArtistDetails(nodeId: string) {
