@@ -1,6 +1,6 @@
 import { getLabel, getRelease } from '$lib/discogs/client';
 
-import { buildCompaniesFromRelease, buildFromLabel, buildLabelsFromRelease } from '../builder/patches';
+import { buildCompaniesFromRelease, buildFromLabel, buildLabelsFromRelease } from '../operations/patches/labels';
 
 import { runLoad } from './run-load';
 
@@ -22,6 +22,7 @@ export async function loadRelatedLabels(ctx: GraphContext, nodeId: string) {
 			case 'release': {
 				const release = await getRelease(discogsId);
 				ctx.expansion.applyPatchFromExpansion(nodeId, buildLabelsFromRelease(release));
+				// ctx.progress.markActionLoaded(nodeId, 'labels');
 				break;
 			}
 		}

@@ -4,11 +4,11 @@ import { expansionStore } from './expansion-store.svelte';
 import { expansionProgressStore } from './expansion-progress-store.svelte';
 import { graphUiStore } from './ui-store.svelte';
 
-import { resetGraph, seedFromNode, seedFromResult } from '../actions/seed';
+import { resetGraph, seedFromNode, seedFromResult } from '../loaders/seed';
 
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 import type { SearchResult, Master } from '$lib/discogs/types';
-import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
+import type { GraphNode, GraphPatch, NodeType } from '../types';
 import type { GraphFacade } from './types';
 
 class Graph implements GraphFacade {

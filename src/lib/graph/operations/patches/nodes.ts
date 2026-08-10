@@ -16,7 +16,7 @@ import type {
 	Sublabel
 } from '$lib/discogs/types';
 
-import type { GraphNode, NodeType } from '../types';
+import type { GraphNode, NodeType } from '../../types';
 
 import { getDisplayName, getDiscogsUrl, nodeId } from './compositions';
 
