@@ -13,8 +13,17 @@
 
 	const fieldClass =
 		'rounded-md border border-border bg-panel px-3 py-2 text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50';
+	const headerTextClass = 'mt-1 mb-0 text-sm';
 
 	let emptyMessage = $state<string | null>(null);
+
+	const rateLimitText = $derived.by(() => {
+		const { limit, remaining } = discogsApiStore.rateLimit;
+
+		if (limit === null || remaining === null) return null;
+
+		return `${remaining}/${limit} API requests remaining`;
+	});
 
 	async function handleSearch(event: Event) {
 		event.preventDefault();
@@ -110,5 +119,15 @@
 				</li>
 			{/each}
 		</ul>
+	{/if}
+
+	{#if rateLimitText}
+		<p class="text-muted {headerTextClass}" class:text-warning={discogsApiStore.isRateLimited}>
+			{rateLimitText}
+		</p>
+	{/if}
+
+	{#if discogsApiStore.error}
+		<p class="text-danger {headerTextClass}">{discogsApiStore.error}</p>
 	{/if}
 </div>

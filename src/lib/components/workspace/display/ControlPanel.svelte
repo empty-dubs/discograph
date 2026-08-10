@@ -1,0 +1,159 @@
+<script lang="ts">
+	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
+	import { ALL_NODE_TYPES, NODE_COLORS } from '$lib/graph/constants';
+	import { graph } from '$lib/graph/store/graph.svelte';
+	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+	import { loadMoreMasterReleases, loadMoreReleases } from '$lib/graph/actions/releases';
+	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
+
+	import type { NodeType } from '$lib/graph/types';
+
+	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
+
+	const labels: Record<NodeType, string> = {
+		artist: 'Artists',
+		label: 'Labels',
+		master: 'Masters',
+		release: 'Releases'
+	};
+
+	const selectedNode = $derived(graph.selectedNode);
+
+	const websiteUrl = $derived(selectedNode ? getDiscogsWebsiteUrl(selectedNode) : null);
+	const apiUrl = $derived(selectedNode ? getDiscogsProxyUrl(selectedNode) : null);
+	const artistDisplayName = $derived(
+		selectedNode?.type === 'release' || selectedNode?.type === 'master'
+			? resolveArtistDisplayName(selectedNode, graph.linkList, (id) => graph.nodes.get(id))
+			: null
+	);
+	const youtubeUrl = $derived(
+		selectedNode ? getYouTubeSearchUrl(selectedNode, artistDisplayName) : null
+	);
+
+	const buttonClass =
+		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
+</script>
+
+<div class="flex flex-col gap-3">
+	<div
+		class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-400"
+		role="group"
+		aria-label="Node type visibility"
+	>
+		{#each ALL_NODE_TYPES as type (type)}
+			{@const visible = graph.isTypeVisible(type)}
+			{@const count = graph.typeCounts[type]}
+			<button
+				type="button"
+				class="font-inherit hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit"
+				aria-pressed={visible}
+				onclick={() => graph.toggleType(type)}
+			>
+				<span
+					class="h-2.5 w-2.5 shrink-0 rounded-full"
+					style:background={NODE_COLORS[type]}
+					style:opacity={visible ? 1 : 0.3}
+				></span>
+
+				<span class:line-through={!visible} class:opacity-45={!visible}>{labels[type]}</span>
+
+				{#if count > 0}
+					<span class="text-xs text-gray-500">{count}</span>
+				{/if}
+			</button>
+		{/each}
+	</div>
+
+	{#if selectedNode}
+		<div class="flex flex-wrap gap-2" role="group" aria-label="Graph actions">
+			<NodeLoadActions nodeId={selectedNode.id} />
+
+			{#if graph.hasChildren(selectedNode.id)}
+				<button
+					type="button"
+					class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
+					disabled={graph.isLoading(selectedNode.id)}
+					onclick={() => graph.collapseNode(selectedNode.id)}
+				>
+					Collapse children
+				</button>
+			{/if}
+
+			<button
+				type="button"
+				class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
+				disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
+				onclick={() => graph.seedFromNode(selectedNode)}
+			>
+				Reset graph to this node
+			</button>
+
+			{#if graph.hasMoreReleases(selectedNode.id)}
+				<button
+					type="button"
+					class="{buttonClass} bg-accent cursor-pointer border-none text-white"
+					disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
+					onclick={() => loadMoreReleases(graph, selectedNode.id)}
+				>
+					Load more releases
+				</button>
+			{/if}
+
+			{#if graph.hasMoreMasterReleases(selectedNode.id)}
+				<button
+					type="button"
+					class="{buttonClass} bg-accent cursor-pointer border-none text-white"
+					disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
+					onclick={() => loadMoreMasterReleases(graph, selectedNode.id)}
+				>
+					Load more master releases
+				</button>
+			{/if}
+
+			{#if websiteUrl}
+				<a
+					href={websiteUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="{buttonClass} border-border bg-panel-hover border text-gray-300"
+				>
+					View on Discogs
+				</a>
+			{/if}
+
+			{#if youtubeUrl}
+				<a
+					href={youtubeUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="{buttonClass} border-border bg-panel-hover border text-gray-300"
+				>
+					Search on YouTube
+				</a>
+			{/if}
+
+			{#if apiUrl}
+				<a
+					href={apiUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="{buttonClass} border-border bg-panel-hover border text-sm text-gray-300"
+				>
+					View Payload
+				</a>
+			{/if}
+		</div>
+	{/if}
+
+	{#if graph.nodeList.length > 0}
+		<div>
+			<button
+				type="button"
+				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
+				onclick={() => graph.clearGraph()}
+			>
+				Clear graph
+			</button>
+		</div>
+	{/if}
+</div>

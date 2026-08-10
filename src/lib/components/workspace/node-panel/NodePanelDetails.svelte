@@ -5,7 +5,6 @@
 
 	import { stripDiscogsWikiMarkup } from '../format';
 
-	import NodePanelActions from './NodePanelActions.svelte';
 	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
 	import NodePanelItemList from './NodePanelItemList.svelte';
@@ -221,8 +220,4 @@
 
 <NodePanelCollapsibleSection id="notes" show={showNotes} title="Notes">
 	<div class="text-muted whitespace-pre-wrap text-sm">{node.notes}</div>
-</NodePanelCollapsibleSection>
-
-<NodePanelCollapsibleSection id="explore" title="Explore">
-	<NodePanelActions {node} />
 </NodePanelCollapsibleSection>
