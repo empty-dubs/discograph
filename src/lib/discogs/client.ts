@@ -1,3 +1,5 @@
+import { discogsApiStore } from './api-store.svelte';
+
 import { API_BASE } from './constants';
 
 import type {
@@ -37,8 +39,6 @@ async function request<T>(
 	}
 
 	const response = await fetch(url);
-
-	const { discogsApiStore } = await import('./api-store.svelte');
 
 	discogsApiStore.updateFromHeaders(response.headers);
 

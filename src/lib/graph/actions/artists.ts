@@ -36,6 +36,8 @@ export async function loadRelatedArtists(ctx: GraphContext, nodeId: string) {
 				break;
 			}
 		}
+
+		ctx.progress.markActionLoaded(nodeId, 'artists');
 	}, 'Failed to load related artists');
 }
 
@@ -52,6 +54,8 @@ export async function loadRelatedCreditedArtists(ctx: GraphContext, nodeId: stri
 				break;
 			}
 		}
+
+		ctx.progress.markActionLoaded(nodeId, 'credited_artists');
 	}, 'Failed to load credited artists');
 }
 
@@ -69,5 +73,7 @@ export async function loadRelatedAliases(ctx: GraphContext, nodeId: string) {
 				break;
 			}
 		}
+
+		ctx.progress.markActionLoaded(nodeId, 'aliases');
 	}, 'Failed to load related aliases');
 }

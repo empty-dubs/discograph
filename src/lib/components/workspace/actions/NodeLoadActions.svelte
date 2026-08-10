@@ -22,9 +22,10 @@
 	} from '$lib/graph/actions/releases';
 
 	import {
+		getLoadButtonState,
 		getMasterReleasesButtonState,
 		getReleasesButtonState,
-		LOAD_ACTIONS
+		getVisibleLoadActions
 	} from './constants';
 
 	interface Props {
@@ -36,7 +37,9 @@
 	let { nodeId, layout = 'stack', onAction }: Props = $props();
 
 	const node = $derived(graph.nodes.get(nodeId) ?? null);
-	const actions = $derived(node ? LOAD_ACTIONS[node.type] : []);
+	const actions = $derived(
+		node ? getVisibleLoadActions(node, (id) => graph.isDetailsFetched(id)) : []
+	);
 
 	const releasesState = $derived(
 		getReleasesButtonState(graph.releasePages, nodeId, graph.hasMoreReleases(nodeId))
@@ -48,7 +51,15 @@
 			graph.hasMoreMasterReleases(nodeId)
 		)
 	);
-	const isBusy = $derived(graph.isLoading(nodeId) || discogsApiStore.isRateLimited);
+	const artistsState = $derived(getLoadButtonState(graph.loadedActions, nodeId, 'artists'));
+	const aliasesState = $derived(getLoadButtonState(graph.loadedActions, nodeId, 'aliases'));
+	const labelsState = $derived(getLoadButtonState(graph.loadedActions, nodeId, 'labels'));
+	const mainReleaseState = $derived(getLoadButtonState(graph.loadedActions, nodeId, 'main_release'));
+	const companiesState = $derived(getLoadButtonState(graph.loadedActions, nodeId, 'companies'));
+	const creditedArtistsState = $derived(
+		getLoadButtonState(graph.loadedActions, nodeId, 'credited_artists')
+	);
+	const isLoading = $derived(graph.isLoading(nodeId) || discogsApiStore.isRateLimited);
 
 	const itemClass = $derived(
 		layout === 'menu'
@@ -66,10 +77,10 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		disabled={isLoading || artistsState.exhausted}
 		onclick={() => run(() => loadRelatedArtists(graph, nodeId))}
 	>
-		Load related artists
+		{artistsState.label}
 	</button>
 {/if}
 
@@ -77,10 +88,10 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		disabled={isLoading || aliasesState.exhausted}
 		onclick={() => run(() => loadRelatedAliases(graph, nodeId))}
 	>
-		Load artist aliases
+		{aliasesState.label}
 	</button>
 {/if}
 
@@ -88,10 +99,10 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		disabled={isLoading || labelsState.exhausted}
 		onclick={() => run(() => loadRelatedLabels(graph, nodeId))}
 	>
-		Load related labels
+		{labelsState.label}
 	</button>
 {/if}
 
@@ -99,7 +110,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={isBusy || masterReleasesState.exhausted}
+		disabled={isLoading || masterReleasesState.exhausted}
 		onclick={() =>
 			run(() =>
 				masterReleasesState.loaded
@@ -115,7 +126,7 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={isBusy || releasesState.exhausted}
+		disabled={isLoading || releasesState.exhausted}
 		onclick={() =>
 			run(() =>
 				releasesState.loaded ? loadMoreReleases(graph, nodeId) : loadReleases(graph, nodeId)
@@ -129,10 +140,10 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		disabled={isLoading || mainReleaseState.exhausted}
 		onclick={() => run(() => loadMainRelease(graph, nodeId))}
 	>
-		Load main release
+		{mainReleaseState.label}
 	</button>
 {/if}
 
@@ -140,10 +151,10 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		disabled={isLoading || companiesState.exhausted}
 		onclick={() => run(() => loadRelatedCompanies(graph, nodeId))}
 	>
-		Load related companies
+		{companiesState.label}
 	</button>
 {/if}
 
@@ -151,9 +162,9 @@
 	<button
 		type="button"
 		class={itemClass}
-		disabled={graph.isLoading(nodeId) || discogsApiStore.isRateLimited}
+		disabled={isLoading || creditedArtistsState.exhausted}
 		onclick={() => run(() => loadRelatedCreditedArtists(graph, nodeId))}
 	>
-		Load credited artists
+		{creditedArtistsState.label}
 	</button>
 {/if}

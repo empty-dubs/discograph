@@ -3,7 +3,7 @@
 
 	import { graph } from '$lib/graph/store/graph.svelte';
 
-	import { LOAD_ACTIONS } from '../actions/constants';
+	import { getVisibleLoadActions } from '../actions/constants';
 
 	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
 
@@ -17,8 +17,26 @@
 	let { nodeId, x, y, onClose }: Props = $props();
 
 	const node = $derived(nodeId ? (graph.nodes.get(nodeId) ?? null) : null);
-	const actions = $derived(node ? LOAD_ACTIONS[node.type] : []);
+	const actions = $derived(
+		node ? getVisibleLoadActions(node, (id) => graph.isDetailsFetched(id)) : []
+	);
 	const hasActions = $derived(actions.length > 0);
+
+	$effect(() => {
+		if (!node) return;
+
+		if (node.type === 'artist') {
+			graph.ensureArtistDetails(node.id);
+		}
+
+		if (node.type === 'label') {
+			graph.ensureLabelDetails(node.id);
+		}
+
+		if (node.type === 'master') {
+			graph.ensureMasterDetails(node.id);
+		}
+	});
 
 	function handleKeydown(event: KeyboardEvent) {
 		event.preventDefault();
