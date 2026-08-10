@@ -6,7 +6,7 @@ import {
 	buildArtistsFromRelease,
 	buildCreditedArtistsFromRelease,
 	buildFromMaster
-} from '../builder/patches';
+} from '../operations/patches/artists';
 
 import { runLoad } from './run-load';
 

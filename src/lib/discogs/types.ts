@@ -117,12 +117,6 @@ export interface LabelRelease {
 	thumb?: string;
 }
 
-export function labelReleaseKind(item: LabelRelease): 'master' | 'release' {
-	if (item.type) return item.type;
-
-	return item.resource_url?.includes('/masters/') ? 'master' : 'release';
-}
-
 export interface LabelReleasesResponse {
 	pagination: Pagination;
 	releases: LabelRelease[];

@@ -1,6 +1,6 @@
 import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
-import { buildFromSearchResult } from '../builder/patches';
+import { buildFromSearchResult } from '../operations/patches/search';
 
 import type { GraphNode } from '../types';
 import type { SearchResult } from '$lib/discogs/types';

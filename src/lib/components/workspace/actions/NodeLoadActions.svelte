@@ -6,12 +6,12 @@
 		loadRelatedArtists,
 		loadRelatedAliases,
 		loadRelatedCreditedArtists
-	} from '$lib/graph/actions/artists';
+	} from '$lib/graph/loaders/artists';
 
 	import {
 		loadRelatedLabels,
 		loadRelatedCompanies
-	} from '$lib/graph/actions/labels';
+	} from '$lib/graph/loaders/labels';
 
 	import {
 		loadReleases,
@@ -19,7 +19,7 @@
 		loadMainRelease,
 		loadMoreReleases,
 		loadMoreMasterReleases
-	} from '$lib/graph/actions/releases';
+	} from '$lib/graph/loaders/releases';
 
 	import {
 		getLoadButtonState,

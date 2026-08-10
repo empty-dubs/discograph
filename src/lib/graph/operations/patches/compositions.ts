@@ -13,7 +13,7 @@ import type {
 	SearchResult
 } from '$lib/discogs/types';
 
-import type { EdgeType, NodeType } from '../types';
+import type { EdgeType, NodeType } from '../../types';
 
 export function nodeId(type: NodeType, id: number | string): string {
 	return `${type}:${id}`;

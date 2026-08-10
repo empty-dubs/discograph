@@ -12,7 +12,7 @@ import {
 	buildFromLabelReleases,
 	buildFromMasterVersions,
 	buildMainReleaseFromMaster
-} from '../builder/patches';
+} from '../operations/patches/releases';
 
 import { runLoad } from './run-load';
 
