@@ -1,4 +1,4 @@
-import { discogsApiStore } from './api-store.svelte';
+import { discogsApi } from './discogs.svelte';
 
 import { API_BASE } from './constants';
 
@@ -40,7 +40,7 @@ async function request<T>(
 
 	const response = await fetch(url);
 
-	discogsApiStore.updateFromHeaders(response.headers);
+	discogsApi.updateFromHeaders(response.headers);
 
 	if (!response.ok) {
 		let message = `Request failed (${response.status})`;

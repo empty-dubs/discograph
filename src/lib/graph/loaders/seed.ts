@@ -1,4 +1,4 @@
-import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+import { discogsApi } from '$lib/discogs/discogs.svelte';
 import { buildFromSearchResult } from '../operations/patches/search';
 
 import type { SearchResult } from '$lib/discogs/types';
@@ -7,7 +7,7 @@ import type { GraphNode } from '../types';
 
 export function seedFromResult(graph: GraphInterface, result: SearchResult) {
 	graph.clear();
-	discogsApiStore.clear();
+	discogsApi.clear();
 
 	const patch = buildFromSearchResult(result);
 

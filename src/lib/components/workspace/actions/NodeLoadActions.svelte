@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { graph } from '$lib/graph/stores/graph.svelte';
-	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+	import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 	import {
 		loadRelatedArtists,
@@ -59,7 +59,7 @@
 	const creditedArtistsState = $derived(
 		getLoadButtonState(graph.loadedActions, nodeId, 'credited_artists')
 	);
-	const isLoading = $derived(graph.progress.isLoading(nodeId) || discogsApiStore.isRateLimited);
+	const isLoading = $derived(graph.progress.isLoading(nodeId) || discogsApi.isRateLimited);
 
 	const itemClass = $derived(
 		layout === 'menu'

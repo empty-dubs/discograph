@@ -3,7 +3,7 @@ import { parseRateLimitHeaders } from './rate-limit';
 
 import type { RateLimitInfo, SearchResult, SearchType } from './types';
 
-class DiscogsApiStore {
+class DiscogsApi {
 	rateLimit = $state<RateLimitInfo>({ limit: null, used: null, remaining: null });
 	error = $state<string | null>(null);
 	searchQuery = $state('');
@@ -51,7 +51,7 @@ class DiscogsApiStore {
 		}
 	}
 
-	async search(query: string, type?: SearchType): Promise<SearchResult[]> {
+	async search(query: string, type?: SearchType) {
 		const trimmed = query.trim();
 
 		if (!trimmed || this.searching || this.isRateLimited) return [];
@@ -64,8 +64,6 @@ class DiscogsApiStore {
 			const response = await discogs.search(trimmed, type);
 
 			this.searchResults = response.results;
-
-			return response.results;
 		} catch (err) {
 			this.setError(err instanceof Error ? err.message : 'Search failed');
 			this.searchResults = [];
@@ -77,4 +75,4 @@ class DiscogsApiStore {
 	}
 }
 
-export const discogsApiStore = new DiscogsApiStore();
+export const discogsApi = new DiscogsApi();

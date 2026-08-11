@@ -18,7 +18,7 @@ const searchResultBuilders: Record<string, SearchResultBuilder> = {
 
 export function buildFromSearchResult(result: SearchResult): GraphPatch {
 	try {
-		const buildNode = searchResultBuilders[result.type as SearchType];
+		const buildNode = searchResultBuilders[result.type];
 		return { nodes: [buildNode(result)], links: [] };
 	} catch (error) {
 		console.error(error);

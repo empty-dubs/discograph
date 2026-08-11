@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ALL_NODE_TYPES, NODE_COLORS } from '$lib/graph/constants';
 	import { graph } from '$lib/graph/stores/graph.svelte';
-	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+	import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 	import { seedFromNode } from '$lib/graph/loaders/seed';
 
@@ -71,7 +71,7 @@
 				disabled={isNodeLoading}
 				onclick={() => {
 					graph.data.clear();
-					discogsApiStore.clear();
+					discogsApi.clear();
 				}}
 			>
 				Clear graph
@@ -97,7 +97,7 @@
 			<button
 				type="button"
 				class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-				disabled={isNodeLoading || discogsApiStore.isRateLimited}
+				disabled={isNodeLoading || discogsApi.isRateLimited}
 				onclick={() => { seedFromNode(graph, selectedNode) }}
 			>
 				Reset graph to this node

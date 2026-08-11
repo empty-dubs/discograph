@@ -20,62 +20,74 @@ import type { GraphNode, NodeType } from '../../types';
 
 import { getDisplayName, getDiscogsUrl, nodeId } from './compositions';
 
-export type ArtistNodeSource =
+type ArtistNodePayload =
 	| SearchResult
 	| Artist
-	| (ReleaseArtist & { id: number })
+	| ReleaseArtist
 	| ArtistMember
 	| ArtistGroup
 	| ArtistAlias
 	| MasterArtist;
 
-export type LabelNodeSource = SearchResult | Label | Sublabel | LabelRef | ReleaseCompany;
+type LabelNodePayload =
+	| SearchResult
+	| Label
+	| Sublabel
+	| LabelRef
+	| ReleaseCompany;
 
-export type MasterNodeSource = SearchResult | MasterVersion | Master;
+type MasterNodePayload =
+	| SearchResult
+	| MasterVersion
+	| Master;
 
-export type ReleaseNodeSource = SearchResult | Release | LabelRelease | MasterVersion;
+type ReleaseNodePayload =
+	| SearchResult
+	| Release
+	| LabelRelease
+	| MasterVersion;
 
-export function artistNode(result: ArtistNodeSource): GraphNode {
+export function artistNode(payload: ArtistNodePayload): GraphNode {
 	const nodeType: NodeType = 'artist';
 
 	return {
-		...result,
-		id: nodeId(nodeType, result.id),
+		...payload,
+		id: nodeId(nodeType, payload.id),
 		type: nodeType,
-		discogsId: result.id,
-		displayName: getDisplayName(result, nodeType),
-		discogsUrl: getDiscogsUrl(result, nodeType)
+		discogsId: payload.id,
+		displayName: getDisplayName(payload, nodeType),
+		discogsUrl: getDiscogsUrl(payload, nodeType)
 	};
 }
 
-export function labelNode(result: LabelNodeSource): GraphNode {
+export function labelNode(payload: LabelNodePayload): GraphNode {
 	const nodeType: NodeType = 'label';
 
 	return {
-		...result,
-		id: nodeId(nodeType, result.id),
+		...payload,
+		id: nodeId(nodeType, payload.id),
 		type: nodeType,
-		discogsId: result.id,
-		displayName: getDisplayName(result, nodeType),
-		discogsUrl: getDiscogsUrl(result, nodeType)
+		discogsId: payload.id,
+		displayName: getDisplayName(payload, nodeType),
+		discogsUrl: getDiscogsUrl(payload, nodeType)
 	};
 }
 
-export function masterNode(result: MasterNodeSource, meta?: GraphNode['meta']): GraphNode {
+export function masterNode(payload: MasterNodePayload, meta?: GraphNode['meta']): GraphNode {
 	const nodeType: NodeType = 'master';
-	const nodeURI: string | undefined = 'uri' in result ? result.uri : undefined;
-	const nodeResourceURL: string | undefined = 'resource_url' in result ? result.resource_url : undefined;
+	const nodeURI: string | undefined = 'uri' in payload ? payload.uri : undefined;
+	const nodeResourceURL: string | undefined = 'resource_url' in payload ? payload.resource_url : undefined;
 
 	return {
-		id: nodeId(nodeType, result.id),
+		id: nodeId(nodeType, payload.id),
 		type: nodeType,
-		discogsId: result.id,
-		displayName: getDisplayName(result, nodeType),
-		name: result.title,
+		discogsId: payload.id,
+		displayName: getDisplayName(payload, nodeType),
+		name: payload.title,
 		uri: nodeURI,
 		resource_url: nodeResourceURL,
 		discogsUrl: getDiscogsUrl(
-			{ uri: nodeURI, id: result.id },
+			{ uri: nodeURI, id: payload.id },
 			nodeType
 		),
 		meta
@@ -98,21 +110,21 @@ export function masterStubFromRelease(release: Release): GraphNode {
 	};
 }
 
-export function releaseNode(result: ReleaseNodeSource, meta?: GraphNode['meta']): GraphNode {
+export function releaseNode(payload: ReleaseNodePayload, meta?: GraphNode['meta']): GraphNode {
 	const nodeType: NodeType = 'release';
-	const nodeURI: string | undefined = 'uri' in result ? result.uri : undefined;
-	const nodeResourceURL: string | undefined = 'resource_url' in result ? result.resource_url : undefined
+	const nodeURI: string | undefined = 'uri' in payload ? payload.uri : undefined;
+	const nodeResourceURL: string | undefined = 'resource_url' in payload ? payload.resource_url : undefined
 
 	return {
-		id: nodeId(nodeType, result.id),
+		id: nodeId(nodeType, payload.id),
 		type: nodeType,
-		discogsId: result.id,
-		displayName: getDisplayName(result, nodeType),
-		name: result.title,
+		discogsId: payload.id,
+		displayName: getDisplayName(payload, nodeType),
+		name: payload.title,
 		uri: nodeURI,
 		resource_url: nodeResourceURL,
 		discogsUrl: getDiscogsUrl(
-			{ uri: nodeURI, id: result.id },
+			{ uri: nodeURI, id: payload.id },
 			nodeType
 		),
 		meta

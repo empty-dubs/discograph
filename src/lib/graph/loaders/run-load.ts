@@ -1,4 +1,4 @@
-import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 import type { GraphInterface } from '../stores/graph.svelte';
 
@@ -16,7 +16,7 @@ export async function runLoad(
 
 	graph.progress.setLoading(nodeId, true);
 
-	await discogsApiStore.withRequest(fn, errorMessage);
+	await discogsApi.withRequest(fn, errorMessage);
 
 	graph.progress.setLoading(nodeId, false);
 }

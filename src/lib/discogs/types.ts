@@ -15,16 +15,8 @@ export interface Pagination {
 
 export interface SearchResult {
 	id: number;
-	country?: string;
-	format?: string[];
-	genre?: string[];
-	// label?: string[];
-	master_id?: number | null;
-	master_url?: string | null;
 	name?: string;
 	resource_url?: string;
-	style?: string[];
-	// thumb?: string;
 	title?: string;
 	type: string;
 	uri?: string;
@@ -41,12 +33,14 @@ export interface ArtistMember {
 	name: string;
 	active?: boolean;
 	resource_url?: string;
+	uri?: string;
 }
 
 export interface ArtistGroup {
 	id: number;
 	name: string;
 	resource_url?: string;
+	uri?: string;
 }
 
 export interface ArtistAlias {
@@ -75,7 +69,6 @@ export interface ArtistRelease {
 	title: string;
 	type: 'release' | 'master';
 	year?: number;
-	thumb?: string;
 	resource_url?: string;
 	main_release?: number;
 	artist?: string;
@@ -120,7 +113,7 @@ export interface LabelRelease {
 	year?: string;
 	artist?: string;
 	resource_url?: string;
-	thumb?: string;
+	uri?: string;
 }
 
 export interface LabelReleasesResponse {
@@ -129,13 +122,14 @@ export interface LabelReleasesResponse {
 }
 
 export interface ReleaseArtist {
-	id?: number;
+	id: number;
 	name: string;
 	anv?: string;
 	join?: string;
 	resource_url?: string;
 	role?: string;
 	tracks?: string;
+	uri?: string;
 }
 
 export interface ReleaseCompany {
@@ -186,6 +180,7 @@ export interface MasterArtist {
 	id: number;
 	name: string;
 	resource_url?: string;
+	uri?: string;
 }
 
 export interface MasterVersion {
@@ -193,7 +188,7 @@ export interface MasterVersion {
 	title: string;
 	released?: string;
 	resource_url?: string;
-	thumb?: string;
+	uri?: string;
 }
 
 export interface Master {
