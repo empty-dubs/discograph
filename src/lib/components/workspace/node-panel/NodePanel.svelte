@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 
-	import { graph } from '$lib/graph/store/graph.svelte';
+	import { graph } from '$lib/graph/stores/graph.svelte';
 
 	import { NODE_PANEL_ACCORDION_KEY } from '../accordion';
 	import type { NodePanelAccordion } from '../accordion';

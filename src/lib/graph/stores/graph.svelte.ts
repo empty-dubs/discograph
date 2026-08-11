@@ -1,12 +1,40 @@
-import { graphDataStore } from './data-store.svelte';
-import { detailsStore } from './details-store.svelte';
-import { expansionStore } from './expansion-store.svelte';
-import { expansionProgressStore } from './expansion-progress-store.svelte';
-import { graphDisplayStore } from './display-store.svelte';
+import { graphDataStore, type GraphDataStore } from './data-store.svelte';
+import { detailsStore, type DetailsStore } from './details-store.svelte';
+import { expansionStore, type ExpansionStore } from './expansion-store.svelte';
+import { expansionProgressStore, type ExpansionProgressStore } from './expansion-progress-store.svelte';
+import { graphDisplayStore, type GraphDisplayStore } from './display-store.svelte';
 
-import type { GraphInterface } from './types';
+import type { GraphLink, GraphNode } from '../types';
+import type { LoadAction } from '$lib/components/workspace/actions/constants';
 
-export class Graph implements GraphInterface {
+export interface GraphInterface {
+	readonly data: GraphDataStore;
+	readonly display: GraphDisplayStore;
+	readonly expansion: ExpansionStore;
+	readonly progress: ExpansionProgressStore;
+	readonly details: DetailsStore;
+	readonly nodes: Map<string, GraphNode>;
+	readonly links: Map<string, GraphLink>;
+	readonly nodeList: GraphNode[];
+	readonly linkList: GraphLink[];
+	readonly releasePages: Map<string, { page: number; pages: number }>;
+	readonly masterReleasePages: Map<string, { page: number; pages: number }>;
+	readonly loadedActions: Map<string, Set<LoadAction>>;
+
+	clear(): void;
+	collapseNode(nodeId: string): void;
+	hasChildren(nodeId: string): boolean;
+	hasMoreReleases(nodeId: string): boolean;
+	hasMoreMasterReleases(nodeId: string): boolean;
+	isDetailsLoading(nodeId: string): boolean;
+	isDetailsFetched(nodeId: string): boolean;
+	ensureArtistDetails(nodeId: string): Promise<void>;
+	ensureLabelDetails(nodeId: string): Promise<void>;
+	ensureMasterDetails(nodeId: string): Promise<void>;
+	ensureReleaseDetails(nodeId: string): Promise<void>;
+}
+
+class Graph implements GraphInterface {
 	readonly data = graphDataStore;
 	readonly display = graphDisplayStore;
 	readonly expansion = expansionStore;

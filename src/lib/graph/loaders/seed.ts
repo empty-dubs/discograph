@@ -2,10 +2,10 @@ import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 import { buildFromSearchResult } from '../operations/patches/search';
 
 import type { SearchResult } from '$lib/discogs/types';
-import type { Graph } from '../store/graph.svelte';
+import type { GraphInterface } from '../stores/graph.svelte';
 import type { GraphNode } from '../types';
 
-export function seedFromResult(graph: Graph, result: SearchResult) {
+export function seedFromResult(graph: GraphInterface, result: SearchResult) {
 	graph.clear();
 	discogsApiStore.clear();
 
@@ -21,7 +21,7 @@ export function seedFromResult(graph: Graph, result: SearchResult) {
 	graph.display.selectedId = seedNodeId;
 }
 
-export async function seedFromNode(graph: Graph, node: GraphNode) {
+export async function seedFromNode(graph: GraphInterface, node: GraphNode) {
 	if (node.discogsId === null) return;
 
 	seedFromResult(graph, {

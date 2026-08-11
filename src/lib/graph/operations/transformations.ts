@@ -1,6 +1,6 @@
 import type { NodeType } from '../types';
 
-import type { ParsedNodeId } from '../store/types';
+import type { ParsedNodeId } from '../stores/types';
 
 export function parseNodeId(id: string): ParsedNodeId {
 	const [type, rawId] = id.split(':');
