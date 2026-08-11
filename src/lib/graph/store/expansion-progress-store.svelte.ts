@@ -1,6 +1,6 @@
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 
-class ExpansionProgressStore {
+export class ExpansionProgressStore {
 	loading = $state<Set<string>>(new Set());
 	releasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
 	masterReleasePages = $state<Map<string, { page: number; pages: number }>>(new Map());

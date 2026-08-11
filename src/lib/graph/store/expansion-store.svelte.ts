@@ -4,7 +4,7 @@ import {
 	hasExpansionChildren
 } from '../operations/crawlers';
 import { graphDataStore } from './data-store.svelte';
-import { graphUiStore } from './ui-store.svelte';
+import { graphDisplayStore } from './display-store.svelte';
 
 import type { GraphPatch } from '../types';
 
@@ -12,7 +12,7 @@ export interface CollapseSideEffects {
 	onNodesRemoved?: (nodeIds: Set<string>) => void;
 }
 
-class ExpansionStore {
+export class ExpansionStore {
 	expansionChildren = $state<Map<string, Set<string>>>(new Map());
 	expanded = $state<Set<string>>(new Set());
 
@@ -75,11 +75,11 @@ class ExpansionStore {
 		}
 		this.expanded = nextExpanded;
 
-		if (graphUiStore.selectedId && toRemove.has(graphUiStore.selectedId)) {
-			graphUiStore.selectedId = nodeId;
+		if (graphDisplayStore.selectedId && toRemove.has(graphDisplayStore.selectedId)) {
+			graphDisplayStore.selectedId = nodeId;
 		}
-		if (graphUiStore.seedId && toRemove.has(graphUiStore.seedId)) {
-			graphUiStore.seedId = nodeId;
+		if (graphDisplayStore.seedId && toRemove.has(graphDisplayStore.seedId)) {
+			graphDisplayStore.seedId = nodeId;
 		}
 
 		sideEffects.onNodesRemoved?.(toRemove);

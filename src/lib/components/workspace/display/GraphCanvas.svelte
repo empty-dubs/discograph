@@ -15,10 +15,10 @@
 		forceGraph = new ForceGraph(container!, {
 			onNodeClick: (id) => {
 				contextMenu = null;
-				graph.selectNode(id);
+				graph.display.selectNode(id);
 			},
 			onNodeContextMenu: (id, event) => {
-				graph.selectNode(id);
+				graph.display.selectNode(id);
 				contextMenu = { nodeId: id, x: event.clientX, y: event.clientY };
 			},
 			onTooltip: (t) => {
@@ -38,34 +38,34 @@
 
 	$effect(() => {
 		if (!forceGraph) return;
-		const nodes = graph.visibleNodeList;
-		const links = graph.visibleLinkList;
-		const showNodeLabels = graph.showNodeLabels;
+		const nodes = graph.display.visibleNodeList;
+		const links = graph.display.visibleLinkList;
+		const showNodeLabels = graph.display.showNodeLabels;
 
 		if (nodes.length > 0) {
 			forceGraph.update(nodes, links, {
-				selectedId: graph.selectedId,
+				selectedId: graph.display.selectedId,
 				showNodeLabels
 			});
 		} else {
 			forceGraph.clear();
 		}
 
-		void graph.visibleTypes;
+		void graph.display.visibleTypes;
 	});
 
 	$effect(() => {
-		if (forceGraph && graph.visibleNodeList.length > 0) {
+		if (forceGraph && graph.display.visibleNodeList.length > 0) {
 			forceGraph.updateHighlight({
-				selectedId: graph.selectedId
+				selectedId: graph.display.selectedId
 			});
 		}
 
-		void graph.selectedId;
+		void graph.display.selectedId;
 	});
 
 	$effect(() => {
-		void graph.viewResetToken;
+		void graph.display.viewResetToken;
 		forceGraph?.resetZoom();
 	});
 </script>
@@ -78,7 +78,7 @@
 		aria-label="Discogs relationship graph"
 	></div>
 
-	{#if graph.isEmpty}
+	{#if graph.data.isEmpty}
 		<div
 			class="text-muted pointer-events-none absolute inset-0 z-10 grid place-items-center text-[0.95rem]"
 		>

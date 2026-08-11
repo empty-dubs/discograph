@@ -8,7 +8,7 @@
 
 	import NodePanelDetails from './NodePanelDetails.svelte';
 
-	const node = $derived(graph.selectedNode);
+	const node = $derived(graph.display.selectedNode);
 
 	let openSectionId = $state<string | null>(null);
 	let selectedNodeId = $state<string | null>(null);
@@ -28,7 +28,7 @@
 	setContext(NODE_PANEL_ACCORDION_KEY, accordion);
 
 	$effect(() => {
-		const selected = graph.selectedNode;
+		const selected = graph.display.selectedNode;
 
 		if (selected?.type === 'artist') {
 			graph.ensureArtistDetails(selected.id);
