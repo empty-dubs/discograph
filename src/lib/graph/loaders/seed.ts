@@ -1,9 +1,7 @@
 import { discogsApiStore } from '$lib/discogs/api-store.svelte';
-// import { graph } from '$lib/graph/store/graph.svelte';
 import { buildFromSearchResult } from '../operations/patches/search';
 
 import type { SearchResult } from '$lib/discogs/types';
-// import type { GraphContext } from '../store/graph.svelte';
 import type { GraphNode } from '../types';
 import type { GraphInterface } from '../store/types';
 

@@ -1,22 +1,22 @@
 import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
-import type { GraphContext } from '../store/graph.svelte';
+import type { GraphInterface } from '../store/types';
 
 export async function runLoad(
-	ctx: GraphContext,
+	graph: GraphInterface,
 	nodeId: string,
 	fn: () => Promise<void>,
 	errorMessage: string
 ): Promise<void> {
-	if (ctx.progress.loading.has(nodeId)) return;
+	if (graph.progress.loading.has(nodeId)) return;
 
-	const { discogsId } = ctx.data.parseNodeId(nodeId);
+	const { discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
-	ctx.progress.setLoading(nodeId, true);
+	graph.progress.setLoading(nodeId, true);
 
 	await discogsApiStore.withRequest(fn, errorMessage);
 
-	ctx.progress.setLoading(nodeId, false);
+	graph.progress.setLoading(nodeId, false);
 }

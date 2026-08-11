@@ -175,8 +175,3 @@ class Graph implements GraphInterface {
 }
 
 export const graph = new Graph();
-
-export type GraphContext = Pick<
-	Graph,
-	'data' | 'ui' | 'expansion' | 'progress' | 'details'
->;

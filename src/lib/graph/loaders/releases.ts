@@ -16,60 +16,60 @@ import {
 
 import { runLoad } from './run-load';
 
-import type { GraphContext } from '../store/graph.svelte';
+import type { GraphInterface } from '../store/types';
 
-export async function loadReleases(ctx: GraphContext, nodeId: string) {
-	const { type, discogsId } = ctx.data.parseNodeId(nodeId);
+export async function loadReleases(graph: GraphInterface, nodeId: string) {
+	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
-	await runLoad(ctx, nodeId, async () => {
+	await runLoad(graph, nodeId, async () => {
 		switch (type) {
 			case 'artist': {
 				const releases = await getArtistReleases(discogsId, 1);
-				ctx.expansion.applyPatchFromExpansion(
+				graph.expansion.applyPatchFromExpansion(
 					nodeId,
 					buildFromArtistReleases(releases.releases, discogsId, 'release')
 				);
-				ctx.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
+				graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 				break;
 			}
 			case 'label': {
 				const releases = await getLabelReleases(discogsId, 1);
-				ctx.expansion.applyPatchFromExpansion(
+				graph.expansion.applyPatchFromExpansion(
 					nodeId,
 					buildFromLabelReleases(releases.releases, discogsId, 'release')
 				);
-				ctx.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
+				graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 				break;
 			}
 			case 'master': {
 				const versions = await getMasterVersions(discogsId, 1);
-				ctx.expansion.applyPatchFromExpansion(
+				graph.expansion.applyPatchFromExpansion(
 					nodeId,
 					buildFromMasterVersions(versions.versions, discogsId)
 				);
-				ctx.progress.setReleasePages(nodeId, versions.pagination.page, versions.pagination.pages);
+				graph.progress.setReleasePages(nodeId, versions.pagination.page, versions.pagination.pages);
 				break;
 			}
 		}
 	}, 'Failed to load releases');
 }
 
-export async function loadMasterReleases(ctx: GraphContext, nodeId: string) {
-	const { type, discogsId } = ctx.data.parseNodeId(nodeId);
+export async function loadMasterReleases(graph: GraphInterface, nodeId: string) {
+	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
-	await runLoad(ctx, nodeId, async () => {
+	await runLoad(graph, nodeId, async () => {
 		switch (type) {
 			case 'artist': {
 				const releases = await getArtistReleases(discogsId, 1);
-				ctx.expansion.applyPatchFromExpansion(
+				graph.expansion.applyPatchFromExpansion(
 					nodeId,
 					buildFromArtistReleases(releases.releases, discogsId, 'master')
 				);
-				ctx.progress.setMasterReleasePages(
+				graph.progress.setMasterReleasePages(
 					nodeId,
 					releases.pagination.page,
 					releases.pagination.pages
@@ -78,11 +78,11 @@ export async function loadMasterReleases(ctx: GraphContext, nodeId: string) {
 			}
 			case 'label': {
 				const releases = await getLabelReleases(discogsId, 1);
-				ctx.expansion.applyPatchFromExpansion(
+				graph.expansion.applyPatchFromExpansion(
 					nodeId,
 					buildFromLabelReleases(releases.releases, discogsId, 'master')
 				);
-				ctx.progress.setMasterReleasePages(
+				graph.progress.setMasterReleasePages(
 					nodeId,
 					releases.pagination.page,
 					releases.pagination.pages
@@ -93,18 +93,18 @@ export async function loadMasterReleases(ctx: GraphContext, nodeId: string) {
 	}, 'Failed to load master releases');
 }
 
-export async function loadMainRelease(ctx: GraphContext, nodeId: string) {
-	const { type, discogsId } = ctx.data.parseNodeId(nodeId);
+export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
+	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null || type !== 'master') return;
 
-	await runLoad(ctx, nodeId, async () => {
-		let mainReleaseId = ctx.data.nodes.get(nodeId)?.main_release?.id;
+	await runLoad(graph, nodeId, async () => {
+		let mainReleaseId = graph.data.nodes.get(nodeId)?.main_release?.id;
 
 		if (!mainReleaseId) {
 			const master = await getMaster(discogsId);
-			await ctx.details.mergeMasterDetails(nodeId, master);
-			ctx.details.markMasterDetailsFetched(nodeId);
+			await graph.details.mergeMasterDetails(nodeId, master);
+			graph.details.markMasterDetailsFetched(nodeId);
 			mainReleaseId = master.main_release;
 		}
 
@@ -114,88 +114,88 @@ export async function loadMainRelease(ctx: GraphContext, nodeId: string) {
 		}
 
 		const release = await getRelease(mainReleaseId);
-		ctx.expansion.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
-		ctx.progress.markActionLoaded(nodeId, 'main_release');
+		graph.expansion.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
+		graph.progress.markActionLoaded(nodeId, 'main_release');
 	}, 'Failed to load main release');
 }
 
-export async function loadMoreReleases(ctx: GraphContext, nodeId: string) {
-	const { type, discogsId } = ctx.data.parseNodeId(nodeId);
+export async function loadMoreReleases(graph: GraphInterface, nodeId: string) {
+	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
-	const paging = ctx.progress.releasePages.get(nodeId);
+	const paging = graph.progress.releasePages.get(nodeId);
 
 	if (!paging || paging.page >= paging.pages) return;
 
 	const nextPage = paging.page + 1;
 
-	ctx.progress.setLoading(nodeId, true);
+	graph.progress.setLoading(nodeId, true);
 
 	await discogsApiStore.withRequest(async () => {
 		if (type === 'artist') {
 			const releases = await getArtistReleases(discogsId, nextPage);
-			ctx.expansion.applyPatchFromExpansion(
+			graph.expansion.applyPatchFromExpansion(
 				nodeId,
 				buildFromArtistReleases(releases.releases, discogsId, 'release')
 			);
-			ctx.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
+			graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 		} else if (type === 'label') {
 			const releases = await getLabelReleases(discogsId, nextPage);
-			ctx.expansion.applyPatchFromExpansion(
+			graph.expansion.applyPatchFromExpansion(
 				nodeId,
 				buildFromLabelReleases(releases.releases, discogsId, 'release')
 			);
-			ctx.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
+			graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 		} else if (type === 'master') {
 			const versions = await getMasterVersions(discogsId, nextPage);
-			ctx.expansion.applyPatchFromExpansion(
+			graph.expansion.applyPatchFromExpansion(
 				nodeId,
 				buildFromMasterVersions(versions.versions, discogsId)
 			);
-			ctx.progress.setReleasePages(nodeId, versions.pagination.page, versions.pagination.pages);
+			graph.progress.setReleasePages(nodeId, versions.pagination.page, versions.pagination.pages);
 		}
 	}, 'Failed to load more releases');
 
-	ctx.progress.setLoading(nodeId, false);
+	graph.progress.setLoading(nodeId, false);
 }
 
-export function hasMoreReleases(ctx: GraphContext, nodeId: string): boolean {
-	return ctx.progress.hasMoreReleases(nodeId);
+export function hasMoreReleases(graph: GraphInterface, nodeId: string): boolean {
+	return graph.progress.hasMoreReleases(nodeId);
 }
 
-export async function loadMoreMasterReleases(ctx: GraphContext, nodeId: string) {
-	const { type, discogsId } = ctx.data.parseNodeId(nodeId);
+export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: string) {
+	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null || (type !== 'artist' && type !== 'label')) return;
 
-	const paging = ctx.progress.masterReleasePages.get(nodeId);
+	const paging = graph.progress.masterReleasePages.get(nodeId);
 
 	if (!paging || paging.page >= paging.pages) return;
 
 	const nextPage = paging.page + 1;
 
-	ctx.progress.setLoading(nodeId, true);
+	graph.progress.setLoading(nodeId, true);
 
 	await discogsApiStore.withRequest(async () => {
 		if (type === 'artist') {
 			const releases = await getArtistReleases(discogsId, nextPage);
-			ctx.expansion.applyPatchFromExpansion(
+			graph.expansion.applyPatchFromExpansion(
 				nodeId,
 				buildFromArtistReleases(releases.releases, discogsId, 'master')
 			);
-			ctx.progress.setMasterReleasePages(
+			graph.progress.setMasterReleasePages(
 				nodeId,
 				releases.pagination.page,
 				releases.pagination.pages
 			);
 		} else {
 			const releases = await getLabelReleases(discogsId, nextPage);
-			ctx.expansion.applyPatchFromExpansion(
+			graph.expansion.applyPatchFromExpansion(
 				nodeId,
 				buildFromLabelReleases(releases.releases, discogsId, 'master')
 			);
-			ctx.progress.setMasterReleasePages(
+			graph.progress.setMasterReleasePages(
 				nodeId,
 				releases.pagination.page,
 				releases.pagination.pages
@@ -203,9 +203,9 @@ export async function loadMoreMasterReleases(ctx: GraphContext, nodeId: string) 
 		}
 	}, 'Failed to load more master releases');
 
-	ctx.progress.setLoading(nodeId, false);
+	graph.progress.setLoading(nodeId, false);
 }
 
-export function hasMoreMasterReleases(ctx: GraphContext, nodeId: string): boolean {
-	return ctx.progress.hasMoreMasterReleases(nodeId);
+export function hasMoreMasterReleases(graph: GraphInterface, nodeId: string): boolean {
+	return graph.progress.hasMoreMasterReleases(nodeId);
 }
