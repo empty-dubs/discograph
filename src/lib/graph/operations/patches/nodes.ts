@@ -20,7 +20,7 @@ import type { GraphNode, NodeType } from '../../types';
 
 import { getDisplayName, getDiscogsUrl, nodeId } from './compositions';
 
-export type ArtistNodeSource =
+type ArtistNodeSource =
 	| SearchResult
 	| Artist
 	| (ReleaseArtist & { id: number })
@@ -29,11 +29,11 @@ export type ArtistNodeSource =
 	| ArtistAlias
 	| MasterArtist;
 
-export type LabelNodeSource = SearchResult | Label | Sublabel | LabelRef | ReleaseCompany;
+type LabelNodeSource = SearchResult | Label | Sublabel | LabelRef | ReleaseCompany;
 
-export type MasterNodeSource = SearchResult | MasterVersion | Master;
+type MasterNodeSource = SearchResult | MasterVersion | Master;
 
-export type ReleaseNodeSource = SearchResult | Release | LabelRelease | MasterVersion;
+type ReleaseNodeSource = SearchResult | Release | LabelRelease | MasterVersion;
 
 export function artistNode(result: ArtistNodeSource): GraphNode {
 	const nodeType: NodeType = 'artist';
