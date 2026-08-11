@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
-	import { graph } from '$lib/graph/store/graph.svelte';
+	import { graph } from '$lib/graph/stores/graph.svelte';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 
 	import type { GraphNode } from '$lib/graph/types';

@@ -2,7 +2,7 @@ import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 import { buildFromSearchResult } from '../operations/patches/search';
 
 import type { SearchResult } from '$lib/discogs/types';
-import type { GraphInterface } from '../store/graph.svelte';
+import type { GraphInterface } from '../stores/graph.svelte';
 import type { GraphNode } from '../types';
 
 export function seedFromResult(graph: GraphInterface, result: SearchResult) {

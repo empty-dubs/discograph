@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { graph } from '$lib/graph/store/graph.svelte';
+	import { graph } from '$lib/graph/stores/graph.svelte';
 
 	import type { GraphNode } from '$lib/graph/types';
 

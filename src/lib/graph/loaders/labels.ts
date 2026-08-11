@@ -4,7 +4,7 @@ import { buildCompaniesFromRelease, buildFromLabel, buildLabelsFromRelease } fro
 
 import { runLoad } from './run-load';
 
-import type { GraphInterface } from '../store/graph.svelte';
+import type { GraphInterface } from '../stores/graph.svelte';
 
 export async function loadRelatedLabels(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);

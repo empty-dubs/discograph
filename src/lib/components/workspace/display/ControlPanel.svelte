@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ALL_NODE_TYPES, NODE_COLORS } from '$lib/graph/constants';
-	import { graph } from '$lib/graph/store/graph.svelte';
+	import { graph } from '$lib/graph/stores/graph.svelte';
 	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
 	import { seedFromNode } from '$lib/graph/loaders/seed';
