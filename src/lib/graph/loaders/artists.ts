@@ -10,9 +10,9 @@ import {
 
 import { runLoad } from './run-load';
 
-import type { GraphInterface } from '../store/types';
+import type { Graph } from '../store/graph.svelte';
 
-export async function loadRelatedArtists(graph: GraphInterface, nodeId: string) {
+export async function loadRelatedArtists(graph: Graph, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
@@ -41,7 +41,7 @@ export async function loadRelatedArtists(graph: GraphInterface, nodeId: string) 
 	}, 'Failed to load related artists');
 }
 
-export async function loadRelatedCreditedArtists(graph: GraphInterface, nodeId: string) {
+export async function loadRelatedCreditedArtists(graph: Graph, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
@@ -59,7 +59,7 @@ export async function loadRelatedCreditedArtists(graph: GraphInterface, nodeId: 
 	}, 'Failed to load credited artists');
 }
 
-export async function loadRelatedAliases(graph: GraphInterface, nodeId: string) {
+export async function loadRelatedAliases(graph: Graph, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;

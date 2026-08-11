@@ -1,9 +1,9 @@
 import { discogsApiStore } from '$lib/discogs/api-store.svelte';
 
-import type { GraphInterface } from '../store/types';
+import type { Graph } from '../store/graph.svelte';
 
 export async function runLoad(
-	graph: GraphInterface,
+	graph: Graph,
 	nodeId: string,
 	fn: () => Promise<void>,
 	errorMessage: string

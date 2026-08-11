@@ -9,7 +9,7 @@ import type { Master } from '$lib/discogs/types';
 import type { GraphPatch, NodeType } from '../types';
 import type { GraphInterface } from './types';
 
-class Graph implements GraphInterface {
+export class Graph implements GraphInterface {
 	readonly data = graphDataStore;
 	readonly ui = graphUiStore;
 	readonly expansion = expansionStore;

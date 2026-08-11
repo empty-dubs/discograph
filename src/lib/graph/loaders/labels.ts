@@ -4,9 +4,9 @@ import { buildCompaniesFromRelease, buildFromLabel, buildLabelsFromRelease } fro
 
 import { runLoad } from './run-load';
 
-import type { GraphInterface } from '../store/types';
+import type { Graph } from '../store/graph.svelte';
 
-export async function loadRelatedLabels(graph: GraphInterface, nodeId: string) {
+export async function loadRelatedLabels(graph: Graph, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
@@ -30,7 +30,7 @@ export async function loadRelatedLabels(graph: GraphInterface, nodeId: string) {
 	}, 'Failed to load related labels');
 }
 
-export async function loadRelatedCompanies(graph: GraphInterface, nodeId: string) {
+export async function loadRelatedCompanies(graph: Graph, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
