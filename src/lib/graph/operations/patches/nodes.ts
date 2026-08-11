@@ -23,7 +23,7 @@ import { getDisplayName, getDiscogsUrl, nodeId } from './compositions';
 type ArtistNodeSource =
 	| SearchResult
 	| Artist
-	| (ReleaseArtist & { id: number })
+	| ReleaseArtist
 	| ArtistMember
 	| ArtistGroup
 	| ArtistAlias

@@ -23,7 +23,7 @@ export function linkId(source: string, type: EdgeType, target: string): string {
 	return `${source}|${type}|${target}`;
 }
 
-export type DisplayNameSource =
+type NodeSource =
 	| SearchResult
 	| Artist
 	| Label
@@ -35,7 +35,7 @@ export type DisplayNameSource =
 	| ArtistGroup
 	| MasterArtist;
 
-export function getDisplayName(result: DisplayNameSource, fallbackType = 'entity'): string {
+export function getDisplayName(result: NodeSource, fallbackType = 'entity'): string {
 	if ('title' in result && result.title) return result.title;
 	if ('name' in result && result.name) return result.name;
 	if ('type' in result && typeof result.type === 'string') return `Unknown ${result.type}`;

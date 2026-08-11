@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SearchType } from '$lib/discogs/types';
+	import type { SearchResult, SearchType } from '$lib/discogs/types';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/stores/graph.svelte';
 
@@ -32,17 +32,17 @@
 
 		emptyMessage = null;
 
-		const results = await discogsApi.search(
+		await discogsApi.search(
 			discogsApi.searchQuery,
 			discogsApi.searchType || undefined
 		);
 
-		if (results.length === 0 && discogsApi.searchQuery.trim()) {
+		if (discogsApi.searchResults.length === 0 && discogsApi.searchQuery.trim()) {
 			emptyMessage = 'No results found';
 		}
 	}
 
-	async function pickResult(result: (typeof discogsApi.searchResults)[number]) {
+	async function pickResult(result: SearchResult) {
 		await seedFromResult(graph, result);
 
 		emptyMessage = null;
