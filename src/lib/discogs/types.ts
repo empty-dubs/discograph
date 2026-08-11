@@ -15,14 +15,20 @@ export interface Pagination {
 
 export interface SearchResult {
 	id: number;
-	type: string;
-	title?: string;
+	country?: string;
+	format?: string[];
+	genre?: string[];
+	// label?: string[];
+	master_id?: number | null;
+	master_url?: string | null;
 	name?: string;
-	uri?: string;
 	resource_url?: string;
-	thumb?: string;
+	style?: string[];
+	// thumb?: string;
+	title?: string;
+	type: string;
+	uri?: string;
 	year?: string;
-	label?: string[];
 }
 
 export interface SearchResponse {

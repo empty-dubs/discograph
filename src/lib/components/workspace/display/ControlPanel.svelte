@@ -17,6 +17,9 @@
 	};
 
 	const selectedNode = $derived(graph.display.selectedNode);
+	const isNodeLoading = $derived(
+		selectedNode ? graph.progress.isLoading(selectedNode.id) : false
+	);
 
 	const buttonClass =
 		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
@@ -64,7 +67,8 @@
 
 			<button
 				type="button"
-				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
+				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+				disabled={isNodeLoading}
 				onclick={() => {
 					graph.data.clear();
 					discogsApiStore.clear();
@@ -83,7 +87,7 @@
 				<button
 					type="button"
 					class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-					disabled={graph.progress.isLoading(selectedNode.id)}
+					disabled={isNodeLoading}
 					onclick={() => graph.collapseNode(selectedNode.id)}
 				>
 					Collapse children
@@ -93,7 +97,7 @@
 			<button
 				type="button"
 				class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-				disabled={graph.progress.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
+				disabled={isNodeLoading || discogsApiStore.isRateLimited}
 				onclick={() => { seedFromNode(graph, selectedNode) }}
 			>
 				Reset graph to this node
