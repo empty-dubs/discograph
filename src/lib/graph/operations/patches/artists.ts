@@ -122,12 +122,6 @@ export function buildCreditedArtistsFromRelease(release: Release): GraphPatch {
 }
 
 export function buildFromMaster(master: Master): GraphPatch {
-	// const nodes: GraphNode[] = [
-	// 	masterNode(master, {
-	// 		year: master.year,
-	// 		genres: master.genres
-	// 	})
-	// ];
     const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const masterNodeId = nodeId('master', master.id);
