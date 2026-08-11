@@ -16,9 +16,9 @@ import {
 
 import { runLoad } from './run-load';
 
-import type { Graph } from '../store/graph.svelte';
+import type { GraphInterface } from '../store/graph.svelte';
 
-export async function loadReleases(graph: Graph, nodeId: string) {
+export async function loadReleases(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
@@ -56,7 +56,7 @@ export async function loadReleases(graph: Graph, nodeId: string) {
 	}, 'Failed to load releases');
 }
 
-export async function loadMasterReleases(graph: Graph, nodeId: string) {
+export async function loadMasterReleases(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
@@ -93,7 +93,7 @@ export async function loadMasterReleases(graph: Graph, nodeId: string) {
 	}, 'Failed to load master releases');
 }
 
-export async function loadMainRelease(graph: Graph, nodeId: string) {
+export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null || type !== 'master') return;
@@ -119,7 +119,7 @@ export async function loadMainRelease(graph: Graph, nodeId: string) {
 	}, 'Failed to load main release');
 }
 
-export async function loadMoreReleases(graph: Graph, nodeId: string) {
+export async function loadMoreReleases(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null) return;
@@ -160,11 +160,11 @@ export async function loadMoreReleases(graph: Graph, nodeId: string) {
 	graph.progress.setLoading(nodeId, false);
 }
 
-export function hasMoreReleases(graph: Graph, nodeId: string): boolean {
+export function hasMoreReleases(graph: GraphInterface, nodeId: string): boolean {
 	return graph.progress.hasMoreReleases(nodeId);
 }
 
-export async function loadMoreMasterReleases(graph: Graph, nodeId: string) {
+export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = graph.data.parseNodeId(nodeId);
 
 	if (discogsId === null || (type !== 'artist' && type !== 'label')) return;
@@ -206,6 +206,6 @@ export async function loadMoreMasterReleases(graph: Graph, nodeId: string) {
 	graph.progress.setLoading(nodeId, false);
 }
 
-export function hasMoreMasterReleases(graph: Graph, nodeId: string): boolean {
+export function hasMoreMasterReleases(graph: GraphInterface, nodeId: string): boolean {
 	return graph.progress.hasMoreMasterReleases(nodeId);
 }
