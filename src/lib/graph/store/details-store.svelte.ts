@@ -12,7 +12,7 @@ import type { DetailsTrackerContext } from './types';
 
 export type DetailStatus = 'idle' | 'loading' | 'fetched';
 
-class DetailsStore {
+export class DetailsStore {
 	detailsByNodeId = $state<Map<string, DetailStatus>>(new Map());
 
 	private artistTracker = createDetailsTracker({

@@ -12,7 +12,7 @@ export interface CollapseSideEffects {
 	onNodesRemoved?: (nodeIds: Set<string>) => void;
 }
 
-class ExpansionStore {
+export class ExpansionStore {
 	expansionChildren = $state<Map<string, Set<string>>>(new Map());
 	expanded = $state<Set<string>>(new Set());
 

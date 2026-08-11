@@ -4,6 +4,11 @@ import type { Master, SearchResult } from '$lib/discogs/types';
 import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
 
 import type { DetailStatus } from './details-store.svelte';
+import type { GraphDataStore } from './data-store.svelte';
+import type { GraphUiStore } from './ui-store.svelte';
+import type { ExpansionStore } from './expansion-store.svelte';
+import type { ExpansionProgressStore } from './expansion-progress-store.svelte';
+import type { DetailsStore } from './details-store.svelte';
 
 export interface ParsedNodeId {
 	type: NodeType;
@@ -39,7 +44,12 @@ export interface DetailsTracker<T> {
 	merge(ctx: DetailsTrackerContext, nodeId: string, entity: T): Promise<void>;
 }
 
-export interface GraphFacade {
+export interface GraphInterface {
+	readonly data: GraphDataStore;
+	readonly ui: GraphUiStore;
+	readonly expansion: ExpansionStore;
+	readonly progress: ExpansionProgressStore;
+	readonly details: DetailsStore;
 	readonly nodes: Map<string, GraphNode>;
 	readonly links: Map<string, GraphLink>;
 	readonly nodeList: GraphNode[];

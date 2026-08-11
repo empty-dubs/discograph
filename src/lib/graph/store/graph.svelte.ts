@@ -5,11 +5,11 @@ import { expansionProgressStore } from './expansion-progress-store.svelte';
 import { graphUiStore } from './ui-store.svelte';
 
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
-import type { SearchResult, Master } from '$lib/discogs/types';
-import type { GraphNode, GraphPatch, NodeType } from '../types';
-import type { GraphFacade } from './types';
+import type { Master } from '$lib/discogs/types';
+import type { GraphPatch, NodeType } from '../types';
+import type { GraphInterface } from './types';
 
-class Graph implements GraphFacade {
+class Graph implements GraphInterface {
 	readonly data = graphDataStore;
 	readonly ui = graphUiStore;
 	readonly expansion = expansionStore;

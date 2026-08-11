@@ -3,7 +3,7 @@ import { mergePatch } from '../operations/compositions';
 
 import type { GraphLink, GraphNode, GraphPatch } from '../types';
 
-class GraphDataStore {
+export class GraphDataStore {
 	nodes = $state<Map<string, GraphNode>>(new Map());
 	links = $state<Map<string, GraphLink>>(new Map());
 
