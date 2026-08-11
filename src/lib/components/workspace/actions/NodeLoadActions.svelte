@@ -59,7 +59,7 @@
 	const creditedArtistsState = $derived(
 		getLoadButtonState(graph.loadedActions, nodeId, 'credited_artists')
 	);
-	const isLoading = $derived(graph.isLoading(nodeId) || discogsApiStore.isRateLimited);
+	const isLoading = $derived(graph.progress.isLoading(nodeId) || discogsApiStore.isRateLimited);
 
 	const itemClass = $derived(
 		layout === 'menu'

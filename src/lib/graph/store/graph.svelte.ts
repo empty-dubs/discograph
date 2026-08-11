@@ -4,9 +4,6 @@ import { expansionStore } from './expansion-store.svelte';
 import { expansionProgressStore } from './expansion-progress-store.svelte';
 import { graphUiStore } from './ui-store.svelte';
 
-import type { LoadAction } from '$lib/components/workspace/actions/constants';
-import type { Master } from '$lib/discogs/types';
-import type { GraphPatch, NodeType } from '../types';
 import type { GraphInterface } from './types';
 
 export class Graph implements GraphInterface {
@@ -84,32 +81,12 @@ export class Graph implements GraphInterface {
 		return this.progress.loadedActions;
 	}
 
-	parseNodeId(id: string) {
-		return this.data.parseNodeId(id);
-	}
-
-	applyPatch(patch: GraphPatch) {
-		this.data.applyPatch(patch);
-	}
-
 	clear() {
 		this.data.clear();
 		this.expansion.clear();
 		this.progress.clear();
 		this.details.clear();
 		this.ui.clear();
-	}
-
-	selectNode(id: string | null) {
-		this.ui.selectNode(id);
-	}
-
-	isTypeVisible(type: NodeType) {
-		return this.ui.isTypeVisible(type);
-	}
-
-	toggleType(type: NodeType) {
-		this.ui.toggleType(type);
 	}
 
 	toggleNodeLabels() {
@@ -129,20 +106,12 @@ export class Graph implements GraphInterface {
 		return this.expansion.hasChildren(nodeId);
 	}
 
-	isLoading(nodeId: string) {
-		return this.progress.isLoading(nodeId);
-	}
-
 	hasMoreReleases(nodeId: string) {
 		return this.progress.hasMoreReleases(nodeId);
 	}
 
 	hasMoreMasterReleases(nodeId: string) {
 		return this.progress.hasMoreMasterReleases(nodeId);
-	}
-
-	hasLoadedAction(nodeId: string, action: LoadAction) {
-		return this.progress.hasLoadedAction(nodeId, action);
 	}
 
 	isDetailsLoading(nodeId: string) {
@@ -167,10 +136,6 @@ export class Graph implements GraphInterface {
 
 	async ensureReleaseDetails(nodeId: string) {
 		await this.details.ensureReleaseDetails(nodeId);
-	}
-
-	async mergeMasterDetails(nodeId: string, master: Master) {
-		await this.details.mergeMasterDetails(nodeId, master);
 	}
 }
 

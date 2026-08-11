@@ -15,10 +15,10 @@
 		forceGraph = new ForceGraph(container!, {
 			onNodeClick: (id) => {
 				contextMenu = null;
-				graph.selectNode(id);
+				graph.ui.selectNode(id);
 			},
 			onNodeContextMenu: (id, event) => {
-				graph.selectNode(id);
+				graph.ui.selectNode(id);
 				contextMenu = { nodeId: id, x: event.clientX, y: event.clientY };
 			},
 			onTooltip: (t) => {

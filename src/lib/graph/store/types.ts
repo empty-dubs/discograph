@@ -1,7 +1,6 @@
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
-import type { Master, SearchResult } from '$lib/discogs/types';
 
-import type { GraphLink, GraphNode, GraphPatch, NodeType } from '../types';
+import type { GraphLink, GraphNode, NodeType } from '../types';
 
 import type { DetailStatus } from './details-store.svelte';
 import type { GraphDataStore } from './data-store.svelte';
@@ -67,27 +66,15 @@ export interface GraphInterface {
 	readonly masterReleasePages: Map<string, { page: number; pages: number }>;
 	readonly loadedActions: Map<string, Set<LoadAction>>;
 
-	parseNodeId(id: string): ParsedNodeId;
-	applyPatch(patch: GraphPatch): void;
 	clear(): void;
-	selectNode(id: string | null): void;
-	isTypeVisible(type: NodeType): boolean;
-	toggleType(type: NodeType): void;
-	toggleNodeLabels(): void;
 	collapseNode(nodeId: string): void;
 	hasChildren(nodeId: string): boolean;
-	isLoading(nodeId: string): boolean;
 	hasMoreReleases(nodeId: string): boolean;
 	hasMoreMasterReleases(nodeId: string): boolean;
-	hasLoadedAction(
-		nodeId: string,
-		action: LoadAction
-	): boolean;
 	isDetailsLoading(nodeId: string): boolean;
 	isDetailsFetched(nodeId: string): boolean;
 	ensureArtistDetails(nodeId: string): Promise<void>;
 	ensureLabelDetails(nodeId: string): Promise<void>;
 	ensureMasterDetails(nodeId: string): Promise<void>;
 	ensureReleaseDetails(nodeId: string): Promise<void>;
-	mergeMasterDetails(nodeId: string, master: Master): Promise<void>;
 }

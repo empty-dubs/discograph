@@ -29,14 +29,14 @@
 		aria-label="Node type visibility"
 	>
 		{#each ALL_NODE_TYPES as type (type)}
-			{@const visible = graph.isTypeVisible(type)}
+			{@const visible = graph.ui.isTypeVisible(type)}
 			{@const count = graph.typeCounts[type]}
 			<button
 				type="button"
 				class="font-inherit hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
 				aria-pressed={visible}
 				disabled={graph.isEmpty}
-				onclick={() => graph.toggleType(type)}
+				onclick={() => graph.ui.toggleType(type)}
 			>
 				<span
 					class="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -57,7 +57,7 @@
 				type="button"
 				class="font-inherit hover:bg-panel flex cursor-pointer items-center rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
 				aria-pressed={graph.showNodeLabels}
-				onclick={() => graph.toggleNodeLabels()}
+				onclick={() => graph.ui.toggleNodeLabels()}
 			>
 				{graph.showNodeLabels ? 'Hide labels' : 'Show labels'}
 			</button>
@@ -83,7 +83,7 @@
 				<button
 					type="button"
 					class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-					disabled={graph.isLoading(selectedNode.id)}
+					disabled={graph.progress.isLoading(selectedNode.id)}
 					onclick={() => graph.collapseNode(selectedNode.id)}
 				>
 					Collapse children
@@ -93,7 +93,7 @@
 			<button
 				type="button"
 				class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-				disabled={graph.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
+				disabled={graph.progress.isLoading(selectedNode.id) || discogsApiStore.isRateLimited}
 				onclick={() => { seedFromNode(graph, selectedNode) }}
 			>
 				Reset graph to this node
