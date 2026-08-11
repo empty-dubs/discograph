@@ -16,7 +16,7 @@
 		release: 'Releases'
 	};
 
-	const selectedNode = $derived(graph.selectedNode);
+	const selectedNode = $derived(graph.display.selectedNode);
 
 	const buttonClass =
 		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
@@ -29,14 +29,14 @@
 		aria-label="Node type visibility"
 	>
 		{#each ALL_NODE_TYPES as type (type)}
-			{@const visible = graph.ui.isTypeVisible(type)}
-			{@const count = graph.typeCounts[type]}
+			{@const visible = graph.display.isTypeVisible(type)}
+			{@const count = graph.display.typeCounts[type]}
 			<button
 				type="button"
 				class="font-inherit hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
 				aria-pressed={visible}
-				disabled={graph.isEmpty}
-				onclick={() => graph.ui.toggleType(type)}
+				disabled={graph.data.isEmpty}
+				onclick={() => graph.display.toggleType(type)}
 			>
 				<span
 					class="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -52,21 +52,21 @@
 			</button>
 		{/each}
 
-		{#if !graph.isEmpty}
+		{#if !graph.data.isEmpty}
 			<button
 				type="button"
 				class="font-inherit hover:bg-panel flex cursor-pointer items-center rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
-				aria-pressed={graph.showNodeLabels}
-				onclick={() => graph.ui.toggleNodeLabels()}
+				aria-pressed={graph.display.showNodeLabels}
+				onclick={() => graph.display.toggleNodeLabels()}
 			>
-				{graph.showNodeLabels ? 'Hide labels' : 'Show labels'}
+				{graph.display.showNodeLabels ? 'Hide labels' : 'Show labels'}
 			</button>
 
 			<button
 				type="button"
 				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300"
 				onclick={() => {
-					graph.clear();
+					graph.data.clear();
 					discogsApiStore.clear();
 				}}
 			>

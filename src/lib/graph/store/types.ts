@@ -4,7 +4,7 @@ import type { GraphLink, GraphNode, NodeType } from '../types';
 
 import type { DetailStatus } from './details-store.svelte';
 import type { GraphDataStore } from './data-store.svelte';
-import type { GraphUiStore } from './ui-store.svelte';
+import type { GraphDisplayStore } from './display-store.svelte';
 import type { ExpansionStore } from './expansion-store.svelte';
 import type { ExpansionProgressStore } from './expansion-progress-store.svelte';
 import type { DetailsStore } from './details-store.svelte';
@@ -45,7 +45,7 @@ export interface DetailsTracker<T> {
 
 export interface GraphInterface {
 	readonly data: GraphDataStore;
-	readonly ui: GraphUiStore;
+	readonly display: GraphDisplayStore;
 	readonly expansion: ExpansionStore;
 	readonly progress: ExpansionProgressStore;
 	readonly details: DetailsStore;
@@ -53,15 +53,6 @@ export interface GraphInterface {
 	readonly links: Map<string, GraphLink>;
 	readonly nodeList: GraphNode[];
 	readonly linkList: GraphLink[];
-	readonly visibleNodeList: GraphNode[];
-	readonly visibleLinkList: GraphLink[];
-	readonly typeCounts: Record<NodeType, number>;
-	readonly selectedNode: GraphNode | null;
-	readonly selectedId: string | null;
-	readonly seedId: string | null;
-	readonly visibleTypes: Set<NodeType>;
-	readonly viewResetToken: number;
-	readonly showNodeLabels: boolean;
 	readonly releasePages: Map<string, { page: number; pages: number }>;
 	readonly masterReleasePages: Map<string, { page: number; pages: number }>;
 	readonly loadedActions: Map<string, Set<LoadAction>>;

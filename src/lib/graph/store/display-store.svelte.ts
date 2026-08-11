@@ -5,7 +5,7 @@ import { graphDataStore } from './data-store.svelte';
 
 import type { GraphNode, NodeType } from '../types';
 
-export class GraphUiStore {
+export class GraphDisplayStore {
 	selectedId = $state<string | null>(null);
 	seedId = $state<string | null>(null);
 	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
@@ -78,4 +78,4 @@ export class GraphUiStore {
 	}
 }
 
-export const graphUiStore = new GraphUiStore();
+export const graphDisplayStore = new GraphDisplayStore();

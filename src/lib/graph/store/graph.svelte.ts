@@ -2,13 +2,13 @@ import { graphDataStore } from './data-store.svelte';
 import { detailsStore } from './details-store.svelte';
 import { expansionStore } from './expansion-store.svelte';
 import { expansionProgressStore } from './expansion-progress-store.svelte';
-import { graphUiStore } from './ui-store.svelte';
+import { graphDisplayStore } from './display-store.svelte';
 
 import type { GraphInterface } from './types';
 
 export class Graph implements GraphInterface {
 	readonly data = graphDataStore;
-	readonly ui = graphUiStore;
+	readonly display = graphDisplayStore;
 	readonly expansion = expansionStore;
 	readonly progress = expansionProgressStore;
 	readonly details = detailsStore;
@@ -29,46 +29,6 @@ export class Graph implements GraphInterface {
 		return this.data.linkList;
 	}
 
-	get isEmpty() {
-		return this.data.isEmpty;
-	}
-
-	get visibleNodeList() {
-		return this.ui.visibleNodeList;
-	}
-
-	get visibleLinkList() {
-		return this.ui.visibleLinkList;
-	}
-
-	get typeCounts() {
-		return this.ui.typeCounts;
-	}
-
-	get selectedNode() {
-		return this.ui.selectedNode;
-	}
-
-	get selectedId() {
-		return this.ui.selectedId;
-	}
-
-	get seedId() {
-		return this.ui.seedId;
-	}
-
-	get visibleTypes() {
-		return this.ui.visibleTypes;
-	}
-
-	get viewResetToken() {
-		return this.ui.viewResetToken;
-	}
-
-	get showNodeLabels() {
-		return this.ui.showNodeLabels;
-	}
-
 	get releasePages() {
 		return this.progress.releasePages;
 	}
@@ -86,11 +46,7 @@ export class Graph implements GraphInterface {
 		this.expansion.clear();
 		this.progress.clear();
 		this.details.clear();
-		this.ui.clear();
-	}
-
-	toggleNodeLabels() {
-		this.ui.toggleNodeLabels();
+		this.display.clear();
 	}
 
 	collapseNode(nodeId: string) {

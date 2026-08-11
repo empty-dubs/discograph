@@ -17,8 +17,8 @@ export function seedFromResult(graph: Graph, result: SearchResult) {
 
 	if (!seedNodeId) return;
 
-	graph.ui.seedId = seedNodeId;
-	graph.ui.selectedId = seedNodeId;
+	graph.display.seedId = seedNodeId;
+	graph.display.selectedId = seedNodeId;
 }
 
 export async function seedFromNode(graph: Graph, node: GraphNode) {
