@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SearchType } from '$lib/discogs/types';
-	import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/stores/graph.svelte';
 
 	import { seedFromResult } from '$lib/graph/loaders/seed';
@@ -20,7 +20,7 @@
 	let emptyMessage = $state<string | null>(null);
 
 	const rateLimitText = $derived.by(() => {
-		const { limit, remaining } = discogsApiStore.rateLimit;
+		const { limit, remaining } = discogsApi.rateLimit;
 
 		if (limit === null || remaining === null) return null;
 
@@ -32,29 +32,29 @@
 
 		emptyMessage = null;
 
-		const results = await discogsApiStore.search(
-			discogsApiStore.searchQuery,
-			discogsApiStore.searchType || undefined
+		const results = await discogsApi.search(
+			discogsApi.searchQuery,
+			discogsApi.searchType || undefined
 		);
 
-		if (results.length === 0 && discogsApiStore.searchQuery.trim()) {
+		if (results.length === 0 && discogsApi.searchQuery.trim()) {
 			emptyMessage = 'No results found';
 		}
 	}
 
-	async function pickResult(result: (typeof discogsApiStore.searchResults)[number]) {
+	async function pickResult(result: (typeof discogsApi.searchResults)[number]) {
 		await seedFromResult(graph, result);
 
 		emptyMessage = null;
 	}
 
 	$effect(() => {
-		if (discogsApiStore.searchResults.length === 0) return;
+		if (discogsApi.searchResults.length === 0) return;
 
 		const handleKeydown = (event: KeyboardEvent) => {
 			event.preventDefault();
 
-			if (event.key === 'Escape') discogsApiStore.clearSearchResults();
+			if (event.key === 'Escape') discogsApi.clearSearchResults();
 		};
 
 		document.addEventListener('keydown', handleKeydown);
@@ -62,8 +62,8 @@
 	});
 
 	$effect(() => {
-		if (!discogsApiStore.searchQuery.trim()) {
-			discogsApiStore.clearSearchResults();
+		if (!discogsApi.searchQuery.trim()) {
+			discogsApi.clearSearchResults();
 			emptyMessage = null;
 		}
 	});
@@ -75,14 +75,14 @@
 			type="search"
 			class="{fieldClass} min-w-0 flex-1"
 			placeholder="Search Discogs…"
-			bind:value={discogsApiStore.searchQuery}
-			disabled={discogsApiStore.searching || discogsApiStore.isRateLimited}
+			bind:value={discogsApi.searchQuery}
+			disabled={discogsApi.searching || discogsApi.isRateLimited}
 		/>
 
 		<select
 			class="{fieldClass} cursor-pointer"
-			bind:value={discogsApiStore.searchType}
-			disabled={discogsApiStore.searching || discogsApiStore.isRateLimited}
+			bind:value={discogsApi.searchType}
+			disabled={discogsApi.searching || discogsApi.isRateLimited}
 		>
 			{#each typeOptions as option}
 				<option value={option.value}>{option.label}</option>
@@ -92,9 +92,9 @@
 		<button
 			type="submit"
 			class="{fieldClass} border-accent bg-accent cursor-pointer text-white"
-			disabled={discogsApiStore.searching || !discogsApiStore.searchQuery.trim() || discogsApiStore.isRateLimited}
+			disabled={discogsApi.searching || !discogsApi.searchQuery.trim() || discogsApi.isRateLimited}
 		>
-			{discogsApiStore.searching ? 'Searching…' : 'Search'}
+			{discogsApi.searching ? 'Searching…' : 'Search'}
 		</button>
 	</form>
 
@@ -102,11 +102,11 @@
 		<p class="text-muted mt-2 text-sm">{emptyMessage}</p>
 	{/if}
 
-	{#if discogsApiStore.searchResults.length > 0}
+	{#if discogsApi.searchResults.length > 0}
 		<ul
 			class="border-border bg-panel absolute top-full right-0 left-0 z-50 mt-2 max-h-40 overflow-y-auto rounded-md border shadow-lg"
 		>
-			{#each discogsApiStore.searchResults as result (result.id + result.type)}
+			{#each discogsApi.searchResults as result (result.id + result.type)}
 				<li class="border-border border-t first:border-t-0">
 					<button
 						type="button"
@@ -125,12 +125,12 @@
 	{/if}
 
 	{#if rateLimitText}
-		<p class="text-muted {headerTextClass}" class:text-warning={discogsApiStore.isRateLimited}>
+		<p class="text-muted {headerTextClass}" class:text-warning={discogsApi.isRateLimited}>
 			{rateLimitText}
 		</p>
 	{/if}
 
-	{#if discogsApiStore.error}
-		<p class="text-danger {headerTextClass}">{discogsApiStore.error}</p>
+	{#if discogsApi.error}
+		<p class="text-danger {headerTextClass}">{discogsApi.error}</p>
 	{/if}
 </div>

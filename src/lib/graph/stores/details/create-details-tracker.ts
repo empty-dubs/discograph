@@ -1,4 +1,4 @@
-import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 import type { DetailsTracker, DetailsTrackerConfig, DetailsTrackerContext } from '../types';
 
@@ -12,7 +12,7 @@ export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): Detail
 
 			ctx.setStatus(nodeId, 'loading');
 
-			const entity = await discogsApiStore.withRequest(
+			const entity = await discogsApi.withRequest(
 				() => config.fetch(discogsId),
 				config.errorMessage
 			);

@@ -3,7 +3,7 @@ import { parseRateLimitHeaders } from './rate-limit';
 
 import type { RateLimitInfo, SearchResult, SearchType } from './types';
 
-class DiscogsApiStore {
+class DiscogsApi {
 	rateLimit = $state<RateLimitInfo>({ limit: null, used: null, remaining: null });
 	error = $state<string | null>(null);
 	searchQuery = $state('');
@@ -77,4 +77,4 @@ class DiscogsApiStore {
 	}
 }
 
-export const discogsApiStore = new DiscogsApiStore();
+export const discogsApi = new DiscogsApi();

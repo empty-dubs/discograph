@@ -5,7 +5,7 @@ import {
 	getMasterVersions,
 	getRelease
 } from '$lib/discogs/client';
-import { discogsApiStore } from '$lib/discogs/api-store.svelte';
+import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 import {
 	buildFromArtistReleases,
@@ -109,7 +109,7 @@ export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
 		}
 
 		if (!mainReleaseId) {
-			discogsApiStore.setError('This master has no main release');
+			discogsApi.setError('This master has no main release');
 			return;
 		}
 
@@ -132,7 +132,7 @@ export async function loadMoreReleases(graph: GraphInterface, nodeId: string) {
 
 	graph.progress.setLoading(nodeId, true);
 
-	await discogsApiStore.withRequest(async () => {
+	await discogsApi.withRequest(async () => {
 		if (type === 'artist') {
 			const releases = await getArtistReleases(discogsId, nextPage);
 			graph.expansion.applyPatchFromExpansion(
@@ -177,7 +177,7 @@ export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: stri
 
 	graph.progress.setLoading(nodeId, true);
 
-	await discogsApiStore.withRequest(async () => {
+	await discogsApi.withRequest(async () => {
 		if (type === 'artist') {
 			const releases = await getArtistReleases(discogsId, nextPage);
 			graph.expansion.applyPatchFromExpansion(
