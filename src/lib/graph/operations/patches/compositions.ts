@@ -23,7 +23,7 @@ export function linkId(source: string, type: EdgeType, target: string): string {
 	return `${source}|${type}|${target}`;
 }
 
-type NodeSource =
+type NodePayload =
 	| SearchResult
 	| Artist
 	| Label
@@ -35,19 +35,19 @@ type NodeSource =
 	| ArtistGroup
 	| MasterArtist;
 
-export function getDisplayName(result: NodeSource, fallbackType = 'entity'): string {
-	if ('title' in result && result.title) return result.title;
-	if ('name' in result && result.name) return result.name;
-	if ('type' in result && typeof result.type === 'string') return `Unknown ${result.type}`;
+export function getDisplayName(payload: NodePayload, fallbackType = 'entity'): string {
+	if ('title' in payload && payload.title) return payload.title;
+	if ('name' in payload && payload.name) return payload.name;
+	if ('type' in payload && typeof payload.type === 'string') return `Unknown ${payload.type}`;
 
 	return `Unknown ${fallbackType}`;
 }
 
 export function getDiscogsUrl(
-	entity: { uri?: string; id: number },
+	payload: { uri?: string; id: number },
 	segment: string
 ): string | undefined {
-	const uri = entity.uri ?? `/${segment}/${entity.id}`;
+	const uri = payload.uri ?? `/${segment}/${payload.id}`;
 
 	if (!uri) return undefined;
 	if (uri.startsWith(DISCOGS_WEB_ORIGIN)) return uri;

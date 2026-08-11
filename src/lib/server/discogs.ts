@@ -77,16 +77,18 @@ export async function fetchDiscogs(
 }
 
 export function extractRateLimitHeaders(headers: Headers): Record<string, string> {
-	const result: Record<string, string> = {};
+	const headerPayload: Record<string, string> = {};
+
 	for (const key of [
 		'x-discogs-ratelimit',
 		'x-discogs-ratelimit-used',
 		'x-discogs-ratelimit-remaining'
 	]) {
 		const value = headers.get(key);
+
 		if (value !== null) {
-			result[key] = value;
+			headerPayload[key] = value;
 		}
 	}
-	return result;
+	return headerPayload;
 }
