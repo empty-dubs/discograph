@@ -1,28 +1,11 @@
 <script lang="ts">
-	import { ALL_NODE_TYPES, NODE_COLORS } from '$lib/graph/constants';
 	import { graph } from '$lib/graph/stores/graph.svelte';
-	import { discogsApi } from '$lib/discogs/discogs.svelte';
 
-	import { seedFromNode } from '$lib/graph/loaders/seed';
-
-	import type { NodeType } from '$lib/graph/types';
-
-	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
-
-	const labels: Record<NodeType, string> = {
-		artist: 'Artists',
-		label: 'Labels',
-		master: 'Masters',
-		release: 'Releases'
-	};
+	import GraphDisplayOptions from './control-panel/GraphDisplayOptions.svelte';
+	import GraphNodeFilters from './control-panel/GraphNodeFilters.svelte';
+	import GraphOperations from './control-panel/GraphOperations.svelte';
 
 	const selectedNode = $derived(graph.display.selectedNode);
-	const isNodeLoading = $derived(
-		selectedNode ? graph.progress.isLoading(selectedNode.id) : false
-	);
-
-	const buttonClass =
-		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
 </script>
 
 <div class="flex flex-col gap-3">
@@ -31,77 +14,14 @@
 		role="group"
 		aria-label="Node type visibility"
 	>
-		{#each ALL_NODE_TYPES as type (type)}
-			{@const visible = graph.display.isTypeVisible(type)}
-			{@const count = graph.display.typeCounts[type]}
-			<button
-				type="button"
-				class="font-inherit hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
-				aria-pressed={visible}
-				disabled={graph.data.isEmpty}
-				onclick={() => graph.display.toggleType(type)}
-			>
-				<span
-					class="h-2.5 w-2.5 shrink-0 rounded-full"
-					style:background={NODE_COLORS[type]}
-					style:opacity={visible ? 1 : 0.3}
-				></span>
-
-				<span class:line-through={!visible} class:opacity-45={!visible}>{labels[type]}</span>
-
-				{#if count > 0}
-					<span class="text-xs text-gray-500">{count}</span>
-				{/if}
-			</button>
-		{/each}
+		<GraphNodeFilters />
 
 		{#if !graph.data.isEmpty}
-			<button
-				type="button"
-				class="font-inherit hover:bg-panel flex cursor-pointer items-center rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
-				aria-pressed={graph.display.showNodeLabels}
-				onclick={() => graph.display.toggleNodeLabels()}
-			>
-				{graph.display.showNodeLabels ? 'Hide labels' : 'Show labels'}
-			</button>
-
-			<button
-				type="button"
-				class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
-				disabled={isNodeLoading}
-				onclick={() => {
-					graph.data.clear();
-					discogsApi.clear();
-				}}
-			>
-				Clear graph
-			</button>
+			<GraphDisplayOptions />
 		{/if}
 	</div>
 
 	{#if selectedNode}
-		<div class="flex flex-wrap gap-2" role="group" aria-label="Graph actions">
-			<NodeLoadActions nodeId={selectedNode.id} />
-
-			{#if graph.hasChildren(selectedNode.id)}
-				<button
-					type="button"
-					class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-					disabled={isNodeLoading}
-					onclick={() => graph.collapseNode(selectedNode.id)}
-				>
-					Collapse children
-				</button>
-			{/if}
-
-			<button
-				type="button"
-				class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-				disabled={isNodeLoading || discogsApi.isRateLimited}
-				onclick={() => { seedFromNode(graph, selectedNode) }}
-			>
-				Reset graph to this node
-			</button>
-		</div>
+		<GraphOperations nodeId={selectedNode.id} />
 	{/if}
 </div>

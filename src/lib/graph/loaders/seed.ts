@@ -17,7 +17,6 @@ export function seedFromResult(graph: GraphInterface, result: SearchResult) {
 
 	if (!seedNodeId) return;
 
-	graph.display.seedId = seedNodeId;
 	graph.display.selectedId = seedNodeId;
 }
 
