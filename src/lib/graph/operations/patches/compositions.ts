@@ -1,5 +1,3 @@
-import { DISCOGS_WEB_ORIGIN } from '$lib/discogs/constants';
-
 import type { NodePayload } from '$lib/discogs/types';
 
 import type { EdgeType, NodeType } from '../../types';
@@ -18,16 +16,4 @@ export function getDisplayName(payload: NodePayload, fallbackType = 'entity'): s
 	if ('type' in payload && typeof payload.type === 'string') return `Unknown ${payload.type}`;
 
 	return `Unknown ${fallbackType}`;
-}
-
-export function getDiscogsUrl(
-	payload: { uri?: string; id: number },
-	segment: string
-): string | undefined {
-	const uri = payload.uri ?? `/${segment}/${payload.id}`;
-
-	if (!uri) return undefined;
-	if (uri.startsWith(DISCOGS_WEB_ORIGIN)) return uri;
-
-	return `${DISCOGS_WEB_ORIGIN}${uri.startsWith('/') ? uri : `/${uri}`}`;
 }
