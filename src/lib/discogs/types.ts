@@ -228,3 +228,30 @@ export type NodePayload =
 	| ArtistMember
 	| ArtistGroup
 	| MasterArtist;
+
+export type ArtistNodePayload =
+	| SearchResult
+	| Artist
+	| ReleaseArtist
+	| ArtistMember
+	| ArtistGroup
+	| ArtistAlias
+	| MasterArtist;
+
+export type LabelNodePayload =
+	| SearchResult
+	| Label
+	| Sublabel
+	| LabelRef
+	| ReleaseCompany;
+
+export type MasterNodePayload =
+	| SearchResult
+	| MasterVersion
+	| Master;
+
+export type ReleaseNodePayload =
+	| SearchResult
+	| Release
+	| LabelRelease
+	| MasterVersion;

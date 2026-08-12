@@ -1,51 +1,8 @@
-import type {
-	Artist,
-	ArtistAlias,
-	ArtistGroup,
-	ArtistMember,
-	Label,
-	LabelRef,
-	LabelRelease,
-	Master,
-	MasterArtist,
-	MasterVersion,
-	Release,
-	ReleaseArtist,
-	ReleaseCompany,
-	SearchResult,
-	Sublabel
-} from '$lib/discogs/types';
+import { getDisplayName, nodeId } from './compositions';
 
 import type { GraphNode, NodeType } from '../../types';
 
-import { getDisplayName, nodeId } from './compositions';
-
-type ArtistNodePayload =
-	| SearchResult
-	| Artist
-	| ReleaseArtist
-	| ArtistMember
-	| ArtistGroup
-	| ArtistAlias
-	| MasterArtist;
-
-type LabelNodePayload =
-	| SearchResult
-	| Label
-	| Sublabel
-	| LabelRef
-	| ReleaseCompany;
-
-type MasterNodePayload =
-	| SearchResult
-	| MasterVersion
-	| Master;
-
-type ReleaseNodePayload =
-	| SearchResult
-	| Release
-	| LabelRelease
-	| MasterVersion;
+import type { ArtistNodePayload, LabelNodePayload, MasterNodePayload, Release, ReleaseNodePayload } from '$lib/discogs/types';
 
 export function artistNode(payload: ArtistNodePayload): GraphNode {
 	const nodeType: NodeType = 'artist';
