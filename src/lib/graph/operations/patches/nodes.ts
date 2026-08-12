@@ -6,7 +6,6 @@ import type {
 	ArtistNodePayload,
 	LabelNodePayload,
 	MasterNodePayload,
-	Release,
 	ReleaseNodePayload,
 } from '$lib/discogs/types';
 
@@ -48,21 +47,6 @@ export function masterNode(payload: MasterNodePayload, meta?: GraphNode['meta'])
 		uri: nodeURI,
 		resource_url: nodeResourceURL,
 		meta
-	};
-}
-
-export function masterStubFromRelease(release: Release): GraphNode {
-	const masterId = release.master_id!;
-	const nodeType: NodeType = 'master';
-
-	return {
-		id: nodeId(nodeType, masterId),
-		type: nodeType,
-		discogsId: masterId,
-		displayName: release.title ?? `Master ${masterId}`,
-		name: release.title,
-		resource_url: release.master_url,
-		meta: { year: release.year ?? release.released }
 	};
 }
 
