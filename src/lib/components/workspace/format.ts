@@ -6,25 +6,23 @@ const GUIDELINE_LINK_PATTERN = /\[g[\d.]+\]/gi;
 const IMAGE_TAG_PATTERN = /\[img=[^\]]+\]/gi;
 
 export function stripDiscogsWikiMarkup(text: string): string {
-	let result = text;
-
-	result = result.replace(NAMED_LINK_PATTERN, '$1');
-	result = result.replace(URL_TAG_PATTERN, '$1');
+	text = text.replace(NAMED_LINK_PATTERN, '$1');
+	text = text.replace(URL_TAG_PATTERN, '$1');
 
 	for (let pass = 0; pass < 3; pass += 1) {
-		const next = result.replace(PAIRED_TAG_PATTERN, '$1');
+		const next = text.replace(PAIRED_TAG_PATTERN, '$1');
 
-		if (next === result) break;
-		result = next;
+		if (next === text) break;
+		text = next;
 	}
 
-	result = result.replace(ID_ONLY_LINK_PATTERN, '');
-	result = result.replace(GUIDELINE_LINK_PATTERN, '');
-	result = result.replace(IMAGE_TAG_PATTERN, '');
-	result = result.replace(/[^\S\n]{2,}/g, ' ');
-	result = result.replace(/[ \t]+\n/g, '\n');
+	text = text.replace(ID_ONLY_LINK_PATTERN, '');
+	text = text.replace(GUIDELINE_LINK_PATTERN, '');
+	text = text.replace(IMAGE_TAG_PATTERN, '');
+	text = text.replace(/[^\S\n]{2,}/g, ' ');
+	text = text.replace(/[ \t]+\n/g, '\n');
 
-	return result.trim();
+	return text.trim();
 }
 
 export function parseDiscogsExternalUrl(raw: string): { href: string; display: string } | null {

@@ -9,10 +9,13 @@ export function getDiscogsProxyUrl(node: Pick<GraphNode, 'type' | 'discogsId'>):
 }
 
 export function getDiscogsWebsiteUrl(
-	node: Pick<GraphNode, 'type' | 'discogsId' | 'discogsUrl'>
+	node: Pick<GraphNode, 'type' | 'discogsId' | 'uri'>
 ): string | null {
-	if (node.discogsUrl) return node.discogsUrl;
 	if (node.discogsId === null) return null;
 
-	return `${DISCOGS_WEB_ORIGIN}/${WEB_SEGMENTS[node.type]}/${node.discogsId}`;
+	const path = node.uri ?? `/${WEB_SEGMENTS[node.type]}/${node.discogsId}`;
+
+	if (path.startsWith(DISCOGS_WEB_ORIGIN)) return path;
+
+	return `${DISCOGS_WEB_ORIGIN}${path.startsWith('/') ? path : `/${path}`}`;
 }

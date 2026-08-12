@@ -18,7 +18,6 @@ export interface GraphNode {
 	title?: string | undefined;
 	displayName: string;
 	uri?: string;
-	discogsUrl?: string;
 	resource_url?: string;
 	profile?: string;
 	realname?: string | null;

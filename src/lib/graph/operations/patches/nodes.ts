@@ -1,51 +1,8 @@
-import type {
-	Artist,
-	ArtistAlias,
-	ArtistGroup,
-	ArtistMember,
-	Label,
-	LabelRef,
-	LabelRelease,
-	Master,
-	MasterArtist,
-	MasterVersion,
-	Release,
-	ReleaseArtist,
-	ReleaseCompany,
-	SearchResult,
-	Sublabel
-} from '$lib/discogs/types';
+import { getDisplayName, nodeId } from './compositions';
 
 import type { GraphNode, NodeType } from '../../types';
 
-import { getDisplayName, getDiscogsUrl, nodeId } from './compositions';
-
-type ArtistNodePayload =
-	| SearchResult
-	| Artist
-	| ReleaseArtist
-	| ArtistMember
-	| ArtistGroup
-	| ArtistAlias
-	| MasterArtist;
-
-type LabelNodePayload =
-	| SearchResult
-	| Label
-	| Sublabel
-	| LabelRef
-	| ReleaseCompany;
-
-type MasterNodePayload =
-	| SearchResult
-	| MasterVersion
-	| Master;
-
-type ReleaseNodePayload =
-	| SearchResult
-	| Release
-	| LabelRelease
-	| MasterVersion;
+import type { ArtistNodePayload, LabelNodePayload, MasterNodePayload, Release, ReleaseNodePayload } from '$lib/discogs/types';
 
 export function artistNode(payload: ArtistNodePayload): GraphNode {
 	const nodeType: NodeType = 'artist';
@@ -55,8 +12,7 @@ export function artistNode(payload: ArtistNodePayload): GraphNode {
 		id: nodeId(nodeType, payload.id),
 		type: nodeType,
 		discogsId: payload.id,
-		displayName: getDisplayName(payload, nodeType),
-		discogsUrl: getDiscogsUrl(payload, nodeType)
+		displayName: getDisplayName(payload, nodeType)
 	};
 }
 
@@ -68,8 +24,7 @@ export function labelNode(payload: LabelNodePayload): GraphNode {
 		id: nodeId(nodeType, payload.id),
 		type: nodeType,
 		discogsId: payload.id,
-		displayName: getDisplayName(payload, nodeType),
-		discogsUrl: getDiscogsUrl(payload, nodeType)
+		displayName: getDisplayName(payload, nodeType)
 	};
 }
 
@@ -86,10 +41,6 @@ export function masterNode(payload: MasterNodePayload, meta?: GraphNode['meta'])
 		name: payload.title,
 		uri: nodeURI,
 		resource_url: nodeResourceURL,
-		discogsUrl: getDiscogsUrl(
-			{ uri: nodeURI, id: payload.id },
-			nodeType
-		),
 		meta
 	};
 }
@@ -105,7 +56,6 @@ export function masterStubFromRelease(release: Release): GraphNode {
 		displayName: release.title ?? `Master ${masterId}`,
 		name: release.title,
 		resource_url: release.master_url,
-		discogsUrl: getDiscogsUrl({ id: masterId }, nodeType),
 		meta: { year: release.year ?? release.released }
 	};
 }
@@ -123,10 +73,6 @@ export function releaseNode(payload: ReleaseNodePayload, meta?: GraphNode['meta'
 		name: payload.title,
 		uri: nodeURI,
 		resource_url: nodeResourceURL,
-		discogsUrl: getDiscogsUrl(
-			{ uri: nodeURI, id: payload.id },
-			nodeType
-		),
 		meta
 	};
 }

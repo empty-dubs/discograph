@@ -29,6 +29,6 @@ export async function seedFromNode(graph: GraphInterface, node: GraphNode) {
 		type: node.type,
 		name: node.type === 'artist' || node.type === 'label' ? node.displayName : undefined,
 		title: node.type === 'release' || node.type === 'master' ? node.displayName : undefined,
-		uri: node.discogsUrl
+		uri: node.uri
 	});
 }
