@@ -15,12 +15,8 @@ class DiscogsApi {
 		return this.rateLimit.remaining !== null && this.rateLimit.remaining <= 0;
 	}
 
-	update(info: RateLimitInfo): void {
-		this.rateLimit = info;
-	}
-
 	updateFromHeaders(headers: Headers): void {
-		this.update(parseRateLimitHeaders(headers));
+		this.rateLimit = parseRateLimitHeaders(headers);
 	}
 
 	setError(message: string | null): void {
