@@ -9,6 +9,13 @@ export const NODE_COLORS: Record<NodeType, string> = {
 	release: '#e8943a'
 };
 
+export const NODE_TYPE_LABELS: Record<NodeType, string> = {
+	artist: 'Artists',
+	label: 'Labels',
+	master: 'Masters',
+	release: 'Releases'
+};
+
 export const NODE_RADIUS: Record<NodeType, number> = {
 	artist: 14,
 	label: 12,
