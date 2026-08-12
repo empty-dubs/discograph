@@ -216,3 +216,15 @@ export interface RateLimitInfo {
 	used: number | null;
 	remaining: number | null;
 }
+
+export type NodePayload =
+	| SearchResult
+	| Artist
+	| Label
+	| Release
+	| MasterVersion
+	| ReleaseArtist
+	| LabelRelease
+	| ArtistMember
+	| ArtistGroup
+	| MasterArtist;

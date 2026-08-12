@@ -1,17 +1,6 @@
 import { DISCOGS_WEB_ORIGIN } from '$lib/discogs/constants';
 
-import type {
-	Artist,
-	ArtistGroup,
-	ArtistMember,
-	Label,
-	LabelRelease,
-	MasterArtist,
-	MasterVersion,
-	Release,
-	ReleaseArtist,
-	SearchResult
-} from '$lib/discogs/types';
+import type { NodePayload } from '$lib/discogs/types';
 
 import type { EdgeType, NodeType } from '../../types';
 
@@ -22,18 +11,6 @@ export function nodeId(type: NodeType, id: number | string): string {
 export function linkId(source: string, type: EdgeType, target: string): string {
 	return `${source}|${type}|${target}`;
 }
-
-type NodePayload =
-	| SearchResult
-	| Artist
-	| Label
-	| Release
-	| MasterVersion
-	| ReleaseArtist
-	| LabelRelease
-	| ArtistMember
-	| ArtistGroup
-	| MasterArtist;
 
 export function getDisplayName(payload: NodePayload, fallbackType = 'entity'): string {
 	if ('title' in payload && payload.title) return payload.title;
