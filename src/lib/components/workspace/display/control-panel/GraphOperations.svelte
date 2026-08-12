@@ -5,40 +5,40 @@
 	import { seedFromNode } from '$lib/graph/loaders/seed';
 
 	import NodeLoadActions from '../../actions/NodeLoadActions.svelte';
+	import type { GraphNode } from '$lib/graph/types';
 
 	interface Props {
-		nodeId: string;
+		node: GraphNode;
 	}
 
-	let { nodeId }: Props = $props();
+	let { node }: Props = $props();
 
-	const selectedNode = $derived(graph.nodes.get(nodeId) ?? null);
-	const isNodeLoading = $derived(graph.progress.isLoading(nodeId));
+	const isNodeLoading = $derived(graph.progress.isLoading(node.id));
 
 	const buttonClass =
 		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
 </script>
 
 <div class="flex flex-wrap gap-2" role="group" aria-label="Graph actions">
-	<NodeLoadActions {nodeId} />
+	<NodeLoadActions {node} />
 
-	{#if selectedNode && graph.hasChildren(nodeId)}
+	{#if node && graph.hasChildren(node.id)}
 		<button
 			type="button"
 			class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
 			disabled={isNodeLoading}
-			onclick={() => graph.collapseNode(nodeId)}
+			onclick={() => graph.collapseNode(node.id)}
 		>
 			Collapse children
 		</button>
 	{/if}
 
-	{#if selectedNode}
+	{#if node}
 		<button
 			type="button"
 			class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
 			disabled={isNodeLoading || discogsApi.isRateLimited}
-			onclick={() => seedFromNode(graph, selectedNode)}
+			onclick={() => seedFromNode(graph, node)}
 		>
 			Reset graph to this node
 		</button>

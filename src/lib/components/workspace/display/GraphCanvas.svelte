@@ -11,6 +11,8 @@
 	let contextMenu = $state<{ nodeId: string; x: number; y: number } | null>(null);
 	let forceGraph: ForceGraph | null = null;
 
+	const node = $derived(graph.nodes.get(graph.display.selectedId ?? '') ?? null);
+
 	onMount(() => {
 		forceGraph = new ForceGraph(container!, {
 			onNodeClick: (id) => {
@@ -89,7 +91,7 @@
 
 {#if contextMenu}
 	<GraphContextMenu
-		nodeId={contextMenu.nodeId}
+		{node}
 		x={contextMenu.x}
 		y={contextMenu.y}
 		onClose={() => {
