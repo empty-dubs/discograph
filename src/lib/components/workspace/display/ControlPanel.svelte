@@ -5,7 +5,7 @@
 	import GraphNodeFilters from './control-panel/GraphNodeFilters.svelte';
 	import GraphOperations from './control-panel/GraphOperations.svelte';
 
-	const selectedNode = $derived(graph.display.selectedNode);
+	const node = $derived(graph.nodes.get(graph.display.selectedId ?? '') ?? null);
 </script>
 
 <div class="flex flex-col gap-3">
@@ -21,7 +21,7 @@
 		{/if}
 	</div>
 
-	{#if selectedNode}
-		<GraphOperations nodeId={selectedNode.id} />
+	{#if node}
+		<GraphOperations {node} />
 	{/if}
 </div>

@@ -2,15 +2,16 @@
 	import { onMount } from 'svelte';
 
 	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
+	import type { GraphNode } from '$lib/graph/types';
 
 	interface Props {
-		nodeId: string | null;
+		node: GraphNode | null;
 		x: number;
 		y: number;
 		onClose: () => void;
 	}
 
-	let { nodeId, x, y, onClose }: Props = $props();
+	let { node, x, y, onClose }: Props = $props();
 
 	function handleKeydown(event: KeyboardEvent) {
 		event.preventDefault();
@@ -34,7 +35,7 @@
 	});
 </script>
 
-{#if nodeId}
+{#if node}
 	<div
 		data-graph-context-menu
 		class="border-border bg-panel fixed z-110 min-w-45 overflow-hidden rounded-md border py-1 shadow-lg"
@@ -42,6 +43,6 @@
 		style:top="{y}px"
 		role="menu"
 	>
-		<NodeLoadActions {nodeId} layout="menu" onAction={onClose} />
+		<NodeLoadActions {node} layout="menu" onAction={onClose} />
 	</div>
 {/if}
