@@ -78,9 +78,6 @@ export class ExpansionStore {
 		if (graphDisplayStore.selectedId && toRemove.has(graphDisplayStore.selectedId)) {
 			graphDisplayStore.selectedId = nodeId;
 		}
-		if (graphDisplayStore.seedId && toRemove.has(graphDisplayStore.seedId)) {
-			graphDisplayStore.seedId = nodeId;
-		}
 
 		sideEffects.onNodesRemoved?.(toRemove);
 	}

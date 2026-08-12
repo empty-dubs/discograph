@@ -7,7 +7,6 @@ import type { GraphNode, NodeType } from '../types';
 
 export class GraphDisplayStore {
 	selectedId = $state<string | null>(null);
-	seedId = $state<string | null>(null);
 	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
 	viewResetToken = $state(0);
 	showNodeLabels = $state(true);
@@ -70,7 +69,6 @@ export class GraphDisplayStore {
 	}
 
 	clear() {
-		this.seedId = null;
 		this.selectedId = null;
 		this.visibleTypes = new Set(ALL_NODE_TYPES);
 		this.showNodeLabels = true;
