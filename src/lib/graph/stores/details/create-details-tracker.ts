@@ -1,11 +1,13 @@
+import { parseNodeId } from '../../operations/transformations';
+
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 import type { DetailsTracker, DetailsTrackerConfig, DetailsTrackerContext } from '../types';
 
 export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): DetailsTracker<T> {
 	return {
-		async ensure(ctx, nodeId) {
-			const { type, discogsId } = ctx.parseNodeId(nodeId);
+		async ensure(ctx: DetailsTrackerContext, nodeId: string) {
+			const { type, discogsId } = parseNodeId(nodeId);
 
 			if (type !== config.nodeType || discogsId === null) return;
 			if (ctx.isFetched(nodeId) || ctx.isLoading(nodeId)) return;
@@ -26,15 +28,15 @@ export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): Detail
 			ctx.setStatus(nodeId, 'fetched');
 		},
 
-		isLoading(ctx, nodeId) {
+		isLoading(ctx: DetailsTrackerContext, nodeId: string) {
 			return ctx.isLoading(nodeId);
 		},
 
-		markFetched(ctx, nodeId) {
+		markFetched(ctx: DetailsTrackerContext, nodeId: string) {
 			ctx.setStatus(nodeId, 'fetched');
 		},
 
-		async merge(ctx, nodeId, entity) {
+		async merge(ctx: DetailsTrackerContext, nodeId: string, entity: T) {
 			await config.merge(ctx, nodeId, entity);
 		}
 	};

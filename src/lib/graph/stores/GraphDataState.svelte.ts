@@ -1,4 +1,3 @@
-import { parseNodeId } from '../operations/transformations';
 import { mergePatch } from '../operations/compositions';
 
 import type { GraphLink, GraphNode, GraphPatch } from '../types';
@@ -17,10 +16,6 @@ export class GraphDataState {
 
 	get isEmpty(): boolean {
 		return this.nodes.size === 0 && this.links.size === 0;
-	}
-
-	parseNodeId(id: string) {
-		return parseNodeId(id);
 	}
 
 	applyPatch(patch: GraphPatch) {

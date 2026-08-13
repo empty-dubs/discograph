@@ -9,7 +9,6 @@ export interface ParsedNodeId {
 
 export interface DetailsTrackerContext {
 	readonly nodes: Map<string, GraphNode>;
-	parseNodeId(id: string): ParsedNodeId;
 	setNodes(nodes: Map<string, GraphNode>): void;
 	isFetched(nodeId: string): boolean;
 	isLoading(nodeId: string): boolean;

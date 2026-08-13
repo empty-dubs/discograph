@@ -46,7 +46,6 @@ export class NodeDetailsState {
 	private ctx(): DetailsTrackerContext {
 		return {
 			nodes: graphDataState.nodes,
-			parseNodeId: (id) => graphDataState.parseNodeId(id),
 			setNodes: (nodes) => {
 				graphDataState.nodes = nodes;
 			},
