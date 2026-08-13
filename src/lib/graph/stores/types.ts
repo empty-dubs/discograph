@@ -2,11 +2,6 @@ import type { GraphNode, NodeType } from '../types';
 
 import type { DetailStatus } from './NodeDetailsState.svelte';
 
-export interface ParsedNodeId {
-	type: NodeType;
-	discogsId: number | null;
-}
-
 export interface DetailsTrackerContext {
 	readonly nodes: Map<string, GraphNode>;
 	setNodes(nodes: Map<string, GraphNode>): void;

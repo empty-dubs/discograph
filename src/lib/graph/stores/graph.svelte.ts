@@ -28,10 +28,6 @@ export interface GraphInterface {
 	hasMoreMasterReleases(nodeId: string): boolean;
 	isDetailsLoading(nodeId: string): boolean;
 	isDetailsFetched(nodeId: string): boolean;
-	ensureArtistDetails(nodeId: string): Promise<void>;
-	ensureLabelDetails(nodeId: string): Promise<void>;
-	ensureMasterDetails(nodeId: string): Promise<void>;
-	ensureReleaseDetails(nodeId: string): Promise<void>;
 }
 
 class Graph implements GraphInterface {
@@ -104,22 +100,6 @@ class Graph implements GraphInterface {
 
 	isDetailsFetched(nodeId: string) {
 		return this.details.isDetailsFetched(nodeId);
-	}
-
-	async ensureArtistDetails(nodeId: string) {
-		await this.details.ensureArtistDetails(nodeId);
-	}
-
-	async ensureLabelDetails(nodeId: string) {
-		await this.details.ensureLabelDetails(nodeId);
-	}
-
-	async ensureMasterDetails(nodeId: string) {
-		await this.details.ensureMasterDetails(nodeId);
-	}
-
-	async ensureReleaseDetails(nodeId: string) {
-		await this.details.ensureReleaseDetails(nodeId);
 	}
 }
 

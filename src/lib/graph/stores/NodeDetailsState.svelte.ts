@@ -7,6 +7,7 @@ import { mergeMasterDetails } from './details/master';
 import { mergeReleaseDetails } from './details/release';
 import { graphDataState } from './GraphDataState.svelte';
 
+import type { NodeType } from '../types';
 import type { Master } from '$lib/discogs/types';
 import type { DetailsTrackerContext } from './types';
 
@@ -95,6 +96,19 @@ export class NodeDetailsState {
 
 	async ensureReleaseDetails(nodeId: string) {
 		await this.releaseTracker.ensure(this.ctx(), nodeId);
+	}
+
+	ensureDetails(nodeId: string, type: NodeType) {
+		switch (type) {
+			case 'artist':
+				return this.ensureArtistDetails(nodeId);
+			case 'label':
+				return this.ensureLabelDetails(nodeId);
+			case 'master':
+				return this.ensureMasterDetails(nodeId);
+			case 'release':
+				return this.ensureReleaseDetails(nodeId);
+		}
 	}
 
 	clear() {
