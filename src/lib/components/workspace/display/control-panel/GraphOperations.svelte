@@ -5,29 +5,25 @@
 	import { seedFromNode } from '$lib/graph/loaders/seed';
 
 	import NodeLoadActions from '../../actions/NodeLoadActions.svelte';
-	import type { GraphNode } from '$lib/graph/types';
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	interface Props {
-		node: GraphNode;
-	}
+	const node = $derived(selectedNodeState.node);
 
-	let { node }: Props = $props();
-
-	const isNodeLoading = $derived(graph.progress.isLoading(node.id));
+	const isNodeLoading = $derived(graph.progress.isLoading(node!.id));
 
 	const buttonClass =
 		'rounded-md px-3 py-2 text-center text-sm no-underline disabled:cursor-not-allowed disabled:opacity-50';
 </script>
 
 <div class="flex flex-wrap gap-2" role="group" aria-label="Graph actions">
-	<NodeLoadActions {node} />
+	<NodeLoadActions/>
 
-	{#if node && graph.hasChildren(node.id)}
+	{#if node && graph.hasChildren(node!.id)}
 		<button
 			type="button"
 			class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
 			disabled={isNodeLoading}
-			onclick={() => graph.collapseNode(node.id)}
+			onclick={() => graph.collapseNode(node!.id)}
 		>
 			Collapse children
 		</button>

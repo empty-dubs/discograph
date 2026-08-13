@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { graph } from '$lib/graph/stores/graph.svelte';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	const selectedNode = $derived(graph.display.selectedNode);
+	const selectedNode = $derived(selectedNodeState.node);
 	const isNodeLoading = $derived(
 		selectedNode ? graph.progress.isLoading(selectedNode.id) : false
 	);

@@ -44,6 +44,6 @@
 		style:top="{y}px"
 		role="menu"
 	>
-		<NodeLoadActions {node} layout="menu" onAction={onClose} />
+		<NodeLoadActions layout="menu" onAction={onClose} />
 	</div>
 {/if}

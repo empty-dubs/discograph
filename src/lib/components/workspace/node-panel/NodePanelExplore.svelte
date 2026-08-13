@@ -2,23 +2,18 @@
 	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
 	import { graph } from '$lib/graph/stores/graph.svelte';
 	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	import type { GraphNode } from '$lib/graph/types';
+	const node = $derived(selectedNodeState.node);
 
-	interface Props {
-		node: GraphNode;
-	}
-
-	let { node }: Props = $props();
-
-	const websiteUrl = $derived(getDiscogsWebsiteUrl(node));
-	const apiUrl = $derived(getDiscogsProxyUrl(node));
+	const websiteUrl = $derived(getDiscogsWebsiteUrl(node!));
+	const apiUrl = $derived(getDiscogsProxyUrl(node!));
 	const artistDisplayName = $derived(
-		node.type === 'release' || node.type === 'master'
-			? resolveArtistDisplayName(node, graph.data.linkList, (id) => graph.data.nodes.get(id))
+		node!.type === 'release' || node!.type === 'master'
+			? resolveArtistDisplayName(node!, graph.data.linkList, (id) => graph.data.nodes.get(id))
 			: null
 	);
-	const youtubeUrl = $derived(getYouTubeSearchUrl(node, artistDisplayName));
+	const youtubeUrl = $derived(getYouTubeSearchUrl(node!, artistDisplayName));
 
 	const linkClass =
 		'border-border bg-panel-hover cursor-pointer text-center rounded-md border px-3 py-2 text-sm text-gray-300 no-underline';
