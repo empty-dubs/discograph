@@ -30,7 +30,9 @@
 	$effect(() => {
 		const selected = graph.display.selectedNode;
 
-		graph.details.ensureDetails(selected?.id ?? null, selected?.type ?? null);
+		if (!selected) return;
+
+		graph.details.ensureDetails(selected.id, selected.type);
 	});
 
 	$effect(() => {
