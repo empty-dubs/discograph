@@ -15,7 +15,7 @@
 	const apiUrl = $derived(getDiscogsProxyUrl(node));
 	const artistDisplayName = $derived(
 		node.type === 'release' || node.type === 'master'
-			? resolveArtistDisplayName(node, graph.linkList, (id) => graph.nodes.get(id))
+			? resolveArtistDisplayName(node, graph.data.linkList, (id) => graph.data.nodes.get(id))
 			: null
 	);
 	const youtubeUrl = $derived(getYouTubeSearchUrl(node, artistDisplayName));

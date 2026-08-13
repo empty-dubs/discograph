@@ -11,7 +11,7 @@
 	let contextMenu = $state<{ nodeId: string; x: number; y: number } | null>(null);
 	let forceGraph: ForceGraph | null = null;
 
-	const node = $derived(graph.nodes.get(graph.display.selectedId ?? '') ?? null);
+	const node = $derived(graph.data.nodes.get(graph.display.selectedId ?? '') ?? null);
 
 	onMount(() => {
 		forceGraph = new ForceGraph(container!, {

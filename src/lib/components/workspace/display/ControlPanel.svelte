@@ -5,7 +5,7 @@
 	import GraphNodeFilters from './control-panel/GraphNodeFilters.svelte';
 	import GraphOperations from './control-panel/GraphOperations.svelte';
 
-	const node = $derived(graph.nodes.get(graph.display.selectedId ?? '') ?? null);
+	const node = $derived(graph.data.nodes.get(graph.display.selectedId ?? '') ?? null);
 </script>
 
 <div class="flex flex-col gap-3">
