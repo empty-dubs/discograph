@@ -1,5 +1,7 @@
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 
+import { parseNodeId } from '../operations/transformations';
+
 import type { GraphInterface } from '../stores/graph.svelte';
 
 export async function runLoad(
@@ -10,7 +12,7 @@ export async function runLoad(
 ): Promise<void> {
 	if (graph.progress.loading.has(nodeId)) return;
 
-	const { discogsId } = graph.data.parseNodeId(nodeId);
+	const { discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 

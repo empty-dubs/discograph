@@ -76,17 +76,7 @@
 	$effect(() => {
 		if (!node) return;
 
-		if (node.type === 'artist') {
-			graph.ensureArtistDetails(node.id);
-		}
-
-		if (node.type === 'label') {
-			graph.ensureLabelDetails(node.id);
-		}
-
-		if (node.type === 'master') {
-			graph.ensureMasterDetails(node.id);
-		}
+		graph.details.ensureDetails(node.id, node.type);
 	});
 </script>
 

@@ -1,6 +1,6 @@
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 
-export class ExpansionProgressStore {
+export class ExpansionProgressState {
 	loading = $state<Set<string>>(new Set());
 	releasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
 	masterReleasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
@@ -95,4 +95,4 @@ export class ExpansionProgressStore {
 	}
 }
 
-export const expansionProgressStore = new ExpansionProgressStore();
+export const expansionProgressState = new ExpansionProgressState();

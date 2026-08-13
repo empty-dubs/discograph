@@ -5,6 +5,9 @@ import {
 	getMasterVersions,
 	getRelease
 } from '$lib/discogs/client';
+
+import { parseNodeId } from '../operations/transformations';
+
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 import {
@@ -19,7 +22,7 @@ import { runLoad } from './run-load';
 import type { GraphInterface } from '../stores/graph.svelte';
 
 export async function loadReleases(graph: GraphInterface, nodeId: string) {
-	const { type, discogsId } = graph.data.parseNodeId(nodeId);
+	const { type, discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
@@ -57,7 +60,7 @@ export async function loadReleases(graph: GraphInterface, nodeId: string) {
 }
 
 export async function loadMasterReleases(graph: GraphInterface, nodeId: string) {
-	const { type, discogsId } = graph.data.parseNodeId(nodeId);
+	const { type, discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
@@ -94,7 +97,7 @@ export async function loadMasterReleases(graph: GraphInterface, nodeId: string) 
 }
 
 export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
-	const { type, discogsId } = graph.data.parseNodeId(nodeId);
+	const { type, discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null || type !== 'master') return;
 
@@ -120,7 +123,7 @@ export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
 }
 
 export async function loadMoreReleases(graph: GraphInterface, nodeId: string) {
-	const { type, discogsId } = graph.data.parseNodeId(nodeId);
+	const { type, discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
@@ -165,7 +168,7 @@ export function hasMoreReleases(graph: GraphInterface, nodeId: string): boolean 
 }
 
 export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: string) {
-	const { type, discogsId } = graph.data.parseNodeId(nodeId);
+	const { type, discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null || (type !== 'artist' && type !== 'label')) return;
 

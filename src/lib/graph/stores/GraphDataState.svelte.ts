@@ -1,9 +1,8 @@
-import { parseNodeId } from '../operations/transformations';
 import { mergePatch } from '../operations/compositions';
 
 import type { GraphLink, GraphNode, GraphPatch } from '../types';
 
-export class GraphDataStore {
+export class GraphDataState {
 	nodes = $state<Map<string, GraphNode>>(new Map());
 	links = $state<Map<string, GraphLink>>(new Map());
 
@@ -17,10 +16,6 @@ export class GraphDataStore {
 
 	get isEmpty(): boolean {
 		return this.nodes.size === 0 && this.links.size === 0;
-	}
-
-	parseNodeId(id: string) {
-		return parseNodeId(id);
 	}
 
 	applyPatch(patch: GraphPatch) {
@@ -59,4 +54,4 @@ export class GraphDataStore {
 	}
 }
 
-export const graphDataStore = new GraphDataStore();
+export const graphDataState = new GraphDataState();

@@ -1,6 +1,9 @@
 import type { NodeType } from '../types';
 
-import type { ParsedNodeId } from '../stores/types';
+interface ParsedNodeId {
+	type: NodeType;
+	discogsId: number | null;
+}
 
 export function parseNodeId(id: string): ParsedNodeId {
 	const [type, rawId] = id.split(':');

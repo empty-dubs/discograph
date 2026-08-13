@@ -1,15 +1,9 @@
 import type { GraphNode, NodeType } from '../types';
 
-import type { DetailStatus } from './details-store.svelte';
-
-export interface ParsedNodeId {
-	type: NodeType;
-	discogsId: number | null;
-}
+export type DetailStatus = 'idle' | 'loading' | 'fetched';
 
 export interface DetailsTrackerContext {
 	readonly nodes: Map<string, GraphNode>;
-	parseNodeId(id: string): ParsedNodeId;
 	setNodes(nodes: Map<string, GraphNode>): void;
 	isFetched(nodeId: string): boolean;
 	isLoading(nodeId: string): boolean;

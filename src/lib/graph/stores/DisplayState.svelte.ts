@@ -1,11 +1,11 @@
 import { ALL_NODE_TYPES } from '../constants';
 
 import { filterVisibleLinks, filterVisibleNodes } from '../operations/filters';
-import { graphDataStore } from './data-store.svelte';
+import { graphDataState } from './GraphDataState.svelte';
 
 import type { GraphNode, NodeType } from '../types';
 
-export class GraphDisplayStore {
+export class GraphDisplayState {
 	selectedId = $state<string | null>(null);
 	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
 	viewResetToken = $state(0);
@@ -20,19 +20,19 @@ export class GraphDisplayStore {
 	}
 
 	get visibleNodeList(): GraphNode[] {
-		return filterVisibleNodes(graphDataStore.nodeList, this.visibleTypes, this.pinnedIds);
+		return filterVisibleNodes(graphDataState.nodeList, this.visibleTypes, this.pinnedIds);
 	}
 
 	get visibleLinkList() {
 		const visibleNodeIds = new Set(this.visibleNodeList.map((n) => n.id));
 
-		return filterVisibleLinks(graphDataStore.linkList, visibleNodeIds);
+		return filterVisibleLinks(graphDataState.linkList, visibleNodeIds);
 	}
 
 	get typeCounts(): Record<NodeType, number> {
 		const counts = Object.fromEntries(ALL_NODE_TYPES.map((t) => [t, 0])) as Record<NodeType, number>;
 
-		for (const node of graphDataStore.nodeList) {
+		for (const node of graphDataState.nodeList) {
 			counts[node.type]++;
 		}
 
@@ -40,7 +40,7 @@ export class GraphDisplayStore {
 	}
 
 	get selectedNode(): GraphNode | null {
-		return this.selectedId ? (graphDataStore.nodes.get(this.selectedId) ?? null) : null;
+		return this.selectedId ? (graphDataState.nodes.get(this.selectedId) ?? null) : null;
 	}
 
 	isTypeVisible(type: NodeType): boolean {
@@ -76,4 +76,4 @@ export class GraphDisplayStore {
 	}
 }
 
-export const graphDisplayStore = new GraphDisplayStore();
+export const graphDisplayState = new GraphDisplayState();

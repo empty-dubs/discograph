@@ -30,21 +30,9 @@
 	$effect(() => {
 		const selected = graph.display.selectedNode;
 
-		if (selected?.type === 'artist') {
-			graph.ensureArtistDetails(selected.id);
-		}
+		if (!selected) return;
 
-		if (selected?.type === 'label') {
-			graph.ensureLabelDetails(selected.id);
-		}
-
-		if (selected?.type === 'master') {
-			graph.ensureMasterDetails(selected.id);
-		}
-
-		if (selected?.type === 'release') {
-			graph.ensureReleaseDetails(selected.id);
-		}
+		graph.details.ensureDetails(selected.id, selected.type);
 	});
 
 	$effect(() => {

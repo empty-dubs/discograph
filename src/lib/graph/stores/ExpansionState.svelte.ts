@@ -3,8 +3,8 @@ import {
 	findRemovableDescendants,
 	hasExpansionChildren
 } from '../operations/crawlers';
-import { graphDataStore } from './data-store.svelte';
-import { graphDisplayStore } from './display-store.svelte';
+import { graphDataState } from './GraphDataState.svelte';
+import { graphDisplayState } from './DisplayState.svelte';
 
 import type { GraphPatch } from '../types';
 
@@ -12,16 +12,16 @@ export interface CollapseSideEffects {
 	onNodesRemoved?: (nodeIds: Set<string>) => void;
 }
 
-export class ExpansionStore {
+export class ExpansionState {
 	expansionChildren = $state<Map<string, Set<string>>>(new Map());
 	expanded = $state<Set<string>>(new Set());
 
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch) {
-		const currentNodeIds = new Set(graphDataStore.nodes.keys());
+		const currentNodeIds = new Set(graphDataState.nodes.keys());
 
-		graphDataStore.applyPatch(patch);
+		graphDataState.applyPatch(patch);
 
-		const newNodeIds = [...graphDataStore.nodes.keys()].filter(
+		const newNodeIds = [...graphDataState.nodes.keys()].filter(
 			(id) => id !== parentNodeId && !currentNodeIds.has(id)
 		);
 
@@ -42,7 +42,7 @@ export class ExpansionStore {
 		if (!this.expansionChildren.has(nodeId)) return;
 
 		const descendants = collectDescendants(this.expansionChildren, nodeId);
-		const toRemove = findRemovableDescendants(nodeId, descendants, graphDataStore.linkList);
+		const toRemove = findRemovableDescendants(nodeId, descendants, graphDataState.linkList);
 
 		if (toRemove.size === 0) {
 			const nextExpanded = new Set(this.expanded);
@@ -51,7 +51,7 @@ export class ExpansionStore {
 			return;
 		}
 
-		graphDataStore.removeNodes(toRemove);
+		graphDataState.removeNodes(toRemove);
 
 		const nextChildren = new Map(this.expansionChildren);
 		for (const id of toRemove) {
@@ -75,15 +75,15 @@ export class ExpansionStore {
 		}
 		this.expanded = nextExpanded;
 
-		if (graphDisplayStore.selectedId && toRemove.has(graphDisplayStore.selectedId)) {
-			graphDisplayStore.selectedId = nodeId;
+		if (graphDisplayState.selectedId && toRemove.has(graphDisplayState.selectedId)) {
+			graphDisplayState.selectedId = nodeId;
 		}
 
 		sideEffects.onNodesRemoved?.(toRemove);
 	}
 
 	hasChildren(nodeId: string): boolean {
-		return hasExpansionChildren(nodeId, this.expansionChildren, graphDataStore.nodes);
+		return hasExpansionChildren(nodeId, this.expansionChildren, graphDataState.nodes);
 	}
 
 	clear() {
@@ -92,4 +92,4 @@ export class ExpansionStore {
 	}
 }
 
-export const expansionStore = new ExpansionStore();
+export const expansionState = new ExpansionState();

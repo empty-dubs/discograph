@@ -1,5 +1,7 @@
 import { getArtist, getMaster, getRelease } from '$lib/discogs/client';
 
+import { parseNodeId } from '../operations/transformations';
+
 import {
 	buildFromArtist,
 	buildAliasesFromArtist,
@@ -13,7 +15,7 @@ import { runLoad } from './run-load';
 import type { GraphInterface } from '../stores/graph.svelte';
 
 export async function loadRelatedArtists(graph: GraphInterface, nodeId: string) {
-	const { type, discogsId } = graph.data.parseNodeId(nodeId);
+	const { type, discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
@@ -42,7 +44,7 @@ export async function loadRelatedArtists(graph: GraphInterface, nodeId: string) 
 }
 
 export async function loadRelatedCreditedArtists(graph: GraphInterface, nodeId: string) {
-	const { type, discogsId } = graph.data.parseNodeId(nodeId);
+	const { type, discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
@@ -60,7 +62,7 @@ export async function loadRelatedCreditedArtists(graph: GraphInterface, nodeId: 
 }
 
 export async function loadRelatedAliases(graph: GraphInterface, nodeId: string) {
-	const { type, discogsId } = graph.data.parseNodeId(nodeId);
+	const { type, discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
