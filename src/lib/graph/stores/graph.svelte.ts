@@ -4,7 +4,6 @@ import { expansionState, type ExpansionState } from './ExpansionState.svelte';
 import { expansionProgressState, type ExpansionProgressState } from './ExpansionProgressState.svelte';
 import { graphDisplayState, type GraphDisplayState } from './DisplayState.svelte';
 
-import type { GraphLink, GraphNode } from '../types';
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 
 export interface GraphInterface {
