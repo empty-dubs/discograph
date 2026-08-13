@@ -1,6 +1,6 @@
 import type { GraphNode, NodeType } from '../types';
 
-import type { DetailStatus } from './NodeDetailsState.svelte';
+export type DetailStatus = 'idle' | 'loading' | 'fetched';
 
 export interface DetailsTrackerContext {
 	readonly nodes: Map<string, GraphNode>;

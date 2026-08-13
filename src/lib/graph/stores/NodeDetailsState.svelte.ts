@@ -9,9 +9,7 @@ import { graphDataState } from './GraphDataState.svelte';
 
 import type { NodeType } from '../types';
 import type { Master } from '$lib/discogs/types';
-import type { DetailsTrackerContext } from './types';
-
-export type DetailStatus = 'idle' | 'loading' | 'fetched';
+import type { DetailsTrackerContext, DetailStatus } from './types';
 
 export class NodeDetailsState {
 	detailsByNodeId = $state<Map<string, DetailStatus>>(new Map());
