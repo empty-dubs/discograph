@@ -2,16 +2,17 @@
 	import { onMount } from 'svelte';
 
 	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
-	import type { GraphNode } from '$lib/graph/types';
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	interface Props {
-		node: GraphNode | null;
 		x: number;
 		y: number;
 		onClose: () => void;
 	}
 
-	let { node, x, y, onClose }: Props = $props();
+	let { x, y, onClose }: Props = $props();
+
+	const node = $derived(selectedNodeState.node);
 
 	function handleKeydown(event: KeyboardEvent) {
 		event.preventDefault();
@@ -43,6 +44,6 @@
 		style:top="{y}px"
 		role="menu"
 	>
-		<NodeLoadActions {node} layout="menu" onAction={onClose} />
+		<NodeLoadActions layout="menu" onAction={onClose} />
 	</div>
 {/if}

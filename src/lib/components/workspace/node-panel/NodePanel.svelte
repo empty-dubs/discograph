@@ -2,13 +2,14 @@
 	import { setContext } from 'svelte';
 
 	import { graph } from '$lib/graph/stores/graph.svelte';
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import { NODE_PANEL_ACCORDION_KEY } from '../accordion';
 	import type { NodePanelAccordion } from '../accordion';
 
 	import NodePanelDetails from './NodePanelDetails.svelte';
 
-	const node = $derived(graph.display.selectedNode);
+	const node = $derived(selectedNodeState.node);
 
 	let openSectionId = $state<string | null>(null);
 	let selectedNodeId = $state<string | null>(null);
@@ -28,7 +29,7 @@
 	setContext(NODE_PANEL_ACCORDION_KEY, accordion);
 
 	$effect(() => {
-		const selected = graph.display.selectedNode;
+		const selected = selectedNodeState.node;
 
 		if (!selected) return;
 
@@ -47,7 +48,7 @@
 	<h2 class="mb-4 text-base font-semibold">Node details</h2>
 
 	{#if node}
-		<NodePanelDetails {node} />
+		<NodePanelDetails/>
 	{:else}
 		<p class="text-muted m-0 text-sm">Click a node in the graph to see its details.</p>
 	{/if}

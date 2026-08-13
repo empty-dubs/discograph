@@ -5,13 +5,12 @@
 	import { graph } from '$lib/graph/stores/graph.svelte';
 
 	import GraphContextMenu from './GraphContextMenu.svelte';
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	let container = $state<HTMLDivElement | null>(null);
 	let tooltip = $state<{ x: number; y: number; text: string } | null>(null);
 	let contextMenu = $state<{ nodeId: string; x: number; y: number } | null>(null);
 	let forceGraph: ForceGraph | null = null;
-
-	const node = $derived(graph.nodes.get(graph.display.selectedId ?? '') ?? null);
 
 	onMount(() => {
 		forceGraph = new ForceGraph(container!, {
@@ -91,7 +90,6 @@
 
 {#if contextMenu}
 	<GraphContextMenu
-		{node}
 		x={contextMenu.x}
 		y={contextMenu.y}
 		onClose={() => {
