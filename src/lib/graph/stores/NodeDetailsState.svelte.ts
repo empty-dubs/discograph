@@ -5,14 +5,14 @@ import { mergeArtistDetails } from './details/artist';
 import { mergeLabelDetails } from './details/label';
 import { mergeMasterDetails } from './details/master';
 import { mergeReleaseDetails } from './details/release';
-import { graphDataStore } from './data-store.svelte';
+import { graphDataState } from './GraphDataState.svelte';
 
 import type { Master } from '$lib/discogs/types';
 import type { DetailsTrackerContext } from './types';
 
 export type DetailStatus = 'idle' | 'loading' | 'fetched';
 
-export class DetailsStore {
+export class NodeDetailsState {
 	detailsByNodeId = $state<Map<string, DetailStatus>>(new Map());
 
 	private artistTracker = createDetailsTracker({
@@ -45,10 +45,10 @@ export class DetailsStore {
 
 	private ctx(): DetailsTrackerContext {
 		return {
-			nodes: graphDataStore.nodes,
-			parseNodeId: (id) => graphDataStore.parseNodeId(id),
+			nodes: graphDataState.nodes,
+			parseNodeId: (id) => graphDataState.parseNodeId(id),
 			setNodes: (nodes) => {
-				graphDataStore.nodes = nodes;
+				graphDataState.nodes = nodes;
 			},
 			isFetched: (nodeId) => this.detailsByNodeId.get(nodeId) === 'fetched',
 			isLoading: (nodeId) => this.detailsByNodeId.get(nodeId) === 'loading',
@@ -103,4 +103,4 @@ export class DetailsStore {
 	}
 }
 
-export const detailsStore = new DetailsStore();
+export const nodeDetailsState = new NodeDetailsState();

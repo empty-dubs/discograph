@@ -1,18 +1,18 @@
-import { graphDataStore, type GraphDataStore } from './data-store.svelte';
-import { detailsStore, type DetailsStore } from './details-store.svelte';
-import { expansionStore, type ExpansionStore } from './expansion-store.svelte';
-import { expansionProgressStore, type ExpansionProgressStore } from './expansion-progress-store.svelte';
-import { graphDisplayStore, type GraphDisplayStore } from './display-store.svelte';
+import { graphDataState, type GraphDataState } from './GraphDataState.svelte';
+import { nodeDetailsState, type NodeDetailsState } from './NodeDetailsState.svelte';
+import { expansionState, type ExpansionState } from './ExpansionState.svelte';
+import { expansionProgressState, type ExpansionProgressState } from './ExpansionProgressState.svelte';
+import { graphDisplayState, type GraphDisplayState } from './DisplayState.svelte';
 
 import type { GraphLink, GraphNode } from '../types';
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 
 export interface GraphInterface {
-	readonly data: GraphDataStore;
-	readonly display: GraphDisplayStore;
-	readonly expansion: ExpansionStore;
-	readonly progress: ExpansionProgressStore;
-	readonly details: DetailsStore;
+	readonly data: GraphDataState;
+	readonly display: GraphDisplayState;
+	readonly expansion: ExpansionState;
+	readonly progress: ExpansionProgressState;
+	readonly details: NodeDetailsState;
 	readonly nodes: Map<string, GraphNode>;
 	readonly links: Map<string, GraphLink>;
 	readonly nodeList: GraphNode[];
@@ -35,11 +35,11 @@ export interface GraphInterface {
 }
 
 class Graph implements GraphInterface {
-	readonly data = graphDataStore;
-	readonly display = graphDisplayStore;
-	readonly expansion = expansionStore;
-	readonly progress = expansionProgressStore;
-	readonly details = detailsStore;
+	readonly data = graphDataState;
+	readonly display = graphDisplayState;
+	readonly expansion = expansionState;
+	readonly progress = expansionProgressState;
+	readonly details = nodeDetailsState;
 
 	get nodes() {
 		return this.data.nodes;

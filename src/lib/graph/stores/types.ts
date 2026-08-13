@@ -1,6 +1,6 @@
 import type { GraphNode, NodeType } from '../types';
 
-import type { DetailStatus } from './details-store.svelte';
+import type { DetailStatus } from './NodeDetailsState.svelte';
 
 export interface ParsedNodeId {
 	type: NodeType;
