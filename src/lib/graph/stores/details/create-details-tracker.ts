@@ -26,11 +26,6 @@ export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): Detail
 			await config.merge(ctx, nodeId, entity);
 			ctx.setStatus(nodeId, 'fetched');
 		},
-
-		markFetched(ctx: DetailsTrackerContext, nodeId: string) {
-			ctx.setStatus(nodeId, 'fetched');
-		},
-
 		async merge(ctx: DetailsTrackerContext, nodeId: string, entity: T) {
 			await config.merge(ctx, nodeId, entity);
 		}

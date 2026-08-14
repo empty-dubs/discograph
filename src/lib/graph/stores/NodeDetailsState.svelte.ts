@@ -41,6 +41,14 @@ const nodeUtils: Record<NodeType, DetailsTrackerConfig<any>> = {
 export class NodeDetailsState {
 	visited = $state<Map<string, DetailStatus>>(new Map());
 
+	setStatus(nodeId: string, status: DetailStatus) {
+		this.visited = new Map(this.visited).set(nodeId, status);
+	}
+
+	markFetched(nodeId: string) {
+		this.setStatus(nodeId, 'fetched');
+	}
+
 	private trackers = {
 		artist: createDetailsTracker(nodeUtils.artist),
 		label: createDetailsTracker(nodeUtils.label),
@@ -55,7 +63,7 @@ export class NodeDetailsState {
 				graphDataState.nodes = nodes;
 			},
 			setStatus: (nodeId, status) => {
-				this.visited = new Map(this.visited).set(nodeId, status);
+				this.setStatus(nodeId, status);
 			}
 		};
 	}
@@ -66,18 +74,6 @@ export class NodeDetailsState {
 
 	isDetailsFetched(nodeId: string): boolean {
 		return this.visited.get(nodeId) === 'fetched';
-	}
-
-	markArtistDetailsFetched(nodeId: string) {
-		this.trackers.artist.markFetched(this.ctx(), nodeId);
-	}
-
-	markLabelDetailsFetched(nodeId: string) {
-		this.trackers.label.markFetched(this.ctx(), nodeId);
-	}
-
-	markMasterDetailsFetched(nodeId: string) {
-		this.trackers.master.markFetched(this.ctx(), nodeId);
 	}
 
 	async getArtistDetails(nodeId: string) {

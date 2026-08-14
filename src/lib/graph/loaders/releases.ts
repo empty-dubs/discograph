@@ -107,7 +107,7 @@ export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
 		if (!mainReleaseId) {
 			const master = await getMaster(discogsId);
 			await graph.details.mergeMasterDetails(nodeId, master);
-			graph.details.markMasterDetailsFetched(nodeId);
+			graph.details.markFetched(nodeId);
 			mainReleaseId = master.main_release;
 		}
 
