@@ -37,31 +37,31 @@
 
 	let { layout = 'stack', onAction }: Props = $props();
 	
-	const node = $derived(selectedNodeState.node);
+	const node = $derived(selectedNodeState);
 
 	const actions = $derived(
-		node ? getVisibleLoadActions(node, (id) => graph.isDetailsFetched(id)) : []
+		node ? getVisibleLoadActions(node.node!, (id) => graph.isDetailsFetched(id)) : []
 	);
 
 	const releasesState = $derived(
-		getReleasesButtonState(graph.releasePages, node!.id, graph.hasMoreReleases(node!.id))
+		getReleasesButtonState(graph.releasePages, node.id!, graph.hasMoreReleases(node.id!))
 	);
 	const masterReleasesState = $derived(
 		getMasterReleasesButtonState(
 			graph.masterReleasePages,
-			node!.id,
-			graph.hasMoreMasterReleases(node!.id)
+			node.id!,
+			graph.hasMoreMasterReleases(node.id!)
 		)
 	);
-	const artistsState = $derived(getLoadButtonState(graph.loadedActions, node!.id, 'artists'));
-	const aliasesState = $derived(getLoadButtonState(graph.loadedActions, node!.id, 'aliases'));
-	const labelsState = $derived(getLoadButtonState(graph.loadedActions, node!.id, 'labels'));
-	const mainReleaseState = $derived(getLoadButtonState(graph.loadedActions, node!.id, 'main_release'));
-	const companiesState = $derived(getLoadButtonState(graph.loadedActions, node!.id, 'companies'));
+	const artistsState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'artists'));
+	const aliasesState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'aliases'));
+	const labelsState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'labels'));
+	const mainReleaseState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'main_release'));
+	const companiesState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'companies'));
 	const creditedArtistsState = $derived(
-		getLoadButtonState(graph.loadedActions, node!.id, 'credited_artists')
+		getLoadButtonState(graph.loadedActions, node.id!, 'credited_artists')
 	);
-	const isLoading = $derived(graph.progress.isLoading(node!.id) || discogsApi.isRateLimited);
+	const isLoading = $derived(graph.progress.isLoading(node.id!) || discogsApi.isRateLimited);
 
 	const itemClass = $derived(
 		layout === 'menu'
@@ -75,9 +75,9 @@
 	}
 
 	$effect(() => {
-		if (!node) return;
+		if (!node?.id) return;
 
-		graph.details.ensureDetails(node.id, node.type);
+		node.ensureDetails();
 	});
 </script>
 
@@ -86,7 +86,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || artistsState.exhausted}
-		onclick={() => run(() => loadRelatedArtists(graph, node!.id))}
+		onclick={() => run(() => loadRelatedArtists(graph, node.id!))}
 	>
 		{artistsState.label}
 	</button>
@@ -97,7 +97,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || aliasesState.exhausted}
-		onclick={() => run(() => loadRelatedAliases(graph, node!.id))}
+		onclick={() => run(() => loadRelatedAliases(graph, node.id!))}
 	>
 		{aliasesState.label}
 	</button>
@@ -108,7 +108,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || labelsState.exhausted}
-		onclick={() => run(() => loadRelatedLabels(graph, node!.id))}
+		onclick={() => run(() => loadRelatedLabels(graph, node.id!))}
 	>
 		{labelsState.label}
 	</button>
@@ -122,8 +122,8 @@
 		onclick={() =>
 			run(() =>
 				masterReleasesState.loaded
-					? loadMoreMasterReleases(graph, node!.id)
-					: loadMasterReleases(graph, node!.id)
+					? loadMoreMasterReleases(graph, node.id!)
+					: loadMasterReleases(graph, node.id!)
 			)}
 	>
 		{masterReleasesState.label}
@@ -137,7 +137,7 @@
 		disabled={isLoading || releasesState.exhausted}
 		onclick={() =>
 			run(() =>
-				releasesState.loaded ? loadMoreReleases(graph, node!.id) : loadReleases(graph, node!.id)
+				releasesState.loaded ? loadMoreReleases(graph, node.id!) : loadReleases(graph, node.id!)
 			)}
 	>
 		{releasesState.label}
@@ -149,7 +149,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || mainReleaseState.exhausted}
-		onclick={() => run(() => loadMainRelease(graph, node!.id))}
+		onclick={() => run(() => loadMainRelease(graph, node.id!))}
 	>
 		{mainReleaseState.label}
 	</button>
@@ -160,7 +160,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || companiesState.exhausted}
-		onclick={() => run(() => loadRelatedCompanies(graph, node!.id))}
+		onclick={() => run(() => loadRelatedCompanies(graph, node.id!))}
 	>
 		{companiesState.label}
 	</button>
@@ -171,7 +171,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || creditedArtistsState.exhausted}
-		onclick={() => run(() => loadRelatedCreditedArtists(graph, node!.id))}
+		onclick={() => run(() => loadRelatedCreditedArtists(graph, node.id!))}
 	>
 		{creditedArtistsState.label}
 	</button>

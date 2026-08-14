@@ -96,19 +96,6 @@ export class NodeDetailsState {
 		await this.releaseTracker.ensure(this.ctx(), nodeId);
 	}
 
-	ensureDetails(nodeId: string, type: NodeType) {
-		switch (type) {
-			case 'artist':
-				return this.ensureArtistDetails(nodeId);
-			case 'label':
-				return this.ensureLabelDetails(nodeId);
-			case 'master':
-				return this.ensureMasterDetails(nodeId);
-			case 'release':
-				return this.ensureReleaseDetails(nodeId);
-		}
-	}
-
 	clear() {
 		this.detailsByNodeId = new Map();
 	}
