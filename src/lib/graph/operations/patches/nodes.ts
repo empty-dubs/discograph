@@ -1,4 +1,4 @@
-import { getDisplayName, nodeId } from './compositions';
+import { getDisplayName, getNodeId } from './compositions';
 
 import type { GraphNode, NodeType } from '../../types';
 
@@ -14,7 +14,7 @@ export function artistNode(payload: ArtistNodePayload): GraphNode {
 
 	return {
 		...payload,
-		id: nodeId(nodeType, payload.id),
+		id: getNodeId(nodeType, payload.id),
 		type: nodeType,
 		discogsId: payload.id,
 		displayName: getDisplayName(payload, nodeType)
@@ -26,7 +26,7 @@ export function labelNode(payload: LabelNodePayload): GraphNode {
 
 	return {
 		...payload,
-		id: nodeId(nodeType, payload.id),
+		id: getNodeId(nodeType, payload.id),
 		type: nodeType,
 		discogsId: payload.id,
 		displayName: getDisplayName(payload, nodeType)
@@ -39,7 +39,7 @@ export function masterNode(payload: MasterNodePayload, meta?: GraphNode['meta'])
 	const nodeResourceURL: string | undefined = 'resource_url' in payload ? payload.resource_url : undefined;
 
 	return {
-		id: nodeId(nodeType, payload.id),
+		id: getNodeId(nodeType, payload.id),
 		type: nodeType,
 		discogsId: payload.id,
 		displayName: getDisplayName(payload, nodeType),
@@ -56,7 +56,7 @@ export function releaseNode(payload: ReleaseNodePayload, meta?: GraphNode['meta'
 	const nodeResourceURL: string | undefined = 'resource_url' in payload ? payload.resource_url : undefined
 
 	return {
-		id: nodeId(nodeType, payload.id),
+		id: getNodeId(nodeType, payload.id),
 		type: nodeType,
 		discogsId: payload.id,
 		displayName: getDisplayName(payload, nodeType),
