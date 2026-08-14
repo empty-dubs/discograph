@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SearchResult, SearchType } from '$lib/discogs/types';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
-	import { graph } from '$lib/graph/stores/graph.svelte';
+	import { graph } from '$lib/graph/graph';
 
 	import { seedFromResult } from '$lib/graph/loaders/seed';
 

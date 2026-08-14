@@ -7,7 +7,7 @@ import {
 
 import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '../../types';
 
-import { linkId, nodeId } from './compositions';
+import { getLinkId, getNodeId } from './compositions';
 import { masterNode, releaseNode } from './nodes';
 
 function labelReleaseKind(item: LabelRelease): 'master' | 'release' {
@@ -24,12 +24,12 @@ export function buildFromArtistReleases(
 	const filtered = kind ? releases.filter((item) => item.type === kind) : releases;
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const artistNodeId = nodeId('artist', artistId);
+	const artistNodeId = getNodeId('artist', artistId);
 	const edgeType: EdgeType = 'released';
 
 	for (const item of filtered) {
 		const targetNodeType: NodeType = item.type;
-		const targetNode = nodeId(targetNodeType, item.id);
+		const targetNode = getNodeId(targetNodeType, item.id);
 
 		if (item.type === 'master') {
 			nodes.push(masterNode(item, { year: item.year }));
@@ -38,7 +38,7 @@ export function buildFromArtistReleases(
 		}
 
 		links.push({
-			id: linkId(artistNodeId, edgeType, targetNode),
+			id: getLinkId(artistNodeId, edgeType, targetNode),
 			source: artistNodeId,
 			target: targetNode,
 			type: edgeType
@@ -58,13 +58,13 @@ export function buildFromLabelReleases(
 		: releases;
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const labelNodeId = nodeId('label', labelId);
+	const labelNodeId = getNodeId('label', labelId);
 	const edgeType: EdgeType = 'on_label';
 
 	for (const item of filtered) {
 		const itemKind = labelReleaseKind(item);
 		const targetNodeType: NodeType = itemKind;
-		const sourceNode = nodeId(targetNodeType, item.id);
+		const sourceNode = getNodeId(targetNodeType, item.id);
 
 		if (itemKind === 'master') {
 			nodes.push(masterNode(item, { year: item.year }));
@@ -73,7 +73,7 @@ export function buildFromLabelReleases(
 		}
 
 		links.push({
-			id: linkId(sourceNode, edgeType, labelNodeId),
+			id: getLinkId(sourceNode, edgeType, labelNodeId),
 			source: sourceNode,
 			target: labelNodeId,
 			type: edgeType
@@ -86,16 +86,16 @@ export function buildFromLabelReleases(
 export function buildFromMasterVersions(versions: MasterVersion[], masterId: number): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const masterNodeId = nodeId('master', masterId);
+	const masterNodeId = getNodeId('master', masterId);
 	const edgeType: EdgeType = 'version_of';
 	const releaseNodeType: NodeType = 'release';
 
 	for (const version of versions) {
-		const sourceNode = nodeId(releaseNodeType, version.id);
+		const sourceNode = getNodeId(releaseNodeType, version.id);
 
 		nodes.push(releaseNode(version, { year: version.released }));
 		links.push({
-			id: linkId(sourceNode, edgeType, masterNodeId),
+			id: getLinkId(sourceNode, edgeType, masterNodeId),
 			source: sourceNode,
 			target: masterNodeId,
 			type: edgeType
@@ -106,15 +106,15 @@ export function buildFromMasterVersions(versions: MasterVersion[], masterId: num
 }
 
 export function buildMainReleaseFromMaster(release: Release, masterId: number): GraphPatch {
-	const masterNodeId = nodeId('master', masterId);
-	const releaseNodeId = nodeId('release', release.id);
+	const masterNodeId = getNodeId('master', masterId);
+	const releaseNodeId = getNodeId('release', release.id);
 	const edgeType: EdgeType = 'version_of';
 
 	return {
 		nodes: [releaseNode(release, { year: release.year ?? release.released })],
 		links: [
 			{
-				id: linkId(releaseNodeId, edgeType, masterNodeId),
+				id: getLinkId(releaseNodeId, edgeType, masterNodeId),
 				source: releaseNodeId,
 				target: masterNodeId,
 				type: edgeType

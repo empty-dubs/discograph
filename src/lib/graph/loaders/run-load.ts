@@ -2,7 +2,7 @@ import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 import { parseNodeId } from '../operations/transformations';
 
-import type { GraphInterface } from '../stores/graph.svelte';
+import type { GraphInterface } from '../graph';
 
 export async function runLoad(
 	graph: GraphInterface,

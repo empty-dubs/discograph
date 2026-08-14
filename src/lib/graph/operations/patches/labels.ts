@@ -5,22 +5,22 @@ import {
 
 import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '../../types';
 
-import { linkId, nodeId } from './compositions';
+import { getLinkId, getNodeId } from './compositions';
 import { labelNode } from './nodes';
 
 export function buildLabelsFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const releaseNodeId = nodeId('release', release.id);
+	const releaseNodeId = getNodeId('release', release.id);
 	const nodeType: NodeType = 'label';
 
 	for (const label of release.labels ?? []) {
 		const edgeType: EdgeType = 'on_label';
-		const targetNode = nodeId(nodeType, label.id);
+		const targetNode = getNodeId(nodeType, label.id);
 
 		nodes.push(labelNode(label));
 		links.push({
-			id: linkId(releaseNodeId, edgeType, targetNode),
+			id: getLinkId(releaseNodeId, edgeType, targetNode),
 			source: releaseNodeId,
 			target: targetNode,
 			type: edgeType
@@ -33,16 +33,16 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 export function buildCompaniesFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const releaseNodeId = nodeId('release', release.id);
+	const releaseNodeId = getNodeId('release', release.id);
 	const nodeType: NodeType = 'label';
 
 	for (const company of release.companies ?? []) {
 		const edgeType: EdgeType = 'company_on';
-		const targetNode = nodeId(nodeType, company.id);
+		const targetNode = getNodeId(nodeType, company.id);
 
 		nodes.push(labelNode(company));
 		links.push({
-			id: linkId(releaseNodeId, edgeType, targetNode),
+			id: getLinkId(releaseNodeId, edgeType, targetNode),
 			source: releaseNodeId,
 			target: targetNode,
 			type: edgeType,
@@ -60,12 +60,12 @@ export function buildFromLabel(label: Label): GraphPatch {
 	const edgeType: EdgeType = 'sublabel_of';
 
 	for (const sublabel of label.sublabels ?? []) {
-		const sourceNode = nodeId(nodeType, sublabel.id);
-		const targetNode = nodeId(nodeType, label.id);
+		const sourceNode = getNodeId(nodeType, sublabel.id);
+		const targetNode = getNodeId(nodeType, label.id);
 
 		nodes.push(labelNode(sublabel));
 		links.push({
-			id: linkId(sourceNode, edgeType, targetNode),
+			id: getLinkId(sourceNode, edgeType, targetNode),
 			source: sourceNode,
 			target: targetNode,
 			type: edgeType
@@ -73,12 +73,12 @@ export function buildFromLabel(label: Label): GraphPatch {
 	}
 
 	if (label.parent_label) {
-		const sourceNode = nodeId(nodeType, label.id);
-		const targetNode = nodeId(nodeType, label.parent_label.id);
+		const sourceNode = getNodeId(nodeType, label.id);
+		const targetNode = getNodeId(nodeType, label.parent_label.id);
 
 		nodes.push(labelNode(label.parent_label));
 		links.push({
-			id: linkId(sourceNode, edgeType, targetNode),
+			id: getLinkId(sourceNode, edgeType, targetNode),
 			source: sourceNode,
 			target: targetNode,
 			type: edgeType

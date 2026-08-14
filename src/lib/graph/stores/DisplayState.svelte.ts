@@ -39,10 +39,6 @@ export class GraphDisplayState {
 		return counts;
 	}
 
-	get selectedNode(): GraphNode | null {
-		return this.selectedId ? (graphDataState.nodes.get(this.selectedId) ?? null) : null;
-	}
-
 	isTypeVisible(type: NodeType): boolean {
 		return this.visibleTypes.has(type);
 	}

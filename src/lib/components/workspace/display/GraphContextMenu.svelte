@@ -12,7 +12,7 @@
 
 	let { x, y, onClose }: Props = $props();
 
-	const node = $derived(selectedNodeState.node);
+	const node = $derived(selectedNodeState);
 
 	function handleKeydown(event: KeyboardEvent) {
 		event.preventDefault();
@@ -36,7 +36,7 @@
 	});
 </script>
 
-{#if node}
+{#if node.id}
 	<div
 		data-graph-context-menu
 		class="border-border bg-panel fixed z-110 min-w-45 overflow-hidden rounded-md border py-1 shadow-lg"

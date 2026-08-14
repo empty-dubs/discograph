@@ -19,7 +19,7 @@ import {
 
 import { runLoad } from './run-load';
 
-import type { GraphInterface } from '../stores/graph.svelte';
+import type { GraphInterface } from '../graph';
 
 export async function loadReleases(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = parseNodeId(nodeId);
@@ -163,10 +163,6 @@ export async function loadMoreReleases(graph: GraphInterface, nodeId: string) {
 	graph.progress.setLoading(nodeId, false);
 }
 
-export function hasMoreReleases(graph: GraphInterface, nodeId: string): boolean {
-	return graph.progress.hasMoreReleases(nodeId);
-}
-
 export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = parseNodeId(nodeId);
 
@@ -207,8 +203,4 @@ export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: stri
 	}, 'Failed to load more master releases');
 
 	graph.progress.setLoading(nodeId, false);
-}
-
-export function hasMoreMasterReleases(graph: GraphInterface, nodeId: string): boolean {
-	return graph.progress.hasMoreMasterReleases(nodeId);
 }

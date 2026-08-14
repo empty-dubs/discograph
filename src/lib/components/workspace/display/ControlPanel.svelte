@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { graph } from '$lib/graph/stores/graph.svelte';
+	import { graph } from '$lib/graph/graph';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import GraphDisplayOptions from './control-panel/GraphDisplayOptions.svelte';
 	import GraphNodeFilters from './control-panel/GraphNodeFilters.svelte';
 	import GraphOperations from './control-panel/GraphOperations.svelte';
 
-	const node = $derived(selectedNodeState.node);
+	const node = $derived(selectedNodeState);
 </script>
 
 <div class="flex flex-col gap-3">
@@ -22,7 +22,7 @@
 		{/if}
 	</div>
 
-	{#if node}
+	{#if node.id}
 		<GraphOperations />
 	{/if}
 </div>
