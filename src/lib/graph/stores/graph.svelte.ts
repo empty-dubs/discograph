@@ -17,8 +17,6 @@ export interface GraphInterface {
 	readonly loadedActions: Map<string, Set<LoadAction>>;
 
 	clear(): void;
-	collapseNode(nodeId: string): void;
-	hasChildren(nodeId: string): boolean;
 }
 
 class Graph implements GraphInterface {
@@ -46,19 +44,6 @@ class Graph implements GraphInterface {
 		this.progress.clear();
 		this.details.clear();
 		this.display.clear();
-	}
-
-	collapseNode(nodeId: string) {
-		this.expansion.collapseNode(nodeId, {
-			onNodesRemoved: (nodeIds) => {
-				this.progress.clearNodes(nodeIds);
-				this.progress.clearNodeLoadState(nodeId);
-			}
-		});
-	}
-
-	hasChildren(nodeId: string) {
-		return this.expansion.hasChildren(nodeId);
 	}
 }
 

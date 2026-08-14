@@ -18,12 +18,12 @@
 <div class="flex flex-wrap gap-2" role="group" aria-label="Graph actions">
 	<NodeLoadActions/>
 
-	{#if node.id && graph.hasChildren(node.id!)}
+	{#if node.id && node.hasChildren}
 		<button
 			type="button"
 			class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
 			disabled={isNodeLoading}
-			onclick={() => graph.collapseNode(node.id!)}
+			onclick={() => node.collapseNode()}
 		>
 			Collapse children
 		</button>
