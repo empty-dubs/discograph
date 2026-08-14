@@ -25,7 +25,6 @@
 		getLoadButtonState,
 		getMasterReleasesButtonState,
 		getReleasesButtonState,
-		getVisibleLoadActions
 	} from './constants';
 
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
@@ -39,7 +38,7 @@
 	
 	const node = $derived(selectedNodeState);
 
-	const actions = $derived(getVisibleLoadActions(node.node!, node.isDetailsFetched!));
+	const actions = $derived(node.getVisibleLoadActions);
 
 	const releasesState = $derived(
 		getReleasesButtonState(graph.progress.releasePages, node.id!, node.hasMoreReleases)
