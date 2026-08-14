@@ -44,22 +44,22 @@
 	);
 
 	const releasesState = $derived(
-		getReleasesButtonState(graph.releasePages, node.id!, node.hasMoreReleases)
+		getReleasesButtonState(graph.progress.releasePages, node.id!, node.hasMoreReleases)
 	);
 	const masterReleasesState = $derived(
 		getMasterReleasesButtonState(
-			graph.masterReleasePages,
+			graph.progress.masterReleasePages,
 			node.id!,
 			node.hasMoreMasterReleases
 		)
 	);
-	const artistsState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'artists'));
-	const aliasesState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'aliases'));
-	const labelsState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'labels'));
-	const mainReleaseState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'main_release'));
-	const companiesState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'companies'));
+	const artistsState = $derived(getLoadButtonState(graph.progress.loadedActions, node.id!, 'artists'));
+	const aliasesState = $derived(getLoadButtonState(graph.progress.loadedActions, node.id!, 'aliases'));
+	const labelsState = $derived(getLoadButtonState(graph.progress.loadedActions, node.id!, 'labels'));
+	const mainReleaseState = $derived(getLoadButtonState(graph.progress.loadedActions, node.id!, 'main_release'));
+	const companiesState = $derived(getLoadButtonState(graph.progress.loadedActions, node.id!, 'companies'));
 	const creditedArtistsState = $derived(
-		getLoadButtonState(graph.loadedActions, node.id!, 'credited_artists')
+		getLoadButtonState(graph.progress.loadedActions, node.id!, 'credited_artists')
 	);
 	const isLoading = $derived(graph.progress.isLoading(node.id!) || discogsApi.isRateLimited);
 

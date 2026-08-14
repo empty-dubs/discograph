@@ -4,18 +4,12 @@ import { expansionState, type ExpansionState } from './stores/ExpansionState.sve
 import { expansionProgressState, type ExpansionProgressState } from './stores/ExpansionProgressState.svelte';
 import { graphDisplayState, type GraphDisplayState } from './stores/DisplayState.svelte';
 
-import type { LoadAction } from '$lib/components/workspace/actions/constants';
-
 export interface GraphInterface {
 	readonly data: GraphDataState;
 	readonly display: GraphDisplayState;
 	readonly expansion: ExpansionState;
 	readonly progress: ExpansionProgressState;
 	readonly details: NodeDetailsState;
-	readonly releasePages: Map<string, { page: number; pages: number }>;
-	readonly masterReleasePages: Map<string, { page: number; pages: number }>;
-	readonly loadedActions: Map<string, Set<LoadAction>>;
-
 	clear(): void;
 }
 
@@ -25,18 +19,6 @@ class Graph implements GraphInterface {
 	readonly expansion = expansionState;
 	readonly progress = expansionProgressState;
 	readonly details = nodeDetailsState;
-
-	get releasePages() {
-		return this.progress.releasePages;
-	}
-
-	get masterReleasePages() {
-		return this.progress.masterReleasePages;
-	}
-
-	get loadedActions() {
-		return this.progress.loadedActions;
-	}
 
 	clear() {
 		this.data.clear();
