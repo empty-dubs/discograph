@@ -12,7 +12,7 @@
 	const selected = $derived(selectedNodeState);
 	const node = $derived(selected.node);
 
-	const isDetailsLoading = $derived(selected.isDetailsLoading());
+	const isDetailsLoading = $derived(selected.isDetailsLoading);
 
 	const isArtistOrLabel = $derived(node!.type === 'artist' || node!.type === 'label');
 	const isMasterOrRelease = $derived(node!.type === 'master' || node!.type === 'release');

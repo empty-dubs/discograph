@@ -21,7 +21,6 @@ export interface GraphInterface {
 	hasChildren(nodeId: string): boolean;
 	hasMoreReleases(nodeId: string): boolean;
 	hasMoreMasterReleases(nodeId: string): boolean;
-	isDetailsFetched(nodeId: string): boolean;
 }
 
 class Graph implements GraphInterface {
@@ -70,10 +69,6 @@ class Graph implements GraphInterface {
 
 	hasMoreMasterReleases(nodeId: string) {
 		return this.progress.hasMoreMasterReleases(nodeId);
-	}
-
-	isDetailsFetched(nodeId: string) {
-		return this.details.isDetailsFetched(nodeId);
 	}
 }
 
