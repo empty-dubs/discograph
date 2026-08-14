@@ -3,9 +3,9 @@
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	const selectedNode = $derived(selectedNodeState.node);
+	const node = $derived(selectedNodeState);
 	const isNodeLoading = $derived(
-		selectedNode ? graph.progress.isLoading(selectedNode.id) : false
+		node.id ? graph.progress.isLoading(node.id) : false
 	);
 </script>
 
