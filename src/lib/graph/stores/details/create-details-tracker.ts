@@ -10,7 +10,6 @@ export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): Detail
 			const { type, discogsId } = parseNodeId(nodeId);
 
 			if (type !== config.nodeType || discogsId === null) return;
-			if (ctx.isFetched(nodeId) || ctx.isLoading(nodeId)) return;
 
 			ctx.setStatus(nodeId, 'loading');
 
@@ -26,10 +25,6 @@ export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): Detail
 
 			await config.merge(ctx, nodeId, entity);
 			ctx.setStatus(nodeId, 'fetched');
-		},
-
-		isLoading(ctx: DetailsTrackerContext, nodeId: string) {
-			return ctx.isLoading(nodeId);
 		},
 
 		markFetched(ctx: DetailsTrackerContext, nodeId: string) {

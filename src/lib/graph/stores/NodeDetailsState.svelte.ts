@@ -47,8 +47,6 @@ export class NodeDetailsState {
 			setNodes: (nodes) => {
 				graphDataState.nodes = nodes;
 			},
-			isFetched: (nodeId) => this.visited.get(nodeId) === 'fetched',
-			isLoading: (nodeId) => this.visited.get(nodeId) === 'loading',
 			setStatus: (nodeId, status) => {
 				this.visited = new Map(this.visited).set(nodeId, status);
 			}

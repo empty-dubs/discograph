@@ -64,6 +64,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 	}
 
 	getNodeDetails() {
+		if (this.isDetailsFetched || this.isDetailsLoading) return;
+
 		switch (this.node?.type) {
 			case 'artist':
 				return graph.details.getArtistDetails(this.id!);
