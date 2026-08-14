@@ -11,7 +11,7 @@ import type { Master } from '$lib/discogs/types';
 import type { DetailsTrackerContext, DetailStatus } from './types';
 
 export class NodeDetailsState {
-	detailsByNodeId = $state<Map<string, DetailStatus>>(new Map());
+	visited = $state<Map<string, DetailStatus>>(new Map());
 
 	private artistTracker = createDetailsTracker({
 		nodeType: 'artist',
@@ -47,20 +47,20 @@ export class NodeDetailsState {
 			setNodes: (nodes) => {
 				graphDataState.nodes = nodes;
 			},
-			isFetched: (nodeId) => this.detailsByNodeId.get(nodeId) === 'fetched',
-			isLoading: (nodeId) => this.detailsByNodeId.get(nodeId) === 'loading',
+			isFetched: (nodeId) => this.visited.get(nodeId) === 'fetched',
+			isLoading: (nodeId) => this.visited.get(nodeId) === 'loading',
 			setStatus: (nodeId, status) => {
-				this.detailsByNodeId = new Map(this.detailsByNodeId).set(nodeId, status);
+				this.visited = new Map(this.visited).set(nodeId, status);
 			}
 		};
 	}
 
 	isDetailsLoading(nodeId: string): boolean {
-		return this.detailsByNodeId.get(nodeId) === 'loading';
+		return this.visited.get(nodeId) === 'loading';
 	}
 
 	isDetailsFetched(nodeId: string): boolean {
-		return this.detailsByNodeId.get(nodeId) === 'fetched';
+		return this.visited.get(nodeId) === 'fetched';
 	}
 
 	markArtistDetailsFetched(nodeId: string) {
@@ -96,7 +96,7 @@ export class NodeDetailsState {
 	}
 
 	clear() {
-		this.detailsByNodeId = new Map();
+		this.visited = new Map();
 	}
 }
 
