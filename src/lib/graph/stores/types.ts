@@ -5,8 +5,6 @@ export type DetailStatus = 'idle' | 'loading' | 'fetched';
 export interface DetailsTrackerContext {
 	readonly nodes: Map<string, GraphNode>;
 	setNodes(nodes: Map<string, GraphNode>): void;
-	isFetched(nodeId: string): boolean;
-	isLoading(nodeId: string): boolean;
 	setStatus(nodeId: string, status: DetailStatus): void;
 }
 
@@ -24,8 +22,6 @@ export interface DetailsTrackerConfig<T> {
 }
 
 export interface DetailsTracker<T> {
-	ensure(ctx: DetailsTrackerContext, nodeId: string): Promise<void>;
-	isLoading(ctx: DetailsTrackerContext, nodeId: string): boolean;
-	markFetched(ctx: DetailsTrackerContext, nodeId: string): void;
+	getDetails(ctx: DetailsTrackerContext, nodeId: string): Promise<void>;
 	merge(ctx: DetailsTrackerContext, nodeId: string, entity: T): Promise<void>;
 }

@@ -17,7 +17,7 @@ export async function loadRelatedLabels(graph: GraphInterface, nodeId: string) {
 			case 'label': {
 				const label = await getLabel(discogsId);
 				graph.expansion.applyPatchFromExpansion(nodeId, buildFromLabel(label));
-				graph.details.markLabelDetailsFetched(nodeId);
+				graph.details.markFetched(nodeId);
 				break;
 			}
 			case 'release': {
