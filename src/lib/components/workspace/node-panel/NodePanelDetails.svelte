@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { graph } from '$lib/graph/stores/graph.svelte';
-
 	import { stripDiscogsWikiMarkup } from '../format';
 
 	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
@@ -11,9 +9,10 @@
 	import NodePanelUrls from './NodePanelUrlList.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	const node = $derived(selectedNodeState.node);
+	const selected = $derived(selectedNodeState);
+	const node = $derived(selected.node);
 
-	const isDetailsLoading = $derived(graph.isDetailsLoading(node!.id));
+	const isDetailsLoading = $derived(selected.isDetailsLoading());
 
 	const isArtistOrLabel = $derived(node!.type === 'artist' || node!.type === 'label');
 	const isMasterOrRelease = $derived(node!.type === 'master' || node!.type === 'release');
