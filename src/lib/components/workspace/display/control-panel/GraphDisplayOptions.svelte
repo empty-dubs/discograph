@@ -4,9 +4,6 @@
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	const node = $derived(selectedNodeState);
-	const isNodeLoading = $derived(
-		node.id ? graph.progress.isLoading(node.id) : false
-	);
 </script>
 
 <button
@@ -21,9 +18,9 @@
 <button
 	type="button"
 	class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
-	disabled={isNodeLoading}
+	disabled={node.isLoading}
 	onclick={() => {
-		graph.data.clear();
+		graph.clear();
 		discogsApi.clear();
 	}}
 >

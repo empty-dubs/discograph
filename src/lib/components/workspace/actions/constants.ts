@@ -1,4 +1,4 @@
-import type { GraphNode, NodeType } from '$lib/graph/types';
+import type { NodeType } from '$lib/graph/types';
 
 export type LoadAction =
 	| 'artists'
@@ -74,44 +74,4 @@ export function getLoadButtonState(
 		label: LOAD_ACTION_LABELS[action],
 		exhausted: loaded
 	};
-}
-
-export function hasRelatedArtists(node: GraphNode): boolean {
-	if (node.type !== 'artist') return true;
-
-	return (node.members?.length ?? 0) > 0 || (node.groups?.length ?? 0) > 0;
-}
-
-export function hasRelatedLabels(node: GraphNode): boolean {
-	if (node.type !== 'label') return true;
-
-	return Boolean(node.parent_label) || (node.sublabels?.length ?? 0) > 0;
-}
-
-export function hasRelatedAliases(node: GraphNode): boolean {
-	if (node.type !== 'artist') return true;
-
-	return (node.aliases?.length ?? 0) > 0;
-}
-
-export function hasMainRelease(node: GraphNode, isDetailsFetched: boolean): boolean {
-	if (node.type !== 'master') return true;
-
-	if (node.main_release) return true;
-
-	return !isDetailsFetched;
-}
-
-export function getVisibleLoadActions(
-	node: GraphNode,
-	isDetailsFetched: boolean
-): LoadAction[] {
-	return LOAD_ACTIONS[node.type].filter((action) => {
-		if (action === 'artists' && !hasRelatedArtists(node)) return false;
-		if (action === 'labels' && !hasRelatedLabels(node)) return false;
-		if (action === 'aliases' && !hasRelatedAliases(node)) return false;
-		if (action === 'main_release' && !hasMainRelease(node, isDetailsFetched)) return false;
-
-		return true;
-	});
 }
