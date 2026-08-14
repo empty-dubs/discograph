@@ -44,13 +44,13 @@
 	);
 
 	const releasesState = $derived(
-		getReleasesButtonState(graph.releasePages, node.id!, graph.hasMoreReleases(node.id!))
+		getReleasesButtonState(graph.releasePages, node.id!, node.hasMoreReleases)
 	);
 	const masterReleasesState = $derived(
 		getMasterReleasesButtonState(
 			graph.masterReleasePages,
 			node.id!,
-			graph.hasMoreMasterReleases(node.id!)
+			node.hasMoreMasterReleases
 		)
 	);
 	const artistsState = $derived(getLoadButtonState(graph.loadedActions, node.id!, 'artists'));

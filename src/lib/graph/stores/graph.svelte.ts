@@ -19,8 +19,6 @@ export interface GraphInterface {
 	clear(): void;
 	collapseNode(nodeId: string): void;
 	hasChildren(nodeId: string): boolean;
-	hasMoreReleases(nodeId: string): boolean;
-	hasMoreMasterReleases(nodeId: string): boolean;
 }
 
 class Graph implements GraphInterface {
@@ -61,14 +59,6 @@ class Graph implements GraphInterface {
 
 	hasChildren(nodeId: string) {
 		return this.expansion.hasChildren(nodeId);
-	}
-
-	hasMoreReleases(nodeId: string) {
-		return this.progress.hasMoreReleases(nodeId);
-	}
-
-	hasMoreMasterReleases(nodeId: string) {
-		return this.progress.hasMoreMasterReleases(nodeId);
 	}
 }
 

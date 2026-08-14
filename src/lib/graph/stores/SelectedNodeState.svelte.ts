@@ -1,6 +1,7 @@
 import { graph } from './graph.svelte';
 
 import { nodeDetailsState } from './NodeDetailsState.svelte';
+import { expansionProgressState } from './ExpansionProgressState.svelte';
 
 interface SelectedNodeInterface {
 	id: string | null;
@@ -9,6 +10,9 @@ interface SelectedNodeInterface {
 class SelectedNodeState implements SelectedNodeInterface {
 	id = $derived(graph.display.selectedId);
     node = $derived(graph.data.nodes.get(this.id!));
+
+	hasMoreReleases = $derived(expansionProgressState.hasMoreReleases(this.id!));
+	hasMoreMasterReleases = $derived(expansionProgressState.hasMoreMasterReleases(this.id!));
 	isDetailsLoading = $derived(nodeDetailsState.isDetailsLoading(this.id!));
 	isDetailsFetched = $derived(nodeDetailsState.isDetailsFetched(this.id!));
 
