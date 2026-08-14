@@ -94,17 +94,17 @@ export function hasRelatedAliases(node: GraphNode): boolean {
 	return (node.aliases?.length ?? 0) > 0;
 }
 
-export function hasMainRelease(node: GraphNode, isDetailsFetched: (nodeId: string) => boolean): boolean {
+export function hasMainRelease(node: GraphNode, isDetailsFetched: boolean): boolean {
 	if (node.type !== 'master') return true;
 
 	if (node.main_release) return true;
 
-	return !isDetailsFetched(node.id);
+	return !isDetailsFetched;
 }
 
 export function getVisibleLoadActions(
 	node: GraphNode,
-	isDetailsFetched: (nodeId: string) => boolean
+	isDetailsFetched: boolean
 ): LoadAction[] {
 	return LOAD_ACTIONS[node.type].filter((action) => {
 		if (action === 'artists' && !hasRelatedArtists(node)) return false;

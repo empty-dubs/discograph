@@ -40,7 +40,7 @@
 	const node = $derived(selectedNodeState);
 
 	const actions = $derived(
-		node.id ? getVisibleLoadActions(node.node!, (id) => graph.isDetailsFetched(id)) : []
+		node.id ? getVisibleLoadActions(node.node!, node.isDetailsFetched!) : []
 	);
 
 	const releasesState = $derived(

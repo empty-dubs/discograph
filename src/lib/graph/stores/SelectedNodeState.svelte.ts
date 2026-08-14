@@ -9,14 +9,8 @@ interface SelectedNodeInterface {
 class SelectedNodeState implements SelectedNodeInterface {
 	id = $derived(graph.display.selectedId);
     node = $derived(graph.data.nodes.get(this.id!));
-
-	isDetailsLoading() {
-		return nodeDetailsState.isDetailsLoading(this.id!);
-	}
-
-	isDetailsFetched() {
-		return nodeDetailsState.isDetailsFetched(this.id!);
-	}
+	isDetailsLoading = $derived(nodeDetailsState.isDetailsLoading(this.id!));
+	isDetailsFetched = $derived(nodeDetailsState.isDetailsFetched(this.id!));
 
 	ensureDetails() {
 		switch (this.node?.type) {
