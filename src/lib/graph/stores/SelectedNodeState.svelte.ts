@@ -3,7 +3,7 @@ import { graph } from '../graph';
 import { expansionProgressState } from './ExpansionProgressState.svelte';
 import { expansionState } from './ExpansionState.svelte';
 import { nodeDetailsState } from './NodeDetailsState.svelte';
-import { getVisibleLoadActions, hasMainRelease, LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
+import { LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
 
 
 interface SelectedNodeInterface {
