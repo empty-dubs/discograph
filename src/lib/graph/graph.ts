@@ -21,11 +21,11 @@ class Graph implements GraphInterface {
 	readonly details = nodeDetailsState;
 
 	clear() {
-		this.data.clear();
+		this.display.clear();
 		this.expansion.clear();
 		this.progress.clear();
 		this.details.clear();
-		this.display.clear();
+		this.data.clear();
 	}
 }
 

@@ -106,6 +106,8 @@ export function getVisibleLoadActions(
 	node: GraphNode,
 	isDetailsFetched: boolean
 ): LoadAction[] {
+	if (!node) return [];
+
 	return LOAD_ACTIONS[node.type].filter((action) => {
 		if (action === 'artists' && !hasRelatedArtists(node)) return false;
 		if (action === 'labels' && !hasRelatedLabels(node)) return false;

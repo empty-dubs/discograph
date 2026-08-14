@@ -18,6 +18,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	hasMoreMasterReleases = $derived(expansionProgressState.hasMoreMasterReleases(this.id!));
 	isDetailsLoading = $derived(nodeDetailsState.isDetailsLoading(this.id!));
 	isDetailsFetched = $derived(nodeDetailsState.isDetailsFetched(this.id!));
+	isLoading = $derived(expansionProgressState.isLoading(this.id!));
 
 	collapseNode() {
 		expansionState.collapseNode(this.id!, {

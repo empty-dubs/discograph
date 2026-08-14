@@ -39,9 +39,7 @@
 	
 	const node = $derived(selectedNodeState);
 
-	const actions = $derived(
-		node.id ? getVisibleLoadActions(node.node!, node.isDetailsFetched!) : []
-	);
+	const actions = $derived(getVisibleLoadActions(node.node!, node.isDetailsFetched!));
 
 	const releasesState = $derived(
 		getReleasesButtonState(graph.progress.releasePages, node.id!, node.hasMoreReleases)
@@ -61,7 +59,7 @@
 	const creditedArtistsState = $derived(
 		getLoadButtonState(graph.progress.loadedActions, node.id!, 'credited_artists')
 	);
-	const isLoading = $derived(graph.progress.isLoading(node.id!) || discogsApi.isRateLimited);
+	const isLoading = $derived(node.isLoading || discogsApi.isRateLimited);
 
 	const itemClass = $derived(
 		layout === 'menu'
