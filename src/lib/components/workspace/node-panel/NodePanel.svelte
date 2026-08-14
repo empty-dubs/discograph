@@ -29,11 +29,9 @@
 	setContext(NODE_PANEL_ACCORDION_KEY, accordion);
 
 	$effect(() => {
-		const selected = selectedNodeState.node;
+		if (!node) return;
 
-		if (!selected) return;
-
-		graph.details.ensureDetails(selected.id, selected.type);
+		graph.details.ensureDetails(node.id, node.type);
 	});
 
 	$effect(() => {

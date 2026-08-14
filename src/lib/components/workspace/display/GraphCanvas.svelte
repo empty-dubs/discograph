@@ -5,7 +5,6 @@
 	import { graph } from '$lib/graph/stores/graph.svelte';
 
 	import GraphContextMenu from './GraphContextMenu.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	let container = $state<HTMLDivElement | null>(null);
 	let tooltip = $state<{ x: number; y: number; text: string } | null>(null);
