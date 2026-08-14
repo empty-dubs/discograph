@@ -7,7 +7,6 @@ import { mergeMasterDetails } from './details/master';
 import { mergeReleaseDetails } from './details/release';
 import { graphDataState } from './GraphDataState.svelte';
 
-import type { NodeType } from '../types';
 import type { Master } from '$lib/discogs/types';
 import type { DetailsTrackerContext, DetailStatus } from './types';
 
