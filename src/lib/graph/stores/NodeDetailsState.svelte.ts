@@ -75,11 +75,11 @@ export class NodeDetailsState {
 		this.masterTracker.markFetched(this.ctx(), nodeId);
 	}
 
-	async ensureArtistDetails(nodeId: string) {
+	async getArtistDetails(nodeId: string) {
 		await this.artistTracker.ensure(this.ctx(), nodeId);
 	}
 
-	async ensureLabelDetails(nodeId: string) {
+	async getLabelDetails(nodeId: string) {
 		await this.labelTracker.ensure(this.ctx(), nodeId);
 	}
 
@@ -87,11 +87,11 @@ export class NodeDetailsState {
 		await this.masterTracker.merge(this.ctx(), nodeId, master);
 	}
 
-	async ensureMasterDetails(nodeId: string) {
+	async getMasterDetails(nodeId: string) {
 		await this.masterTracker.ensure(this.ctx(), nodeId);
 	}
 
-	async ensureReleaseDetails(nodeId: string) {
+	async getReleaseDetails(nodeId: string) {
 		await this.releaseTracker.ensure(this.ctx(), nodeId);
 	}
 

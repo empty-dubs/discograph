@@ -63,16 +63,16 @@ class SelectedNodeState implements SelectedNodeInterface {
 		});
 	}
 
-	ensureDetails() {
+	getNodeDetails() {
 		switch (this.node?.type) {
 			case 'artist':
-				return graph.details.ensureArtistDetails(this.id!);
+				return graph.details.getArtistDetails(this.id!);
 			case 'label':
-				return graph.details.ensureLabelDetails(this.id!);
+				return graph.details.getLabelDetails(this.id!);
 			case 'master':
-				return graph.details.ensureMasterDetails(this.id!);
+				return graph.details.getMasterDetails(this.id!);
 			case 'release':
-				return graph.details.ensureReleaseDetails(this.id!);
+				return graph.details.getReleaseDetails(this.id!);
 		}
 	}
 }

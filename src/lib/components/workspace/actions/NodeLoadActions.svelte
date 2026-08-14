@@ -74,7 +74,7 @@
 	$effect(() => {
 		if (!node?.id) return;
 
-		node.ensureDetails();
+		node.getNodeDetails();
 	});
 </script>
 
