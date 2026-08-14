@@ -1,8 +1,8 @@
-import { graphDataState, type GraphDataState } from './GraphDataState.svelte';
-import { nodeDetailsState, type NodeDetailsState } from './NodeDetailsState.svelte';
-import { expansionState, type ExpansionState } from './ExpansionState.svelte';
-import { expansionProgressState, type ExpansionProgressState } from './ExpansionProgressState.svelte';
-import { graphDisplayState, type GraphDisplayState } from './DisplayState.svelte';
+import { graphDataState, type GraphDataState } from './stores/GraphDataState.svelte';
+import { nodeDetailsState, type NodeDetailsState } from './stores/NodeDetailsState.svelte';
+import { expansionState, type ExpansionState } from './stores/ExpansionState.svelte';
+import { expansionProgressState, type ExpansionProgressState } from './stores/ExpansionProgressState.svelte';
+import { graphDisplayState, type GraphDisplayState } from './stores/DisplayState.svelte';
 
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 

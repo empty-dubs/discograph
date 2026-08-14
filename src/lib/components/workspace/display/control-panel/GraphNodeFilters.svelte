@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ALL_NODE_TYPES, NODE_COLORS, NODE_TYPE_LABELS } from '$lib/graph/constants';
-	import { graph } from '$lib/graph/stores/graph.svelte';
+	import { graph } from '$lib/graph/graph';
 </script>
 
 {#each ALL_NODE_TYPES as type (type)}

@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	import { ForceGraph } from '$lib/graph/force-graph';
-	import { graph } from '$lib/graph/stores/graph.svelte';
+	import { graph } from '$lib/graph/graph';
 
 	import GraphContextMenu from './GraphContextMenu.svelte';
 

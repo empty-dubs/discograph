@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { graph } from '$lib/graph/stores/graph.svelte';
+	import { graph } from '$lib/graph/graph';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import GraphDisplayOptions from './control-panel/GraphDisplayOptions.svelte';

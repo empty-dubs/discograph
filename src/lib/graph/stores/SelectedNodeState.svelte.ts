@@ -1,4 +1,4 @@
-import { graph } from './graph.svelte';
+import { graph } from '../graph';
 
 import { expansionProgressState } from './ExpansionProgressState.svelte';
 import { expansionState } from './ExpansionState.svelte';

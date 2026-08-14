@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { graph } from '$lib/graph/stores/graph.svelte';
+	import { graph } from '$lib/graph/graph';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 	import {
