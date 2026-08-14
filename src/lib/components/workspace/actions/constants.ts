@@ -12,7 +12,7 @@ export type LoadAction =
 
 export const LOAD_ACTIONS: Record<NodeType, LoadAction[]> = {
 	artist: ['artists', 'aliases', 'releases', 'master_releases'],
-	label: ['labels', 'releases', 'master_releases'],
+	label: ['labels', 'releases'],
 	release: ['artists', 'labels', 'companies', 'credited_artists'],
 	master: ['artists', 'releases', 'main_release']
 };
