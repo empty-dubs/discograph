@@ -22,7 +22,7 @@ export interface DetailsTrackerConfig<T> {
 }
 
 export interface DetailsTracker<T> {
-	ensure(ctx: DetailsTrackerContext, nodeId: string): Promise<void>;
+	getDetails(ctx: DetailsTrackerContext, nodeId: string): Promise<void>;
 	markFetched(ctx: DetailsTrackerContext, nodeId: string): void;
 	merge(ctx: DetailsTrackerContext, nodeId: string, entity: T): Promise<void>;
 }

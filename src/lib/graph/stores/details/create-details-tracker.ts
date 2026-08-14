@@ -6,7 +6,7 @@ import type { DetailsTracker, DetailsTrackerConfig, DetailsTrackerContext } from
 
 export function createDetailsTracker<T>(config: DetailsTrackerConfig<T>): DetailsTracker<T> {
 	return {
-		async ensure(ctx: DetailsTrackerContext, nodeId: string) {
+		async getDetails(ctx: DetailsTrackerContext, nodeId: string) {
 			const { type, discogsId } = parseNodeId(nodeId);
 
 			if (type !== config.nodeType || discogsId === null) return;

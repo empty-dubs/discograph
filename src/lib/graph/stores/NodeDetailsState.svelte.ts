@@ -7,39 +7,46 @@ import { mergeMasterDetails } from './details/master';
 import { mergeReleaseDetails } from './details/release';
 import { graphDataState } from './GraphDataState.svelte';
 
+import type { NodeType } from '../types';
 import type { Master } from '$lib/discogs/types';
-import type { DetailsTrackerContext, DetailStatus } from './types';
+import type { DetailsTrackerContext, DetailStatus, DetailsTrackerConfig } from './types';
 
-export class NodeDetailsState {
-	visited = $state<Map<string, DetailStatus>>(new Map());
-
-	private artistTracker = createDetailsTracker({
+const nodeUtils: Record<NodeType, DetailsTrackerConfig<any>> = {
+	artist: {
 		nodeType: 'artist',
 		fetch: getArtist,
 		merge: mergeArtistDetails,
 		errorMessage: 'Failed to load artist details'
-	});
-
-	private labelTracker = createDetailsTracker({
+	},
+	label: {
 		nodeType: 'label',
 		fetch: getLabel,
 		merge: mergeLabelDetails,
 		errorMessage: 'Failed to load label details'
-	});
-
-	private masterTracker = createDetailsTracker({
+	},
+	master: {
 		nodeType: 'master',
 		fetch: getMaster,
 		merge: mergeMasterDetails,
 		errorMessage: 'Failed to load master details'
-	});
-
-	private releaseTracker = createDetailsTracker({
+	},
+	release: {
 		nodeType: 'release',
 		fetch: getRelease,
 		merge: mergeReleaseDetails,
 		errorMessage: 'Failed to load release details'
-	});
+	}
+}
+
+export class NodeDetailsState {
+	visited = $state<Map<string, DetailStatus>>(new Map());
+
+	private trackers = {
+		artist: createDetailsTracker(nodeUtils.artist),
+		label: createDetailsTracker(nodeUtils.label),
+		master: createDetailsTracker(nodeUtils.master),
+		release: createDetailsTracker(nodeUtils.release)
+	}
 
 	private ctx(): DetailsTrackerContext {
 		return {
@@ -62,35 +69,35 @@ export class NodeDetailsState {
 	}
 
 	markArtistDetailsFetched(nodeId: string) {
-		this.artistTracker.markFetched(this.ctx(), nodeId);
+		this.trackers.artist.markFetched(this.ctx(), nodeId);
 	}
 
 	markLabelDetailsFetched(nodeId: string) {
-		this.labelTracker.markFetched(this.ctx(), nodeId);
+		this.trackers.label.markFetched(this.ctx(), nodeId);
 	}
 
 	markMasterDetailsFetched(nodeId: string) {
-		this.masterTracker.markFetched(this.ctx(), nodeId);
+		this.trackers.master.markFetched(this.ctx(), nodeId);
 	}
 
 	async getArtistDetails(nodeId: string) {
-		await this.artistTracker.ensure(this.ctx(), nodeId);
+		await this.trackers.artist.getDetails(this.ctx(), nodeId);
 	}
 
 	async getLabelDetails(nodeId: string) {
-		await this.labelTracker.ensure(this.ctx(), nodeId);
+		await this.trackers.label.getDetails(this.ctx(), nodeId);
 	}
 
 	async mergeMasterDetails(nodeId: string, master: Master) {
-		await this.masterTracker.merge(this.ctx(), nodeId, master);
+		await this.trackers.master.merge(this.ctx(), nodeId, master);
 	}
 
 	async getMasterDetails(nodeId: string) {
-		await this.masterTracker.ensure(this.ctx(), nodeId);
+		await this.trackers.master.getDetails(this.ctx(), nodeId);
 	}
 
 	async getReleaseDetails(nodeId: string) {
-		await this.releaseTracker.ensure(this.ctx(), nodeId);
+		await this.trackers.release.getDetails(this.ctx(), nodeId);
 	}
 
 	clear() {
