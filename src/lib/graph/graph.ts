@@ -3,6 +3,7 @@ import { visitedNodesState, type VisitedNodesState } from './stores/VisitedNodes
 import { expansionState, type ExpansionState } from './stores/ExpansionState.svelte';
 import { expansionProgressState, type ExpansionProgressState } from './stores/ExpansionProgressState.svelte';
 import { graphDisplayState, type GraphDisplayState } from './stores/DisplayState.svelte';
+import type { GraphPatch } from './types';
 
 export interface GraphInterface {
 	readonly data: GraphDataState;
@@ -10,6 +11,7 @@ export interface GraphInterface {
 	readonly expansion: ExpansionState;
 	readonly progress: ExpansionProgressState;
 	readonly visitedNodes: VisitedNodesState;
+	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch): void;
 	clear(): void;
 }
 
@@ -19,6 +21,28 @@ class Graph implements GraphInterface {
 	readonly expansion = expansionState;
 	readonly progress = expansionProgressState;
 	readonly visitedNodes = visitedNodesState;
+
+	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch) {
+		const currentNodeIds = new Set(this.data.nodes.keys());
+
+		this.data.applyPatch(patch);
+
+		const newNodeIds = [...this.data.nodes.keys()].filter(
+			(id) => id !== parentNodeId && !currentNodeIds.has(id)
+		);
+
+		if (newNodeIds.length === 0) return;
+
+		const parentChildMap = new Map(this.expansion.expansionChildren);
+		const childNodeIds = new Set(parentChildMap.get(parentNodeId) ?? []);
+
+		for (const id of newNodeIds) {
+			childNodeIds.add(id);
+		}
+
+		parentChildMap.set(parentNodeId, childNodeIds);
+		this.expansion.expansionChildren = parentChildMap;
+	}
 
 	clear() {
 		this.display.clear();

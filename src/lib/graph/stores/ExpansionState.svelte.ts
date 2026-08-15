@@ -6,8 +6,6 @@ import {
 import { graphDataState } from './GraphDataState.svelte';
 import { graphDisplayState } from './DisplayState.svelte';
 
-import type { GraphPatch } from '../types';
-
 export interface CollapseSideEffects {
 	onNodesRemoved?: (nodeIds: Set<string>) => void;
 }
@@ -15,28 +13,6 @@ export interface CollapseSideEffects {
 export class ExpansionState {
 	expansionChildren = $state<Map<string, Set<string>>>(new Map());
 	expanded = $state<Set<string>>(new Set());
-
-	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch) {
-		const currentNodeIds = new Set(graphDataState.nodes.keys());
-
-		graphDataState.applyPatch(patch);
-
-		const newNodeIds = [...graphDataState.nodes.keys()].filter(
-			(id) => id !== parentNodeId && !currentNodeIds.has(id)
-		);
-
-		if (newNodeIds.length === 0) return;
-
-		const parentChildMap = new Map(this.expansionChildren);
-		const childNodeIds = new Set(parentChildMap.get(parentNodeId) ?? []);
-
-		for (const id of newNodeIds) {
-			childNodeIds.add(id);
-		}
-
-		parentChildMap.set(parentNodeId, childNodeIds);
-		this.expansionChildren = parentChildMap;
-	}
 
 	collapseNode(nodeId: string, sideEffects: CollapseSideEffects = {}) {
 		if (!this.expansionChildren.has(nodeId)) return;
