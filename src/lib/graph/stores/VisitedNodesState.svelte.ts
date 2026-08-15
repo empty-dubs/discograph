@@ -35,11 +35,11 @@ export const buildConfig: Record<NodeType, DetailsConfig<any>> = {
 	}
 }
 
-export class NodeDetailsState {
+export class VisitedNodesState {
 	visited = $state<Map<string, DetailStatus>>(new Map());
 
 	setStatus(nodeId: string, status: DetailStatus) {
-		this.visited = new Map(this.visited).set(nodeId, status);
+		this.visited.set(nodeId, status);
 	}
 
 	markFetched(nodeId: string) {
@@ -59,4 +59,4 @@ export class NodeDetailsState {
 	}
 }
 
-export const nodeDetailsState = new NodeDetailsState();
+export const visitedNodesState = new VisitedNodesState();

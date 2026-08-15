@@ -1,5 +1,5 @@
 import { graphDataState, type GraphDataState } from './stores/GraphDataState.svelte';
-import { nodeDetailsState, type NodeDetailsState } from './stores/NodeDetailsState.svelte';
+import { visitedNodesState, type VisitedNodesState } from './stores/VisitedNodesState.svelte';
 import { expansionState, type ExpansionState } from './stores/ExpansionState.svelte';
 import { expansionProgressState, type ExpansionProgressState } from './stores/ExpansionProgressState.svelte';
 import { graphDisplayState, type GraphDisplayState } from './stores/DisplayState.svelte';
@@ -9,7 +9,7 @@ export interface GraphInterface {
 	readonly display: GraphDisplayState;
 	readonly expansion: ExpansionState;
 	readonly progress: ExpansionProgressState;
-	readonly details: NodeDetailsState;
+	readonly visitedNodes: VisitedNodesState;
 	clear(): void;
 }
 
@@ -18,13 +18,13 @@ class Graph implements GraphInterface {
 	readonly display = graphDisplayState;
 	readonly expansion = expansionState;
 	readonly progress = expansionProgressState;
-	readonly details = nodeDetailsState;
+	readonly visitedNodes = visitedNodesState;
 
 	clear() {
 		this.display.clear();
 		this.expansion.clear();
 		this.progress.clear();
-		this.details.clear();
+		this.visitedNodes.clear();
 		this.data.clear();
 	}
 }

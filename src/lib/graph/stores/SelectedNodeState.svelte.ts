@@ -2,7 +2,7 @@ import { graph } from '../graph';
 
 import { LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
-import { buildConfig } from './NodeDetailsState.svelte';
+import { buildConfig } from './VisitedNodesState.svelte';
 import type { NodeType } from '../types';
 import { parseNodeId } from '$lib/graph/operations/transformations';
 
@@ -17,8 +17,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 	hasChildren = $derived(graph.expansion.hasChildren(this.id!));
 	hasMoreReleases = $derived(graph.progress.hasMoreReleases(this.id!));
 	hasMoreMasterReleases = $derived(graph.progress.hasMoreMasterReleases(this.id!));
-	isDetailsLoading = $derived(graph.details.isDetailsLoading(this.id!));
-	isDetailsFetched = $derived(graph.details.isDetailsFetched(this.id!));
+	isDetailsLoading = $derived(graph.visitedNodes.isDetailsLoading(this.id!));
+	isDetailsFetched = $derived(graph.visitedNodes.isDetailsFetched(this.id!));
 	isLoading = $derived(graph.progress.isLoading(this.id!));
 
 	private _hasRelatedArtists = $derived.by(() => {
@@ -74,7 +74,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 
 		if (!type || !discogsId) return;
 
-		graph.details.setStatus(this.id!, 'loading');
+		graph.visitedNodes.setStatus(this.id!, 'loading');
 
 		const config = buildConfig[type as NodeType];
 
@@ -84,12 +84,12 @@ class SelectedNodeState implements SelectedNodeInterface {
 		);
 
 		if (!payload) {
-			graph.details.setStatus(this.id!, 'idle');
+			graph.visitedNodes.setStatus(this.id!, 'idle');
 			return;
 		}
 
 		await config.merge(this.node!, graph, payload);
-		graph.details.setStatus(this.id!, 'fetched');
+		graph.visitedNodes.setStatus(this.id!, 'fetched');
 	}
 }
 
