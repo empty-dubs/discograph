@@ -1,13 +1,11 @@
 import { graphDataState, type GraphDataState } from './stores/GraphDataState.svelte';
 import { visitedNodesState, type VisitedNodesState } from './stores/VisitedNodesState.svelte';
-import { expansionProgressState, type ExpansionProgressState } from './stores/ExpansionProgressState.svelte';
 import { graphDisplayState, type GraphDisplayState } from './stores/DisplayState.svelte';
 import type { GraphPatch } from './types';
 
 export interface GraphInterface {
 	readonly data: GraphDataState;
 	readonly display: GraphDisplayState;
-	readonly progress: ExpansionProgressState;
 	readonly visitedNodes: VisitedNodesState;
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch): void;
 	clear(): void;
@@ -16,7 +14,6 @@ export interface GraphInterface {
 class Graph implements GraphInterface {
 	readonly data = graphDataState;
 	readonly display = graphDisplayState;
-	readonly progress = expansionProgressState;
 	readonly visitedNodes = visitedNodesState;
 
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch) {
@@ -43,7 +40,6 @@ class Graph implements GraphInterface {
 
 	clear() {
 		this.display.clear();
-		this.progress.clear();
 		this.visitedNodes.clear();
 		this.data.clear();
 	}

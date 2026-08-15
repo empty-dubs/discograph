@@ -10,15 +10,15 @@ export async function runLoad(
 	fn: () => Promise<void>,
 	errorMessage: string
 ): Promise<void> {
-	if (graph.progress.loading.has(nodeId)) return;
+	if (graph.visitedNodes.loading.has(nodeId)) return;
 
 	const { discogsId } = parseNodeId(nodeId);
 
 	if (discogsId === null) return;
 
-	graph.progress.setLoading(nodeId, true);
+	graph.visitedNodes.setLoading(nodeId, true);
 
 	await discogsApi.withRequest(fn, errorMessage);
 
-	graph.progress.setLoading(nodeId, false);
+	graph.visitedNodes.setLoading(nodeId, false);
 }

@@ -27,7 +27,7 @@ export async function loadRelatedLabels(graph: GraphInterface, nodeId: string) {
 			}
 		}
 
-		graph.progress.markActionLoaded(nodeId, 'labels');
+		graph.visitedNodes.markActionLoaded(nodeId, 'labels');
 	}, 'Failed to load related labels');
 }
 
@@ -45,6 +45,6 @@ export async function loadRelatedCompanies(graph: GraphInterface, nodeId: string
 			}
 		}
 
-		graph.progress.markActionLoaded(nodeId, 'companies');
+		graph.visitedNodes.markActionLoaded(nodeId, 'companies');
 	}, 'Failed to load related companies');
 }

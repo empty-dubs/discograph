@@ -36,7 +36,7 @@ export async function loadReleases(graph: GraphInterface, nodeId: string) {
 					nodeId,
 					buildFromArtistReleases(releases.releases, discogsId, 'release')
 				);
-				graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
+				graph.visitedNodes.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 				break;
 			}
 			case 'label': {
@@ -45,7 +45,7 @@ export async function loadReleases(graph: GraphInterface, nodeId: string) {
 					nodeId,
 					buildFromLabelReleases(releases.releases, discogsId, 'release')
 				);
-				graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
+				graph.visitedNodes.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 				break;
 			}
 			case 'master': {
@@ -54,7 +54,7 @@ export async function loadReleases(graph: GraphInterface, nodeId: string) {
 					nodeId,
 					buildFromMasterVersions(versions.versions, discogsId)
 				);
-				graph.progress.setReleasePages(nodeId, versions.pagination.page, versions.pagination.pages);
+				graph.visitedNodes.setReleasePages(nodeId, versions.pagination.page, versions.pagination.pages);
 				break;
 			}
 		}
@@ -74,7 +74,7 @@ export async function loadMasterReleases(graph: GraphInterface, nodeId: string) 
 					nodeId,
 					buildFromArtistReleases(releases.releases, discogsId, 'master')
 				);
-				graph.progress.setMasterReleasePages(
+				graph.visitedNodes.setMasterReleasePages(
 					nodeId,
 					releases.pagination.page,
 					releases.pagination.pages
@@ -87,7 +87,7 @@ export async function loadMasterReleases(graph: GraphInterface, nodeId: string) 
 					nodeId,
 					buildFromLabelReleases(releases.releases, discogsId, 'master')
 				);
-				graph.progress.setMasterReleasePages(
+				graph.visitedNodes.setMasterReleasePages(
 					nodeId,
 					releases.pagination.page,
 					releases.pagination.pages
@@ -120,7 +120,7 @@ export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
 
 		const release = await getRelease(mainReleaseId);
 		graph.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
-		graph.progress.markActionLoaded(nodeId, 'main_release');
+		graph.visitedNodes.markActionLoaded(nodeId, 'main_release');
 	}, 'Failed to load main release');
 }
 
@@ -129,13 +129,13 @@ export async function loadMoreReleases(graph: GraphInterface, nodeId: string) {
 
 	if (discogsId === null) return;
 
-	const paging = graph.progress.releasePages.get(nodeId);
+	const paging = graph.visitedNodes.releasePages.get(nodeId);
 
 	if (!paging || paging.page >= paging.pages) return;
 
 	const nextPage = paging.page + 1;
 
-	graph.progress.setLoading(nodeId, true);
+	graph.visitedNodes.setLoading(nodeId, true);
 
 	await discogsApi.withRequest(async () => {
 		if (type === 'artist') {
@@ -144,25 +144,25 @@ export async function loadMoreReleases(graph: GraphInterface, nodeId: string) {
 				nodeId,
 				buildFromArtistReleases(releases.releases, discogsId, 'release')
 			);
-			graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
+			graph.visitedNodes.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 		} else if (type === 'label') {
 			const releases = await getLabelReleases(discogsId, nextPage);
 			graph.applyPatchFromExpansion(
 				nodeId,
 				buildFromLabelReleases(releases.releases, discogsId, 'release')
 			);
-			graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
+			graph.visitedNodes.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 		} else if (type === 'master') {
 			const versions = await getMasterVersions(discogsId, nextPage);
 			graph.applyPatchFromExpansion(
 				nodeId,
 				buildFromMasterVersions(versions.versions, discogsId)
 			);
-			graph.progress.setReleasePages(nodeId, versions.pagination.page, versions.pagination.pages);
+			graph.visitedNodes.setReleasePages(nodeId, versions.pagination.page, versions.pagination.pages);
 		}
 	}, 'Failed to load more releases');
 
-	graph.progress.setLoading(nodeId, false);
+	graph.visitedNodes.setLoading(nodeId, false);
 }
 
 export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: string) {
@@ -170,13 +170,13 @@ export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: stri
 
 	if (discogsId === null || (type !== 'artist' && type !== 'label')) return;
 
-	const paging = graph.progress.masterReleasePages.get(nodeId);
+	const paging = graph.visitedNodes.masterReleasePages.get(nodeId);
 
 	if (!paging || paging.page >= paging.pages) return;
 
 	const nextPage = paging.page + 1;
 
-	graph.progress.setLoading(nodeId, true);
+	graph.visitedNodes.setLoading(nodeId, true);
 
 	await discogsApi.withRequest(async () => {
 		if (type === 'artist') {
@@ -185,7 +185,7 @@ export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: stri
 				nodeId,
 				buildFromArtistReleases(releases.releases, discogsId, 'master')
 			);
-			graph.progress.setMasterReleasePages(
+			graph.visitedNodes.setMasterReleasePages(
 				nodeId,
 				releases.pagination.page,
 				releases.pagination.pages
@@ -196,7 +196,7 @@ export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: stri
 				nodeId,
 				buildFromLabelReleases(releases.releases, discogsId, 'master')
 			);
-			graph.progress.setMasterReleasePages(
+			graph.visitedNodes.setMasterReleasePages(
 				nodeId,
 				releases.pagination.page,
 				releases.pagination.pages
@@ -204,5 +204,5 @@ export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: stri
 		}
 	}, 'Failed to load more master releases');
 
-	graph.progress.setLoading(nodeId, false);
+	graph.visitedNodes.setLoading(nodeId, false);
 }

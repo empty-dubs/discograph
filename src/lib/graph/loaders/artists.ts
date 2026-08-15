@@ -39,7 +39,7 @@ export async function loadRelatedArtists(graph: GraphInterface, nodeId: string) 
 			}
 		}
 
-		graph.progress.markActionLoaded(nodeId, 'artists');
+		graph.visitedNodes.markActionLoaded(nodeId, 'artists');
 	}, 'Failed to load related artists');
 }
 
@@ -57,7 +57,7 @@ export async function loadRelatedCreditedArtists(graph: GraphInterface, nodeId: 
 			}
 		}
 
-		graph.progress.markActionLoaded(nodeId, 'credited_artists');
+		graph.visitedNodes.markActionLoaded(nodeId, 'credited_artists');
 	}, 'Failed to load credited artists');
 }
 
@@ -76,6 +76,6 @@ export async function loadRelatedAliases(graph: GraphInterface, nodeId: string) 
 			}
 		}
 
-		graph.progress.markActionLoaded(nodeId, 'aliases');
+		graph.visitedNodes.markActionLoaded(nodeId, 'aliases');
 	}, 'Failed to load related aliases');
 }
