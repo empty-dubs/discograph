@@ -9,7 +9,7 @@ import type {
 	ReleaseNodePayload,
 } from '$lib/discogs/types';
 
-export function artistNode(payload: ArtistNodePayload): GraphNode {
+export function createArtistNode(payload: ArtistNodePayload): GraphNode {
 	const nodeType: NodeType = 'artist';
 
 	return {
@@ -21,7 +21,7 @@ export function artistNode(payload: ArtistNodePayload): GraphNode {
 	};
 }
 
-export function labelNode(payload: LabelNodePayload): GraphNode {
+export function createLabelNode(payload: LabelNodePayload): GraphNode {
 	const nodeType: NodeType = 'label';
 
 	return {
@@ -33,7 +33,7 @@ export function labelNode(payload: LabelNodePayload): GraphNode {
 	};
 }
 
-export function masterNode(payload: MasterNodePayload, meta?: GraphNode['meta']): GraphNode {
+export function createMasterNode(payload: MasterNodePayload, meta?: GraphNode['meta']): GraphNode {
 	const nodeType: NodeType = 'master';
 	const nodeURI: string | undefined = 'uri' in payload ? payload.uri : undefined;
 	const nodeResourceURL: string | undefined = 'resource_url' in payload ? payload.resource_url : undefined;
@@ -50,7 +50,7 @@ export function masterNode(payload: MasterNodePayload, meta?: GraphNode['meta'])
 	};
 }
 
-export function releaseNode(payload: ReleaseNodePayload, meta?: GraphNode['meta']): GraphNode {
+export function createReleaseNode(payload: ReleaseNodePayload, meta?: GraphNode['meta']): GraphNode {
 	const nodeType: NodeType = 'release';
 	const nodeURI: string | undefined = 'uri' in payload ? payload.uri : undefined;
 	const nodeResourceURL: string | undefined = 'resource_url' in payload ? payload.resource_url : undefined
