@@ -2,8 +2,24 @@ import { getArtist, getLabel, getMaster, getRelease } from '$lib/discogs/client'
 
 import { updateArtistNode, updateLabelNode, updateMasterNode, updateReleaseNode } from '$lib/graph/operations/patches/nodes';
 
-import type { NodeType } from '../types';
-import type { DetailStatus, DetailsConfig } from './types';
+import type { GraphNode, NodeType } from '../types';
+
+import type { GraphInterface } from '$lib/graph/graph';
+
+type DetailStatus = 'idle' | 'loading' | 'fetched';
+
+type EntityMergeFn<T> = (
+	node: GraphNode,
+	graph: GraphInterface,
+	entity: T
+) => void | Promise<void>;
+
+interface DetailsConfig<T> {
+	nodeType: NodeType;
+	fetch: (id: number) => Promise<T>;
+	merge: EntityMergeFn<T>;
+	errorMessage: string;
+}
 
 export const buildConfig: Record<NodeType, DetailsConfig<any>> = {
 	artist: {
