@@ -19,7 +19,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	hasMoreMasterReleases = $derived(graph.progress.hasMoreMasterReleases(this.id!));
 	isDetailsLoading = $derived(graph.visitedNodes.visited.get(this.id!) === 'loading');
 	isDetailsFetched = $derived(graph.visitedNodes.visited.get(this.id!) === 'fetched');
-	isLoading = $derived(graph.progress.isLoading(this.id!));
+	isLoading = $derived(graph.progress.loading.has(this.id!));
 
 	private _hasRelatedArtists = $derived.by(() => {
 		if (this.node?.type !== 'artist') return true;
