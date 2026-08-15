@@ -21,11 +21,11 @@ class SelectedNodeState implements SelectedNodeInterface {
     node = $derived(graph.data.nodes.get(this.id!));
 
 	hasChildren = $derived(hasExpansionChildren(this.id!, graph.visitedNodes.expansionChildren, graph.data.nodes));
-	hasMoreReleases = $derived(graph.progress.hasMoreReleases(this.id!));
-	hasMoreMasterReleases = $derived(graph.progress.hasMoreMasterReleases(this.id!));
+	hasMoreReleases = $derived(graph.visitedNodes.hasMoreReleases(this.id!));
+	hasMoreMasterReleases = $derived(graph.visitedNodes.hasMoreMasterReleases(this.id!));
 	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
 	isDetailsFetched = $derived(graph.visitedNodes.status.get(this.id!) === 'fetched');
-	isLoading = $derived(graph.progress.loading.has(this.id!));
+	isLoading = $derived(graph.visitedNodes.loading.has(this.id!));
 
 	private _hasRelatedArtists = $derived.by(() => {
 		if (this.node?.type !== 'artist') return true;
@@ -105,8 +105,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 			graph.display.selectedId = this.id!;
 		}
 
-		graph.progress.clearNodes(toRemove);
-		graph.progress.clearNodeLoadState(this.id!);
+		graph.visitedNodes.clearNodes(toRemove);
+		graph.visitedNodes.clearNodeLoadState(this.id!);
 
 		if (graph.data.nodes.size === 1) {
 			graph.display.viewResetToken++;
