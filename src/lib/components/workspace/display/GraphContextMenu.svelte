@@ -36,7 +36,7 @@
 	});
 </script>
 
-{#if node.id}
+{#if node.isDetailsFetched}
 	<div
 		data-graph-context-menu
 		class="border-border bg-panel fixed z-110 min-w-45 overflow-hidden rounded-md border py-1 shadow-lg"
