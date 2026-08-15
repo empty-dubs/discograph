@@ -49,14 +49,18 @@ export const buildConfig: Record<NodeType, DetailsConfig<any>> = {
 }
 
 export class VisitedNodesState {
-	visited = $state<Map<string, DetailStatus>>(new Map());
+	expansionChildren = $state<Map<string, Set<string>>>(new Map());
+	expanded = $state<Set<string>>(new Set());
+	status = $state<Map<string, DetailStatus>>(new Map());
 
 	markFetched(nodeId: string) {
-		this.visited.set(nodeId, 'fetched');
+		this.status.set(nodeId, 'fetched');
 	}
 
 	clear() {
-		this.visited = new Map();
+		this.expansionChildren = new Map();
+		this.expanded = new Set();
+		this.status = new Map();
 	}
 }
 

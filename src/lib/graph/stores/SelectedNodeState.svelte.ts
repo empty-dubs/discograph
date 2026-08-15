@@ -23,8 +23,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 	hasChildren = $derived(hasExpansionChildren(this.id!, graph.expansion.expansionChildren, graph.data.nodes));
 	hasMoreReleases = $derived(graph.progress.hasMoreReleases(this.id!));
 	hasMoreMasterReleases = $derived(graph.progress.hasMoreMasterReleases(this.id!));
-	isDetailsLoading = $derived(graph.visitedNodes.visited.get(this.id!) === 'loading');
-	isDetailsFetched = $derived(graph.visitedNodes.visited.get(this.id!) === 'fetched');
+	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
+	isDetailsFetched = $derived(graph.visitedNodes.status.get(this.id!) === 'fetched');
 	isLoading = $derived(graph.progress.loading.has(this.id!));
 
 	private _hasRelatedArtists = $derived.by(() => {
@@ -112,7 +112,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	}
 
 	setStatus(status: 'loading' | 'fetched' | 'idle') {
-		graph.visitedNodes.visited.set(this.id!, status);
+		graph.visitedNodes.status.set(this.id!, status);
 	}
 
 	async fetchNodeDetails() {
