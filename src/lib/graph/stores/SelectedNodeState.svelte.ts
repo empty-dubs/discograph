@@ -6,6 +6,11 @@ import { buildConfig } from './VisitedNodesState.svelte';
 import type { NodeType } from '../types';
 import { parseNodeId } from '$lib/graph/operations/transformations';
 
+import {
+	collectDescendants,
+	findRemovableDescendants,
+} from '../operations/crawlers';
+
 interface SelectedNodeInterface {
 	id: string | null;
 }
@@ -59,12 +64,50 @@ class SelectedNodeState implements SelectedNodeInterface {
 	});
 
 	collapseNode() {
-		graph.expansion.collapseNode(this.id!, {
-			onNodesRemoved: (nodeIds) => {
-				graph.progress.clearNodes(nodeIds);
-				graph.progress.clearNodeLoadState(this.id!);
-			}
-		});
+		if (!graph.expansion.expansionChildren.has(this.id!)) return;
+
+		const descendants = collectDescendants(graph.expansion.expansionChildren, this.id!);
+		const toRemove = findRemovableDescendants(this.id!, descendants, graph.data.linkList);
+
+		if (toRemove.size === 0) {
+			const nextExpanded = new Set(graph.expansion.expanded);
+			nextExpanded.delete(this.id!);
+			graph.expansion.expanded = nextExpanded;
+			return;
+		}
+
+		graph.data.removeNodes(toRemove);
+
+		const nextChildren = new Map(graph.expansion.expansionChildren);
+		for (const id of toRemove) {
+			nextChildren.delete(id);
+		}
+		const parentChildren = new Set(nextChildren.get(this.id!) ?? []);
+		for (const id of toRemove) {
+			parentChildren.delete(id);
+		}
+		if (parentChildren.size === 0) {
+			nextChildren.delete(this.id!);
+		} else {
+			nextChildren.set(this.id!, parentChildren);
+		}
+		graph.expansion.expansionChildren = nextChildren;
+
+		const nextExpanded = new Set(graph.expansion.expanded);
+		nextExpanded.delete(this.id!);
+		for (const id of toRemove) {
+			nextExpanded.delete(id);
+		}
+		graph.expansion.expanded = nextExpanded;
+
+		if (graph.display.selectedId && toRemove.has(graph.display.selectedId)) {
+			graph.display.selectedId = this.id!;
+		}
+
+		graph.progress.clearNodes(toRemove);
+		graph.progress.clearNodeLoadState(this.id!);
+
+		graph.display.viewResetToken++;
 	}
 
 	setStatus(status: 'loading' | 'fetched' | 'idle') {
