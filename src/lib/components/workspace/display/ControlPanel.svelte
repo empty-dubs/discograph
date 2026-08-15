@@ -22,7 +22,7 @@
 		{/if}
 	</div>
 
-	{#if node.id}
+	{#if node.isDetailsFetched}
 		<GraphOperations />
 	{/if}
 </div>
