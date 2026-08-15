@@ -20,7 +20,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	id = $derived(graph.display.selectedId);
     node = $derived(graph.data.nodes.get(this.id!));
 
-	hasChildren = $derived(hasExpansionChildren(this.id!, graph.expansion.expansionChildren, graph.data.nodes));
+	hasChildren = $derived(hasExpansionChildren(this.id!, graph.visitedNodes.expansionChildren, graph.data.nodes));
 	hasMoreReleases = $derived(graph.progress.hasMoreReleases(this.id!));
 	hasMoreMasterReleases = $derived(graph.progress.hasMoreMasterReleases(this.id!));
 	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
@@ -65,21 +65,21 @@ class SelectedNodeState implements SelectedNodeInterface {
 	});
 
 	collapseNode() {
-		if (!graph.expansion.expansionChildren.has(this.id!)) return;
+		if (!graph.visitedNodes.expansionChildren.has(this.id!)) return;
 
-		const descendants = collectDescendants(graph.expansion.expansionChildren, this.id!);
+		const descendants = collectDescendants(graph.visitedNodes.expansionChildren, this.id!);
 		const toRemove = findRemovableDescendants(this.id!, descendants, graph.data.linkList);
 
 		if (toRemove.size === 0) {
-			const nextExpanded = new Set(graph.expansion.expanded);
+			const nextExpanded = new Set(graph.visitedNodes.expanded);
 			nextExpanded.delete(this.id!);
-			graph.expansion.expanded = nextExpanded;
+			graph.visitedNodes.expanded = nextExpanded;
 			return;
 		}
 
 		graph.data.removeNodes(toRemove);
 
-		const nextChildren = new Map(graph.expansion.expansionChildren);
+		const nextChildren = new Map(graph.visitedNodes.expansionChildren);
 		for (const id of toRemove) {
 			nextChildren.delete(id);
 		}
@@ -92,14 +92,14 @@ class SelectedNodeState implements SelectedNodeInterface {
 		} else {
 			nextChildren.set(this.id!, parentChildren);
 		}
-		graph.expansion.expansionChildren = nextChildren;
+		graph.visitedNodes.expansionChildren = nextChildren;
 
-		const nextExpanded = new Set(graph.expansion.expanded);
+		const nextExpanded = new Set(graph.visitedNodes.expanded);
 		nextExpanded.delete(this.id!);
 		for (const id of toRemove) {
 			nextExpanded.delete(id);
 		}
-		graph.expansion.expanded = nextExpanded;
+		graph.visitedNodes.expanded = nextExpanded;
 
 		if (graph.display.selectedId && toRemove.has(graph.display.selectedId)) {
 			graph.display.selectedId = this.id!;
@@ -108,7 +108,9 @@ class SelectedNodeState implements SelectedNodeInterface {
 		graph.progress.clearNodes(toRemove);
 		graph.progress.clearNodeLoadState(this.id!);
 
-		graph.display.viewResetToken++;
+		if (graph.data.nodes.size === 1) {
+			graph.display.viewResetToken++;
+		}
 	}
 
 	setStatus(status: 'loading' | 'fetched' | 'idle') {

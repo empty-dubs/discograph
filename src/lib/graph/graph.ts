@@ -1,6 +1,5 @@
 import { graphDataState, type GraphDataState } from './stores/GraphDataState.svelte';
 import { visitedNodesState, type VisitedNodesState } from './stores/VisitedNodesState.svelte';
-import { expansionState, type ExpansionState } from './stores/ExpansionState.svelte';
 import { expansionProgressState, type ExpansionProgressState } from './stores/ExpansionProgressState.svelte';
 import { graphDisplayState, type GraphDisplayState } from './stores/DisplayState.svelte';
 import type { GraphPatch } from './types';
@@ -8,7 +7,6 @@ import type { GraphPatch } from './types';
 export interface GraphInterface {
 	readonly data: GraphDataState;
 	readonly display: GraphDisplayState;
-	readonly expansion: ExpansionState;
 	readonly progress: ExpansionProgressState;
 	readonly visitedNodes: VisitedNodesState;
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch): void;
@@ -18,7 +16,6 @@ export interface GraphInterface {
 class Graph implements GraphInterface {
 	readonly data = graphDataState;
 	readonly display = graphDisplayState;
-	readonly expansion = expansionState;
 	readonly progress = expansionProgressState;
 	readonly visitedNodes = visitedNodesState;
 
@@ -33,7 +30,7 @@ class Graph implements GraphInterface {
 
 		if (newNodeIds.length === 0) return;
 
-		const parentChildMap = new Map(this.expansion.expansionChildren);
+		const parentChildMap = new Map(this.visitedNodes.expansionChildren);
 		const childNodeIds = new Set(parentChildMap.get(parentNodeId) ?? []);
 
 		for (const id of newNodeIds) {
@@ -41,12 +38,11 @@ class Graph implements GraphInterface {
 		}
 
 		parentChildMap.set(parentNodeId, childNodeIds);
-		this.expansion.expansionChildren = parentChildMap;
+		this.visitedNodes.expansionChildren = parentChildMap;
 	}
 
 	clear() {
 		this.display.clear();
-		this.expansion.clear();
 		this.progress.clear();
 		this.visitedNodes.clear();
 		this.data.clear();
