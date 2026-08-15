@@ -1,6 +1,10 @@
 import { graph } from '../graph';
 
 import { LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
+import { discogsApi } from '$lib/discogs/discogs.svelte';
+import { buildConfig } from './NodeDetailsState.svelte';
+import type { NodeType } from '../types';
+import { parseNodeId } from '$lib/graph/operations/transformations';
 
 interface SelectedNodeInterface {
 	id: string | null;
@@ -63,19 +67,29 @@ class SelectedNodeState implements SelectedNodeInterface {
 		});
 	}
 
-	getNodeDetails() {
+	async fetchNodeDetails() {
 		if (this.isDetailsFetched || this.isDetailsLoading) return;
 
-		switch (this.node?.type) {
-			case 'artist':
-				return graph.details.getArtistDetails(this.id!);
-			case 'label':
-				return graph.details.getLabelDetails(this.id!);
-			case 'master':
-				return graph.details.getMasterDetails(this.id!);
-			case 'release':
-				return graph.details.getReleaseDetails(this.id!);
+		const { type, discogsId } = parseNodeId(this.id!);
+
+		if (!type || !discogsId) return;
+
+		graph.details.setStatus(this.id!, 'loading');
+
+		const config = buildConfig[type as NodeType];
+
+		const payload = await discogsApi.withRequest(
+			() => config.fetch(discogsId),
+			config.errorMessage
+		);
+
+		if (!payload) {
+			graph.details.setStatus(this.id!, 'idle');
+			return;
 		}
+
+		await config.merge(this.node!, graph, payload);
+		graph.details.setStatus(this.id!, 'fetched');
 	}
 }
 

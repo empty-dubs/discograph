@@ -70,12 +70,6 @@
 		await action();
 		onAction?.();
 	}
-
-	$effect(() => {
-		if (!node?.id) return;
-
-		node.getNodeDetails();
-	});
 </script>
 
 {#if actions.includes('artists')}

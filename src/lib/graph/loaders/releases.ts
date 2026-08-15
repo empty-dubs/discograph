@@ -10,6 +10,8 @@ import { parseNodeId } from '../operations/transformations';
 
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 
+import { mergeMasterDetails } from '../stores/details/master';
+
 import {
 	buildFromArtistReleases,
 	buildFromLabelReleases,
@@ -106,7 +108,7 @@ export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
 
 		if (!mainReleaseId) {
 			const master = await getMaster(discogsId);
-			await graph.details.mergeMasterDetails(nodeId, master);
+			await mergeMasterDetails(graph.data.nodes.get(nodeId)!, graph, master);
 			graph.details.markFetched(nodeId);
 			mainReleaseId = master.main_release;
 		}
