@@ -6,6 +6,12 @@ import { buildConfig } from './VisitedNodesState.svelte';
 import type { NodeType } from '../types';
 import { parseNodeId } from '$lib/graph/operations/transformations';
 
+import {
+	collectDescendants,
+	findRemovableDescendants,
+	hasExpansionChildren
+} from '../operations/crawlers';
+
 interface SelectedNodeInterface {
 	id: string | null;
 }
@@ -14,12 +20,12 @@ class SelectedNodeState implements SelectedNodeInterface {
 	id = $derived(graph.display.selectedId);
     node = $derived(graph.data.nodes.get(this.id!));
 
-	hasChildren = $derived(graph.expansion.hasChildren(this.id!));
+	hasChildren = $derived(hasExpansionChildren(this.id!, graph.visitedNodes.expansionChildren, graph.data.nodes));
 	hasMoreReleases = $derived(graph.progress.hasMoreReleases(this.id!));
 	hasMoreMasterReleases = $derived(graph.progress.hasMoreMasterReleases(this.id!));
-	isDetailsLoading = $derived(graph.visitedNodes.visited.get(this.id!) === 'loading');
-	isDetailsFetched = $derived(graph.visitedNodes.visited.get(this.id!) === 'fetched');
-	isLoading = $derived(graph.progress.isLoading(this.id!));
+	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
+	isDetailsFetched = $derived(graph.visitedNodes.status.get(this.id!) === 'fetched');
+	isLoading = $derived(graph.progress.loading.has(this.id!));
 
 	private _hasRelatedArtists = $derived.by(() => {
 		if (this.node?.type !== 'artist') return true;
@@ -59,16 +65,56 @@ class SelectedNodeState implements SelectedNodeInterface {
 	});
 
 	collapseNode() {
-		graph.expansion.collapseNode(this.id!, {
-			onNodesRemoved: (nodeIds) => {
-				graph.progress.clearNodes(nodeIds);
-				graph.progress.clearNodeLoadState(this.id!);
-			}
-		});
+		if (!graph.visitedNodes.expansionChildren.has(this.id!)) return;
+
+		const descendants = collectDescendants(graph.visitedNodes.expansionChildren, this.id!);
+		const toRemove = findRemovableDescendants(this.id!, descendants, graph.data.linkList);
+
+		if (toRemove.size === 0) {
+			const nextExpanded = new Set(graph.visitedNodes.expanded);
+			nextExpanded.delete(this.id!);
+			graph.visitedNodes.expanded = nextExpanded;
+			return;
+		}
+
+		graph.data.removeNodes(toRemove);
+
+		const nextChildren = new Map(graph.visitedNodes.expansionChildren);
+		for (const id of toRemove) {
+			nextChildren.delete(id);
+		}
+		const parentChildren = new Set(nextChildren.get(this.id!) ?? []);
+		for (const id of toRemove) {
+			parentChildren.delete(id);
+		}
+		if (parentChildren.size === 0) {
+			nextChildren.delete(this.id!);
+		} else {
+			nextChildren.set(this.id!, parentChildren);
+		}
+		graph.visitedNodes.expansionChildren = nextChildren;
+
+		const nextExpanded = new Set(graph.visitedNodes.expanded);
+		nextExpanded.delete(this.id!);
+		for (const id of toRemove) {
+			nextExpanded.delete(id);
+		}
+		graph.visitedNodes.expanded = nextExpanded;
+
+		if (graph.display.selectedId && toRemove.has(graph.display.selectedId)) {
+			graph.display.selectedId = this.id!;
+		}
+
+		graph.progress.clearNodes(toRemove);
+		graph.progress.clearNodeLoadState(this.id!);
+
+		if (graph.data.nodes.size === 1) {
+			graph.display.viewResetToken++;
+		}
 	}
 
 	setStatus(status: 'loading' | 'fetched' | 'idle') {
-		graph.visitedNodes.visited.set(this.id!, status);
+		graph.visitedNodes.status.set(this.id!, status);
 	}
 
 	async fetchNodeDetails() {

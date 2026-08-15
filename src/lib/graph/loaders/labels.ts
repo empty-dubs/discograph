@@ -16,13 +16,13 @@ export async function loadRelatedLabels(graph: GraphInterface, nodeId: string) {
 		switch (type) {
 			case 'label': {
 				const label = await getLabel(discogsId);
-				graph.expansion.applyPatchFromExpansion(nodeId, buildFromLabel(label));
+				graph.applyPatchFromExpansion(nodeId, buildFromLabel(label));
 				graph.visitedNodes.markFetched(nodeId);
 				break;
 			}
 			case 'release': {
 				const release = await getRelease(discogsId);
-				graph.expansion.applyPatchFromExpansion(nodeId, buildLabelsFromRelease(release));
+				graph.applyPatchFromExpansion(nodeId, buildLabelsFromRelease(release));
 				break;
 			}
 		}
@@ -40,7 +40,7 @@ export async function loadRelatedCompanies(graph: GraphInterface, nodeId: string
 		switch (type) {
 			case 'release': {
 				const release = await getRelease(discogsId);
-				graph.expansion.applyPatchFromExpansion(nodeId, buildCompaniesFromRelease(release));
+				graph.applyPatchFromExpansion(nodeId, buildCompaniesFromRelease(release));
 				break;
 			}
 		}

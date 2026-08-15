@@ -32,7 +32,7 @@ export async function loadReleases(graph: GraphInterface, nodeId: string) {
 		switch (type) {
 			case 'artist': {
 				const releases = await getArtistReleases(discogsId, 1);
-				graph.expansion.applyPatchFromExpansion(
+				graph.applyPatchFromExpansion(
 					nodeId,
 					buildFromArtistReleases(releases.releases, discogsId, 'release')
 				);
@@ -41,7 +41,7 @@ export async function loadReleases(graph: GraphInterface, nodeId: string) {
 			}
 			case 'label': {
 				const releases = await getLabelReleases(discogsId, 1);
-				graph.expansion.applyPatchFromExpansion(
+				graph.applyPatchFromExpansion(
 					nodeId,
 					buildFromLabelReleases(releases.releases, discogsId, 'release')
 				);
@@ -50,7 +50,7 @@ export async function loadReleases(graph: GraphInterface, nodeId: string) {
 			}
 			case 'master': {
 				const versions = await getMasterVersions(discogsId, 1);
-				graph.expansion.applyPatchFromExpansion(
+				graph.applyPatchFromExpansion(
 					nodeId,
 					buildFromMasterVersions(versions.versions, discogsId)
 				);
@@ -70,7 +70,7 @@ export async function loadMasterReleases(graph: GraphInterface, nodeId: string) 
 		switch (type) {
 			case 'artist': {
 				const releases = await getArtistReleases(discogsId, 1);
-				graph.expansion.applyPatchFromExpansion(
+				graph.applyPatchFromExpansion(
 					nodeId,
 					buildFromArtistReleases(releases.releases, discogsId, 'master')
 				);
@@ -83,7 +83,7 @@ export async function loadMasterReleases(graph: GraphInterface, nodeId: string) 
 			}
 			case 'label': {
 				const releases = await getLabelReleases(discogsId, 1);
-				graph.expansion.applyPatchFromExpansion(
+				graph.applyPatchFromExpansion(
 					nodeId,
 					buildFromLabelReleases(releases.releases, discogsId, 'master')
 				);
@@ -119,7 +119,7 @@ export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
 		}
 
 		const release = await getRelease(mainReleaseId);
-		graph.expansion.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
+		graph.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
 		graph.progress.markActionLoaded(nodeId, 'main_release');
 	}, 'Failed to load main release');
 }
@@ -140,21 +140,21 @@ export async function loadMoreReleases(graph: GraphInterface, nodeId: string) {
 	await discogsApi.withRequest(async () => {
 		if (type === 'artist') {
 			const releases = await getArtistReleases(discogsId, nextPage);
-			graph.expansion.applyPatchFromExpansion(
+			graph.applyPatchFromExpansion(
 				nodeId,
 				buildFromArtistReleases(releases.releases, discogsId, 'release')
 			);
 			graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 		} else if (type === 'label') {
 			const releases = await getLabelReleases(discogsId, nextPage);
-			graph.expansion.applyPatchFromExpansion(
+			graph.applyPatchFromExpansion(
 				nodeId,
 				buildFromLabelReleases(releases.releases, discogsId, 'release')
 			);
 			graph.progress.setReleasePages(nodeId, releases.pagination.page, releases.pagination.pages);
 		} else if (type === 'master') {
 			const versions = await getMasterVersions(discogsId, nextPage);
-			graph.expansion.applyPatchFromExpansion(
+			graph.applyPatchFromExpansion(
 				nodeId,
 				buildFromMasterVersions(versions.versions, discogsId)
 			);
@@ -181,7 +181,7 @@ export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: stri
 	await discogsApi.withRequest(async () => {
 		if (type === 'artist') {
 			const releases = await getArtistReleases(discogsId, nextPage);
-			graph.expansion.applyPatchFromExpansion(
+			graph.applyPatchFromExpansion(
 				nodeId,
 				buildFromArtistReleases(releases.releases, discogsId, 'master')
 			);
@@ -192,7 +192,7 @@ export async function loadMoreMasterReleases(graph: GraphInterface, nodeId: stri
 			);
 		} else {
 			const releases = await getLabelReleases(discogsId, nextPage);
-			graph.expansion.applyPatchFromExpansion(
+			graph.applyPatchFromExpansion(
 				nodeId,
 				buildFromLabelReleases(releases.releases, discogsId, 'master')
 			);

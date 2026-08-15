@@ -18,10 +18,6 @@ export class ExpansionProgressState {
 		this.loading = next;
 	}
 
-	isLoading(nodeId: string): boolean {
-		return this.loading.has(nodeId);
-	}
-
 	setReleasePages(nodeId: string, page: number, pages: number) {
 		this.releasePages = new Map(this.releasePages).set(nodeId, { page, pages });
 	}

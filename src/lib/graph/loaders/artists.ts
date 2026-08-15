@@ -23,18 +23,18 @@ export async function loadRelatedArtists(graph: GraphInterface, nodeId: string) 
 		switch (type) {
 			case 'artist': {
 				const artist = await getArtist(discogsId);
-				graph.expansion.applyPatchFromExpansion(nodeId, buildFromArtist(artist));
+				graph.applyPatchFromExpansion(nodeId, buildFromArtist(artist));
 				graph.visitedNodes.markFetched(nodeId);
 				break;
 			}
 			case 'release': {
 				const release = await getRelease(discogsId);
-				graph.expansion.applyPatchFromExpansion(nodeId, buildArtistsFromRelease(release));
+				graph.applyPatchFromExpansion(nodeId, buildArtistsFromRelease(release));
 				break;
 			}
 			case 'master': {
 				const master = await getMaster(discogsId);
-				graph.expansion.applyPatchFromExpansion(nodeId, buildFromMaster(master));
+				graph.applyPatchFromExpansion(nodeId, buildFromMaster(master));
 				break;
 			}
 		}
@@ -52,7 +52,7 @@ export async function loadRelatedCreditedArtists(graph: GraphInterface, nodeId: 
 		switch (type) {
 			case 'release': {
 				const release = await getRelease(discogsId);
-				graph.expansion.applyPatchFromExpansion(nodeId, buildCreditedArtistsFromRelease(release));
+				graph.applyPatchFromExpansion(nodeId, buildCreditedArtistsFromRelease(release));
 				break;
 			}
 		}
@@ -70,7 +70,7 @@ export async function loadRelatedAliases(graph: GraphInterface, nodeId: string) 
 		switch (type) {
 			case 'artist': {
 				const artist = await getArtist(discogsId);
-				graph.expansion.applyPatchFromExpansion(nodeId, buildAliasesFromArtist(artist));
+				graph.applyPatchFromExpansion(nodeId, buildAliasesFromArtist(artist));
 				graph.visitedNodes.markFetched(nodeId);
 				break;
 			}
