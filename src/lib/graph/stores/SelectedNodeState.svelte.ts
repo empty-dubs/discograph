@@ -9,6 +9,7 @@ import { parseNodeId } from '$lib/graph/operations/transformations';
 import {
 	collectDescendants,
 	findRemovableDescendants,
+	hasExpansionChildren
 } from '../operations/crawlers';
 
 interface SelectedNodeInterface {
@@ -19,7 +20,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	id = $derived(graph.display.selectedId);
     node = $derived(graph.data.nodes.get(this.id!));
 
-	hasChildren = $derived(graph.expansion.hasChildren(this.id!));
+	hasChildren = $derived(hasExpansionChildren(this.id!, graph.expansion.expansionChildren, graph.data.nodes));
 	hasMoreReleases = $derived(graph.progress.hasMoreReleases(this.id!));
 	hasMoreMasterReleases = $derived(graph.progress.hasMoreMasterReleases(this.id!));
 	isDetailsLoading = $derived(graph.visitedNodes.visited.get(this.id!) === 'loading');
