@@ -54,7 +54,7 @@ export function buildCompaniesFromRelease(release: Release): GraphPatch {
 }
 
 export function buildFromLabel(label: Label): GraphPatch {
-	const nodes: GraphNode[] = [createLabelNode(label)];
+	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'label';
 	const edgeType: EdgeType = 'sublabel_of';

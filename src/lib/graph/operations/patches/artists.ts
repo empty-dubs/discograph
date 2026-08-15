@@ -10,7 +10,7 @@ import { getNodeId, getLinkId } from './compositions';
 import { createArtistNode } from './nodes';
 
 export function buildFromArtist(artist: Artist): GraphPatch {
-	const nodes: GraphNode[] = [createArtistNode(artist)];
+	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'artist';
 	const edgeType: EdgeType = 'member_of';
