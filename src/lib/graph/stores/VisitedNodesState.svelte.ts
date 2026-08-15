@@ -38,20 +38,8 @@ export const buildConfig: Record<NodeType, DetailsConfig<any>> = {
 export class VisitedNodesState {
 	visited = $state<Map<string, DetailStatus>>(new Map());
 
-	setStatus(nodeId: string, status: DetailStatus) {
-		this.visited.set(nodeId, status);
-	}
-
 	markFetched(nodeId: string) {
-		this.setStatus(nodeId, 'fetched');
-	}
-
-	isDetailsLoading(nodeId: string): boolean {
-		return this.visited.get(nodeId) === 'loading';
-	}
-
-	isDetailsFetched(nodeId: string): boolean {
-		return this.visited.get(nodeId) === 'fetched';
+		this.visited.set(nodeId, 'fetched');
 	}
 
 	clear() {

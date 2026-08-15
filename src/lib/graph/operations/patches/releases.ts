@@ -8,7 +8,7 @@ import {
 import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '../../types';
 
 import { getLinkId, getNodeId } from './compositions';
-import { masterNode, releaseNode } from './nodes';
+import { createMasterNode, createReleaseNode } from './nodes';
 
 function labelReleaseKind(item: LabelRelease): 'master' | 'release' {
 	if (item.type) return item.type;
@@ -32,9 +32,9 @@ export function buildFromArtistReleases(
 		const targetNode = getNodeId(targetNodeType, item.id);
 
 		if (item.type === 'master') {
-			nodes.push(masterNode(item, { year: item.year }));
+			nodes.push(createMasterNode(item, { year: item.year }));
 		} else {
-			nodes.push(releaseNode(item, { year: item.year }));
+			nodes.push(createReleaseNode(item, { year: item.year }));
 		}
 
 		links.push({
@@ -67,9 +67,9 @@ export function buildFromLabelReleases(
 		const sourceNode = getNodeId(targetNodeType, item.id);
 
 		if (itemKind === 'master') {
-			nodes.push(masterNode(item, { year: item.year }));
+			nodes.push(createMasterNode(item, { year: item.year }));
 		} else {
-			nodes.push(releaseNode(item, { year: item.year }));
+			nodes.push(createReleaseNode(item, { year: item.year }));
 		}
 
 		links.push({
@@ -93,7 +93,7 @@ export function buildFromMasterVersions(versions: MasterVersion[], masterId: num
 	for (const version of versions) {
 		const sourceNode = getNodeId(releaseNodeType, version.id);
 
-		nodes.push(releaseNode(version, { year: version.released }));
+		nodes.push(createReleaseNode(version, { year: version.released }));
 		links.push({
 			id: getLinkId(sourceNode, edgeType, masterNodeId),
 			source: sourceNode,
@@ -111,7 +111,7 @@ export function buildMainReleaseFromMaster(release: Release, masterId: number): 
 	const edgeType: EdgeType = 'version_of';
 
 	return {
-		nodes: [releaseNode(release, { year: release.year ?? release.released })],
+		nodes: [createReleaseNode(release, { year: release.year ?? release.released })],
 		links: [
 			{
 				id: getLinkId(releaseNodeId, edgeType, masterNodeId),

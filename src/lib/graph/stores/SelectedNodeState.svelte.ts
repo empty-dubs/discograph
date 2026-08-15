@@ -17,8 +17,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 	hasChildren = $derived(graph.expansion.hasChildren(this.id!));
 	hasMoreReleases = $derived(graph.progress.hasMoreReleases(this.id!));
 	hasMoreMasterReleases = $derived(graph.progress.hasMoreMasterReleases(this.id!));
-	isDetailsLoading = $derived(graph.visitedNodes.isDetailsLoading(this.id!));
-	isDetailsFetched = $derived(graph.visitedNodes.isDetailsFetched(this.id!));
+	isDetailsLoading = $derived(graph.visitedNodes.visited.get(this.id!) === 'loading');
+	isDetailsFetched = $derived(graph.visitedNodes.visited.get(this.id!) === 'fetched');
 	isLoading = $derived(graph.progress.isLoading(this.id!));
 
 	private _hasRelatedArtists = $derived.by(() => {
@@ -67,6 +67,10 @@ class SelectedNodeState implements SelectedNodeInterface {
 		});
 	}
 
+	setStatus(status: 'loading' | 'fetched' | 'idle') {
+		graph.visitedNodes.visited.set(this.id!, status);
+	}
+
 	async fetchNodeDetails() {
 		if (this.isDetailsFetched || this.isDetailsLoading) return;
 
@@ -74,7 +78,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 
 		if (!type || !discogsId) return;
 
-		graph.visitedNodes.setStatus(this.id!, 'loading');
+		this.setStatus('loading');
+		this.isDetailsLoading = true;
 
 		const config = buildConfig[type as NodeType];
 
@@ -84,12 +89,16 @@ class SelectedNodeState implements SelectedNodeInterface {
 		);
 
 		if (!payload) {
-			graph.visitedNodes.setStatus(this.id!, 'idle');
+			this.setStatus('idle');
+			this.isDetailsLoading = false;
 			return;
 		}
 
 		await config.merge(this.node!, graph, payload);
-		graph.visitedNodes.setStatus(this.id!, 'fetched');
+
+		this.setStatus('fetched');
+		this.isDetailsLoading = false;
+		this.isDetailsFetched = true;
 	}
 }
 

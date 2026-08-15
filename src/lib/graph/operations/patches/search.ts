@@ -1,19 +1,16 @@
-import type {
-	SearchResult,
-	SearchType
-} from '$lib/discogs/types';
+import type { SearchResult } from '$lib/discogs/types';
 
 import type { GraphNode, GraphPatch} from '../../types';
 
-import { artistNode, labelNode, masterNode, releaseNode } from './nodes';
+import { createArtistNode, createLabelNode, createMasterNode, createReleaseNode } from './nodes';
 
 type SearchResultBuilder = (result: SearchResult) => GraphNode;
 
 const searchResultBuilders: Record<string, SearchResultBuilder> = {
-	artist: (result) => artistNode(result),
-	label: (result) => labelNode(result),
-	master: (result) => masterNode(result, { year: result.year }),
-	release: (result) => releaseNode(result, { year: result.year })
+	artist: (result) => createArtistNode(result),
+	label: (result) => createLabelNode(result),
+	master: (result) => createMasterNode(result, { year: result.year }),
+	release: (result) => createReleaseNode(result, { year: result.year })
 };
 
 export function buildFromSearchResult(result: SearchResult): GraphPatch {

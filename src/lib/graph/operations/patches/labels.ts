@@ -6,7 +6,7 @@ import {
 import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '../../types';
 
 import { getLinkId, getNodeId } from './compositions';
-import { labelNode } from './nodes';
+import { createLabelNode } from './nodes';
 
 export function buildLabelsFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];
@@ -18,7 +18,7 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 		const edgeType: EdgeType = 'on_label';
 		const targetNode = getNodeId(nodeType, label.id);
 
-		nodes.push(labelNode(label));
+		nodes.push(createLabelNode(label));
 		links.push({
 			id: getLinkId(releaseNodeId, edgeType, targetNode),
 			source: releaseNodeId,
@@ -40,7 +40,7 @@ export function buildCompaniesFromRelease(release: Release): GraphPatch {
 		const edgeType: EdgeType = 'company_on';
 		const targetNode = getNodeId(nodeType, company.id);
 
-		nodes.push(labelNode(company));
+		nodes.push(createLabelNode(company));
 		links.push({
 			id: getLinkId(releaseNodeId, edgeType, targetNode),
 			source: releaseNodeId,
@@ -54,7 +54,7 @@ export function buildCompaniesFromRelease(release: Release): GraphPatch {
 }
 
 export function buildFromLabel(label: Label): GraphPatch {
-	const nodes: GraphNode[] = [labelNode(label)];
+	const nodes: GraphNode[] = [createLabelNode(label)];
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'label';
 	const edgeType: EdgeType = 'sublabel_of';
@@ -63,7 +63,7 @@ export function buildFromLabel(label: Label): GraphPatch {
 		const sourceNode = getNodeId(nodeType, sublabel.id);
 		const targetNode = getNodeId(nodeType, label.id);
 
-		nodes.push(labelNode(sublabel));
+		nodes.push(createLabelNode(sublabel));
 		links.push({
 			id: getLinkId(sourceNode, edgeType, targetNode),
 			source: sourceNode,
@@ -76,7 +76,7 @@ export function buildFromLabel(label: Label): GraphPatch {
 		const sourceNode = getNodeId(nodeType, label.id);
 		const targetNode = getNodeId(nodeType, label.parent_label.id);
 
-		nodes.push(labelNode(label.parent_label));
+		nodes.push(createLabelNode(label.parent_label));
 		links.push({
 			id: getLinkId(sourceNode, edgeType, targetNode),
 			source: sourceNode,
