@@ -1,36 +1,49 @@
 import { getArtist, getLabel, getMaster, getRelease } from '$lib/discogs/client';
 
-import { mergeArtistDetails } from './details/artist';
-import { mergeLabelDetails } from './details/label';
-import { mergeMasterDetails } from './details/master';
-import { mergeReleaseDetails } from './details/release';
+import { updateArtistNode, updateLabelNode, updateMasterNode, updateReleaseNode } from '$lib/graph/operations/patches/nodes';
 
-import type { NodeType } from '../types';
-import type { DetailStatus, DetailsConfig } from './types';
+import type { GraphNode, NodeType } from '../types';
+
+import type { GraphInterface } from '$lib/graph/graph';
+
+type DetailStatus = 'idle' | 'loading' | 'fetched';
+
+type EntityMergeFn<T> = (
+	node: GraphNode,
+	graph: GraphInterface,
+	entity: T
+) => void | Promise<void>;
+
+interface DetailsConfig<T> {
+	nodeType: NodeType;
+	fetch: (id: number) => Promise<T>;
+	merge: EntityMergeFn<T>;
+	errorMessage: string;
+}
 
 export const buildConfig: Record<NodeType, DetailsConfig<any>> = {
 	artist: {
 		nodeType: 'artist',
 		fetch: getArtist,
-		merge: mergeArtistDetails,
+		merge: updateArtistNode,
 		errorMessage: 'Failed to load artist details'
 	},
 	label: {
 		nodeType: 'label',
 		fetch: getLabel,
-		merge: mergeLabelDetails,
+		merge: updateLabelNode,
 		errorMessage: 'Failed to load label details'
 	},
 	master: {
 		nodeType: 'master',
 		fetch: getMaster,
-		merge: mergeMasterDetails,
+		merge: updateMasterNode,
 		errorMessage: 'Failed to load master details'
 	},
 	release: {
 		nodeType: 'release',
 		fetch: getRelease,
-		merge: mergeReleaseDetails,
+		merge: updateReleaseNode,
 		errorMessage: 'Failed to load release details'
 	}
 }

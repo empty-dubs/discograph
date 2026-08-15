@@ -21,13 +21,9 @@
 		loadMoreMasterReleases
 	} from '$lib/graph/loaders/releases';
 
-	import {
-		getLoadButtonState,
-		getMasterReleasesButtonState,
-		getReleasesButtonState,
-	} from './constants';
-
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
+
+	import { LOAD_ACTION_LABELS, type LoadAction, type PagedLoadButtonState } from './constants';
 
 	interface Props {
 		layout?: 'menu' | 'stack';
@@ -40,16 +36,26 @@
 
 	const actions = $derived(node.getVisibleLoadActions);
 
-	const releasesState = $derived(
-		getReleasesButtonState(graph.progress.releasePages, node.id!, node.hasMoreReleases)
-	);
-	const masterReleasesState = $derived(
-		getMasterReleasesButtonState(
-			graph.progress.masterReleasePages,
-			node.id!,
-			node.hasMoreMasterReleases
-		)
-	);
+	const releasesState = $derived.by(() => {
+		const loaded = graph.progress.releasePages.has(node.id!);
+
+		return {
+			loaded,
+			label: loaded ? 'Load more releases' : 'Load releases',
+			exhausted: loaded && !node.hasMoreReleases
+		};
+	});
+
+	const masterReleasesState = $derived.by(() => {
+		const loaded = graph.progress.masterReleasePages.has(node.id!);
+
+		return {
+			loaded,
+			label: loaded ? 'Load more master releases' : 'Load master releases',
+			exhausted: loaded && !node.hasMoreMasterReleases
+		};
+	});
+
 	const artistsState = $derived(getLoadButtonState(graph.progress.loadedActions, node.id!, 'artists'));
 	const aliasesState = $derived(getLoadButtonState(graph.progress.loadedActions, node.id!, 'aliases'));
 	const labelsState = $derived(getLoadButtonState(graph.progress.loadedActions, node.id!, 'labels'));
@@ -65,6 +71,20 @@
 			? 'hover:bg-panel-hover block w-full border-none bg-transparent px-3 py-2 text-left text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent'
 			: 'border-border bg-panel-hover cursor-pointer rounded-md border px-3 py-2 text-sm text-gray-300 disabled:cursor-not-allowed disabled:opacity-50'
 	);
+
+	function getLoadButtonState(
+		loadedActions: Map<string, Set<LoadAction>>,
+		nodeId: string,
+		action: LoadAction
+	): PagedLoadButtonState {
+		const loaded = loadedActions.get(nodeId)?.has(action) ?? false;
+
+		return {
+			loaded,
+			label: LOAD_ACTION_LABELS[action],
+			exhausted: loaded
+		};
+	}
 
 	async function run(action: () => Promise<void>) {
 		await action();
