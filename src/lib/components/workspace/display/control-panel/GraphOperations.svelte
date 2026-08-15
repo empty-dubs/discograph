@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { graph } from '$lib/graph/graph';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
-
+	import { graph } from '$lib/graph/graph';
 	import { seedFromNode } from '$lib/graph/loaders/seed';
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import NodeLoadActions from '../../actions/NodeLoadActions.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	const node = $derived(selectedNodeState);
 
@@ -16,18 +15,18 @@
 <div class="flex flex-wrap gap-2" role="group" aria-label="Graph actions">
 	<NodeLoadActions/>
 
-	{#if node.id && node.hasChildren}
-		<button
-			type="button"
-			class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-			disabled={node.isLoading}
-			onclick={() => node.collapseNode()}
-		>
-			Collapse children
-		</button>
-	{/if}
+	{#if node.isDetailsFetched}
+		{#if node.hasChildren}
+			<button
+				type="button"
+				class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
+				disabled={node.isLoading}
+				onclick={() => node.collapseNode()}
+			>
+				Collapse children
+			</button>
+		{/if}
 
-	{#if node.id}
 		<button
 			type="button"
 			class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
