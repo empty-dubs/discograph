@@ -11,7 +11,7 @@ import type { NodeType } from '../types';
 import type { Master } from '$lib/discogs/types';
 import type { DetailsTrackerContext, DetailStatus, DetailsTrackerConfig } from './types';
 
-const nodeUtils: Record<NodeType, DetailsTrackerConfig<any>> = {
+export const buildConfig: Record<NodeType, DetailsTrackerConfig<any>> = {
 	artist: {
 		nodeType: 'artist',
 		fetch: getArtist,
@@ -50,10 +50,10 @@ export class NodeDetailsState {
 	}
 
 	private trackers = {
-		artist: createDetailsTracker(nodeUtils.artist),
-		label: createDetailsTracker(nodeUtils.label),
-		master: createDetailsTracker(nodeUtils.master),
-		release: createDetailsTracker(nodeUtils.release)
+		artist: createDetailsTracker(buildConfig.artist),
+		label: createDetailsTracker(buildConfig.label),
+		master: createDetailsTracker(buildConfig.master),
+		release: createDetailsTracker(buildConfig.release)
 	}
 
 	private ctx(): DetailsTrackerContext {

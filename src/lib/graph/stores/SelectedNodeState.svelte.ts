@@ -1,6 +1,10 @@
 import { graph } from '../graph';
 
 import { LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
+import { discogsApi } from '$lib/discogs/discogs.svelte';
+import { buildConfig } from './NodeDetailsState.svelte';
+import type { NodeType } from '../types';
+import { parseNodeId } from '$lib/graph/operations/transformations';
 
 interface SelectedNodeInterface {
 	id: string | null;
@@ -76,6 +80,29 @@ class SelectedNodeState implements SelectedNodeInterface {
 			case 'release':
 				return graph.details.getReleaseDetails(this.id!);
 		}
+	}
+
+	async fetchNodeDetails() {
+		const { type, discogsId } = parseNodeId(this.id!);
+
+		if (!type || !discogsId) return;
+
+		graph.details.setStatus(this.id!, 'loading');
+
+		const config = buildConfig[type as NodeType];
+
+		const payload = await discogsApi.withRequest(
+			() => config.fetch(discogsId),
+			config.errorMessage
+		);
+
+		if (!payload) {
+			graph.details.setStatus(this.id!, 'idle');
+			return;
+		}
+
+		await config.merge(graph.details.ctx(), this.id!, payload);
+		graph.details.setStatus(this.id!, 'fetched');
 	}
 }
 
