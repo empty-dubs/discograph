@@ -29,7 +29,7 @@
 	$effect(() => {
 		if (!node.id) return;
 
-		node.getNodeDetails();
+		node.fetchNodeDetails();
 	});
 
 	$effect(() => {

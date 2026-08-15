@@ -1,24 +1,22 @@
 import type { Artist } from '$lib/discogs/types';
+import type { GraphNode } from '$lib/graph/types';
+import type { GraphInterface } from '$lib/graph/graph';
 
-import type { DetailsTrackerContext } from '../types';
+export function mergeArtistDetails(node: GraphNode, graph: GraphInterface, artist: Artist) {
+	if (!node) return;
 
-export function mergeArtistDetails(ctx: DetailsTrackerContext, nodeId: string, artist: Artist) {
-	const existing = ctx.nodes.get(nodeId);
+	const next = new Map(graph.data.nodes);
 
-	if (!existing) return;
-
-	const next = new Map(ctx.nodes);
-
-	next.set(nodeId, {
-		...existing,
+	next.set(node.id, {
+		...node,
 		profile: artist.profile,
 		realname: artist.realname ?? undefined,
-		urls: artist.urls,
-		namevariations: artist.namevariations,
+		urls: artist.urls ?? [],
+		namevariations: artist.namevariations ?? [],
 		groups: artist.groups?.map(({ id, name }) => ({ id, name })),
 		aliases: artist.aliases?.map(({ id, name }) => ({ id, name })),
 		members: artist.members?.map(({ id, name, active }) => ({ id, name, active }))
 	});
 
-	ctx.setNodes(next);
+	graph.data.nodes = next;
 }

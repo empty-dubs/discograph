@@ -67,22 +67,9 @@ class SelectedNodeState implements SelectedNodeInterface {
 		});
 	}
 
-	getNodeDetails() {
+	async fetchNodeDetails() {
 		if (this.isDetailsFetched || this.isDetailsLoading) return;
 
-		switch (this.node?.type) {
-			case 'artist':
-				return graph.details.getArtistDetails(this.id!);
-			case 'label':
-				return graph.details.getLabelDetails(this.id!);
-			case 'master':
-				return graph.details.getMasterDetails(this.id!);
-			case 'release':
-				return graph.details.getReleaseDetails(this.id!);
-		}
-	}
-
-	async fetchNodeDetails() {
 		const { type, discogsId } = parseNodeId(this.id!);
 
 		if (!type || !discogsId) return;
@@ -101,7 +88,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 			return;
 		}
 
-		await config.merge(graph.details.ctx(), this.id!, payload);
+		await config.merge(this.node!, graph, payload);
 		graph.details.setStatus(this.id!, 'fetched');
 	}
 }

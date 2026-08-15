@@ -1,8 +1,8 @@
 import { getMaster } from '$lib/discogs/client';
 
 import type { Release, ReleaseFormat } from '$lib/discogs/types';
-
-import type { DetailsTrackerContext } from '../types';
+import type { GraphInterface } from '$lib/graph/graph';
+import type { GraphNode } from '$lib/graph/types';
 
 function formatReleaseFormats(formats: ReleaseFormat[]): string {
 	return formats
@@ -10,9 +10,9 @@ function formatReleaseFormats(formats: ReleaseFormat[]): string {
 		.join(' / ');
 }
 
-async function resolveMasterTitle(ctx: DetailsTrackerContext, id: number): Promise<string> {
+async function resolveMasterTitle(graph: GraphInterface, id: number): Promise<string> {
 	const masterNodeId = `master:${id}`;
-	const existing = ctx.nodes.get(masterNodeId);
+	const existing = graph.data.nodes.get(masterNodeId);
 
 	if (existing) return existing.displayName;
 
@@ -25,25 +25,23 @@ async function resolveMasterTitle(ctx: DetailsTrackerContext, id: number): Promi
 }
 
 export async function mergeReleaseDetails(
-	ctx: DetailsTrackerContext,
-	nodeId: string,
+	node: GraphNode,
+	graph: GraphInterface,
 	release: Release
 ) {
-	const existing = ctx.nodes.get(nodeId);
-
-	if (!existing) return;
+	if (!node) return;
 
 	const linkedMaster = release.master_id
 		? {
 				id: release.master_id,
-				title: await resolveMasterTitle(ctx, release.master_id)
+				title: await resolveMasterTitle(graph, release.master_id)
 			}
 		: undefined;
 
-	const next = new Map(ctx.nodes);
+	const next = new Map(graph.data.nodes);
 
-	next.set(nodeId, {
-		...existing,
+	next.set(node.id, {
+		...node,
 		artists: (release.artists ?? [])
 			.filter((artist): artist is typeof artist & { id: number } => artist.id !== undefined)
 			.map(({ id, name }) => ({ id, name })),
@@ -64,9 +62,9 @@ export async function mergeReleaseDetails(
 		notes: release.notes,
 		linked_master: linkedMaster,
 		meta: {
-			...existing.meta,
-			year: release.year ?? existing.meta?.year,
-			genres: release.genres ?? existing.meta?.genres,
+			...node.meta,
+			year: release.year ?? node.meta?.year,
+			genres: release.genres ?? node.meta?.genres,
 			styles: release.styles,
 			released: release.released_formatted ?? release.released,
 			country: release.country,
@@ -74,5 +72,5 @@ export async function mergeReleaseDetails(
 		}
 	});
 
-	ctx.setNodes(next);
+	graph.data.nodes = next;
 }

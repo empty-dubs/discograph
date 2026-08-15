@@ -1,23 +1,19 @@
 import type { Label } from '$lib/discogs/types';
+import type { GraphInterface } from '$lib/graph/graph';
+import type { GraphNode } from '$lib/graph/types';
 
-import type { DetailsTrackerContext } from '../types';
+export function mergeLabelDetails(node: GraphNode, graph: GraphInterface, label: Label) {
+	if (!node) return;
 
-export function mergeLabelDetails(ctx: DetailsTrackerContext, nodeId: string, label: Label) {
-	const existing = ctx.nodes.get(nodeId);
+	const next = new Map(graph.data.nodes);
 
-	if (!existing) return;
-
-	const next = new Map(ctx.nodes);
-
-	next.set(nodeId, {
-		...existing,
+	next.set(node.id, {
+		...node,
 		profile: label.profile,
-		urls: label.urls,
-		parent_label: label.parent_label
-			? { id: label.parent_label.id, name: label.parent_label.name }
-			: undefined,
-		sublabels: label.sublabels?.map(({ id, name }) => ({ id, name }))
+		urls: label.urls ?? [],
+		parent_label: label.parent_label ?? undefined,
+		sublabels: label.sublabels?.map(({ id, name }) => ({ id, name })) ?? []
 	});
 
-	ctx.setNodes(next);
+	graph.data.nodes = next;
 }

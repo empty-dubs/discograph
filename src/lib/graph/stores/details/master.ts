@@ -1,15 +1,15 @@
 import { getRelease } from '$lib/discogs/client';
 
 import type { Master } from '$lib/discogs/types';
-
-import type { DetailsTrackerContext } from '../types';
+import type { GraphInterface } from '$lib/graph/graph';
+import type { GraphNode } from '$lib/graph/types';
 
 async function resolveMainReleaseTitle(
-	ctx: DetailsTrackerContext,
+	graph: GraphInterface,
 	id: number
 ): Promise<string> {
 	const releaseNodeId = `release:${id}`;
-	const existing = ctx.nodes.get(releaseNodeId);
+	const existing = graph.data.nodes.get(releaseNodeId);
 
 	if (existing) return existing.displayName;
 
@@ -22,25 +22,23 @@ async function resolveMainReleaseTitle(
 }
 
 export async function mergeMasterDetails(
-	ctx: DetailsTrackerContext,
-	nodeId: string,
+	node: GraphNode,
+	graph: GraphInterface,
 	master: Master
 ) {
-	const existing = ctx.nodes.get(nodeId);
-
-	if (!existing) return;
+	if (!node) return;
 
 	const mainRelease = master.main_release
 		? {
 				id: master.main_release,
-				title: await resolveMainReleaseTitle(ctx, master.main_release)
+				title: await resolveMainReleaseTitle(graph, master.main_release)
 			}
 		: undefined;
 
-	const next = new Map(ctx.nodes);
+	const next = new Map(graph.data.nodes);
 
-	next.set(nodeId, {
-		...existing,
+	next.set(node.id, {
+		...node,
 		artists: master.artists?.map(({ id, name }) => ({ id, name })),
 		tracklist: master.tracklist?.map(({ position, title, duration }) => ({
 			position,
@@ -49,12 +47,12 @@ export async function mergeMasterDetails(
 		})),
 		main_release: mainRelease,
 		meta: {
-			...existing.meta,
-			year: master.year ?? existing.meta?.year,
-			genres: master.genres ?? existing.meta?.genres,
+			...node.meta,
+			year: master.year ?? node.meta?.year,
+			genres: master.genres ?? node.meta?.genres,
 			styles: master.styles
 		}
 	});
 
-	ctx.setNodes(next);
+	graph.data.nodes = next;
 }
