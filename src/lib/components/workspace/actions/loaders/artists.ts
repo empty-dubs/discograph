@@ -24,7 +24,6 @@ export async function loadRelatedArtists(graph: GraphInterface, nodeId: string) 
 			case 'artist': {
 				const artist = await getArtist(discogsId);
 				graph.applyPatchFromExpansion(nodeId, buildFromArtist(artist));
-				graph.visitedNodes.markFetched(nodeId);
 				break;
 			}
 			case 'release': {
@@ -71,7 +70,6 @@ export async function loadRelatedAliases(graph: GraphInterface, nodeId: string) 
 			case 'artist': {
 				const artist = await getArtist(discogsId);
 				graph.applyPatchFromExpansion(nodeId, buildAliasesFromArtist(artist));
-				graph.visitedNodes.markFetched(nodeId);
 				break;
 			}
 		}

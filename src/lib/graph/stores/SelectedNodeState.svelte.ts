@@ -43,8 +43,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 	
 	private _hasMainRelease = $derived.by(() => {
 		if (this.node?.type !== 'master') return true;
-	
-		return this.node?.main_release ? true : !this.isDetailsFetched;
+
+		return Boolean(this.node?.main_release);
 	});
 
 	getVisibleLoadActions = $derived.by(() => {
@@ -77,10 +77,6 @@ class SelectedNodeState implements SelectedNodeInterface {
 		}
 	}
 
-	setStatus(status: 'loading' | 'fetched' | 'idle') {
-		graph.visitedNodes.status.set(this.id!, status);
-	}
-
 	async fetchNodeDetails() {
 		if (this.isDetailsFetched || this.isDetailsLoading) return;
 
@@ -88,8 +84,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 
 		if (!type || !discogsId) return;
 
-		this.setStatus('loading');
-		this.isDetailsLoading = true;
+		graph.visitedNodes.setDetailStatus(this.id!, 'loading');
 
 		const config = buildConfig[type as NodeType];
 
@@ -99,16 +94,13 @@ class SelectedNodeState implements SelectedNodeInterface {
 		);
 
 		if (!payload) {
-			this.setStatus('idle');
-			this.isDetailsLoading = false;
+			graph.visitedNodes.setDetailStatus(this.id!, 'idle');
 			return;
 		}
 
 		await config.merge(this.node!, graph, payload);
 
-		this.setStatus('fetched');
-		this.isDetailsLoading = false;
-		this.isDetailsFetched = true;
+		graph.visitedNodes.setDetailStatus(this.id!, 'fetched');
 	}
 }
 

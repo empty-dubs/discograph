@@ -109,7 +109,6 @@ export async function loadMainRelease(graph: GraphInterface, nodeId: string) {
 		if (!mainReleaseId) {
 			const master = await getMaster(discogsId);
 			await updateMasterNode(graph.data.nodes.get(nodeId)!, graph, master);
-			graph.visitedNodes.markFetched(nodeId);
 			mainReleaseId = master.main_release;
 		}
 
