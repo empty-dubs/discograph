@@ -80,8 +80,8 @@ export class VisitedNodesState {
 		this.loadedActions = next;
 	}
 
-	markFetched(nodeId: string) {
-		this.status.set(nodeId, 'fetched');
+	setDetailStatus(nodeId: string, status: DetailStatus) {
+		this.status = new Map(this.status).set(nodeId, status);
 	}
 
 	setLoading(id: string, isLoading: boolean) {

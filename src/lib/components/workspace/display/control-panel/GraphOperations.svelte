@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
-	import { seedFromNode } from '$lib/graph/loaders/seed';
+	import { seedFromNode } from '$lib/components/workspace/actions/loaders/seed';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	import NodeLoadActions from '../../actions/NodeLoadActions.svelte';
+	import NodeLoadActions from '$lib/components/workspace/actions/NodeLoadActions.svelte';
 
 	const node = $derived(selectedNodeState);
 

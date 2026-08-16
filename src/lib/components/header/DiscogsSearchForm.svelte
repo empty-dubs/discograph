@@ -3,7 +3,7 @@
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
 
-	import { seedFromResult } from '$lib/graph/loaders/seed';
+	import { seedFromResult } from '$lib/components/workspace/actions/loaders/seed';
 
 	const typeOptions: { value: SearchType | ''; label: string }[] = [
 		{ value: '', label: 'All types' },

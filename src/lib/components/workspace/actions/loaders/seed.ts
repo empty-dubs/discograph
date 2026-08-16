@@ -1,9 +1,9 @@
 import { discogsApi } from '$lib/discogs/discogs.svelte';
-import { buildFromSearchResult } from '../operations/patches/search';
+import { buildFromSearchResult } from '$lib/graph/operations/patches/search';
 
 import type { SearchResult } from '$lib/discogs/types';
-import type { GraphInterface } from '../graph';
-import type { GraphNode } from '../types';
+import type { GraphInterface } from '$lib/graph/graph';
+import type { GraphNode } from '$lib/graph/types';
 
 export function seedFromResult(graph: GraphInterface, result: SearchResult) {
 	graph.clear();
