@@ -51,8 +51,7 @@ export const buildConfig: Record<NodeType, DetailsConfig<any>> = {
 }
 
 export class VisitedNodesState {
-	expansionChildren = $state<Map<string, Set<string>>>(new Map());
-	expanded = $state<Set<string>>(new Set());
+	knownChildren = $state<Map<string, Set<string>>>(new Map());
 	loadedActions = $state<Map<string, Set<LoadAction>>>(new Map());
 	loading = $state<Set<string>>(new Set());
 	masterReleasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
@@ -105,41 +104,38 @@ export class VisitedNodesState {
 		this.releasePages = new Map(this.releasePages).set(nodeId, { page, pages });
 	}
 
-	clearNodeLoadState(nodeId: string) {
-		const nextReleasePages = new Map(this.releasePages);
-		const nextMasterReleasePages = new Map(this.masterReleasePages);
-		const nextLoadedActions = new Map(this.loadedActions);
+	resetNodeMaps(expanded: Set<string>, descendants: Set<string>) {
+		if (expanded.size === 0 && descendants.size === 0) return;
 
-		nextReleasePages.delete(nodeId);
-		nextMasterReleasePages.delete(nodeId);
-		nextLoadedActions.delete(nodeId);
+		const knownChildren = new Map(this.knownChildren);
+		const releasePages = new Map(this.releasePages);
+		const masterReleasePages = new Map(this.masterReleasePages);
+		const loadedActions = new Map(this.loadedActions);
+		const status = new Map(this.status);
+		const loading = new Set(this.loading);
 
-		this.releasePages = nextReleasePages;
-		this.masterReleasePages = nextMasterReleasePages;
-		this.loadedActions = nextLoadedActions;
-	}
-
-	clearNodes(nodeIds: Set<string>) {
-		if (nodeIds.size === 0) return;
-
-		const nextReleasePages = new Map(this.releasePages);
-		const nextMasterReleasePages = new Map(this.masterReleasePages);
-		const nextLoadedActions = new Map(this.loadedActions);
-
-		for (const id of nodeIds) {
-			nextReleasePages.delete(id);
-			nextMasterReleasePages.delete(id);
-			nextLoadedActions.delete(id);
+		for (const id of expanded) {
+			knownChildren.delete(id);
+			releasePages.delete(id);
+			masterReleasePages.delete(id);
+			loadedActions.delete(id);
 		}
 
-		this.releasePages = nextReleasePages;
-		this.masterReleasePages = nextMasterReleasePages;
-		this.loadedActions = nextLoadedActions;
+		for (const id of descendants) {
+			status.delete(id);
+			loading.delete(id);
+		}
+
+		this.knownChildren = knownChildren;
+		this.releasePages = releasePages;
+		this.masterReleasePages = masterReleasePages;
+		this.loadedActions = loadedActions;
+		this.status = status;
+		this.loading = loading;
 	}
 
 	clear() {
-		this.expansionChildren = new Map();
-		this.expanded = new Set();
+		this.knownChildren = new Map();
 		this.loadedActions = new Map();
 		this.loading = new Set();
 		this.masterReleasePages = new Map();
