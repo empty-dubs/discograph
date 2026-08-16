@@ -6,10 +6,7 @@ import { buildConfig } from './VisitedNodesState.svelte';
 import type { NodeType } from '../types';
 import { parseNodeId } from '$lib/graph/operations/transformations';
 
-import {
-	collectDescendants,
-	findRemovableDescendants,
-} from '../operations/crawlers';
+import { collectDescendants } from '../operations/crawlers';
 
 interface SelectedNodeInterface {
 	id: string | null;
@@ -68,9 +65,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 
 		const descendants = collectDescendants(this.id!, graph.visitedNodes.knownChildren);
 
-		const toRemove = findRemovableDescendants(this.id!, descendants, graph.data.linkList);
-
-		if (toRemove.size === 0) {
+		if (descendants.size === 0) {
 			const nextExpanded = new Set(graph.visitedNodes.expanded);
 
 			nextExpanded.delete(this.id!);
@@ -79,13 +74,13 @@ class SelectedNodeState implements SelectedNodeInterface {
 			return;
 		}
 
-		graph.data.removeNodes(toRemove);
+		graph.data.removeNodes(descendants);
 
 		const nextChildren = new Map(graph.visitedNodes.knownChildren);
-		for (const id of toRemove) nextChildren.delete(id);
+		for (const id of descendants) nextChildren.delete(id);
 
 		const parentChildren = new Set(nextChildren.get(this.id!) ?? []);
-		for (const id of toRemove) parentChildren.delete(id);
+		for (const id of descendants) parentChildren.delete(id);
 
 		if (parentChildren.size === 0) {
 			nextChildren.delete(this.id!);
@@ -96,15 +91,15 @@ class SelectedNodeState implements SelectedNodeInterface {
 
 		const nextExpanded = new Set(graph.visitedNodes.expanded);
 		nextExpanded.delete(this.id!);
-		for (const id of toRemove) nextExpanded.delete(id);
+		for (const id of descendants) nextExpanded.delete(id);
 
 		graph.visitedNodes.expanded = nextExpanded;
 
-		if (graph.display.selectedId && toRemove.has(graph.display.selectedId)) {
+		if (graph.display.selectedId && descendants.has(graph.display.selectedId)) {
 			graph.display.selectedId = this.id!;
 		}
 
-		graph.visitedNodes.clearNodes(toRemove);
+		graph.visitedNodes.clearNodes(descendants);
 		graph.visitedNodes.clearNodeLoadState(this.id!);
 
 		if (graph.data.nodes.size === 1) {
