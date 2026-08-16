@@ -1,13 +1,13 @@
 import type { GraphLink } from '../types';
 
 export function collectDescendants(
-	expansionChildren: Map<string, Set<string>>,
-	rootId: string
+	rootId: string,
+	knownChildren: Map<string, Set<string>>
 ): Set<string> {
 	const descendants = new Set<string>();
 
 	const visit = (id: string) => {
-		const children = expansionChildren.get(id);
+		const children = knownChildren.get(id);
 
 		if (!children) return;
 
@@ -46,14 +46,4 @@ export function findRemovableDescendants(
 	}
 
 	return toRemove;
-}
-
-export function hasExpansionChildren(
-	nodeId: string,
-	expansionChildren: Map<string, Set<string>>,
-	nodes: Map<string, { id: string }>
-): boolean {
-	const children = expansionChildren.get(nodeId);
-	if (!children || children.size === 0) return false;
-	return [...children].some((id) => nodes.has(id));
 }

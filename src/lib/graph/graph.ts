@@ -17,25 +17,25 @@ class Graph implements GraphInterface {
 	readonly visitedNodes = visitedNodesState;
 
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch) {
-		const currentNodeIds = new Set(this.data.nodes.keys());
+		const prePatchNodeIds = new Set(this.data.nodes.keys());
 
 		this.data.applyPatch(patch);
 
-		const newNodeIds = [...this.data.nodes.keys()].filter(
-			(id) => id !== parentNodeId && !currentNodeIds.has(id)
-		);
+		const postPatchNodeIds = new Set(this.data.nodes.keys());
 
-		if (newNodeIds.length === 0) return;
+		const newNodeIds = postPatchNodeIds.difference(prePatchNodeIds)
 
-		const parentChildMap = new Map(this.visitedNodes.expansionChildren);
-		const childNodeIds = new Set(parentChildMap.get(parentNodeId) ?? []);
+		if (newNodeIds.size === 0) return;
 
-		for (const id of newNodeIds) {
-			childNodeIds.add(id);
-		}
+		const knownChildren = new Map(this.visitedNodes.knownChildren);
 
-		parentChildMap.set(parentNodeId, childNodeIds);
-		this.visitedNodes.expansionChildren = parentChildMap;
+		const childNodeIds = new Set(knownChildren.get(parentNodeId) ?? []);
+
+		for (const id of newNodeIds) childNodeIds.add(id);
+
+		knownChildren.set(parentNodeId, childNodeIds);
+
+		this.visitedNodes.knownChildren = knownChildren;
 	}
 
 	clear() {

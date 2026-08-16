@@ -9,7 +9,6 @@ import { parseNodeId } from '$lib/graph/operations/transformations';
 import {
 	collectDescendants,
 	findRemovableDescendants,
-	hasExpansionChildren
 } from '../operations/crawlers';
 
 interface SelectedNodeInterface {
@@ -20,7 +19,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	id = $derived(graph.display.selectedId);
     node = $derived(graph.data.nodes.get(this.id!));
 
-	hasChildren = $derived(hasExpansionChildren(this.id!, graph.visitedNodes.expansionChildren, graph.data.nodes));
+	hasChildren = $derived(graph.visitedNodes.knownChildren.has(this.id!));
 	hasMoreReleases = $derived(graph.visitedNodes.hasMoreReleases(this.id!));
 	hasMoreMasterReleases = $derived(graph.visitedNodes.hasMoreMasterReleases(this.id!));
 	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
@@ -65,40 +64,40 @@ class SelectedNodeState implements SelectedNodeInterface {
 	});
 
 	collapseNode() {
-		if (!graph.visitedNodes.expansionChildren.has(this.id!)) return;
+		if (!this.hasChildren) return;
 
-		const descendants = collectDescendants(graph.visitedNodes.expansionChildren, this.id!);
+		const descendants = collectDescendants(this.id!, graph.visitedNodes.knownChildren);
+
 		const toRemove = findRemovableDescendants(this.id!, descendants, graph.data.linkList);
 
 		if (toRemove.size === 0) {
 			const nextExpanded = new Set(graph.visitedNodes.expanded);
+
 			nextExpanded.delete(this.id!);
+
 			graph.visitedNodes.expanded = nextExpanded;
 			return;
 		}
 
 		graph.data.removeNodes(toRemove);
 
-		const nextChildren = new Map(graph.visitedNodes.expansionChildren);
-		for (const id of toRemove) {
-			nextChildren.delete(id);
-		}
+		const nextChildren = new Map(graph.visitedNodes.knownChildren);
+		for (const id of toRemove) nextChildren.delete(id);
+
 		const parentChildren = new Set(nextChildren.get(this.id!) ?? []);
-		for (const id of toRemove) {
-			parentChildren.delete(id);
-		}
+		for (const id of toRemove) parentChildren.delete(id);
+
 		if (parentChildren.size === 0) {
 			nextChildren.delete(this.id!);
 		} else {
 			nextChildren.set(this.id!, parentChildren);
 		}
-		graph.visitedNodes.expansionChildren = nextChildren;
+		graph.visitedNodes.knownChildren = nextChildren;
 
 		const nextExpanded = new Set(graph.visitedNodes.expanded);
 		nextExpanded.delete(this.id!);
-		for (const id of toRemove) {
-			nextExpanded.delete(id);
-		}
+		for (const id of toRemove) nextExpanded.delete(id);
+
 		graph.visitedNodes.expanded = nextExpanded;
 
 		if (graph.display.selectedId && toRemove.has(graph.display.selectedId)) {
