@@ -1,22 +1,21 @@
 <script lang="ts">
 	import { NODE_COLORS } from '$lib/graph/constants';
 
-	import type { NodeType } from '$lib/graph/types';
+	import {selectedNodeState} from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	interface Props {
-		type: NodeType;
-	}
+	const type = $derived(selectedNodeState.node?.type);
 
-	let { type }: Props = $props();
 </script>
 
-<dt class="text-muted">Type</dt>
-<dd
-	class="type-badge m-0 inline-block rounded px-2 py-0.5 text-sm capitalize"
-	style:--badge-color={NODE_COLORS[type]}
->
-	{type}
-</dd>
+{#if type}
+	<dt class="text-muted">Type</dt>
+	<dd
+		class="type-badge m-0 inline-block rounded px-2 py-0.5 text-sm capitalize"
+		style:--badge-color={NODE_COLORS[type]}
+	>
+			{type}
+	</dd>
+{/if}
 
 <style>
 	.type-badge {

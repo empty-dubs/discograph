@@ -16,7 +16,7 @@
 
 <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
 	<NodeDetailRow label="Name">{node!.displayName}</NodeDetailRow>
-	<NodeTypeBadge type={node!.type} />
+	<NodeTypeBadge/>
 	<NodeDetailRow label="Year" show={showYear}>{node!.meta?.year}</NodeDetailRow>
 	<NodeDetailRow label="Genres" show={showGenres}>{node!.meta?.genres?.join(', ')}</NodeDetailRow>
 	<NodeDetailRow label="Styles" show={showStyles}>{node!.meta?.styles?.join(', ')}</NodeDetailRow>
