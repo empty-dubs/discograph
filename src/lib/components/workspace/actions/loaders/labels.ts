@@ -1,11 +1,11 @@
 import { getLabel, getRelease } from '$lib/discogs/client';
 
-import { parseNodeId } from '../operations/transformations';
-import { buildCompaniesFromRelease, buildFromLabel, buildLabelsFromRelease } from '../operations/patches/labels';
+import { parseNodeId } from '$lib/graph/operations/transformations';
+import { buildCompaniesFromRelease, buildFromLabel, buildLabelsFromRelease } from '$lib/graph/operations/patches/labels';
 
 import { runLoad } from './run-load';
 
-import type { GraphInterface } from '../graph';
+import type { GraphInterface } from '$lib/graph/graph';
 
 export async function loadRelatedLabels(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = parseNodeId(nodeId);

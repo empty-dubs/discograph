@@ -1,8 +1,8 @@
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 
-import { parseNodeId } from '../operations/transformations';
+import { parseNodeId } from '$lib/graph/operations/transformations';
 
-import type { GraphInterface } from '../graph';
+import type { GraphInterface } from '$lib/graph/graph';
 
 export async function runLoad(
 	graph: GraphInterface,

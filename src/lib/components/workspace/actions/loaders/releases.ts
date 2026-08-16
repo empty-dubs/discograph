@@ -6,7 +6,7 @@ import {
 	getRelease
 } from '$lib/discogs/client';
 
-import { parseNodeId } from '../operations/transformations';
+import { parseNodeId } from '$lib/graph/operations/transformations';
 
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 
@@ -17,11 +17,11 @@ import {
 	buildFromLabelReleases,
 	buildFromMasterVersions,
 	buildMainReleaseFromMaster
-} from '../operations/patches/releases';
+} from '$lib/graph/operations/patches/releases';
 
 import { runLoad } from './run-load';
 
-import type { GraphInterface } from '../graph';
+import type { GraphInterface } from '$lib/graph/graph';
 
 export async function loadReleases(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = parseNodeId(nodeId);

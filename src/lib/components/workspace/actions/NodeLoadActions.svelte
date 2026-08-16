@@ -6,12 +6,12 @@
 		loadRelatedArtists,
 		loadRelatedAliases,
 		loadRelatedCreditedArtists
-	} from '$lib/graph/loaders/artists';
+	} from '$lib/components/workspace/actions/loaders/artists';
 
 	import {
 		loadRelatedLabels,
 		loadRelatedCompanies
-	} from '$lib/graph/loaders/labels';
+	} from '$lib/components/workspace/actions/loaders/labels';
 
 	import {
 		loadReleases,
@@ -19,7 +19,7 @@
 		loadMainRelease,
 		loadMoreReleases,
 		loadMoreMasterReleases
-	} from '$lib/graph/loaders/releases';
+	} from '$lib/components/workspace/actions/loaders/releases';
 
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 

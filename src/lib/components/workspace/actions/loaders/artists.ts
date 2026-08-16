@@ -1,6 +1,6 @@
 import { getArtist, getMaster, getRelease } from '$lib/discogs/client';
 
-import { parseNodeId } from '../operations/transformations';
+import { parseNodeId } from '$lib/graph/operations/transformations';
 
 import {
 	buildFromArtist,
@@ -8,11 +8,11 @@ import {
 	buildArtistsFromRelease,
 	buildCreditedArtistsFromRelease,
 	buildFromMaster
-} from '../operations/patches/artists';
+} from '$lib/graph/operations/patches/artists';
 
 import { runLoad } from './run-load';
 
-import type { GraphInterface } from '../graph';
+import type { GraphInterface } from '$lib/graph/graph';
 
 export async function loadRelatedArtists(graph: GraphInterface, nodeId: string) {
 	const { type, discogsId } = parseNodeId(nodeId);
