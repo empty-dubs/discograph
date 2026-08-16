@@ -63,28 +63,14 @@ class SelectedNodeState implements SelectedNodeInterface {
 	collapseNode() {
 		if (!this.hasChildren) return;
 
-		// Collect the descendants of the selected node
 		const descendants = collectDescendants(this.id!, graph.visitedNodes.knownChildren);
-
 		if (descendants.size === 0) return;
 
-		// Remove the descendants from the graph data
+		const collapsedIds = new Set(descendants);
+		collapsedIds.add(this.id!);
+
 		graph.data.removeNodes(descendants);
-
-		// Create a new map of nodes with known children
-		const nodesWithKnownChildren = new Map(graph.visitedNodes.knownChildren);
-
-		// Remove the descendants from the nodes with known children
-		for (const id of descendants) nodesWithKnownChildren.delete(id);
-
-		// Remove the selected node from the nodes with known children
-		nodesWithKnownChildren.delete(this.id!);
-
-		// Update the nodes with known children
-		graph.visitedNodes.knownChildren = nodesWithKnownChildren;
-
-		graph.visitedNodes.clearNodes(descendants);
-		graph.visitedNodes.clearNodeLoadState(this.id!);
+		graph.visitedNodes.resetNodeMaps(collapsedIds, descendants);
 
 		if (graph.data.nodes.size === 1) {
 			graph.display.viewResetToken++;
