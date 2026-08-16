@@ -6,7 +6,7 @@ import type { Pagination } from '$lib/discogs/types';
 
 import { LOAD_ACTION_LABELS, type LoadAction } from '../constants';
 
-import { LOAD_ACTION_CONFIG } from './load-config';
+import { LOAD_ACTION_CONFIG } from '$lib/graph/node-load-config';
 
 import type { GraphInterface } from '$lib/graph/graph';
 
