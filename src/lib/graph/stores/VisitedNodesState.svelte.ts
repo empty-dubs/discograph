@@ -52,7 +52,6 @@ export const buildConfig: Record<NodeType, DetailsConfig<any>> = {
 
 export class VisitedNodesState {
 	knownChildren = $state<Map<string, Set<string>>>(new Map());
-	expanded = $state<Set<string>>(new Set());
 	loadedActions = $state<Map<string, Set<LoadAction>>>(new Map());
 	loading = $state<Set<string>>(new Set());
 	masterReleasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
@@ -139,7 +138,6 @@ export class VisitedNodesState {
 
 	clear() {
 		this.knownChildren = new Map();
-		this.expanded = new Set();
 		this.loadedActions = new Map();
 		this.loading = new Set();
 		this.masterReleasePages = new Map();

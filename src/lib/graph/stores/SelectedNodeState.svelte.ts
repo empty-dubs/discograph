@@ -65,14 +65,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 
 		const descendants = collectDescendants(this.id!, graph.visitedNodes.knownChildren);
 
-		if (descendants.size === 0) {
-			const nextExpanded = new Set(graph.visitedNodes.expanded);
-
-			nextExpanded.delete(this.id!);
-
-			graph.visitedNodes.expanded = nextExpanded;
-			return;
-		}
+		if (descendants.size === 0) return;
 
 		graph.data.removeNodes(descendants);
 
@@ -88,12 +81,6 @@ class SelectedNodeState implements SelectedNodeInterface {
 			nextChildren.set(this.id!, parentChildren);
 		}
 		graph.visitedNodes.knownChildren = nextChildren;
-
-		const nextExpanded = new Set(graph.visitedNodes.expanded);
-		nextExpanded.delete(this.id!);
-		for (const id of descendants) nextExpanded.delete(id);
-
-		graph.visitedNodes.expanded = nextExpanded;
 
 		if (graph.display.selectedId && descendants.has(graph.display.selectedId)) {
 			graph.display.selectedId = this.id!;
