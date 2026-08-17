@@ -1,4 +1,5 @@
-import * as discogs from './client';
+import { search as searchClient} from './client';
+import { BLOCKED_DISCOGS_IDS } from './constants';
 import { parseRateLimitHeaders } from './rate-limit';
 
 import type { RateLimitInfo, SearchResult, SearchType } from './types';
@@ -57,7 +58,7 @@ class DiscogsApi {
 		this.searching = true;
 
 		try {
-			const response = await discogs.search(trimmed, type);
+			const response = await searchClient(trimmed, type);
 
 			this.searchResults = response.results;
 		} catch (err) {
@@ -68,6 +69,12 @@ class DiscogsApi {
 		} finally {
 			this.searching = false;
 		}
+	}
+
+	isBlockedDiscogsEntity(type: SearchType, discogsId: number | null): boolean {
+		if (discogsId === null) return false;
+
+		return BLOCKED_DISCOGS_IDS[type]?.has(discogsId) ?? false;
 	}
 }
 

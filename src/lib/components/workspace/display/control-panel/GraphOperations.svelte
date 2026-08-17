@@ -15,7 +15,7 @@
 <div class="flex flex-wrap gap-2" role="group" aria-label="Graph actions">
 	<NodeLoadActions/>
 
-	{#if node.isDetailsFetched}
+	{#if node.isDetailsFetched && !node.isBlocked}
 		{#if node.hasChildren}
 			<button
 				type="button"

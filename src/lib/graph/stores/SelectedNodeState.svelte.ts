@@ -22,6 +22,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
 	isDetailsFetched = $derived(graph.visitedNodes.status.get(this.id!) === 'fetched');
 	isLoading = $derived(graph.visitedNodes.loading.has(this.id!));
+	isBlocked = $derived(discogsApi.isBlockedDiscogsEntity(this.node?.type!, this.node?.discogsId!));
 
 	private _hasRelatedArtists = $derived.by(() => {
 		if (this.node?.type !== 'artist') return true;
@@ -48,8 +49,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 	});
 
 	getVisibleLoadActions = $derived.by(() => {
-		if (!this.node) return [];
-	
+		if (!this.node || this.isBlocked) return [];
+
 		return LOAD_ACTIONS[this.node.type].filter((action) => {
 			if (action === 'artists' && !this._hasRelatedArtists) return false;
 			if (action === 'labels' && !this._hasRelatedLabels) return false;
@@ -83,6 +84,11 @@ class SelectedNodeState implements SelectedNodeInterface {
 		const { type, discogsId } = parseNodeId(this.id!);
 
 		if (!type || !discogsId) return;
+
+		if (this.isBlocked) {
+			graph.visitedNodes.setDetailStatus(this.id!, 'fetched');
+			return;
+		}
 
 		graph.visitedNodes.setDetailStatus(this.id!, 'loading');
 

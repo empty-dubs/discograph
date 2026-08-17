@@ -85,7 +85,8 @@
 		items={(node!.aliases ?? []).map((alias) => ({
 			key: String(alias.id),
 			label: alias.name,
-			query: alias.name
+			query: alias.name,
+			discogsId: alias.id
 		}))}
 	/>
 </NodePanelCollapsibleSection>
@@ -96,7 +97,8 @@
 		items={(node!.members ?? []).map((member) => ({
 			key: String(member.id),
 			label: formatMemberName(member),
-			query: member.name
+			query: member.name,
+			discogsId: member.id
 		}))}
 	/>
 </NodePanelCollapsibleSection>
@@ -107,7 +109,8 @@
 		items={(node!.groups ?? []).map((group) => ({
 			key: String(group.id),
 			label: group.name,
-			query: group.name
+			query: group.name,
+			discogsId: group.id
 		}))}
 	/>
 </NodePanelCollapsibleSection>
@@ -117,9 +120,10 @@
 		<NodePanelSearchableList
 			searchType="label"
 			items={[{
-				key: String(node!.id),
+				key: String(node!.parent_label.id),
 				label: node!.parent_label.name,
 				query: node!.parent_label.name,
+				discogsId: node!.parent_label.id
 			}]}
 		/>
 	{/if}
@@ -131,7 +135,8 @@
 		items={(node!.sublabels ?? []).map((sublabel) => ({
 			key: String(sublabel.id),
 			label: sublabel.name,
-			query: sublabel.name
+			query: sublabel.name,
+			discogsId: sublabel.id
 		}))}
 	/>
 </NodePanelCollapsibleSection>
@@ -168,7 +173,8 @@
 		items={(node!.artists ?? []).map((artist) => ({
 			key: String(artist.id),
 			label: artist.name,
-			query: artist.name
+			query: artist.name,
+			discogsId: artist.id
 		}))}
 	/>
 </NodePanelCollapsibleSection>
@@ -179,7 +185,8 @@
 		items={(node!.labels ?? []).map((label) => ({
 			key: `${label.id}-${label.catno ?? ''}`,
 			label: label.name,
-			query: label.name
+			query: label.name,
+			discogsId: label.id
 		}))}
 	/>
 </NodePanelCollapsibleSection>
@@ -190,7 +197,8 @@
 		items={(node!.credits ?? []).map((credit, index) => ({
 			key: `${credit.id}-${credit.role ?? ''}-${index}`,
 			label: credit.role ? `${credit.name} — ${credit.role}` : credit.name,
-			query: credit.name
+			query: credit.name,
+			discogsId: credit.id
 		}))}
 	/>
 </NodePanelCollapsibleSection>
@@ -203,7 +211,8 @@
 			label: company.entity_type_name
 				? `${company.name} — ${company.entity_type_name}`
 				: company.name,
-			query: company.name
+			query: company.name,
+			discogsId: company.id
 		}))}
 	/>
 </NodePanelCollapsibleSection>
