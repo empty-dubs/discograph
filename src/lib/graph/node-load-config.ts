@@ -179,7 +179,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.releasePages.get(nodeId),
 			setPaging: (graph, nodeId, pagination) =>
-				graph.visitedNodes.setReleasePages(nodeId, pagination.page, pagination.pages)
+				graph.visitedNodes.setReleasePages(nodeId, pagination.page, pagination.pages, pagination.items)
 		},
 		label: {
 			kind: 'paged',
@@ -192,7 +192,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.releasePages.get(nodeId),
 			setPaging: (graph, nodeId, pagination) =>
-				graph.visitedNodes.setReleasePages(nodeId, pagination.page, pagination.pages)
+				graph.visitedNodes.setReleasePages(nodeId, pagination.page, pagination.pages, pagination.items)
 		},
 		master: {
 			kind: 'paged',
@@ -204,7 +204,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.releasePages.get(nodeId),
 			setPaging: (graph, nodeId, pagination) =>
-				graph.visitedNodes.setReleasePages(nodeId, pagination.page, pagination.pages)
+				graph.visitedNodes.setReleasePages(nodeId, pagination.page, pagination.pages, pagination.items)
 		}
 	},
 	master_releases: {
@@ -219,7 +219,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.masterReleasePages.get(nodeId),
 			setPaging: (graph, nodeId, pagination) =>
-				graph.visitedNodes.setMasterReleasePages(nodeId, pagination.page, pagination.pages)
+				graph.visitedNodes.setMasterReleasePages(nodeId, pagination.page, pagination.pages, pagination.items)
 		},
 		label: {
 			kind: 'paged',
@@ -232,7 +232,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.masterReleasePages.get(nodeId),
 			setPaging: (graph, nodeId, pagination) =>
-				graph.visitedNodes.setMasterReleasePages(nodeId, pagination.page, pagination.pages)
+				graph.visitedNodes.setMasterReleasePages(nodeId, pagination.page, pagination.pages, pagination.items)
 		}
 	},
 	main_release: {

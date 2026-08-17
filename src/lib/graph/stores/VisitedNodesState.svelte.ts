@@ -2,12 +2,14 @@ import type { LoadAction } from '$lib/components/workspace/actions/constants';
 
 type DetailStatus = 'idle' | 'loading' | 'fetched' | 'failed';
 
+type ReleasePaging = { page: number; pages: number; items: number };
+
 export class VisitedNodesState {
 	knownChildren = $state<Map<string, Set<string>>>(new Map());
 	loadedActions = $state<Map<string, Set<LoadAction>>>(new Map());
 	loading = $state<Set<string>>(new Set());
-	masterReleasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
-	releasePages = $state<Map<string, { page: number; pages: number }>>(new Map());
+	masterReleasePages = $state<Map<string, ReleasePaging>>(new Map());
+	releasePages = $state<Map<string, ReleasePaging>>(new Map());
 	status = $state<Map<string, DetailStatus>>(new Map());
 
 	hasMoreReleases(nodeId: string): boolean {
@@ -47,12 +49,12 @@ export class VisitedNodesState {
 		this.loading = loading;
 	}
 
-	setMasterReleasePages(nodeId: string, page: number, pages: number) {
-		this.masterReleasePages = new Map(this.masterReleasePages).set(nodeId, { page, pages });
+	setMasterReleasePages(nodeId: string, page: number, pages: number, items: number) {
+		this.masterReleasePages = new Map(this.masterReleasePages).set(nodeId, { page, pages, items });
 	}
 
-	setReleasePages(nodeId: string, page: number, pages: number) {
-		this.releasePages = new Map(this.releasePages).set(nodeId, { page, pages });
+	setReleasePages(nodeId: string, page: number, pages: number, items: number) {
+		this.releasePages = new Map(this.releasePages).set(nodeId, { page, pages, items });
 	}
 
 	resetNodeMaps(expanded: Set<string>, descendants: Set<string>) {
