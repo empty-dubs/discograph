@@ -55,20 +55,20 @@ import {
 
 import type { GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
 
-export type LoadContext = {
+type LoadContext = {
 	graph: GraphInterface;
 	nodeId: string;
 	discogsId: number;
 };
 
-export type DetailLoadEntry = {
+type DetailLoadEntry = {
 	kind: 'detail';
 	fetch: (discogsId: number) => Promise<unknown>;
 	merge: (node: GraphNode, graph: GraphInterface, entity: any) => void | Promise<void>;
 	errorMessage: string;
 };
 
-export type ExpansionLoadEntry =
+type ExpansionLoadEntry =
 	| {
 			kind: 'patch';
 			fetch: (discogsId: number) => Promise<unknown>;
@@ -86,8 +86,6 @@ export type ExpansionLoadEntry =
 			kind: 'custom';
 			run: (ctx: LoadContext) => Promise<void>;
 	  };
-
-export type NodeLoadEntry = DetailLoadEntry | ExpansionLoadEntry;
 
 export const DETAIL_CONFIG: Record<NodeType, DetailLoadEntry> = {
 	artist: {

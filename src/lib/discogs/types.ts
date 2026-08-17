@@ -28,7 +28,7 @@ export interface SearchResponse {
 	results: SearchResult[];
 }
 
-export interface ArtistMember {
+interface ArtistMember {
 	id: number;
 	name: string;
 	active?: boolean;
@@ -36,14 +36,14 @@ export interface ArtistMember {
 	uri?: string;
 }
 
-export interface ArtistGroup {
+interface ArtistGroup {
 	id: number;
 	name: string;
 	resource_url?: string;
 	uri?: string;
 }
 
-export interface ArtistAlias {
+interface ArtistAlias {
 	id: number;
 	name: string;
 	resource_url?: string;
@@ -81,14 +81,14 @@ export interface ArtistReleasesResponse {
 	releases: ArtistRelease[];
 }
 
-export interface LabelRef {
+interface LabelRef {
 	id: number;
 	name: string;
 	catno?: string;
 	resource_url?: string;
 }
 
-export interface Sublabel {
+interface Sublabel {
 	id: number;
 	name: string;
 	resource_url?: string;
@@ -121,7 +121,7 @@ export interface LabelReleasesResponse {
 	releases: LabelRelease[];
 }
 
-export interface ReleaseArtist {
+interface ReleaseArtist {
 	id: number;
 	name: string;
 	anv?: string;
@@ -132,7 +132,7 @@ export interface ReleaseArtist {
 	uri?: string;
 }
 
-export interface ReleaseCompany {
+interface ReleaseCompany {
 	id: number;
 	name: string;
 	catno?: string;
@@ -170,13 +170,13 @@ export interface Release {
 	formats?: ReleaseFormat[];
 }
 
-export interface DiscogsTrack {
+interface DiscogsTrack {
 	position: string;
 	title: string;
 	duration?: string;
 }
 
-export interface MasterArtist {
+interface MasterArtist {
 	id: number;
 	name: string;
 	resource_url?: string;

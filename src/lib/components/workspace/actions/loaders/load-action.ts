@@ -29,7 +29,7 @@ async function runLoad<T>(
 	graph.visitedNodes.setLoading(nodeId, false);
 }
 
-export type RunLoadActionOptions = {
+type RunLoadActionOptions = {
 	page?: number | 'next';
 };
 
