@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { parseDiscogsExternalUrl } from '../actions/transformations';
+	import { parseDiscogsExternalUrl } from './transformations';
 
 	interface Props {
 		urls: string[];

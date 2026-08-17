@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-	import { stripDiscogsWikiMarkup } from '../actions/transformations';
+	import { stripDiscogsWikiMarkup } from './transformations';
 
 	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
