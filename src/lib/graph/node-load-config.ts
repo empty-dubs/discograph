@@ -10,11 +10,27 @@ import {
 
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 
-import type { Artist, ArtistReleasesResponse, Label, LabelReleasesResponse, Master, MasterVersionsResponse, Pagination, Release } from '$lib/discogs/types';
+import type {
+	Artist,
+	ArtistReleasesResponse,
+	Label,
+	LabelReleasesResponse,
+	Master,
+	MasterVersionsResponse,
+	Pagination,
+	Release
+} from '$lib/discogs/types';
+
+import type { LoadAction } from '$lib/components/workspace/actions/constants';
 
 import type { GraphInterface } from '$lib/graph/graph';
 
-import { updateMasterNode } from '$lib/graph/operations/patches/nodes';
+import {
+	updateArtistNode,
+	updateLabelNode,
+	updateMasterNode,
+	updateReleaseNode
+} from '$lib/graph/operations/patches/nodes';
 
 import {
 	buildFromArtist,
@@ -37,17 +53,22 @@ import {
 	buildMainReleaseFromMaster
 } from '$lib/graph/operations/patches/releases';
 
-import type { GraphPatch, NodeType } from '$lib/graph/types';
+import type { GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
 
-import type { LoadAction } from '../constants';
-
-export type LoadContext = {
+type LoadContext = {
 	graph: GraphInterface;
 	nodeId: string;
 	discogsId: number;
 };
 
-export type NodeLoadEntry =
+type DetailLoadEntry = {
+	kind: 'detail';
+	fetch: (discogsId: number) => Promise<unknown>;
+	merge: (node: GraphNode, graph: GraphInterface, entity: any) => void | Promise<void>;
+	errorMessage: string;
+};
+
+type ExpansionLoadEntry =
 	| {
 			kind: 'patch';
 			fetch: (discogsId: number) => Promise<unknown>;
@@ -66,8 +87,35 @@ export type NodeLoadEntry =
 			run: (ctx: LoadContext) => Promise<void>;
 	  };
 
+export const DETAIL_CONFIG: Record<NodeType, DetailLoadEntry> = {
+	artist: {
+		kind: 'detail',
+		fetch: getArtist,
+		merge: updateArtistNode,
+		errorMessage: 'Failed to load artist details'
+	},
+	label: {
+		kind: 'detail',
+		fetch: getLabel,
+		merge: updateLabelNode,
+		errorMessage: 'Failed to load label details'
+	},
+	master: {
+		kind: 'detail',
+		fetch: getMaster,
+		merge: updateMasterNode,
+		errorMessage: 'Failed to load master details'
+	},
+	release: {
+		kind: 'detail',
+		fetch: getRelease,
+		merge: updateReleaseNode,
+		errorMessage: 'Failed to load release details'
+	}
+};
+
 export const LOAD_ACTION_CONFIG: Partial<
-	Record<LoadAction, Partial<Record<NodeType, NodeLoadEntry>>>
+	Record<LoadAction, Partial<Record<NodeType, ExpansionLoadEntry>>>
 > = {
 	artists: {
 		artist: {
@@ -109,16 +157,14 @@ export const LOAD_ACTION_CONFIG: Partial<
 		release: {
 			kind: 'patch',
 			fetch: getRelease,
-			toPatch: (release) =>
-				buildCompaniesFromRelease(release as Release)
+			toPatch: (release) => buildCompaniesFromRelease(release as Release)
 		}
 	},
 	credited_artists: {
 		release: {
 			kind: 'patch',
 			fetch: getRelease,
-			toPatch: (release) =>
-				buildCreditedArtistsFromRelease(release as Release)
+			toPatch: (release) => buildCreditedArtistsFromRelease(release as Release)
 		}
 	},
 	releases: {

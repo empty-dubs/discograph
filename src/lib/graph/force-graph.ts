@@ -7,20 +7,18 @@ import {
 	forceSimulation,
 	select,
 	zoom,
-	zoomIdentity
-} from 'd3';
-
-import type {
-	DragBehavior,
-	ForceLink,
-	Selection,
-	Simulation,
-	SimulationLinkDatum,
-	SubjectPosition,
-	ZoomBehavior
+	zoomIdentity,
+	type DragBehavior,
+	type ForceLink,
+	type Selection,
+	type Simulation,
+	type SimulationLinkDatum,
+	type SubjectPosition,
+	type ZoomBehavior,
 } from 'd3';
 
 import { NODE_COLORS, NODE_RADIUS } from './constants';
+
 import type { GraphLink, GraphNode } from './types';
 
 interface SimulationNode extends GraphNode {

@@ -1,8 +1,5 @@
+import { getRelease, getMaster } from '$lib/discogs/client';
 import { getDisplayName, getNodeId } from './compositions';
-
-import type { GraphNode, NodeType } from '../../types';
-
-import type { GraphInterface } from '$lib/graph/graph';
 
 import type {
 	Artist,
@@ -15,7 +12,9 @@ import type {
 	ReleaseFormat,
 	Release,
 } from '$lib/discogs/types';
-import { getRelease, getMaster } from '$lib/discogs/client';
+
+import type { GraphInterface } from '$lib/graph/graph';
+import type { GraphNode, NodeType } from '$lib/graph/types';
 
 export function createArtistNode(payload: ArtistNodePayload): GraphNode {
 	const nodeType: NodeType = 'artist';
@@ -78,9 +77,9 @@ export function createReleaseNode(payload: ReleaseNodePayload, meta?: GraphNode[
 export function updateArtistNode(node: GraphNode, graph: GraphInterface, artist: Artist) {
 	if (!node) return;
 
-	const next = new Map(graph.data.nodes);
+	const nodes = new Map(graph.data.nodes);
 
-	next.set(node.id, {
+	nodes.set(node.id, {
 		...node,
 		profile: artist.profile,
 		realname: artist.realname ?? undefined,
@@ -91,15 +90,15 @@ export function updateArtistNode(node: GraphNode, graph: GraphInterface, artist:
 		members: artist.members?.map(({ id, name, active }) => ({ id, name, active }))
 	});
 
-	graph.data.nodes = next;
+	graph.data.nodes = nodes;
 }
 
 export function updateLabelNode(node: GraphNode, graph: GraphInterface, label: Label) {
 	if (!node) return;
 
-	const next = new Map(graph.data.nodes);
+	const nodes = new Map(graph.data.nodes);
 
-	next.set(node.id, {
+	nodes.set(node.id, {
 		...node,
 		profile: label.profile,
 		urls: label.urls ?? [],
@@ -107,7 +106,7 @@ export function updateLabelNode(node: GraphNode, graph: GraphInterface, label: L
 		sublabels: label.sublabels?.map(({ id, name }) => ({ id, name })) ?? []
 	});
 
-	graph.data.nodes = next;
+	graph.data.nodes = nodes;
 }
 
 async function resolveMainReleaseTitle(
@@ -141,9 +140,9 @@ export async function updateMasterNode(
 			}
 		: undefined;
 
-	const next = new Map(graph.data.nodes);
+	const nodes = new Map(graph.data.nodes);
 
-	next.set(node.id, {
+	nodes.set(node.id, {
 		...node,
 		artists: master.artists?.map(({ id, name }) => ({ id, name })),
 		tracklist: master.tracklist?.map(({ position, title, duration }) => ({
@@ -160,7 +159,7 @@ export async function updateMasterNode(
 		}
 	});
 
-	graph.data.nodes = next;
+	graph.data.nodes = nodes;
 }
 
 function formatReleaseFormats(formats: ReleaseFormat[]): string {
@@ -197,9 +196,9 @@ export async function updateReleaseNode(
 			}
 		: undefined;
 
-	const next = new Map(graph.data.nodes);
+	const nodes = new Map(graph.data.nodes);
 
-	next.set(node.id, {
+	nodes.set(node.id, {
 		...node,
 		artists: (release.artists ?? [])
 			.filter((artist): artist is typeof artist & { id: number } => artist.id !== undefined)
@@ -231,5 +230,5 @@ export async function updateReleaseNode(
 		}
 	});
 
-	graph.data.nodes = next;
+	graph.data.nodes = nodes;
 }

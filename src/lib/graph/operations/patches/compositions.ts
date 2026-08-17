@@ -1,6 +1,5 @@
 import type { NodePayload } from '$lib/discogs/types';
-
-import type { EdgeType, NodeType } from '../../types';
+import type { EdgeType, NodeType } from '$lib/graph/types';
 
 export function getNodeId(type: NodeType, id: number | string): string {
 	return `${type}:${id}`;

@@ -1,13 +1,9 @@
 import { discogsApi } from '$lib/discogs/discogs.svelte';
-
 import { parseNodeId } from '$lib/graph/operations/transformations';
-
-import type { Pagination } from '$lib/discogs/types';
-
+import { LOAD_ACTION_CONFIG } from '$lib/graph/node-load-config';
 import { LOAD_ACTION_LABELS, type LoadAction } from '../constants';
 
-import { LOAD_ACTION_CONFIG } from './load-config';
-
+import type { Pagination } from '$lib/discogs/types';
 import type { GraphInterface } from '$lib/graph/graph';
 
 interface RunLoadOptions<T> {
@@ -33,7 +29,7 @@ async function runLoad<T>(
 	graph.visitedNodes.setLoading(nodeId, false);
 }
 
-export type RunLoadActionOptions = {
+type RunLoadActionOptions = {
 	page?: number | 'next';
 };
 

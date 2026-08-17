@@ -1,13 +1,8 @@
-import {
-	type Artist,
-	type Master,
-	type Release,
-} from '$lib/discogs/types';
-
-import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '../../types';
-
 import { getNodeId, getLinkId } from './compositions';
 import { createArtistNode } from './nodes';
+
+import type { Artist, Master, Release } from '$lib/discogs/types';
+import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
 
 export function buildFromArtist(artist: Artist): GraphPatch {
 	const nodes: GraphNode[] = [];

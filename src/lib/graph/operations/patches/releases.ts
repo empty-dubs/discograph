@@ -1,14 +1,8 @@
-import {
-	type ArtistRelease,
-	type LabelRelease,
-	type MasterVersion,
-	type Release,
-} from '$lib/discogs/types';
-
-import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '../../types';
-
 import { getLinkId, getNodeId } from './compositions';
 import { createMasterNode, createReleaseNode } from './nodes';
+
+import type { ArtistRelease, LabelRelease, MasterVersion, Release } from '$lib/discogs/types';
+import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
 
 function labelReleaseKind(item: LabelRelease): 'master' | 'release' {
 	if (item.type) return item.type;

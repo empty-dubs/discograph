@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	import { stripDiscogsWikiMarkup } from '../format';
 
 	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
@@ -7,7 +8,6 @@
 	import NodePanelItemList from './NodePanelItemList.svelte';
 	import NodePanelSearchableList from './NodePanelSearchableList.svelte';
 	import NodePanelUrls from './NodePanelUrlList.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	const selected = $derived(selectedNodeState);
 	const node = $derived(selected.node);

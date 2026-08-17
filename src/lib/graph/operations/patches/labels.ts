@@ -1,12 +1,9 @@
-import {
-	type Label,
-	type Release,
-} from '$lib/discogs/types';
-
-import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '../../types';
-
 import { getLinkId, getNodeId } from './compositions';
 import { createLabelNode } from './nodes';
+
+import type { Label, Release } from '$lib/discogs/types';
+
+import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
 
 export function buildLabelsFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];

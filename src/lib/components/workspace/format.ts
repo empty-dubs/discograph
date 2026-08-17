@@ -39,7 +39,3 @@ export function parseDiscogsExternalUrl(raw: string): { href: string; display: s
 		return null;
 	}
 }
-
-export function formatUrlDomain(url: string): string {
-	return parseDiscogsExternalUrl(url)?.display ?? url;
-}

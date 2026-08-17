@@ -14,7 +14,7 @@ import type {
 	SearchType
 } from './types';
 
-export class DiscogsClientError extends Error {
+class DiscogsClientError extends Error {
 	constructor(
 		message: string,
 		public status: number

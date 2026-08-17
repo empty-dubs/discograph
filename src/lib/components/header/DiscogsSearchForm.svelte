@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { SearchResult, SearchType } from '$lib/discogs/types';
+	import { seedFromResult } from '$lib/components/workspace/actions/loaders/seed';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
 
-	import { seedFromResult } from '$lib/components/workspace/actions/loaders/seed';
+	import type { SearchResult, SearchType } from '$lib/discogs/types';
 
 	const typeOptions: { value: SearchType | ''; label: string }[] = [
 		{ value: '', label: 'All types' },

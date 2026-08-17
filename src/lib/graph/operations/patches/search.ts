@@ -1,8 +1,7 @@
-import type { SearchResult } from '$lib/discogs/types';
-
-import type { GraphNode, GraphPatch} from '../../types';
-
 import { createArtistNode, createLabelNode, createMasterNode, createReleaseNode } from './nodes';
+
+import type { SearchResult } from '$lib/discogs/types';
+import type { GraphNode, GraphPatch} from '$lib/graph/types';
 
 type SearchResultBuilder = (result: SearchResult) => GraphNode;
 

@@ -50,7 +50,7 @@ class DiscogsApi {
 	async search(query: string, type?: SearchType) {
 		const trimmed = query.trim();
 
-		if (!trimmed || this.searching || this.isRateLimited) return [];
+		if (!trimmed || this.searching || this.isRateLimited) return;
 
 		this.searchQuery = trimmed;
 		this.searchType = type ?? '';
@@ -64,7 +64,7 @@ class DiscogsApi {
 			this.setError(err instanceof Error ? err.message : 'Search failed');
 			this.searchResults = [];
 
-			return [];
+			return;
 		} finally {
 			this.searching = false;
 		}

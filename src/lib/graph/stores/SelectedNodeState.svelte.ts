@@ -2,11 +2,11 @@ import { graph } from '../graph';
 
 import { LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
-import { buildConfig } from './VisitedNodesState.svelte';
-import type { NodeType } from '../types';
+import { DETAIL_CONFIG } from '$lib/graph/node-load-config';
 import { parseNodeId } from '$lib/graph/operations/transformations';
-
 import { collectDescendants } from '../operations/crawlers';
+
+import type { NodeType } from '../types';
 
 interface SelectedNodeInterface {
 	id: string | null;
@@ -86,7 +86,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 
 		graph.visitedNodes.setDetailStatus(this.id!, 'loading');
 
-		const config = buildConfig[type as NodeType];
+		const config = DETAIL_CONFIG[type as NodeType];
 
 		const payload = await discogsApi.withRequest(
 			() => config.fetch(discogsId),

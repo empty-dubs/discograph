@@ -2,10 +2,7 @@
 	import { setContext } from 'svelte';
 
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-
-	import { NODE_PANEL_ACCORDION_KEY } from '../accordion';
-	import type { NodePanelAccordion } from '../accordion';
-
+	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from '../accordion';
 	import NodePanelDetails from './NodePanelDetails.svelte';
 
 	const node = $derived(selectedNodeState);

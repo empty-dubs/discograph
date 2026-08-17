@@ -1,7 +1,11 @@
 <script lang="ts">
-	import { getDiscogsProxyUrl, getDiscogsWebsiteUrl } from '$lib/discogs/urls';
+	import {
+		getDiscogsProxyUrl,
+		getDiscogsWebsiteUrl,
+		getYouTubeSearchUrl,
+		resolveArtistDisplayName
+	} from '$lib/components/workspace/actions/compositions';
 	import { graph } from '$lib/graph/graph';
-	import { getYouTubeSearchUrl, resolveArtistDisplayName } from '$lib/youtube/urls';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	const node = $derived(selectedNodeState.node);
