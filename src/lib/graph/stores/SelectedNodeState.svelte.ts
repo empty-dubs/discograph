@@ -3,10 +3,10 @@ import { graph } from '../graph';
 import { LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 import { DETAIL_CONFIG } from '$lib/graph/node-load-config';
-import type { NodeType } from '../types';
 import { parseNodeId } from '$lib/graph/operations/transformations';
-
 import { collectDescendants } from '../operations/crawlers';
+
+import type { NodeType } from '../types';
 
 interface SelectedNodeInterface {
 	id: string | null;

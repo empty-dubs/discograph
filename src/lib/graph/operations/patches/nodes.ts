@@ -1,8 +1,5 @@
+import { getRelease, getMaster } from '$lib/discogs/client';
 import { getDisplayName, getNodeId } from './compositions';
-
-import type { GraphNode, NodeType } from '../../types';
-
-import type { GraphInterface } from '$lib/graph/graph';
 
 import type {
 	Artist,
@@ -15,7 +12,9 @@ import type {
 	ReleaseFormat,
 	Release,
 } from '$lib/discogs/types';
-import { getRelease, getMaster } from '$lib/discogs/client';
+
+import type { GraphInterface } from '$lib/graph/graph';
+import type { GraphNode, NodeType } from '$lib/graph/types';
 
 export function createArtistNode(payload: ArtistNodePayload): GraphNode {
 	const nodeType: NodeType = 'artist';

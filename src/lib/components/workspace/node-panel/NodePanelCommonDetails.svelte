@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
+
 	import NodeDetailRow from './NodeDetailRow.svelte';
 	import NodeTypeBadge from './NodeTypeBadge.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	const node = $derived(selectedNodeState.node);
 
