@@ -19,14 +19,14 @@ async function runLoad<T>(
 ): Promise<void> {
 	if (graph.visitedNodes.loading.has(nodeId)) return;
 
-	graph.visitedNodes.setLoading(nodeId, true);
+	graph.visitedNodes.loading.add(nodeId);
 
 	await discogsApi.withRequest(async () => {
 		const payload = await fetch();
 		await merge(payload);
 	}, errorMessage);
 
-	graph.visitedNodes.setLoading(nodeId, false);
+	graph.visitedNodes.loading.delete(nodeId);
 }
 
 type RunLoadActionOptions = {
