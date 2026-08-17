@@ -40,28 +40,24 @@
 		if (!forceGraph) return;
 		const nodes = graph.display.visibleNodeList;
 		const links = graph.display.visibleLinkList;
-		const showNodeLabels = graph.display.showNodeLabels;
 
 		if (nodes.length > 0) {
-			forceGraph.update(nodes, links, {
-				selectedId: graph.display.selectedId,
-				showNodeLabels
-			});
+			forceGraph.update(nodes, links);
 		} else {
 			forceGraph.clear();
 		}
-
-		void graph.display.visibleTypes;
 	});
 
 	$effect(() => {
-		if (forceGraph && graph.display.visibleNodeList.length > 0) {
-			forceGraph.updateHighlight({
-				selectedId: graph.display.selectedId
-			});
-		}
+		if (!forceGraph || graph.display.visibleNodeList.length === 0) return;
 
-		void graph.display.selectedId;
+		forceGraph.setShowNodeLabels(graph.display.showNodeLabels);
+	});
+
+	$effect(() => {
+		if (!forceGraph || graph.display.visibleNodeList.length === 0) return;
+
+		forceGraph.setSelectedId(graph.display.selectedId);
 	});
 
 	$effect(() => {
