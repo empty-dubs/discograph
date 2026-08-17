@@ -12,8 +12,6 @@
 	const selected = $derived(selectedNodeState);
 	const node = $derived(selected.node);
 
-	const isDetailsLoading = $derived(selected.isDetailsLoading);
-
 	const isArtistOrLabel = $derived(node!.type === 'artist' || node!.type === 'label');
 	const isMasterOrRelease = $derived(node!.type === 'master' || node!.type === 'release');
 
@@ -63,8 +61,12 @@
 
 <NodePanelCommonDetails/>
 
-{#if isDetailsLoading}
+{#if selected.isDetailsLoading}
 	<p class="text-muted m-0 text-sm">Loading details…</p>
+{/if}
+
+{#if selected.isDetailsFailed}
+	<p class="text-muted m-0 text-sm">Could not load details.</p>
 {/if}
 
 <NodePanelCollapsibleSection id="profile" show={showProfile} title="Profile">

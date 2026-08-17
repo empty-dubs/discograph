@@ -21,6 +21,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	hasMoreMasterReleases = $derived(graph.visitedNodes.hasMoreMasterReleases(this.id!));
 	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
 	isDetailsFetched = $derived(graph.visitedNodes.status.get(this.id!) === 'fetched');
+	isDetailsFailed = $derived(graph.visitedNodes.status.get(this.id!) === 'failed');
 	isLoading = $derived(graph.visitedNodes.loading.has(this.id!));
 	isBlocked = $derived(discogsApi.isBlockedDiscogsEntity(this.node?.type!, this.node?.discogsId!));
 
@@ -79,7 +80,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	}
 
 	async fetchNodeDetails() {
-		if (this.isDetailsFetched || this.isDetailsLoading) return;
+		if (this.isDetailsFetched || this.isDetailsLoading || this.isDetailsFailed) return;
 
 		const { type, discogsId } = parseNodeId(this.id!);
 
@@ -100,7 +101,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 		);
 
 		if (!payload) {
-			graph.visitedNodes.setDetailStatus(this.id!, 'idle');
+			graph.visitedNodes.setDetailStatus(this.id!, 'failed');
 			return;
 		}
 
