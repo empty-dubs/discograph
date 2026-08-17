@@ -29,7 +29,8 @@ export function parseDiscogsExternalUrl(raw: string): { href: string; display: s
 	const match = raw.trim().match(/(?:https?:\/\/[^\s]+|www\.[^\s]+)/i);
 	if (!match) return null;
 
-	let href = match[0].replace(/[.,;:!?)]+$/, '');
+	let href = match[0];
+
 	if (/^www\./i.test(href)) href = `https://${href}`;
 
 	try {

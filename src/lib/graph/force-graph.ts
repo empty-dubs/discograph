@@ -50,10 +50,6 @@ interface ForceGraphHighlight {
 	selectedId: string | null;
 }
 
-interface ForceGraphUpdateOptions extends ForceGraphHighlight {
-	showNodeLabels: boolean;
-}
-
 function formatEdgeTooltip(link: SimulationLink): string {
 	const type = link.type.replace(/_/g, ' ');
 
@@ -75,6 +71,8 @@ export class ForceGraph {
 	private simulationNodes: SimulationNode[] = [];
 	private simulationLinks: SimulationLink[] = [];
 	private tooltipText: string | null = null;
+	private showNodeLabels = true;
+	private selectedId: string | null = null;
 
 	private dragBehavior: DragBehavior<SVGGElement, SimulationNode, SimulationNode | SubjectPosition> =
 		drag<SVGGElement, SimulationNode>()
@@ -170,7 +168,7 @@ export class ForceGraph {
 			});
 	}
 
-	update(nodes: GraphNode[], links: GraphLink[], options: ForceGraphUpdateOptions) {
+	update(nodes: GraphNode[], links: GraphLink[]) {
 		if (!this.simulation || !this.gLinks || !this.gNodes || !this.gLabels) return;
 
 		const nodeMap = new Map(this.simulationNodes.map(n => [n.id, n]));
@@ -256,7 +254,7 @@ export class ForceGraph {
 			.attr('r', d => NODE_RADIUS[d.type])
 			.attr('fill', d => NODE_COLORS[d.type]);
 
-		this.applyHighlight(options);
+		this.applyHighlight({ selectedId: this.selectedId });
 
 		nodeGroups
 			.on('click', (_, d) => onNodeClick(d.id))
@@ -300,7 +298,7 @@ export class ForceGraph {
 			.attr('text-anchor', 'middle')
 			.attr('pointer-events', 'none');
 
-		if (options.showNodeLabels) {
+		if (this.showNodeLabels) {
 			this.gLabels.style('display', null);
 		} else {
 			this.gLabels.style('display', 'none');
@@ -316,8 +314,19 @@ export class ForceGraph {
 		this.simulation.alpha(0.5).restart();
 	}
 
-	updateHighlight(highlight: ForceGraphHighlight) {
-		this.applyHighlight(highlight);
+	setSelectedId(id: string | null): void {
+		this.selectedId = id;
+		this.applyHighlight({ selectedId: id });
+	}
+
+	setShowNodeLabels(show: boolean): void {
+		this.showNodeLabels = show;
+
+		if (show) {
+			this.gLabels?.style('display', null);
+		} else {
+			this.gLabels?.style('display', 'none');
+		}
 	}
 
 	private applyHighlight(highlight: ForceGraphHighlight) {

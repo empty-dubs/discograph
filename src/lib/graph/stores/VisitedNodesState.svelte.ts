@@ -1,6 +1,6 @@
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 
-type DetailStatus = 'idle' | 'loading' | 'fetched';
+type DetailStatus = 'idle' | 'loading' | 'fetched' | 'failed';
 
 export class VisitedNodesState {
 	knownChildren = $state<Map<string, Set<string>>>(new Map());

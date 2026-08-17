@@ -21,7 +21,9 @@ class SelectedNodeState implements SelectedNodeInterface {
 	hasMoreMasterReleases = $derived(graph.visitedNodes.hasMoreMasterReleases(this.id!));
 	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
 	isDetailsFetched = $derived(graph.visitedNodes.status.get(this.id!) === 'fetched');
+	isDetailsFailed = $derived(graph.visitedNodes.status.get(this.id!) === 'failed');
 	isLoading = $derived(graph.visitedNodes.loading.has(this.id!));
+	isBlocked = $derived(discogsApi.isBlockedDiscogsEntity(this.node?.type!, this.node?.discogsId!));
 
 	private _hasRelatedArtists = $derived.by(() => {
 		if (this.node?.type !== 'artist') return true;
@@ -48,8 +50,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 	});
 
 	getVisibleLoadActions = $derived.by(() => {
-		if (!this.node) return [];
-	
+		if (!this.node || this.isBlocked) return [];
+
 		return LOAD_ACTIONS[this.node.type].filter((action) => {
 			if (action === 'artists' && !this._hasRelatedArtists) return false;
 			if (action === 'labels' && !this._hasRelatedLabels) return false;
@@ -78,11 +80,16 @@ class SelectedNodeState implements SelectedNodeInterface {
 	}
 
 	async fetchNodeDetails() {
-		if (this.isDetailsFetched || this.isDetailsLoading) return;
+		if (this.isDetailsFetched || this.isDetailsLoading || this.isDetailsFailed) return;
 
 		const { type, discogsId } = parseNodeId(this.id!);
 
 		if (!type || !discogsId) return;
+
+		if (this.isBlocked) {
+			graph.visitedNodes.setDetailStatus(this.id!, 'fetched');
+			return;
+		}
 
 		graph.visitedNodes.setDetailStatus(this.id!, 'loading');
 
@@ -94,7 +101,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 		);
 
 		if (!payload) {
-			graph.visitedNodes.setDetailStatus(this.id!, 'idle');
+			graph.visitedNodes.setDetailStatus(this.id!, 'failed');
 			return;
 		}
 

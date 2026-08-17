@@ -47,6 +47,8 @@ export async function runLoadAction(
 
 	if (discogsId === null) return;
 
+	if (discogsApi.isBlockedDiscogsEntity(type, discogsId)) return;
+
 	const entry = LOAD_ACTION_CONFIG[action]?.[type];
 
 	if (!entry) return;
