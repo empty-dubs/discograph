@@ -52,9 +52,10 @@
 		if (discogsApi.searchResults.length === 0) return;
 
 		const handleKeydown = (event: KeyboardEvent) => {
-			event.preventDefault();
-
-			if (event.key === 'Escape') discogsApi.clearSearchResults();
+			if (event.key === 'Escape') {
+				event.preventDefault();
+				discogsApi.clearSearchResults();
+			}
 		};
 
 		document.addEventListener('keydown', handleKeydown);
@@ -71,13 +72,27 @@
 
 <div class="relative">
 	<form class="flex flex-wrap gap-2" onsubmit={handleSearch}>
-		<input
-			type="search"
-			class="{fieldClass} min-w-0 flex-1"
-			placeholder="Search Discogs…"
-			bind:value={discogsApi.searchQuery}
-			disabled={discogsApi.searching || discogsApi.isRateLimited}
-		/>
+		<div class="relative min-w-0 flex-1">
+			<input
+				type="search"
+				class="{fieldClass} w-full pr-9"
+				placeholder="Search Discogs…"
+				bind:value={discogsApi.searchQuery}
+				disabled={discogsApi.searching || discogsApi.isRateLimited}
+			/>
+
+			{#if discogsApi.searchQuery.length > 0}
+				<button
+					type="button"
+					class="text-muted hover:text-gray-200 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer border-none bg-transparent p-0 text-lg leading-none disabled:cursor-not-allowed disabled:opacity-50"
+					aria-label="Clear search"
+					disabled={discogsApi.searching}
+					onclick={() => discogsApi.clearSearch()}
+				>
+					×
+				</button>
+			{/if}
+		</div>
 
 		<select
 			class="{fieldClass} cursor-pointer"

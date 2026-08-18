@@ -32,6 +32,12 @@ class DiscogsApi {
 		this.searchResults = [];
 	}
 
+	clearSearch(): void {
+		this.clearError();
+		this.searchQuery = '';
+		this.clearSearchResults();
+	}
+
 	clear(): void {
 		this.clearError();
 		this.clearSearchResults();
