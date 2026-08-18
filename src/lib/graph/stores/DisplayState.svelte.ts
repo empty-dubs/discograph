@@ -1,3 +1,5 @@
+import { SvelteSet } from 'svelte/reactivity';
+
 import { ALL_NODE_TYPES } from '../constants';
 
 import { filterVisibleLinks, filterVisibleNodes } from '../operations/filters';
@@ -7,7 +9,7 @@ import type { GraphNode, NodeType } from '../types';
 
 export class GraphDisplayState {
 	selectedId = $state<string | null>(null);
-	visibleTypes = $state<Set<NodeType>>(new Set(ALL_NODE_TYPES));
+	visibleTypes = $state<SvelteSet<NodeType>>(new SvelteSet(ALL_NODE_TYPES));
 	viewResetToken = $state(0);
 	showNodeLabels = $state(true);
 
@@ -44,16 +46,13 @@ export class GraphDisplayState {
 	}
 
 	toggleType(type: NodeType) {
-		const visibleTypes = new Set(this.visibleTypes);
+		if (this.visibleTypes.has(type)) {
+			if (this.visibleTypes.size === 0) return;
 
-		if (visibleTypes.has(type)) {
-			if (visibleTypes.size <= 1) return;
-			visibleTypes.delete(type);
+			this.visibleTypes.delete(type);
 		} else {
-			visibleTypes.add(type);
+			this.visibleTypes.add(type);
 		}
-
-		this.visibleTypes = visibleTypes;
 	}
 
 	toggleNodeLabels() {
@@ -66,7 +65,7 @@ export class GraphDisplayState {
 
 	clear() {
 		this.selectedId = null;
-		this.visibleTypes = new Set(ALL_NODE_TYPES);
+		this.visibleTypes = new SvelteSet(ALL_NODE_TYPES);
 		this.showNodeLabels = true;
 		this.viewResetToken++;
 	}
