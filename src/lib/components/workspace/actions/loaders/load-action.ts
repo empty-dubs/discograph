@@ -14,12 +14,12 @@ interface RunLoadOptions<T> {
 
 async function runLoad<T>(
 	graph: Pick<GraphInterface, 'visitedNodes'>,
-	nodeId: string,
+	node: SelectedNodeInterface,
 	{ fetch, merge, errorMessage }: RunLoadOptions<T>
 ): Promise<void> {
-	if (graph.visitedNodes.withLoadingChildren.has(nodeId)) return;
+	if (graph.visitedNodes.withLoadingChildren.has(node.id!)) return;
 
-	graph.visitedNodes.withLoadingChildren.add(nodeId);
+	graph.visitedNodes.withLoadingChildren.add(node.id!);
 
 	await discogsApi.withRequest(async () => {
 		const payload = await fetch();
@@ -27,7 +27,7 @@ async function runLoad<T>(
 		await merge(payload);
 	}, errorMessage);
 
-	graph.visitedNodes.withLoadingChildren.delete(nodeId);
+	graph.visitedNodes.withLoadingChildren.delete(node.id!);
 }
 
 type RunLoadActionOptions = {
@@ -55,7 +55,7 @@ export async function runLoadAction(
 	const errorMessage = loadErrorMessage(action);
 
 	if (entry.kind === 'custom') {
-		await runLoad(graph, node.id!, {
+		await runLoad(graph, node, {
 			fetch: () => entry.run(ctx),
 			merge: () => {},
 			errorMessage
@@ -64,7 +64,7 @@ export async function runLoadAction(
 	}
 
 	if (entry.kind === 'patch') {
-		await runLoad(graph, node.id!, {
+		await runLoad(graph, node, {
 			fetch: () => entry.fetch(node.data?.discogsId!),
 			merge: (payload) => {
 				graph.applyPatchFromExpansion(node.id!, entry.toPatch(payload, ctx));
@@ -87,7 +87,7 @@ export async function runLoadAction(
 		page = options?.page ?? 1;
 	}
 
-	await runLoad(graph, node.id!, {
+	await runLoad(graph, node, {
 		fetch: () => entry.fetchPage(node.data?.discogsId!, page),
 		merge: (payload) => {
 			graph.applyPatchFromExpansion(node.id!, entry.toPatch(payload, ctx));
