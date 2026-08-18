@@ -120,17 +120,17 @@ export const LOAD_ACTION_CONFIG: Partial<
 	artists: {
 		artist: {
 			kind: 'patch',
-			fetch: getArtist,
+			fetch: () => {},
 			patch: (artist) => buildFromArtist(artist as Artist)
 		},
 		release: {
 			kind: 'patch',
-			fetch: getRelease,
+			fetch: () => {},
 			patch: (release) => buildArtistsFromRelease(release as Release)
 		},
 		master: {
 			kind: 'patch',
-			fetch: getMaster,
+			fetch: () => {},
 			patch: (master) => buildFromMaster(master as Master)
 		}
 	},
@@ -144,26 +144,26 @@ export const LOAD_ACTION_CONFIG: Partial<
 	labels: {
 		label: {
 			kind: 'patch',
-			fetch: getLabel,
+			fetch: () => {},
 			patch: (label) => buildFromLabel(label as Label)
 		},
 		release: {
 			kind: 'patch',
-			fetch: getRelease,
+			fetch: () => {},
 			patch: (release) => buildLabelsFromRelease(release as Release)
 		}
 	},
 	companies: {
 		release: {
 			kind: 'patch',
-			fetch: getRelease,
+			fetch: () => {},
 			patch: (release) => buildCompaniesFromRelease(release as Release)
 		}
 	},
 	credited_artists: {
 		release: {
 			kind: 'patch',
-			fetch: getRelease,
+			fetch: () => {},
 			patch: (release) => buildCreditedArtistsFromRelease(release as Release)
 		}
 	},
