@@ -71,7 +71,7 @@ type DetailLoadEntry = {
 type ExpansionLoadEntry =
 	| {
 			kind: 'patch';
-			fetch: (discogsId: number) => Promise<unknown>;
+			fetch: (discogsId: number) => Promise<unknown> | void;
 			patch: (payload: unknown, ctx: LoadContext) => GraphPatch;
 			markActionLoaded?: LoadAction;
 	  }
@@ -137,7 +137,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 	aliases: {
 		artist: {
 			kind: 'patch',
-			fetch: getArtist,
+			fetch: () => {},
 			patch: (artist) => buildAliasesFromArtist(artist as Artist)
 		}
 	},

@@ -5,10 +5,11 @@ import { LOAD_ACTION_LABELS, type LoadAction } from '../constants';
 import type { Pagination } from '$lib/discogs/types';
 import type { GraphInterface } from '$lib/graph/graph';
 import type { SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
+import type { GraphNode } from '$lib/graph/types';
 
 interface RunLoadOptions<T> {
-	fetch: () => Promise<T>;
-	merge: (payload: T) => void | Promise<void>;
+	fetch: () => Promise<T> | void;
+	merge: (payload: T | GraphNode) => void | Promise<void>;
 	errorMessage: string;
 }
 
@@ -24,7 +25,11 @@ async function runLoad<T>(
 	await discogsApi.withRequest(async () => {
 		const payload = await fetch();
 
-		await merge(payload);
+		if (payload) {
+			await merge(payload);
+		} else {
+			await merge(node.data as GraphNode)
+		}
 	}, errorMessage);
 
 	graph.visitedNodes.withLoadingChildren.delete(node.id!);
@@ -65,7 +70,7 @@ export async function runLoadAction(
 
 	if (config.kind === 'patch') {
 		await runLoad(graph, node, {
-			fetch: () => config.fetch(node.data?.discogsId!),
+			fetch: () => config.fetch(node.data?.discogsId!) as Promise<unknown>,
 			merge: (payload) => {
 				graph.applyPatchFromExpansion(node.id!, config.patch(payload, ctx));
 				graph.visitedNodes.markActionLoaded(node.id!, config.markActionLoaded ?? action);

@@ -5,7 +5,7 @@ export function getNodeId(type: NodeType, id: number | string): string {
 	return `${type}:${id}`;
 }
 
-export function getLinkId(source: string, type: EdgeType, target: string): string {
+export function getLinkId(source: number | string, type: EdgeType, target: number | string): string {
 	return `${source}|${type}|${target}`;
 }
 

@@ -44,18 +44,18 @@ export function buildFromArtist(artist: Artist): GraphPatch {
 export function buildAliasesFromArtist(artist: Artist): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const artistNodeId = getNodeId('artist', artist.id);
+	const artistNodeId = artist.id;
 	const nodeType: NodeType = 'artist';
 	const edgeType: EdgeType = 'alias_of';
 
 	for (const alias of artist.aliases ?? []) {
-		const sourceNode = getNodeId(nodeType, alias.id);
+		const targetNodeId = getNodeId(nodeType, alias.id);
 
 		nodes.push(createArtistNode(alias));
 		links.push({
-			id: getLinkId(sourceNode, edgeType, artistNodeId),
-			source: sourceNode,
-			target: artistNodeId,
+			id: getLinkId(artistNodeId, edgeType, targetNodeId),
+			source: artistNodeId,
+			target: targetNodeId,
 			type: edgeType
 		});
 	}
