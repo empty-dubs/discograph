@@ -17,7 +17,7 @@
 	
 	const node = $derived(selectedNodeState as SelectedNodeInterface);
 
-	const actions = $derived(node.getVisibleLoadActions);
+	const actions = $derived(node.visibleLoadActions ?? []);
 
 	const releasesState = $derived.by(() => {
 		const loaded = graph.visitedNodes.releasePages.has(node.id!);

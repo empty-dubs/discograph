@@ -6,7 +6,7 @@ interface ParsedNodeId {
 }
 
 export function parseNodeId(id: string): ParsedNodeId {
-	const [type, rawId] = id.split(':');
+	const [type, rawId] = id.split('-')[0].split(':');
 
 	if (!type || !rawId) return { type: 'artist', discogsId: null };
 

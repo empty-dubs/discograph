@@ -41,12 +41,15 @@ export function createLabelNode(payload: LabelNodePayload): GraphNode {
 }
 
 export function createMasterNode(payload: MasterNodePayload, meta?: GraphNode['meta']): GraphNode {
+	const nodeId = payload.main_release
+		? `${getNodeId('master', payload.id)}-${getNodeId('release', payload.main_release)}`
+		: getNodeId('master', payload.id);
 	const nodeType: NodeType = 'master';
 	const nodeURI: string | undefined = 'uri' in payload ? payload.uri : undefined;
 	const nodeResourceURL: string | undefined = 'resource_url' in payload ? payload.resource_url : undefined;
 
 	return {
-		id: getNodeId(nodeType, payload.id),
+		id: nodeId,
 		type: nodeType,
 		discogsId: payload.id,
 		displayName: getDisplayName(payload, nodeType),
@@ -133,7 +136,7 @@ export async function updateMasterNode(
 ) {
 	if (!node) return;
 
-	const mainRelease = master.main_release
+	const mainReleaseInfo = master.main_release
 		? {
 				id: master.main_release,
 				title: await resolveMainReleaseTitle(graph, master.main_release)
@@ -150,7 +153,7 @@ export async function updateMasterNode(
 			title,
 			duration
 		})),
-		main_release: mainRelease,
+		main_release_info: mainReleaseInfo,
 		meta: {
 			...node.meta,
 			year: master.year ?? node.meta?.year,

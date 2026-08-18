@@ -44,8 +44,7 @@ export function buildCompaniesFromRelease(release: Release): GraphPatch {
 			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
 			source: sourceNodeId,
 			target: targetNodeId,
-			type: edgeType,
-			label: company.entity_type_name
+			type: company.entity_type_name ? `(${company.entity_type_name?.toLowerCase()})` as EdgeType : edgeType
 		});
 	}
 
@@ -56,7 +55,7 @@ export function buildFromLabel(label: Label): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'label';
-	const edgeType: EdgeType = 'sublabel_of';
+	let edgeType: EdgeType = 'sublabel_of';
 	const sourceNodeId = label.id;
 
 	for (const sublabel of label.sublabels ?? []) {
@@ -73,6 +72,7 @@ export function buildFromLabel(label: Label): GraphPatch {
 	}
 
 	if (label.parent_label) {
+		edgeType = 'parent_label' as EdgeType;
 		const targetNodeId = getNodeId(nodeType, label.parent_label.id);
 
 		nodes.push(createLabelNode(label.parent_label));

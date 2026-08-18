@@ -15,6 +15,7 @@ export interface Pagination {
 
 export interface SearchResult {
 	id: number;
+	main_release?: number;
 	name?: string;
 	resource_url?: string;
 	title?: string;
@@ -186,9 +187,10 @@ interface MasterArtist {
 
 export interface MasterVersion {
 	id: number;
-	title: string;
+	main_release?: number;
 	released?: string;
 	resource_url?: string;
+	title: string;
 	uri?: string;
 }
 

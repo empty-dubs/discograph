@@ -30,7 +30,8 @@ export interface GraphNode {
 	sublabels?: { id: number; name: string }[];
 	artists?: { id: number; name: string }[];
 	tracklist?: { position: string; title: string; duration?: string }[];
-	main_release?: { id: number; title: string };
+	main_release_info?: { id: number; title: string };
+	main_release?: number;
 	linked_master?: { id: number; title: string };
 	notes?: string;
 	labels?: { id: number; name: string; catno?: string }[];

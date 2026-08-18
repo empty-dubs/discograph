@@ -57,8 +57,7 @@ import type { GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
 
 type LoadContext = {
 	graph: GraphInterface;
-	nodeId: string;
-	discogsId: number;
+	node: GraphNode;
 };
 
 type DetailLoadEntry = {
@@ -72,7 +71,7 @@ type ExpansionLoadEntry =
 	| {
 			kind: 'patch';
 			fetch: (discogsId: number) => Promise<unknown> | void;
-			patch: (payload: unknown, ctx: LoadContext) => GraphPatch;
+			patch: (payload: unknown, ctx?: LoadContext) => GraphPatch;
 			markActionLoaded?: LoadAction;
 	  }
 	| {
@@ -174,7 +173,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 			patch: (payload, ctx) =>
 				buildFromArtistReleases(
 					(payload as ArtistReleasesResponse).releases,
-					ctx.discogsId,
+					ctx.node,
 					'release'
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.releasePages.get(nodeId),
@@ -187,7 +186,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 			patch: (payload, ctx) =>
 				buildFromLabelReleases(
 					(payload as LabelReleasesResponse).releases,
-					ctx.discogsId,
+					ctx.node,
 					'release'
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.releasePages.get(nodeId),
@@ -200,7 +199,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 			patch: (payload, ctx) =>
 				buildFromMasterVersions(
 					(payload as MasterVersionsResponse).versions,
-					ctx.discogsId
+					ctx.node
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.releasePages.get(nodeId),
 			setPaging: (graph, nodeId, pagination) =>
@@ -214,7 +213,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 			patch: (payload, ctx) =>
 				buildFromArtistReleases(
 					(payload as ArtistReleasesResponse).releases,
-					ctx.discogsId,
+					ctx.node,
 					'master'
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.masterReleasePages.get(nodeId),
@@ -227,7 +226,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 			patch: (payload, ctx) =>
 				buildFromLabelReleases(
 					(payload as LabelReleasesResponse).releases,
-					ctx.discogsId,
+					ctx.node,
 					'master'
 				),
 			getPaging: (graph, nodeId) => graph.visitedNodes.masterReleasePages.get(nodeId),
@@ -238,17 +237,17 @@ export const LOAD_ACTION_CONFIG: Partial<
 	main_release: {
 		master: {
 			kind: 'custom',
-			run: async ({ graph, nodeId, discogsId }) => {
-				let mainReleaseId = graph.data.nodes.get(nodeId)?.main_release?.id;
+			run: async ({ graph, node }) => {
+				let mainReleaseId = graph.data.nodes.get(node.id)?.main_release_info?.id;
 
 				// If the master has no main release, fetch the master and set the main release
 				// Likely leftover from a previous implementation where nodes were only partially loaded
 				// This doesn't do anything right now because the master should already be loaded
 				// TODO: Remove this after further consideration of lazy loading
 				if (!mainReleaseId) {
-					const master = await getMaster(discogsId);
+					const master = await getMaster(node.discogsId!);
 
-					await updateMasterNode(graph.data.nodes.get(nodeId)!, graph, master);
+					await updateMasterNode(graph.data.nodes.get(node.id)!, graph, master);
 
 					mainReleaseId = master.main_release;
 				}
@@ -260,8 +259,8 @@ export const LOAD_ACTION_CONFIG: Partial<
 
 				const release = await getRelease(mainReleaseId);
 
-				graph.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
-				graph.visitedNodes.markActionLoaded(nodeId, 'main_release');
+				graph.applyPatchFromExpansion(node.id, buildMainReleaseFromMaster(release, node));
+				graph.visitedNodes.markActionLoaded(node.id, 'main_release');
 			}
 		}
 	}
