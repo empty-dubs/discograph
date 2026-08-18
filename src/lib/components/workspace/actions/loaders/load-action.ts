@@ -47,28 +47,28 @@ export async function runLoadAction(
 	if (!node.data?.discogsId) return;
 	if (node.isBlocked) return;
 
-	const entry = LOAD_ACTION_CONFIG[action]?.[node.data?.type!];
+	const config = LOAD_ACTION_CONFIG[action]?.[node.data?.type!];
 
-	if (!entry) return;
+	if (!config) return;
 
 	const ctx = { graph, nodeId: node.id!, discogsId: node.data?.discogsId! };
 	const errorMessage = loadErrorMessage(action);
 
-	if (entry.kind === 'custom') {
+	if (config.kind === 'custom') {
 		await runLoad(graph, node, {
-			fetch: () => entry.run(ctx),
+			fetch: () => config.run(ctx),
 			merge: () => {},
 			errorMessage
 		});
 		return;
 	}
 
-	if (entry.kind === 'patch') {
+	if (config.kind === 'patch') {
 		await runLoad(graph, node, {
-			fetch: () => entry.fetch(node.data?.discogsId!),
+			fetch: () => config.fetch(node.data?.discogsId!),
 			merge: (payload) => {
-				graph.applyPatchFromExpansion(node.id!, entry.toPatch(payload, ctx));
-				graph.visitedNodes.markActionLoaded(node.id!, entry.markActionLoaded ?? action);
+				graph.applyPatchFromExpansion(node.id!, config.patch(payload, ctx));
+				graph.visitedNodes.markActionLoaded(node.id!, config.markActionLoaded ?? action);
 			},
 			errorMessage
 		});
@@ -78,7 +78,7 @@ export async function runLoadAction(
 	let page: number;
 
 	if (options?.page === 'next') {
-		const paging = entry.getPaging(graph, node.id!);
+		const paging = config.getPaging(graph, node.id!);
 
 		if (!paging || paging.page >= paging.pages) return;
 
@@ -88,10 +88,10 @@ export async function runLoadAction(
 	}
 
 	await runLoad(graph, node, {
-		fetch: () => entry.fetchPage(node.data?.discogsId!, page),
+		fetch: () => config.fetchPage(node.data?.discogsId!, page),
 		merge: (payload) => {
-			graph.applyPatchFromExpansion(node.id!, entry.toPatch(payload, ctx));
-			entry.setPaging(
+			graph.applyPatchFromExpansion(node.id!, config.patch(payload, ctx));
+			config.setPaging(
 				graph,
 				node.id!,
 				(payload as { pagination: Pagination }).pagination
