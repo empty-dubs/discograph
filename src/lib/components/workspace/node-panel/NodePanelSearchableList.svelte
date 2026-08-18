@@ -19,9 +19,9 @@
 
 	function isSearchable(item: Item): boolean {
 		if (searchType !== 'artist' && searchType !== 'label') return true;
-		if (item.discogsId == null) return true;
+		if (item.discogsId === null) return true;
 
-		return !discogsApi.isBlockedDiscogsEntity(searchType, item.discogsId);
+		return !discogsApi.isBlockedDiscogsEntity(searchType, item.discogsId!);
 	}
 </script>
 

@@ -13,20 +13,21 @@ interface RunLoadOptions<T> {
 }
 
 async function runLoad<T>(
-	graph: GraphInterface,
+	graph: Pick<GraphInterface, 'visitedNodes'>,
 	nodeId: string,
 	{ fetch, merge, errorMessage }: RunLoadOptions<T>
 ): Promise<void> {
-	if (graph.visitedNodes.loading.has(nodeId)) return;
+	if (graph.visitedNodes.withLoadingChildren.has(nodeId)) return;
 
-	graph.visitedNodes.setLoading(nodeId, true);
+	graph.visitedNodes.withLoadingChildren.add(nodeId);
 
 	await discogsApi.withRequest(async () => {
 		const payload = await fetch();
+
 		await merge(payload);
 	}, errorMessage);
 
-	graph.visitedNodes.setLoading(nodeId, false);
+	graph.visitedNodes.withLoadingChildren.delete(nodeId);
 }
 
 type RunLoadActionOptions = {

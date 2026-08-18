@@ -18,7 +18,7 @@
 <button
 	type="button"
 	class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
-	disabled={node.isLoading}
+	disabled={node.hasLoadingChildren}
 	onclick={() => {
 		graph.clear();
 		discogsApi.clear();
