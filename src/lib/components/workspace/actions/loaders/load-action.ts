@@ -15,7 +15,7 @@ interface RunLoadOptions<T> {
 
 async function runLoad<T>(
 	graph: Pick<GraphInterface, 'visitedNodes'>,
-	node: SelectedNodeInterface,
+	node: GraphNode,
 	{ fetch, merge, errorMessage }: RunLoadOptions<T>
 ): Promise<void> {
 	if (graph.visitedNodes.withLoadingChildren.has(node.id!)) return;
@@ -28,7 +28,7 @@ async function runLoad<T>(
 		if (payload) {
 			await merge(payload);
 		} else {
-			await merge(node.data as GraphNode)
+			await merge(node)
 		}
 	}, errorMessage);
 
@@ -56,11 +56,11 @@ export async function runLoadAction(
 
 	if (!config) return;
 
-	const ctx = { graph, nodeId: node.id!, discogsId: node.data?.discogsId! };
+	const ctx = { graph, node: node.data };
 	const errorMessage = loadErrorMessage(action);
 
 	if (config.kind === 'custom') {
-		await runLoad(graph, node, {
+		await runLoad(graph, node.data, {
 			fetch: () => config.run(ctx),
 			merge: () => {},
 			errorMessage
@@ -69,10 +69,10 @@ export async function runLoadAction(
 	}
 
 	if (config.kind === 'patch') {
-		await runLoad(graph, node, {
+		await runLoad(graph, node.data, {
 			fetch: () => config.fetch(node.data?.discogsId!) as Promise<unknown>,
 			merge: (payload) => {
-				graph.applyPatchFromExpansion(node.id!, config.patch(payload, ctx));
+				graph.applyPatchFromExpansion(node.id!, config.patch(payload));
 				graph.visitedNodes.markActionLoaded(node.id!, config.markActionLoaded ?? action);
 			},
 			errorMessage
@@ -92,7 +92,7 @@ export async function runLoadAction(
 		page = options?.page ?? 1;
 	}
 
-	await runLoad(graph, node, {
+	await runLoad(graph, node.data, {
 		fetch: () => config.fetchPage(node.data?.discogsId!, page),
 		merge: (payload) => {
 			graph.applyPatchFromExpansion(node.id!, config.patch(payload, ctx));

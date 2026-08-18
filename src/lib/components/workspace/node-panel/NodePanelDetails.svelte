@@ -37,7 +37,7 @@
 	const showTracklist = $derived(isMasterOrRelease && (node!.tracklist?.length ?? 0) > 0);
 
 	// master-only
-	const showMainRelease = $derived(node!.type === 'master' && Boolean(node!.main_release));
+	const showMainRelease = $derived(node!.type === 'master' && Boolean(node!.main_release_info));
 
 	// release-only
 	const showLinkedMaster = $derived(node!.type === 'release' && Boolean(node!.linked_master));
@@ -152,8 +152,9 @@
 		searchType="release"
 		items={[{
 			key: String(node!.id),
-			label: node!.main_release?.title,
-			query: node!.main_release?.title,
+			label: node!.main_release_info?.title,
+			query: node!.main_release_info?.title,
+			discogsId: node!.main_release_info?.id,
 		}]}
 	/>
 </NodePanelCollapsibleSection>

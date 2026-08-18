@@ -20,7 +20,7 @@ export interface SelectedNodeInterface {
 	hasLoadingChildren: boolean;
 	isBlocked: boolean;
 	releaseTotal: number | null;
-	getVisibleLoadActions: string[];
+	visibleLoadActions: string[];
 	collapseNode: () => void;
 	fetchNodeDetails: () => Promise<void>;
 }
@@ -67,10 +67,10 @@ class SelectedNodeState implements SelectedNodeInterface {
 	private _hasMainRelease = $derived.by(() => {
 		if (this.data?.type !== 'master') return true;
 
-		return Boolean(this.data?.main_release);
+		return Boolean(this.data?.main_release_info);
 	});
 
-	getVisibleLoadActions = $derived.by(() => {
+	visibleLoadActions = $derived.by(() => {
 		if (!this.data || this.isBlocked) return [];
 
 		return LOAD_ACTIONS[this.data.type].filter((action) => {
