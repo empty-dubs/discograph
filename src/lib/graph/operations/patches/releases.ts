@@ -19,12 +19,9 @@ export function buildFromArtistReleases(
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const sourceNodeId = artist.id;
+	const edgeType: EdgeType = 'released';
 
 	for (const item of filtered) {
-		const edgeType = item.role?.toLowerCase() === 'main'
-			? 'released'
-			: `released (${item.role?.toLowerCase()})` as EdgeType;
-
 		let targetNodeId: string | number | null = null;
 
 		if (item.type === 'master') {
@@ -45,7 +42,7 @@ export function buildFromArtistReleases(
 			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
 			source: sourceNodeId,
 			target: targetNodeId,
-			type: edgeType
+			type: item.role?.toLowerCase() === 'main' ? edgeType : `(${item.role?.toLowerCase()})` as EdgeType
 		});
 	}
 

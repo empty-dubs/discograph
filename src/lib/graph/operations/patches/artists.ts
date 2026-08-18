@@ -34,7 +34,6 @@ export function buildFromArtist(artist: Artist): GraphPatch {
 			source: sourceNodeId,
 			target: targetNodeId,
 			type: edgeType,
-			label: edgeType.replace('_', ' ')
 		});
 	}
 
@@ -103,8 +102,7 @@ export function buildCreditedArtistsFromRelease(release: Release): GraphPatch {
 			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
 			source: sourceNodeId,
 			target: targetNodeId,
-			type: edgeType,
-			label: artist.role
+			type: artist.role ? `(${artist.role?.toLowerCase()})` as EdgeType : edgeType,
 		});
 	}
 
