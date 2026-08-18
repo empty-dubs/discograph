@@ -241,9 +241,15 @@ export const LOAD_ACTION_CONFIG: Partial<
 			run: async ({ graph, nodeId, discogsId }) => {
 				let mainReleaseId = graph.data.nodes.get(nodeId)?.main_release?.id;
 
+				// If the master has no main release, fetch the master and set the main release
+				// Likely leftover from a previous implementation where nodes were only partially loaded
+				// This doesn't do anything right now because the master should already be loaded
+				// TODO: Remove this after further consideration of lazy loading
 				if (!mainReleaseId) {
 					const master = await getMaster(discogsId);
+
 					await updateMasterNode(graph.data.nodes.get(nodeId)!, graph, master);
+
 					mainReleaseId = master.main_release;
 				}
 
@@ -253,6 +259,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 				}
 
 				const release = await getRelease(mainReleaseId);
+
 				graph.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
 				graph.visitedNodes.markActionLoaded(nodeId, 'main_release');
 			}
