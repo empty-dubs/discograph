@@ -22,7 +22,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
 	isDetailsFetched = $derived(graph.visitedNodes.status.get(this.id!) === 'fetched');
 	isDetailsFailed = $derived(graph.visitedNodes.status.get(this.id!) === 'failed');
-	isLoading = $derived(graph.visitedNodes.loading.has(this.id!));
+	hasLoadingChildren = $derived(graph.visitedNodes.withLoadingChildren.has(this.id!));
 	isBlocked = $derived(discogsApi.isBlockedDiscogsEntity(this.node?.type!, this.node?.discogsId!));
 
 	releaseTotal = $derived.by(() => {

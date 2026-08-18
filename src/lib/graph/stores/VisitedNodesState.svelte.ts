@@ -9,7 +9,7 @@ type ReleasePaging = { page: number; pages: number; items: number };
 export class VisitedNodesState {
 	knownChildren = $state<Map<string, Set<string>>>(new Map());
 	loadedActions = $state<Map<string, Set<LoadAction>>>(new Map());
-	loading = $state<SvelteSet<string>>(new SvelteSet());
+	withLoadingChildren = $state<SvelteSet<string>>(new SvelteSet());
 	masterReleasePages = $state<Map<string, ReleasePaging>>(new Map());
 	releasePages = $state<Map<string, ReleasePaging>>(new Map());
 	status = $state<Map<string, DetailStatus>>(new Map());
@@ -65,7 +65,7 @@ export class VisitedNodesState {
 
 		for (const id of descendants) {
 			status.delete(id);
-			this.loading.delete(id);
+			this.withLoadingChildren.delete(id);
 		}
 
 		this.knownChildren = knownChildren;
@@ -78,7 +78,7 @@ export class VisitedNodesState {
 	clear() {
 		this.knownChildren = new Map();
 		this.loadedActions = new Map();
-		this.loading = new SvelteSet();
+		this.withLoadingChildren = new SvelteSet();
 		this.masterReleasePages = new Map();
 		this.releasePages = new Map();
 		this.status = new Map();

@@ -20,7 +20,7 @@
 			<button
 				type="button"
 				class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-				disabled={node.isLoading}
+				disabled={node.hasLoadingChildren}
 				onclick={() => node.collapseNode()}
 			>
 				Collapse children
@@ -30,7 +30,7 @@
 		<button
 			type="button"
 			class="{buttonClass} border-border bg-panel-hover cursor-pointer border text-gray-300"
-			disabled={node.isLoading || discogsApi.isRateLimited}
+			disabled={node.hasLoadingChildren || discogsApi.isRateLimited}
 			onclick={() => seedFromNode(graph, node.node!)}
 		>
 			Reset graph to this node
