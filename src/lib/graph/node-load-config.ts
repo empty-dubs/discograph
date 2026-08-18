@@ -71,14 +71,14 @@ type DetailLoadEntry = {
 type ExpansionLoadEntry =
 	| {
 			kind: 'patch';
-			fetch: (discogsId: number) => Promise<unknown>;
-			toPatch: (payload: unknown, ctx: LoadContext) => GraphPatch;
+			fetch: (discogsId: number) => Promise<unknown> | void;
+			patch: (payload: unknown, ctx: LoadContext) => GraphPatch;
 			markActionLoaded?: LoadAction;
 	  }
 	| {
 			kind: 'paged';
 			fetchPage: (discogsId: number, page: number) => Promise<unknown>;
-			toPatch: (payload: unknown, ctx: LoadContext) => GraphPatch;
+			patch: (payload: unknown, ctx: LoadContext) => GraphPatch;
 			getPaging: (graph: GraphInterface, nodeId: string) => { page: number; pages: number } | undefined;
 			setPaging: (graph: GraphInterface, nodeId: string, pagination: Pagination) => void;
 	  }
@@ -120,58 +120,58 @@ export const LOAD_ACTION_CONFIG: Partial<
 	artists: {
 		artist: {
 			kind: 'patch',
-			fetch: getArtist,
-			toPatch: (artist) => buildFromArtist(artist as Artist)
+			fetch: () => {},
+			patch: (artist) => buildFromArtist(artist as Artist)
 		},
 		release: {
 			kind: 'patch',
-			fetch: getRelease,
-			toPatch: (release) => buildArtistsFromRelease(release as Release)
+			fetch: () => {},
+			patch: (release) => buildArtistsFromRelease(release as Release)
 		},
 		master: {
 			kind: 'patch',
-			fetch: getMaster,
-			toPatch: (master) => buildFromMaster(master as Master)
+			fetch: () => {},
+			patch: (master) => buildFromMaster(master as Master)
 		}
 	},
 	aliases: {
 		artist: {
 			kind: 'patch',
-			fetch: getArtist,
-			toPatch: (artist) => buildAliasesFromArtist(artist as Artist)
+			fetch: () => {},
+			patch: (artist) => buildAliasesFromArtist(artist as Artist)
 		}
 	},
 	labels: {
 		label: {
 			kind: 'patch',
-			fetch: getLabel,
-			toPatch: (label) => buildFromLabel(label as Label)
+			fetch: () => {},
+			patch: (label) => buildFromLabel(label as Label)
 		},
 		release: {
 			kind: 'patch',
-			fetch: getRelease,
-			toPatch: (release) => buildLabelsFromRelease(release as Release)
+			fetch: () => {},
+			patch: (release) => buildLabelsFromRelease(release as Release)
 		}
 	},
 	companies: {
 		release: {
 			kind: 'patch',
-			fetch: getRelease,
-			toPatch: (release) => buildCompaniesFromRelease(release as Release)
+			fetch: () => {},
+			patch: (release) => buildCompaniesFromRelease(release as Release)
 		}
 	},
 	credited_artists: {
 		release: {
 			kind: 'patch',
-			fetch: getRelease,
-			toPatch: (release) => buildCreditedArtistsFromRelease(release as Release)
+			fetch: () => {},
+			patch: (release) => buildCreditedArtistsFromRelease(release as Release)
 		}
 	},
 	releases: {
 		artist: {
 			kind: 'paged',
 			fetchPage: getArtistReleases,
-			toPatch: (payload, ctx) =>
+			patch: (payload, ctx) =>
 				buildFromArtistReleases(
 					(payload as ArtistReleasesResponse).releases,
 					ctx.discogsId,
@@ -184,7 +184,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 		label: {
 			kind: 'paged',
 			fetchPage: getLabelReleases,
-			toPatch: (payload, ctx) =>
+			patch: (payload, ctx) =>
 				buildFromLabelReleases(
 					(payload as LabelReleasesResponse).releases,
 					ctx.discogsId,
@@ -197,7 +197,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 		master: {
 			kind: 'paged',
 			fetchPage: getMasterVersions,
-			toPatch: (payload, ctx) =>
+			patch: (payload, ctx) =>
 				buildFromMasterVersions(
 					(payload as MasterVersionsResponse).versions,
 					ctx.discogsId
@@ -211,7 +211,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 		artist: {
 			kind: 'paged',
 			fetchPage: getArtistReleases,
-			toPatch: (payload, ctx) =>
+			patch: (payload, ctx) =>
 				buildFromArtistReleases(
 					(payload as ArtistReleasesResponse).releases,
 					ctx.discogsId,
@@ -224,7 +224,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 		label: {
 			kind: 'paged',
 			fetchPage: getLabelReleases,
-			toPatch: (payload, ctx) =>
+			patch: (payload, ctx) =>
 				buildFromLabelReleases(
 					(payload as LabelReleasesResponse).releases,
 					ctx.discogsId,
@@ -241,9 +241,15 @@ export const LOAD_ACTION_CONFIG: Partial<
 			run: async ({ graph, nodeId, discogsId }) => {
 				let mainReleaseId = graph.data.nodes.get(nodeId)?.main_release?.id;
 
+				// If the master has no main release, fetch the master and set the main release
+				// Likely leftover from a previous implementation where nodes were only partially loaded
+				// This doesn't do anything right now because the master should already be loaded
+				// TODO: Remove this after further consideration of lazy loading
 				if (!mainReleaseId) {
 					const master = await getMaster(discogsId);
+
 					await updateMasterNode(graph.data.nodes.get(nodeId)!, graph, master);
+
 					mainReleaseId = master.main_release;
 				}
 
@@ -253,6 +259,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 				}
 
 				const release = await getRelease(mainReleaseId);
+
 				graph.applyPatchFromExpansion(nodeId, buildMainReleaseFromMaster(release, discogsId));
 				graph.visitedNodes.markActionLoaded(nodeId, 'main_release');
 			}

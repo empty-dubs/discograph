@@ -6,15 +6,28 @@ import { DETAIL_CONFIG } from '$lib/graph/node-load-config';
 import { parseNodeId } from '$lib/graph/operations/transformations';
 import { collectDescendants } from '../operations/crawlers';
 
-import type { NodeType } from '../types';
+import type { GraphNode, NodeType } from '../types';
 
-interface SelectedNodeInterface {
+export interface SelectedNodeInterface {
 	id: string | null;
+	data?: GraphNode;
+	hasChildren: boolean;
+	hasMoreReleases: boolean;
+	hasMoreMasterReleases: boolean;
+	isDetailsLoading: boolean;
+	isDetailsFetched: boolean;
+	isDetailsFailed: boolean;
+	hasLoadingChildren: boolean;
+	isBlocked: boolean;
+	releaseTotal: number | null;
+	getVisibleLoadActions: string[];
+	collapseNode: () => void;
+	fetchNodeDetails: () => Promise<void>;
 }
 
 class SelectedNodeState implements SelectedNodeInterface {
 	id = $derived(graph.display.selectedId);
-    node = $derived(graph.data.nodes.get(this.id!));
+    data = $derived(graph.data.nodes.get(this.id!));
 
 	hasChildren = $derived(graph.visitedNodes.knownChildren.has(this.id!));
 	hasMoreReleases = $derived(graph.visitedNodes.hasMoreReleases(this.id!));
@@ -23,7 +36,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 	isDetailsFetched = $derived(graph.visitedNodes.status.get(this.id!) === 'fetched');
 	isDetailsFailed = $derived(graph.visitedNodes.status.get(this.id!) === 'failed');
 	hasLoadingChildren = $derived(graph.visitedNodes.withLoadingChildren.has(this.id!));
-	isBlocked = $derived(discogsApi.isBlockedDiscogsEntity(this.node?.type!, this.node?.discogsId!));
+	isBlocked = $derived(discogsApi.isBlockedDiscogsEntity(this.data?.type!, this.data?.discogsId!));
 
 	releaseTotal = $derived.by(() => {
 		if (!this.id) return null;
@@ -34,33 +47,33 @@ class SelectedNodeState implements SelectedNodeInterface {
 	});
 
 	private _hasRelatedArtists = $derived.by(() => {
-		if (this.node?.type !== 'artist') return true;
+		if (this.data?.type !== 'artist') return true;
 	
-		return (this.node?.members?.length ?? 0) > 0 || (this.node?.groups?.length ?? 0) > 0;
+		return (this.data?.members?.length ?? 0) > 0 || (this.data?.groups?.length ?? 0) > 0;
 	});
 
 	private _hasRelatedLabels = $derived.by(() => {
-		if (this.node?.type !== 'label') return true;
+		if (this.data?.type !== 'label') return true;
 	
-		return Boolean(this.node?.parent_label) || (this.node?.sublabels?.length ?? 0) > 0;
+		return Boolean(this.data?.parent_label) || (this.data?.sublabels?.length ?? 0) > 0;
 	});
 	
 	private _hasRelatedAliases = $derived.by(() => {
-		if (this.node?.type !== 'artist') return true;
+		if (this.data?.type !== 'artist') return true;
 	
-		return (this.node?.aliases?.length ?? 0) > 0;
+		return (this.data?.aliases?.length ?? 0) > 0;
 	});
 	
 	private _hasMainRelease = $derived.by(() => {
-		if (this.node?.type !== 'master') return true;
+		if (this.data?.type !== 'master') return true;
 
-		return Boolean(this.node?.main_release);
+		return Boolean(this.data?.main_release);
 	});
 
 	getVisibleLoadActions = $derived.by(() => {
-		if (!this.node || this.isBlocked) return [];
+		if (!this.data || this.isBlocked) return [];
 
-		return LOAD_ACTIONS[this.node.type].filter((action) => {
+		return LOAD_ACTIONS[this.data.type].filter((action) => {
 			if (action === 'artists' && !this._hasRelatedArtists) return false;
 			if (action === 'labels' && !this._hasRelatedLabels) return false;
 			if (action === 'aliases' && !this._hasRelatedAliases) return false;
@@ -113,7 +126,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 			return;
 		}
 
-		await config.merge(this.node!, graph, payload);
+		await config.merge(this.data!, graph, payload);
 
 		graph.visitedNodes.setDetailStatus(this.id!, 'fetched');
 	}

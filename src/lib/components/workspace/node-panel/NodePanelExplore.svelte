@@ -8,7 +8,7 @@
 	import { graph } from '$lib/graph/graph';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	const node = $derived(selectedNodeState.node);
+	const node = $derived(selectedNodeState.data);
 
 	const websiteUrl = $derived(getDiscogsWebsiteUrl(node!));
 	const apiUrl = $derived(getDiscogsProxyUrl(node!));

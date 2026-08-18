@@ -10,7 +10,7 @@
 	import NodePanelUrls from './NodePanelUrlList.svelte';
 
 	const selected = $derived(selectedNodeState);
-	const node = $derived(selected.node);
+	const node = $derived(selected.data);
 
 	const isArtistOrLabel = $derived(node!.type === 'artist' || node!.type === 'label');
 	const isMasterOrRelease = $derived(node!.type === 'master' || node!.type === 'release');

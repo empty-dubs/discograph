@@ -160,6 +160,7 @@ export interface Release {
 	labels?: LabelRef[];
 	companies?: ReleaseCompany[];
 	extraartists?: ReleaseArtist[];
+	credits?: ReleaseArtist[];
 	master_id?: number;
 	master_url?: string;
 	genres?: string[];

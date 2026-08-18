@@ -8,18 +8,19 @@ import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '$lib/
 export function buildLabelsFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const releaseNodeId = getNodeId('release', release.id);
 	const nodeType: NodeType = 'label';
+	const edgeType: EdgeType = 'on_label';
+	const sourceNodeId = release.id;
 
 	for (const label of release.labels ?? []) {
-		const edgeType: EdgeType = 'on_label';
-		const targetNode = getNodeId(nodeType, label.id);
+		const targetNodeId = getNodeId(nodeType, label.id);
 
 		nodes.push(createLabelNode(label));
+
 		links.push({
-			id: getLinkId(releaseNodeId, edgeType, targetNode),
-			source: releaseNodeId,
-			target: targetNode,
+			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
+			source: sourceNodeId,
+			target: targetNodeId,
 			type: edgeType
 		});
 	}
@@ -30,18 +31,19 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 export function buildCompaniesFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const releaseNodeId = getNodeId('release', release.id);
 	const nodeType: NodeType = 'label';
+	const edgeType: EdgeType = 'company_on';
+	const sourceNodeId = release.id;
 
 	for (const company of release.companies ?? []) {
-		const edgeType: EdgeType = 'company_on';
-		const targetNode = getNodeId(nodeType, company.id);
+		const targetNodeId = getNodeId(nodeType, company.id);
 
 		nodes.push(createLabelNode(company));
+
 		links.push({
-			id: getLinkId(releaseNodeId, edgeType, targetNode),
-			source: releaseNodeId,
-			target: targetNode,
+			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
+			source: sourceNodeId,
+			target: targetNodeId,
 			type: edgeType,
 			label: company.entity_type_name
 		});
@@ -55,29 +57,30 @@ export function buildFromLabel(label: Label): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'label';
 	const edgeType: EdgeType = 'sublabel_of';
+	const sourceNodeId = label.id;
 
 	for (const sublabel of label.sublabels ?? []) {
-		const sourceNode = getNodeId(nodeType, sublabel.id);
-		const targetNode = getNodeId(nodeType, label.id);
+		const targetNodeId = getNodeId(nodeType, sublabel.id);
 
 		nodes.push(createLabelNode(sublabel));
+
 		links.push({
-			id: getLinkId(sourceNode, edgeType, targetNode),
-			source: sourceNode,
-			target: targetNode,
+			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
+			source: sourceNodeId,
+			target: targetNodeId,
 			type: edgeType
 		});
 	}
 
 	if (label.parent_label) {
-		const sourceNode = getNodeId(nodeType, label.id);
-		const targetNode = getNodeId(nodeType, label.parent_label.id);
+		const targetNodeId = getNodeId(nodeType, label.parent_label.id);
 
 		nodes.push(createLabelNode(label.parent_label));
+
 		links.push({
-			id: getLinkId(sourceNode, edgeType, targetNode),
-			source: sourceNode,
-			target: targetNode,
+			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
+			source: sourceNodeId,
+			target: targetNodeId,
 			type: edgeType
 		});
 	}

@@ -4,7 +4,7 @@
 	import NodeDetailRow from './NodeDetailRow.svelte';
 	import NodeTypeBadge from './NodeTypeBadge.svelte';
 
-	const node = $derived(selectedNodeState.node);
+	const node = $derived(selectedNodeState.data);
 
 	const isArtistOrLabel = $derived(node!.type === 'artist' || node!.type === 'label');
 	const isMasterOrRelease = $derived(node!.type === 'master' || node!	.type === 'release');

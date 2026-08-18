@@ -4,7 +4,7 @@
 
 	import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
 
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
+	import { selectedNodeState, type SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import { LOAD_ACTION_LABELS, type LoadAction, type PagedLoadButtonState } from './constants';
 
@@ -15,7 +15,7 @@
 
 	let { layout = 'stack', onAction }: Props = $props();
 	
-	const node = $derived(selectedNodeState);
+	const node = $derived(selectedNodeState as SelectedNodeInterface);
 
 	const actions = $derived(node.getVisibleLoadActions);
 
@@ -80,7 +80,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || artistsState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node.id!, 'artists'))}
+		onclick={() => run(() => runLoadAction(graph, node, 'artists'))}
 	>
 		{artistsState.label}
 	</button>
@@ -91,7 +91,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || aliasesState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node.id!, 'aliases'))}
+		onclick={() => run(() => runLoadAction(graph, node, 'aliases'))}
 	>
 		{aliasesState.label}
 	</button>
@@ -102,7 +102,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || labelsState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node.id!, 'labels'))}
+		onclick={() => run(() => runLoadAction(graph, node, 'labels'))}
 	>
 		{labelsState.label}
 	</button>
@@ -117,7 +117,7 @@
 			run(() =>
 				runLoadAction(
 					graph,
-					node.id!,
+					node,
 					'master_releases',
 					masterReleasesState.loaded ? { page: 'next' } : undefined
 				)
@@ -136,7 +136,7 @@
 			run(() =>
 				runLoadAction(
 					graph,
-					node.id!,
+					node,
 					'releases',
 					releasesState.loaded ? { page: 'next' } : undefined
 				)
@@ -151,7 +151,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || mainReleaseState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node.id!, 'main_release'))}
+		onclick={() => run(() => runLoadAction(graph, node, 'main_release'))}
 	>
 		{mainReleaseState.label}
 	</button>
@@ -162,7 +162,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || companiesState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node.id!, 'companies'))}
+		onclick={() => run(() => runLoadAction(graph, node, 'companies'))}
 	>
 		{companiesState.label}
 	</button>
@@ -173,7 +173,7 @@
 		type="button"
 		class={itemClass}
 		disabled={isLoading || creditedArtistsState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node.id!, 'credited_artists'))}
+		onclick={() => run(() => runLoadAction(graph, node, 'credited_artists'))}
 	>
 		{creditedArtistsState.label}
 	</button>

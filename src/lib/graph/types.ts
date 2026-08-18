@@ -49,8 +49,8 @@ export interface GraphNode {
 
 export interface GraphLink {
 	id: string;
-	source: string;
-	target: string;
+	source: number | string;
+	target: number | string;
 	type: EdgeType;
 	label?: string;
 }
