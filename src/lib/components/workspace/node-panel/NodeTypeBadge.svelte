@@ -3,7 +3,7 @@
 
 	import {selectedNodeState} from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	const type = $derived(selectedNodeState.node?.type);
+	const type = $derived(selectedNodeState.data?.type);
 
 </script>
 

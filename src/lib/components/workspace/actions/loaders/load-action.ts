@@ -1,10 +1,10 @@
 import { discogsApi } from '$lib/discogs/discogs.svelte';
-import { parseNodeId } from '$lib/graph/operations/transformations';
 import { LOAD_ACTION_CONFIG } from '$lib/graph/node-load-config';
 import { LOAD_ACTION_LABELS, type LoadAction } from '../constants';
 
 import type { Pagination } from '$lib/discogs/types';
 import type { GraphInterface } from '$lib/graph/graph';
+import type { SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 interface RunLoadOptions<T> {
 	fetch: () => Promise<T>;
@@ -40,25 +40,22 @@ function loadErrorMessage(action: LoadAction): string {
 
 export async function runLoadAction(
 	graph: GraphInterface,
-	nodeId: string,
+	node: SelectedNodeInterface,
 	action: LoadAction,
 	options?: RunLoadActionOptions
 ): Promise<void> {
-	const { type, discogsId } = parseNodeId(nodeId);
+	if (!node.data?.discogsId) return;
+	if (node.isBlocked) return;
 
-	if (discogsId === null) return;
-
-	if (discogsApi.isBlockedDiscogsEntity(type, discogsId)) return;
-
-	const entry = LOAD_ACTION_CONFIG[action]?.[type];
+	const entry = LOAD_ACTION_CONFIG[action]?.[node.data?.type!];
 
 	if (!entry) return;
 
-	const ctx = { graph, nodeId, discogsId };
+	const ctx = { graph, nodeId: node.id!, discogsId: node.data?.discogsId! };
 	const errorMessage = loadErrorMessage(action);
 
 	if (entry.kind === 'custom') {
-		await runLoad(graph, nodeId, {
+		await runLoad(graph, node.id!, {
 			fetch: () => entry.run(ctx),
 			merge: () => {},
 			errorMessage
@@ -67,11 +64,11 @@ export async function runLoadAction(
 	}
 
 	if (entry.kind === 'patch') {
-		await runLoad(graph, nodeId, {
-			fetch: () => entry.fetch(discogsId),
+		await runLoad(graph, node.id!, {
+			fetch: () => entry.fetch(node.data?.discogsId!),
 			merge: (payload) => {
-				graph.applyPatchFromExpansion(nodeId, entry.toPatch(payload, ctx));
-				graph.visitedNodes.markActionLoaded(nodeId, entry.markActionLoaded ?? action);
+				graph.applyPatchFromExpansion(node.id!, entry.toPatch(payload, ctx));
+				graph.visitedNodes.markActionLoaded(node.id!, entry.markActionLoaded ?? action);
 			},
 			errorMessage
 		});
@@ -81,7 +78,7 @@ export async function runLoadAction(
 	let page: number;
 
 	if (options?.page === 'next') {
-		const paging = entry.getPaging(graph, nodeId);
+		const paging = entry.getPaging(graph, node.id!);
 
 		if (!paging || paging.page >= paging.pages) return;
 
@@ -90,13 +87,13 @@ export async function runLoadAction(
 		page = options?.page ?? 1;
 	}
 
-	await runLoad(graph, nodeId, {
-		fetch: () => entry.fetchPage(discogsId, page),
+	await runLoad(graph, node.id!, {
+		fetch: () => entry.fetchPage(node.data?.discogsId!, page),
 		merge: (payload) => {
-			graph.applyPatchFromExpansion(nodeId, entry.toPatch(payload, ctx));
+			graph.applyPatchFromExpansion(node.id!, entry.toPatch(payload, ctx));
 			entry.setPaging(
 				graph,
-				nodeId,
+				node.id!,
 				(payload as { pagination: Pagination }).pagination
 			);
 		},
