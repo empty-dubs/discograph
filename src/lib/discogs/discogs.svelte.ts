@@ -1,23 +1,22 @@
-import { search as searchClient} from './client';
+import { search as searchClient } from './client';
 import { BLOCKED_DISCOGS_IDS } from './constants';
-import { parseRateLimitHeaders } from './rate-limit';
+import { discogsRateLimit } from './rate-limit-state.svelte';
 
-import type { RateLimitInfo, SearchResult, SearchType } from './types';
+import type { SearchResult, SearchType } from './types';
 
 class DiscogsApi {
-	rateLimit = $state<RateLimitInfo>({ limit: null, used: null, remaining: null });
 	error = $state<string | null>(null);
 	searchQuery = $state('');
 	searchType = $state<SearchType | ''>('');
 	searching = $state(false);
 	searchResults = $state<SearchResult[]>([]);
 
-	get isRateLimited(): boolean {
-		return this.rateLimit.remaining !== null && this.rateLimit.remaining <= 0;
+	get rateLimit() {
+		return discogsRateLimit.rateLimit;
 	}
 
-	updateFromHeaders(headers: Headers): void {
-		this.rateLimit = parseRateLimitHeaders(headers);
+	get isRateLimited(): boolean {
+		return discogsRateLimit.isRateLimited;
 	}
 
 	setError(message: string | null): void {

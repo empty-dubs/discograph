@@ -1,6 +1,5 @@
-import { discogsApi } from './discogs.svelte';
-
 import { API_BASE } from './constants';
+import { discogsRateLimit } from './rate-limit-state.svelte';
 
 import type {
 	Artist,
@@ -40,7 +39,7 @@ async function request<T>(
 
 	const response = await fetch(url);
 
-	discogsApi.updateFromHeaders(response.headers);
+	discogsRateLimit.updateFromHeaders(response.headers);
 
 	if (!response.ok) {
 		let message = `Request failed (${response.status})`;
