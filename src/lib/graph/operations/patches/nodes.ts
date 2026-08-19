@@ -112,6 +112,10 @@ export function updateLabelNode(node: GraphNode, graph: GraphInterface, label: L
 	graph.data.nodes = nodes;
 }
 
+function firstArtistName(artists?: { name: string }[]): string | undefined {
+	return artists?.[0]?.name.trim() || undefined;
+}
+
 async function resolveMainReleaseTitle(
 	graph: GraphInterface,
 	id: number
@@ -139,7 +143,8 @@ export async function updateMasterNode(
 	const mainReleaseInfo = master.main_release
 		? {
 				id: master.main_release,
-				title: await resolveMainReleaseTitle(graph, master.main_release)
+				title: await resolveMainReleaseTitle(graph, master.main_release),
+				artistName: firstArtistName(master.artists)
 			}
 		: undefined;
 
@@ -195,7 +200,8 @@ export async function updateReleaseNode(
 	const linkedMaster = release.master_id
 		? {
 				id: release.master_id,
-				title: await resolveMasterTitle(graph, release.master_id)
+				title: await resolveMasterTitle(graph, release.master_id),
+				artistName: firstArtistName(release.artists)
 			}
 		: undefined;
 

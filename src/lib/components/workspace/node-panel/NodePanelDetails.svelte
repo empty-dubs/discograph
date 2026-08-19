@@ -56,6 +56,16 @@
 	function formatTrack(track: { position: string; title: string; duration?: string }): string {
 		return `${track.position}. ${track.title}${track.duration ? ` (${track.duration})` : ''}`;
 	}
+
+	function buildArtistTitleSearchQuery(title: string | undefined, artistName?: string ): string {
+		if (!title) return '';
+
+		const name = artistName?.trim();
+
+		if (!name) return title;
+
+		return `${name} ${title}`;
+	}
 </script>
 
 <NodePanelCommonDetails/>
@@ -152,7 +162,10 @@
 		items={[{
 			key: String(node!.id),
 			label: node!.main_release_info?.title,
-			query: node!.main_release_info?.title,
+			query: buildArtistTitleSearchQuery(
+				node!.main_release_info?.title,
+				node!.main_release_info?.artistName ?? node!.artists?.[0]?.name
+			),
 			discogsId: node!.main_release_info?.id,
 		}]}
 	/>
@@ -164,7 +177,10 @@
 		items={[{
 			key: String(node!.id),
 			label: node!.linked_master?.title,
-			query: node!.linked_master?.title,
+			query: buildArtistTitleSearchQuery(
+				node!.linked_master?.title,
+				node!.linked_master?.artistName ?? node!.artists?.[0]?.name
+			),
 		}]}
 	/>
 </NodePanelCollapsibleSection>
