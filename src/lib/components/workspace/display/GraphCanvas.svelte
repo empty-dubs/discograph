@@ -61,6 +61,12 @@
 	});
 
 	$effect(() => {
+		if (!forceGraph || graph.display.visibleNodeList.length === 0) return;
+
+		forceGraph.setHighlightedEdgeType(graph.display.highlightedEdgeType);
+	});
+
+	$effect(() => {
 		void graph.display.viewResetToken;
 		forceGraph?.resetZoom();
 	});

@@ -3,6 +3,7 @@
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 	import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
+	import ControlPanelButton from '$lib/components/workspace/display/control-panel/ControlPanelButton.svelte';
 
 	import { selectedNodeState, type SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
 
@@ -16,15 +17,18 @@
 	interface Props {
 		layout?: 'menu' | 'stack';
 		showAllActions?: boolean;
+		actionTypes?: LoadAction[];
 		onAction?: () => void;
 	}
 
-	let { layout = 'stack', showAllActions = false, onAction }: Props = $props();
+	let { layout = 'stack', showAllActions = false, actionTypes, onAction }: Props = $props();
 
 	const node = $derived(selectedNodeState as SelectedNodeInterface);
 
 	const actions = $derived((node.visibleLoadActions ?? []) as LoadAction[]);
-	const renderedActions = $derived(showAllActions ? ALL_LOAD_ACTIONS : actions);
+	const renderedActions = $derived(
+		showAllActions ? (actionTypes ?? ALL_LOAD_ACTIONS) : actions
+	);
 
 	const releasesState = $derived.by(() => {
 		const loaded = graph.visitedNodes.releasePages.has(node.id!);
@@ -48,11 +52,8 @@
 
 	const isLoading = $derived(node.hasLoadingChildren || discogsApi.isRateLimited);
 
-	const itemClass = $derived(
-		layout === 'menu'
-			? 'hover:bg-panel-hover block w-full border-none bg-transparent px-3 py-2 text-left text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent'
-			: 'border-border bg-panel-hover cursor-pointer rounded-md border px-3 py-2 text-sm text-gray-300 disabled:cursor-not-allowed disabled:opacity-50'
-	);
+	const menuClass =
+		'hover:bg-panel-hover block w-full border-none bg-transparent px-3 py-2 text-left text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent';
 
 	function getLoadButtonState(
 		loadedActions: Map<string, Set<LoadAction>>,
@@ -126,12 +127,18 @@
 </script>
 
 {#each renderedActions as action (action)}
-	<button
-		type="button"
-		class={itemClass}
-		disabled={isActionDisabled(action)}
-		onclick={() => runAction(action)}
-	>
-		{getActionState(action).label}
-	</button>
+	{#if layout === 'menu'}
+		<button
+			type="button"
+			class={menuClass}
+			disabled={isActionDisabled(action)}
+			onclick={() => runAction(action)}
+		>
+			{getActionState(action).label}
+		</button>
+	{:else}
+		<ControlPanelButton disabled={isActionDisabled(action)} onclick={() => runAction(action)}>
+			{getActionState(action).label}
+		</ControlPanelButton>
+	{/if}
 {/each}

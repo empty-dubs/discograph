@@ -19,7 +19,7 @@ import {
 
 import { NODE_COLORS, NODE_RADIUS } from './constants';
 
-import type { GraphLink, GraphNode } from './types';
+import type { EdgeType, GraphLink, GraphNode } from './types';
 
 interface SimulationNode extends GraphNode {
 	x?: number;
@@ -46,10 +46,6 @@ interface ForceGraphOptions {
 	onTooltip: (tooltip: ForceGraphTooltip | null) => void;
 }
 
-interface ForceGraphHighlight {
-	selectedId: string | null;
-}
-
 function formatEdgeTooltip(link: SimulationLink): string {
 	const type = link.type.replace(/_/g, ' ');
 
@@ -73,6 +69,7 @@ export class ForceGraph {
 	private tooltipText: string | null = null;
 	private showNodeLabels = true;
 	private selectedId: string | null = null;
+	private highlightedEdgeType: EdgeType | null = null;
 
 	private dragBehavior: DragBehavior<SVGGElement, SimulationNode, SimulationNode | SubjectPosition> =
 		drag<SVGGElement, SimulationNode>()
@@ -254,7 +251,7 @@ export class ForceGraph {
 			.attr('r', d => NODE_RADIUS[d.type])
 			.attr('fill', d => NODE_COLORS[d.type]);
 
-		this.applyHighlight({ selectedId: this.selectedId });
+		this.applyHighlight();
 
 		nodeGroups
 			.on('click', (_, d) => onNodeClick(d.id))
@@ -316,7 +313,12 @@ export class ForceGraph {
 
 	setSelectedId(id: string | null): void {
 		this.selectedId = id;
-		this.applyHighlight({ selectedId: id });
+		this.applyHighlight();
+	}
+
+	setHighlightedEdgeType(type: EdgeType | null): void {
+		this.highlightedEdgeType = type;
+		this.applyHighlight();
 	}
 
 	setShowNodeLabels(show: boolean): void {
@@ -329,12 +331,30 @@ export class ForceGraph {
 		}
 	}
 
-	private applyHighlight(highlight: ForceGraphHighlight) {
+	private applyHighlight() {
 		this.gNodes
 			?.selectAll<SVGGElement, SimulationNode>('g.node')
 			.select('circle')
-			.attr('stroke', d => (d.id === highlight.selectedId ? '#fff' : 'none'))
-			.attr('stroke-width', d => (d.id === highlight.selectedId ? 2 : 0));
+			.attr('stroke', d => (d.id === this.selectedId ? '#fff' : 'none'))
+			.attr('stroke-width', d => (d.id === this.selectedId ? 2 : 0));
+
+		const highlightedType = this.highlightedEdgeType;
+
+		this.gLinks
+			?.selectAll<SVGGElement, SimulationLink>('g.link')
+			.select('line.link-visible')
+			.attr('stroke', d => {
+				if (!highlightedType) return '#999';
+				return d.type === highlightedType ? '#ffffff' : '#555555';
+			})
+			.attr('stroke-opacity', d => {
+				if (!highlightedType) return 0.6;
+				return d.type === highlightedType ? 1 : 0.15;
+			})
+			.attr('stroke-width', d => {
+				if (!highlightedType) return 1.5;
+				return d.type === highlightedType ? 3 : 1;
+			});
 	}
 
 	clear() {
@@ -352,6 +372,8 @@ export class ForceGraph {
 		this.simulation.alpha(0).stop();
 
 		this.tooltipText = null;
+		this.selectedId = null;
+		this.highlightedEdgeType = null;
 		this.options.onTooltip(null);
 	}
 

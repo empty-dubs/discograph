@@ -1,18 +1,47 @@
 <script lang="ts">
-	import GraphDisplayOptions from './control-panel/GraphDisplayOptions.svelte';
+	import {
+		ARTIST_EDGE_TYPES,
+		ARTIST_NODE_TYPES,
+		LABEL_EDGE_TYPES,
+		LABEL_NODE_TYPES,
+		MASTER_RELEASE_EDGE_TYPES,
+		MASTER_RELEASE_NODE_TYPES
+	} from '$lib/graph/constants';
+
+	import {
+		ARTIST_LOAD_ACTIONS,
+		LABEL_LOAD_ACTIONS,
+		MASTER_RELEASE_LOAD_ACTIONS
+	} from '$lib/components/workspace/actions/constants';
+
+	import NodeLoadActions from '$lib/components/workspace/actions/NodeLoadActions.svelte';
+
+	import ControlPanelSection from './control-panel/ControlPanelSection.svelte';
+	import GraphEdgeFilters from './control-panel/GraphEdgeFilters.svelte';
+	import GraphGlobalSettings from './control-panel/GraphGlobalSettings.svelte';
 	import GraphNodeFilters from './control-panel/GraphNodeFilters.svelte';
-	import GraphOperations from './control-panel/GraphOperations.svelte';
 </script>
 
-<div class="flex flex-col gap-3">
-	<div
-		class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-400"
-		role="group"
-		aria-label="Node type visibility"
-	>
-		<GraphNodeFilters />
-		<GraphDisplayOptions />
-	</div>
+<div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+	<ControlPanelSection title="Global Settings">
+		<GraphGlobalSettings />
+	</ControlPanelSection>
 
-	<GraphOperations />
+	<ControlPanelSection title="Artists" nodeTypes={ARTIST_NODE_TYPES}>
+		<GraphNodeFilters types={ARTIST_NODE_TYPES} />
+		<GraphEdgeFilters edgeTypes={ARTIST_EDGE_TYPES} />
+		<NodeLoadActions showAllActions actionTypes={ARTIST_LOAD_ACTIONS} />
+	</ControlPanelSection>
+
+	<ControlPanelSection title="Masters/Releases" nodeTypes={MASTER_RELEASE_NODE_TYPES}>
+		<GraphNodeFilters types={MASTER_RELEASE_NODE_TYPES} />
+		<GraphEdgeFilters edgeTypes={MASTER_RELEASE_EDGE_TYPES} />
+		<NodeLoadActions showAllActions actionTypes={MASTER_RELEASE_LOAD_ACTIONS} />
+	</ControlPanelSection>
+
+	<ControlPanelSection title="Labels" nodeTypes={LABEL_NODE_TYPES}>
+		<GraphNodeFilters types={LABEL_NODE_TYPES} />
+		<GraphEdgeFilters edgeTypes={LABEL_EDGE_TYPES} />
+		<NodeLoadActions showAllActions actionTypes={LABEL_LOAD_ACTIONS} />
+	</ControlPanelSection>
 </div>

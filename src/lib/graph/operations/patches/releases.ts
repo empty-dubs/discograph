@@ -38,11 +38,14 @@ export function buildFromArtistReleases(
 			nodes.push(release);
 		}
 
+		const role = item.role?.toLowerCase();
+
 		links.push({
 			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
 			source: sourceNodeId,
 			target: targetNodeId,
-			type: item.role?.toLowerCase() === 'main' ? edgeType : `(${item.role?.toLowerCase()})` as EdgeType
+			type: edgeType,
+			label: role && role !== 'main' ? role : undefined
 		});
 	}
 

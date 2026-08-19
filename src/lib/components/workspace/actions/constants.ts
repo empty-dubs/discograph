@@ -39,6 +39,15 @@ export const ALL_LOAD_ACTIONS: LoadAction[] = [
 	'credited_artists'
 ];
 
+export const ARTIST_LOAD_ACTIONS: LoadAction[] = [
+	'artists',
+	'aliases',
+	'credited_artists',
+];
+
+export const MASTER_RELEASE_LOAD_ACTIONS: LoadAction[] = ['master_releases', 'releases', 'main_release'];
+export const LABEL_LOAD_ACTIONS: LoadAction[] = ['labels', 'companies'];
+
 export type PagedLoadButtonState = {
 	label: string;
 	loaded: boolean;

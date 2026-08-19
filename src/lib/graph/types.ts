@@ -8,7 +8,8 @@ export type EdgeType =
 	| 'credited_on'
 	| 'version_of'
 	| 'sublabel_of'
-	| 'alias_of';
+	| 'alias_of'
+	| 'parent_label';
 
 export interface GraphNode {
 	id: string;

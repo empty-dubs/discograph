@@ -44,7 +44,8 @@ export function buildCompaniesFromRelease(release: Release): GraphPatch {
 			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
 			source: sourceNodeId,
 			target: targetNodeId,
-			type: company.entity_type_name ? `(${company.entity_type_name?.toLowerCase()})` as EdgeType : edgeType
+			type: edgeType,
+			label: company.entity_type_name?.toLowerCase()
 		});
 	}
 
