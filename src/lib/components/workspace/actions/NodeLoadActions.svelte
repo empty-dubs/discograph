@@ -6,18 +6,25 @@
 
 	import { selectedNodeState, type SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	import { LOAD_ACTION_LABELS, type LoadAction, type PagedLoadButtonState } from './constants';
+	import {
+		ALL_LOAD_ACTIONS,
+		LOAD_ACTION_LABELS,
+		type LoadAction,
+		type PagedLoadButtonState
+	} from './constants';
 
 	interface Props {
 		layout?: 'menu' | 'stack';
+		showAllActions?: boolean;
 		onAction?: () => void;
 	}
 
-	let { layout = 'stack', onAction }: Props = $props();
-	
+	let { layout = 'stack', showAllActions = false, onAction }: Props = $props();
+
 	const node = $derived(selectedNodeState as SelectedNodeInterface);
 
-	const actions = $derived(node.visibleLoadActions ?? []);
+	const actions = $derived((node.visibleLoadActions ?? []) as LoadAction[]);
+	const renderedActions = $derived(showAllActions ? ALL_LOAD_ACTIONS : actions);
 
 	const releasesState = $derived.by(() => {
 		const loaded = graph.visitedNodes.releasePages.has(node.id!);
@@ -39,14 +46,6 @@
 		};
 	});
 
-	const artistsState = $derived(getLoadButtonState(graph.visitedNodes.loadedActions, node.id!, 'artists'));
-	const aliasesState = $derived(getLoadButtonState(graph.visitedNodes.loadedActions, node.id!, 'aliases'));
-	const labelsState = $derived(getLoadButtonState(graph.visitedNodes.loadedActions, node.id!, 'labels'));
-	const mainReleaseState = $derived(getLoadButtonState(graph.visitedNodes.loadedActions, node.id!, 'main_release'));
-	const companiesState = $derived(getLoadButtonState(graph.visitedNodes.loadedActions, node.id!, 'companies'));
-	const creditedArtistsState = $derived(
-		getLoadButtonState(graph.visitedNodes.loadedActions, node.id!, 'credited_artists')
-	);
 	const isLoading = $derived(node.hasLoadingChildren || discogsApi.isRateLimited);
 
 	const itemClass = $derived(
@@ -69,112 +68,70 @@
 		};
 	}
 
-	async function run(action: () => Promise<void>) {
-		await action();
+	function getActionState(action: LoadAction): PagedLoadButtonState {
+		const nodeId = node.id ?? '';
+
+		switch (action) {
+			case 'releases':
+				return releasesState;
+			case 'master_releases':
+				return masterReleasesState;
+			case 'artists':
+				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'artists');
+			case 'aliases':
+				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'aliases');
+			case 'labels':
+				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'labels');
+			case 'main_release':
+				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'main_release');
+			case 'companies':
+				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'companies');
+			case 'credited_artists':
+				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'credited_artists');
+		}
+	}
+
+	function isActionDisabled(action: LoadAction): boolean {
+		if (!node.id || !node.isDetailsFetched || node.isBlocked) return true;
+		if (showAllActions && !actions.includes(action)) return true;
+
+		const state = getActionState(action);
+
+		return isLoading || state.exhausted;
+	}
+
+	async function runAction(action: LoadAction) {
+		const state = getActionState(action);
+
+		if (action === 'releases') {
+			await runLoadAction(
+				graph,
+				node,
+				'releases',
+				state.loaded ? { page: 'next' } : undefined
+			);
+		} else if (action === 'master_releases') {
+			await runLoadAction(
+				graph,
+				node,
+				'master_releases',
+				state.loaded ? { page: 'next' } : undefined
+			);
+		} else {
+			await runLoadAction(graph, node, action);
+		}
+
 		onAction?.();
 	}
 </script>
 
-{#if actions.includes('artists')}
+{#each renderedActions as action (action)}
 	<button
 		type="button"
 		class={itemClass}
-		disabled={isLoading || artistsState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node, 'artists'))}
+		disabled={isActionDisabled(action)}
+		onclick={() => runAction(action)}
 	>
-		{artistsState.label}
+		{getActionState(action).label}
 	</button>
-{/if}
-
-{#if actions.includes('aliases')}
-	<button
-		type="button"
-		class={itemClass}
-		disabled={isLoading || aliasesState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node, 'aliases'))}
-	>
-		{aliasesState.label}
-	</button>
-{/if}
-
-{#if actions.includes('labels')}
-	<button
-		type="button"
-		class={itemClass}
-		disabled={isLoading || labelsState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node, 'labels'))}
-	>
-		{labelsState.label}
-	</button>
-{/if}
-
-{#if actions.includes('master_releases')}
-	<button
-		type="button"
-		class={itemClass}
-		disabled={isLoading || masterReleasesState.exhausted}
-		onclick={() =>
-			run(() =>
-				runLoadAction(
-					graph,
-					node,
-					'master_releases',
-					masterReleasesState.loaded ? { page: 'next' } : undefined
-				)
-			)}
-	>
-		{masterReleasesState.label}
-	</button>
-{/if}
-
-{#if actions.includes('releases')}
-	<button
-		type="button"
-		class={itemClass}
-		disabled={isLoading || releasesState.exhausted}
-		onclick={() =>
-			run(() =>
-				runLoadAction(
-					graph,
-					node,
-					'releases',
-					releasesState.loaded ? { page: 'next' } : undefined
-				)
-			)}
-	>
-		{releasesState.label}
-	</button>
-{/if}
-
-{#if actions.includes('main_release')}
-	<button
-		type="button"
-		class={itemClass}
-		disabled={isLoading || mainReleaseState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node, 'main_release'))}
-	>
-		{mainReleaseState.label}
-	</button>
-{/if}
-
-{#if actions.includes('companies')}
-	<button
-		type="button"
-		class={itemClass}
-		disabled={isLoading || companiesState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node, 'companies'))}
-	>
-		{companiesState.label}
-	</button>
-{/if}
-
-{#if actions.includes('credited_artists')}
-	<button
-		type="button"
-		class={itemClass}
-		disabled={isLoading || creditedArtistsState.exhausted}
-		onclick={() => run(() => runLoadAction(graph, node, 'credited_artists'))}
-	>
-		{creditedArtistsState.label}
-	</button>
-{/if}
+{/each}

@@ -10,6 +10,7 @@
 	type="button"
 	class="font-inherit hover:bg-panel flex cursor-pointer items-center rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
 	aria-pressed={graph.display.showNodeLabels}
+	disabled={graph.data.isEmpty}
 	onclick={() => graph.display.toggleNodeLabels()}
 >
 	{graph.display.showNodeLabels ? 'Hide labels' : 'Show labels'}
@@ -18,7 +19,7 @@
 <button
 	type="button"
 	class="border-border bg-panel hover:bg-panel-hover cursor-pointer rounded-md border px-3 py-1.5 text-sm text-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
-	disabled={node.hasLoadingChildren}
+	disabled={graph.data.isEmpty || node.hasLoadingChildren}
 	onclick={() => {
 		graph.clear();
 		discogsApi.clear();
