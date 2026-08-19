@@ -28,6 +28,26 @@ export const LOAD_ACTION_LABELS: Record<LoadAction, string> = {
 	credited_artists: 'Load credited artists'
 };
 
+export const ALL_LOAD_ACTIONS: LoadAction[] = [
+	'artists',
+	'aliases',
+	'labels',
+	'master_releases',
+	'releases',
+	'main_release',
+	'companies',
+	'credited_artists'
+];
+
+export const ARTIST_LOAD_ACTIONS: LoadAction[] = [
+	'artists',
+	'aliases',
+	'credited_artists',
+];
+
+export const MASTER_RELEASE_LOAD_ACTIONS: LoadAction[] = ['master_releases', 'releases', 'main_release'];
+export const LABEL_LOAD_ACTIONS: LoadAction[] = ['labels', 'companies'];
+
 export type PagedLoadButtonState = {
 	label: string;
 	loaded: boolean;

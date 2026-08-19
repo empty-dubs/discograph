@@ -1,17 +1,18 @@
 import { SvelteSet } from 'svelte/reactivity';
 
-import { ALL_NODE_TYPES } from '../constants';
+import { ALL_EDGE_TYPES, ALL_NODE_TYPES } from '../constants';
 
 import { filterVisibleLinks, filterVisibleNodes } from '../operations/filters';
 import { graphDataState } from './GraphDataState.svelte';
 
-import type { GraphNode, NodeType } from '../types';
+import type { EdgeType, GraphNode, NodeType } from '../types';
 
 export class GraphDisplayState {
 	selectedId = $state<string | null>(null);
 	visibleTypes = $state<SvelteSet<NodeType>>(new SvelteSet(ALL_NODE_TYPES));
 	viewResetToken = $state(0);
 	showNodeLabels = $state(true);
+	highlightedEdgeType = $state<EdgeType | null>(null);
 
 	get pinnedIds(): Set<string> {
 		const pinned = new Set<string>();
@@ -41,6 +42,18 @@ export class GraphDisplayState {
 		return counts;
 	}
 
+	get edgeTypeCounts(): Record<EdgeType, number> {
+		const counts = Object.fromEntries(ALL_EDGE_TYPES.map((t) => [t, 0])) as Record<EdgeType, number>;
+
+		for (const link of this.visibleLinkList) {
+			if (ALL_EDGE_TYPES.includes(link.type)) {
+				counts[link.type]++;
+			}
+		}
+
+		return counts;
+	}
+
 	isTypeVisible(type: NodeType): boolean {
 		return this.visibleTypes.has(type);
 	}
@@ -63,10 +76,19 @@ export class GraphDisplayState {
 		this.selectedId = id;
 	}
 
+	selectEdgeType(type: EdgeType) {
+		this.highlightedEdgeType = type;
+	}
+
+	clearEdgeHighlight() {
+		this.highlightedEdgeType = null;
+	}
+
 	clear() {
 		this.selectedId = null;
 		this.visibleTypes = new SvelteSet(ALL_NODE_TYPES);
 		this.showNodeLabels = true;
+		this.highlightedEdgeType = null;
 		this.viewResetToken++;
 	}
 }

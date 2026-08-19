@@ -4,6 +4,7 @@
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from '../accordion';
 	import NodePanelDetails from './NodePanelDetails.svelte';
+	import NodePanelExplore from './NodePanelExplore.svelte';
 
 	const node = $derived(selectedNodeState);
 
@@ -15,7 +16,7 @@
 			return openSectionId;
 		},
 		toggle(id: string) {
-			openSectionId = openSectionId === id ? 'explore' : id;
+			openSectionId = openSectionId === id ? null : id;
 		},
 		isOpen(id: string) {
 			return openSectionId === id;
@@ -31,7 +32,8 @@
 	});
 
 	$effect(() => {
-		openSectionId = node?.id ? 'explore' : null;
+		node.id;
+		openSectionId = null;
 	});
 
 	$effect(() => {
@@ -39,10 +41,14 @@
 	});
 </script>
 
-<aside class="bg-panel h-full min-h-0 overflow-y-auto rounded-lg p-4">
-	<h2 class="mb-4 font-semibold {titleTextColor}">Node details</h2>
+<aside class="bg-panel flex h-full min-h-0 flex-col rounded-lg p-4">
+	<h2 class="mb-4 shrink-0 font-semibold {titleTextColor}">Node details</h2>
 
-	{#if node.id}
-		<NodePanelDetails/>
-	{/if}
+	<div class="scrollbar-hidden min-h-0 flex-1 overflow-y-auto">
+		{#if node.id}
+			<NodePanelDetails />
+		{/if}
+	</div>
+
+	<NodePanelExplore />
 </aside>

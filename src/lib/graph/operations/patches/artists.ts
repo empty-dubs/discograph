@@ -102,7 +102,8 @@ export function buildCreditedArtistsFromRelease(release: Release): GraphPatch {
 			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
 			source: sourceNodeId,
 			target: targetNodeId,
-			type: artist.role ? `(${artist.role?.toLowerCase()})` as EdgeType : edgeType,
+			type: edgeType,
+			label: artist.role?.toLowerCase()
 		});
 	}
 
