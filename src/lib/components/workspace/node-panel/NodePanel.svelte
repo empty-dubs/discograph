@@ -44,7 +44,7 @@
 <aside class="bg-panel flex h-full min-h-0 flex-col rounded-lg p-4">
 	<h2 class="mb-4 shrink-0 font-semibold {titleTextColor}">Node details</h2>
 
-	<div class="min-h-0 flex-1 overflow-y-auto">
+	<div class="scrollbar-hidden min-h-0 flex-1 overflow-y-auto">
 		{#if node.id}
 			<NodePanelDetails />
 		{/if}
