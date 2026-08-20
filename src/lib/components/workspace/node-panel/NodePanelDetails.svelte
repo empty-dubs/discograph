@@ -45,12 +45,12 @@
 	const showCompanies = $derived(node!.type === 'release' && (node!.companies?.length ?? 0) > 0);
 	const showNotes = $derived(node!.type === 'release' && Boolean(node!.notes));
 
+	let profileText = $state('');
+	let profileLoading = $state(false);
+	let nodesWithLoadedProfile = $state<Set<string>>(new Set());
+
 	function formatMemberName(member: { name: string; active?: boolean }): string {
 		return member.active === false ? `${member.name} (inactive)` : member.name;
-	}
-
-	function formatProfileText(profile: string): string {
-		return profile ? stripDiscogsWikiMarkup(profile) : ''
 	}
 
 	function formatTrack(track: { position: string; title: string; duration?: string }): string {
@@ -66,6 +66,31 @@
 
 		return `${name} ${title}`;
 	}
+
+	$effect(() => {
+		if (nodesWithLoadedProfile.has(node!.id)) return;
+
+		const profile = node?.profile;
+
+		if (!profile || selected.isDetailsLoading) {
+			profileText = '';
+			return;
+		}
+
+		let cancelled = false;
+		profileLoading = true;
+		
+		stripDiscogsWikiMarkup(profile)
+			.then((text) => {
+				if (!cancelled) profileText = text;
+				if (!cancelled) nodesWithLoadedProfile.add(node!.id);
+			})
+			.finally(() => {
+				if (!cancelled) profileLoading = false;
+			});
+
+		return () => { cancelled = true; };
+	});
 </script>
 
 <NodePanelCommonDetails/>
@@ -79,7 +104,13 @@
 {/if}
 
 <NodePanelCollapsibleSection id="profile" show={showProfile} title="Profile">
-	<div class="text-muted whitespace-pre-wrap text-sm">{formatProfileText(node!.profile ?? '')}</div>
+	<div class="text-muted whitespace-pre-wrap text-sm" class:loading={selected.isDetailsLoading}>
+		{#if profileLoading}
+			<p class="text-muted m-0 text-sm">Loading profile…</p>
+		{:else}
+			{profileText}
+		{/if}
+	</div>
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection id="real-name" show={showRealName} title="Real name">
