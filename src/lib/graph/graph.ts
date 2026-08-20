@@ -27,15 +27,11 @@ class Graph implements GraphInterface {
 
 		if (newNodeIds.size === 0) return;
 
-		const knownChildren = new Map(this.visitedNodes.knownChildren);
-
-		const childNodeIds = new Set(knownChildren.get(parentNodeId) ?? []);
+		const childNodeIds = new Set(this.visitedNodes.knownChildren.get(parentNodeId) ?? []);
 
 		for (const id of newNodeIds) childNodeIds.add(id);
 
-		knownChildren.set(parentNodeId, childNodeIds);
-
-		this.visitedNodes.knownChildren = knownChildren;
+		this.visitedNodes.knownChildren.set(parentNodeId, childNodeIds);
 	}
 
 	clear() {

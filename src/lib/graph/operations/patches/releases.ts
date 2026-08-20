@@ -22,7 +22,7 @@ export function buildFromArtistReleases(
 	const edgeType: EdgeType = 'released';
 
 	for (const item of filtered) {
-		let targetNodeId: string | number | null = null;
+		let targetNodeId: string | null = null;
 
 		if (item.type === 'master') {
 			const master = createMasterNode(item, { year: item.year });
@@ -67,7 +67,7 @@ export function buildFromLabelReleases(
 
 	for (const item of filtered) {
 		const releaseType = labelReleaseKind(item);
-		let targetNodeId: string | number | null = null;
+		let targetNodeId: string | null = null;
 
 		if (releaseType === 'master') {
 			const master = createMasterNode(item, { year: item.year });
