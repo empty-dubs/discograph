@@ -16,12 +16,6 @@ const URL_TAG_PATTERN = /\[url=[^\]]+\]([^\[]*?)\[\/url\]/gi;
 // match patterns like [b]Bold Text[/b]
 const PAIRED_TAG_PATTERN = /\[(?:b|i|s|u)\]([\s\S]*?)\[\/(?:b|i|s|u)\]/gi;
 
-// match patterns like [g1.0]
-// const GUIDELINE_LINK_PATTERN = /\[g[\d.]+\]/gi;
-
-// match patterns like [img=https://www.discogs.com/release/1234567890]
-// const IMAGE_TAG_PATTERN = /\[img=[^\]]+\]/gi;
-
 // match patterns of extended whitespace
 const MULTIPLE_SPACE_PATTERN = /[^\S\n]{2,}/g;
 
