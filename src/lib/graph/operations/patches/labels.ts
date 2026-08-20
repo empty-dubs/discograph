@@ -10,7 +10,7 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'label';
 	const edgeType: EdgeType = 'on_label';
-	const sourceNodeId = release.id;
+	const sourceNodeId = String(release.id);
 
 	for (const label of release.labels ?? []) {
 		const targetNodeId = getNodeId(nodeType, label.id);
@@ -33,7 +33,7 @@ export function buildCompaniesFromRelease(release: Release): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'label';
 	const edgeType: EdgeType = 'company_on';
-	const sourceNodeId = release.id;
+	const sourceNodeId = String(release.id);
 
 	for (const company of release.companies ?? []) {
 		const targetNodeId = getNodeId(nodeType, company.id);
@@ -57,7 +57,7 @@ export function buildFromLabel(label: Label): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'label';
 	let edgeType: EdgeType = 'sublabel_of';
-	const sourceNodeId = label.id;
+	const sourceNodeId = String(label.id);
 
 	for (const sublabel of label.sublabels ?? []) {
 		const targetNodeId = getNodeId(nodeType, sublabel.id);

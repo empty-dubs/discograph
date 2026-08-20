@@ -9,7 +9,7 @@ export function buildFromArtist(artist: Artist): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'artist';
 	const edgeType: EdgeType = 'member_of';
-	const sourceNodeId = artist.id;
+	const sourceNodeId = String(artist.id);
 
 	for (const member of artist.members ?? []) {
 		const targetNodeId = getNodeId(nodeType, member.id);
@@ -45,7 +45,7 @@ export function buildAliasesFromArtist(artist: Artist): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'artist';
 	const edgeType: EdgeType = 'alias_of';
-	const sourceNodeId = artist.id;
+	const sourceNodeId = String(artist.id);
 
 	for (const alias of artist.aliases ?? []) {
 		const targetNodeId = getNodeId(nodeType, alias.id);
@@ -68,7 +68,7 @@ export function buildArtistsFromRelease(release: Release): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'artist';
 	const edgeType: EdgeType = 'released';
-	const sourceNodeId = release.id;
+	const sourceNodeId = String(release.id);
 
 	for (const artist of release.artists ?? []) {
 		const targetNodeId = getNodeId(nodeType, artist.id);
@@ -91,7 +91,7 @@ export function buildCreditedArtistsFromRelease(release: Release): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'artist';
 	const edgeType: EdgeType = 'credited_on';
-	const sourceNodeId = release.id;
+	const sourceNodeId = String(release.id);
 
 	for (const artist of release.credits ?? []) {
 		const targetNodeId = getNodeId(nodeType, artist.id);
@@ -115,7 +115,7 @@ export function buildFromMaster(master: Master): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: NodeType = 'artist';
 	const edgeType: EdgeType = 'released';
-	const sourceNodeId = master.id;
+	const sourceNodeId = String(master.id);
 
 	for (const artist of master.artists ?? []) {
 		const targetNodeId = getNodeId(nodeType, artist.id);
