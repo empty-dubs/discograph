@@ -27,7 +27,7 @@ function stripDiscogsDisambiguation(name: string): string {
 export function resolveArtistDisplayName(
 	node: GraphNode,
 	links: GraphLink[],
-	getNode: (id: string | number) => GraphNode | undefined
+	getNode: (id: string) => GraphNode | undefined
 ): string | null {
 	const stubArtist = (node as GraphNode & { artist?: string }).artist;
 	if (stubArtist) return stubArtist;

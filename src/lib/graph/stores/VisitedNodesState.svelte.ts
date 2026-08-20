@@ -27,7 +27,6 @@ export class VisitedNodesState {
 	}
 
 	markActionLoaded(nodeId: string, action: LoadAction) {
-		// const loadActions = new Map(this.loadedActions);
 		const actions = new Set(this.loadedActions.get(nodeId) ?? []);
 
 		actions.add(action);
