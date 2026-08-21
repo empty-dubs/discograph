@@ -91,7 +91,6 @@ export class ForceGraph {
 	
 	private zoomBehavior: ZoomBehavior<SVGSVGElement, unknown> =
 		zoom<SVGSVGElement, unknown>()
-			.scaleExtent([0.2, 4])
 			.on('zoom', event => {
 				this.gRoot?.attr('transform', event.transform);
 			});
@@ -353,7 +352,7 @@ export class ForceGraph {
 			})
 			.attr('stroke-width', d => {
 				if (!highlightedType) return 1.5;
-				return d.type === highlightedType ? 3 : 1;
+				return d.type === highlightedType ? 1.5 : 1;
 			});
 	}
 
