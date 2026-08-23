@@ -41,9 +41,14 @@ class SelectedNodeState implements SelectedNodeInterface {
 	releaseTotal = $derived.by(() => {
 		if (!this.id) return null;
 
-		const paging = graph.visitedNodes.releasePages.get(this.id);
+		const masterReleasePaging = graph.visitedNodes.masterReleasePages.get(this.id);
+		const releasePaging = graph.visitedNodes.releasePages.get(this.id);
 
-		return paging ? paging.items : null;
+		return masterReleasePaging 
+			? masterReleasePaging.items
+			: releasePaging
+				? releasePaging.items
+				: null;
 	});
 
 	private _hasRelatedArtists = $derived.by(() => {
