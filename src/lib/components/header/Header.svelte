@@ -8,7 +8,7 @@
         <h1 class="m-0 text-2xl font-bold">Discograph</h1>
         <p class="text-muted {headerTextClass}">Explore music relationships from Discogs</p>
     </div>
-    <div class="flex-1 max-w-160 min-w-70">
+    <div class="hidden md:block flex-1 max-w-160 min-w-70">
         <DiscogsSearchForm />
     </div>
 </header>
