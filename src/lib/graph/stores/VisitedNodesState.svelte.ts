@@ -3,6 +3,7 @@ import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 
 type DetailStatus = 'idle' | 'loading' | 'fetched' | 'failed';
+type ProfileStatus = 'loading' | 'fetched' | 'failed';
 
 type ReleasePaging = { page: number; pages: number; items: number };
 
@@ -13,6 +14,7 @@ export class VisitedNodesState {
 	masterReleasePages = $state<SvelteMap<string, ReleasePaging>>(new SvelteMap());
 	releasePages = $state<SvelteMap<string, ReleasePaging>>(new SvelteMap());
 	status = $state<SvelteMap<string, DetailStatus>>(new SvelteMap());
+	profileStatus = $state<SvelteMap<string, ProfileStatus>>(new SvelteMap());
 
 	hasMoreReleases(nodeId: string): boolean {
 		const paging = this.releasePages.get(nodeId);
@@ -37,6 +39,10 @@ export class VisitedNodesState {
 		this.status.set(nodeId, status);
 	}
 
+	setProfileStatus(nodeId: string, status: ProfileStatus) {
+		this.profileStatus.set(nodeId, status);
+	}
+
 	setMasterReleasePages(nodeId: string, page: number, pages: number, items: number) {
 		this.masterReleasePages.set(nodeId, { page, pages, items });
 	}
@@ -57,6 +63,7 @@ export class VisitedNodesState {
 
 		for (const id of descendants) {
 			this.status.delete(id);
+			this.profileStatus.delete(id);
 			this.withLoadingChildren.delete(id);
 		}
 	}
@@ -68,6 +75,7 @@ export class VisitedNodesState {
 		this.masterReleasePages = new SvelteMap();
 		this.releasePages = new SvelteMap();
 		this.status = new SvelteMap();
+		this.profileStatus = new SvelteMap();
 	}
 }
 

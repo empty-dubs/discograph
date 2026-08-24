@@ -47,6 +47,18 @@ export class GraphDataState {
 		this.links = nextLinks;
 	}
 
+	updateNode(nodeId: string, patch: Partial<GraphNode>) {
+		const existing = this.nodes.get(nodeId);
+
+		if (!existing) return;
+
+		const nextNodes = new Map(this.nodes);
+
+		nextNodes.set(nodeId, { ...existing, ...patch });
+
+		this.nodes = nextNodes;
+	}
+
 	removeNodes(nodeIds: Set<string>) {
 		if (nodeIds.size === 0) return;
 
