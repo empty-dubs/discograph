@@ -23,7 +23,9 @@
 	const rateLimitText = $derived.by(() => {
 		const { limit, remaining } = discogsApi.rateLimit;
 
-		if (graph.data.isEmpty || limit === null || remaining === null) return null;
+		if (limit === null || remaining === null) return null;
+
+		if (graph.data.isEmpty && discogsApi.searchResults.length === 0) return null;
 
 		return `${remaining}/${limit} API requests remaining`;
 	});
