@@ -5,6 +5,7 @@
 		getYouTubeSearchUrl,
 		resolveArtistDisplayName
 	} from '$lib/components/workspace/actions/compositions';
+	import { isDev } from '$lib/app/dev';
 	import { graph } from '$lib/graph/graph';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
@@ -28,7 +29,7 @@
 	const actions = $derived([
 		{ label: 'View on Discogs', url: websiteUrl },
 		{ label: 'Search on YouTube', url: youtubeUrl },
-		{ label: 'View Payload', url: apiUrl }
+		...(isDev && apiUrl ? [{ label: 'View Payload', url: apiUrl }] : [])
 	]);
 </script>
 

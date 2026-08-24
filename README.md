@@ -2,11 +2,13 @@
 
 An interactive graph visualization for exploring artists, labels, and releases on [Discogs](https://www.discogs.com).
 
-## Setup
+## Development
+
+Development runs a SvelteKit server with a same-origin Discogs API proxy. Credentials stay in `.env` on the server and are never exposed to the browser.
 
 1. Register an application at [Discogs Developer Settings](https://www.discogs.com/settings/developers).
 
-2. Create and configure a .env file using one of the following options
+2. Create a `.env` file using one of the following options:
 
 **Option A — Personal access token (simplest):**
 
@@ -32,6 +34,26 @@ yarn
 yarn dev
 ```
 
+In development, the node panel includes a **View Payload** link that opens raw JSON from the local proxy.
+
+## Production (GitHub Pages)
+
+The production build is a static SPA that calls `https://api.discogs.com` directly from the browser without authentication (25 requests/minute per Discogs rate limits). No `.env` file is required.
+
+Build for GitHub Pages (adjust `BASE_PATH` to match your repository name):
+
+```bash
+yarn build:pages
+```
+
+Preview the production build locally:
+
+```bash
+yarn preview
+```
+
+Deploy the contents of the `build/` directory to GitHub Pages.
+
 ## Usage
 
 - Search for an artist, label, release, or master.
@@ -44,4 +66,4 @@ yarn dev
 - [SvelteKit](https://kit.svelte.dev/) + TypeScript
 - [Tailwind CSS](https://tailwindcss.com/) for styling
 - [D3](https://d3js.org/) force-directed layout
-- Discogs API v2 (proxied server-side to protect credentials)
+- [Discogs API v2](https://www.discogs.com/developers) (proxied server-side in development; direct client calls in production)

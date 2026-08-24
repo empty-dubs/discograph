@@ -1,4 +1,7 @@
+import { dev } from '$app/environment';
+
 import { API_BASE } from './constants';
+import { acquireRateLimitSlot, getClientRateLimit } from './rate-limiter';
 import { discogsRateLimit } from './rate-limit-state.svelte';
 
 import type {
@@ -27,7 +30,15 @@ async function request<T>(
 	path: string,
 	params?: Record<string, string | number | undefined>
 ): Promise<T> {
-	const url = new URL(`${API_BASE}/${path.replace(/^\//, '')}`, window.location.origin);
+	await acquireRateLimitSlot();
+
+	discogsRateLimit.updateFromClient(getClientRateLimit());
+
+	const normalizedPath = path.replace(/^\//, '');
+
+	const url = dev
+		? new URL(`${API_BASE}/${normalizedPath}`, window.location.origin)
+		: new URL(`${API_BASE}/${normalizedPath}`);
 
 	if (params) {
 		for (const [key, value] of Object.entries(params)) {

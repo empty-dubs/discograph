@@ -1,9 +1,11 @@
+import { dev } from '$app/environment';
+
 import type { SearchType } from './types';
 
 export const DISCOGS_WEB_ORIGIN = 'https://www.discogs.com';
 export const DISCOGS_API_ORIGIN = 'https://api.discogs.com';
 
-export const API_BASE = '/api/discogs';
+export const API_BASE = dev ? '/api/discogs' : DISCOGS_API_ORIGIN;
 
 export const API_SEGMENTS: Record<SearchType, string> = {
 	artist: 'artists',
