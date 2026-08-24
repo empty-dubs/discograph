@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
+
+	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from '../accordion';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-	import { stripDiscogsWikiMarkup } from './transformations';
 
 	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
@@ -10,6 +12,8 @@
 
 	const selected = $derived(selectedNodeState);
 	const node = $derived(selected.data);
+	const accordion = getContext<NodePanelAccordion>(NODE_PANEL_ACCORDION_KEY);
+	const profileOpen = $derived(accordion.openSectionId === 'profile');
 
 	const isArtistOrLabel = $derived(node!.type === 'artist' || node!.type === 'label');
 	const isMasterOrRelease = $derived(node!.type === 'master' || node!.type === 'release');
@@ -45,10 +49,6 @@
 	const showCompanies = $derived(node!.type === 'release' && (node!.companies?.length ?? 0) > 0);
 	const showNotes = $derived(node!.type === 'release' && Boolean(node!.notes));
 
-	let profileText = $state('');
-	let profileLoading = $state(false);
-	let nodesWithLoadedProfile = $state<Set<string>>(new Set());
-
 	function formatMemberName(member: { name: string; active?: boolean }): string {
 		return member.active === false ? `${member.name} (inactive)` : member.name;
 	}
@@ -68,28 +68,9 @@
 	}
 
 	$effect(() => {
-		if (nodesWithLoadedProfile.has(node!.id)) return;
+		if (!profileOpen || !showProfile || selected.isDetailsLoading) return;
 
-		const profile = node?.profile;
-
-		if (!profile || selected.isDetailsLoading) {
-			profileText = '';
-			return;
-		}
-
-		let cancelled = false;
-		profileLoading = true;
-		
-		stripDiscogsWikiMarkup(profile)
-			.then((text) => {
-				if (!cancelled) profileText = text;
-				if (!cancelled) nodesWithLoadedProfile.add(node!.id);
-			})
-			.finally(() => {
-				if (!cancelled) profileLoading = false;
-			});
-
-		return () => { cancelled = true; };
+		selected.fetchNodeProfile();
 	});
 </script>
 
@@ -105,10 +86,12 @@
 
 <NodePanelCollapsibleSection id="profile" show={showProfile} title="Profile">
 	<div class="text-muted whitespace-pre-wrap text-sm" class:loading={selected.isDetailsLoading}>
-		{#if profileLoading}
+		{#if selected.isProfileLoading}
 			<p class="text-muted m-0 text-sm">Loading profile…</p>
+		{:else if selected.isProfileFailed}
+			<p class="text-muted m-0 text-sm">Could not load profile.</p>
 		{:else}
-			{profileText}
+			{node!.profile}
 		{/if}
 	</div>
 </NodePanelCollapsibleSection>

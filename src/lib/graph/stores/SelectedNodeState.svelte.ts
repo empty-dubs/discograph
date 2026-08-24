@@ -1,6 +1,7 @@
 import { graph } from '../graph';
 
 import { LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
+import { stripDiscogsWikiMarkup } from '$lib/components/workspace/node-panel/transformations';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 import { DETAIL_CONFIG } from '$lib/graph/node-load-config';
 import { parseNodeId } from '$lib/graph/operations/transformations';
@@ -17,12 +18,16 @@ export interface SelectedNodeInterface {
 	isDetailsLoading: boolean;
 	isDetailsFetched: boolean;
 	isDetailsFailed: boolean;
+	isProfileLoading: boolean;
+	isProfileFetched: boolean;
+	isProfileFailed: boolean;
 	hasLoadingChildren: boolean;
 	isBlocked: boolean;
 	releaseTotal: number | null;
 	visibleLoadActions: string[];
 	collapseNode: () => void;
 	fetchNodeDetails: () => Promise<void>;
+	fetchNodeProfile: () => Promise<void>;
 }
 
 class SelectedNodeState implements SelectedNodeInterface {
@@ -35,6 +40,9 @@ class SelectedNodeState implements SelectedNodeInterface {
 	isDetailsLoading = $derived(graph.visitedNodes.status.get(this.id!) === 'loading');
 	isDetailsFetched = $derived(graph.visitedNodes.status.get(this.id!) === 'fetched');
 	isDetailsFailed = $derived(graph.visitedNodes.status.get(this.id!) === 'failed');
+	isProfileLoading = $derived(graph.visitedNodes.profileStatus.get(this.id!) === 'loading');
+	isProfileFetched = $derived(graph.visitedNodes.profileStatus.get(this.id!) === 'fetched');
+	isProfileFailed = $derived(graph.visitedNodes.profileStatus.get(this.id!) === 'failed');
 	hasLoadingChildren = $derived(graph.visitedNodes.withLoadingChildren.has(this.id!));
 	isBlocked = $derived(discogsApi.isBlockedDiscogsEntity(this.data?.type!, this.data?.discogsId!));
 
@@ -134,6 +142,29 @@ class SelectedNodeState implements SelectedNodeInterface {
 		await config.merge(this.data!, graph, payload);
 
 		graph.visitedNodes.setDetailStatus(this.id!, 'fetched');
+	}
+
+	async fetchNodeProfile() {
+		const nodeId = this.id;
+		const profile = this.data?.profile;
+
+		if (!nodeId || !profile) return;
+
+		const status = graph.visitedNodes.profileStatus.get(nodeId);
+
+		if (status === 'fetched' || status === 'loading') return;
+		if (this.isDetailsLoading) return;
+
+		graph.visitedNodes.setProfileStatus(nodeId, 'loading');
+
+		try {
+			const processed = await stripDiscogsWikiMarkup(profile);
+
+			graph.data.updateNode(nodeId, { profile: processed });
+			graph.visitedNodes.setProfileStatus(nodeId, 'fetched');
+		} catch {
+			graph.visitedNodes.setProfileStatus(nodeId, 'failed');
+		}
 	}
 }
 
