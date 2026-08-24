@@ -23,33 +23,50 @@
 	const rateLimitText = $derived.by(() => {
 		const { limit, remaining } = discogsApi.rateLimit;
 
-		if (limit === null || remaining === null) return null;
+		if (graph.data.isEmpty || limit === null || remaining === null) return null;
 
 		return `${remaining}/${limit} API requests remaining`;
 	});
 
+	const showRateLimitHint = $derived(
+		discogsApi.error !== null || discogsApi.isRateLimited
+	);
+
 	const searchInfo = $derived.by(() => {
-		const lines: { text: string; tone: 'muted' | 'warning' | 'danger' }[] = [];
+		const lines: {
+			id: string;
+			text: string;
+			tone: 'muted' | 'warning' | 'danger';
+			wrap?: boolean;
+		}[] = [];
 
 		if (rateLimitText) {
 			lines.push({
+				id: 'rate-limit',
 				text: rateLimitText,
 				tone: discogsApi.isRateLimited ? 'warning' : 'muted'
 			});
 		}
 
 		if (discogsApi.error) {
-			lines.push({ text: discogsApi.error, tone: 'danger' });
+			lines.push({ id: 'error', text: discogsApi.error, tone: 'danger' });
+		}
+
+		if (showRateLimitHint) {
+			lines.push({
+				id: 'rate-limit-hint',
+				text: 'You may be making too many requests. Wait 60 seconds to resume exploration.',
+				tone: 'warning',
+				wrap: true
+			});
 		}
 
 		if (emptyMessage) {
-			lines.push({ text: emptyMessage, tone: 'muted' });
+			lines.push({ id: 'empty-message', text: emptyMessage, tone: 'muted' });
 		}
 
 		return lines;
 	});
-
-	const hasSearchInfo = $derived(searchInfo.length > 0);
 
 	const iconToneClass = $derived(
 		discogsApi.error
@@ -111,23 +128,23 @@
 				<Icon data={infoCircle} />
 			</span>
 
-			{#if hasSearchInfo}
-				<div
-					role="tooltip"
-					class="border-border bg-panel pointer-events-none absolute top-full left-0 z-[100] mt-2 min-w-max rounded-md border px-3 py-2 text-sm opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
-				>
-					{#each searchInfo as line (line.text)}
-						<p
-							class="m-0 whitespace-nowrap"
-							class:text-muted={line.tone === 'muted'}
-							class:text-warning={line.tone === 'warning'}
-							class:text-danger={line.tone === 'danger'}
-						>
-							{line.text}
-						</p>
-					{/each}
-				</div>
-			{/if}
+			<div
+				role="tooltip"
+				class="border-border bg-panel pointer-events-none absolute top-full left-0 z-[100] mt-2 min-w-max rounded-md border px-3 py-2 text-sm opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
+			>
+				{#each searchInfo as line (line.id)}
+					<p
+						class="m-0 {line.wrap ? 'max-w-xs whitespace-normal' : 'whitespace-nowrap'}"
+						class:text-muted={line.tone === 'muted'}
+						class:text-warning={line.tone === 'warning'}
+						class:text-danger={line.tone === 'danger'}
+					>
+						{line.text}
+					</p>
+				{:else}
+					<p class="text-muted m-0 whitespace-nowrap">Search for an artist, label, or release to begin.</p>
+				{/each}
+			</div>
 		</div>
 
 		<div class="relative flex min-w-0 flex-1 flex-wrap gap-2">

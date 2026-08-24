@@ -1,3 +1,7 @@
+import { dev } from '$app/environment';
+
+import { getClientRateLimit } from './rate-limiter';
+
 import type { RateLimitInfo } from './types';
 
 function parseRateLimitHeaders(headers: Headers): RateLimitInfo {
@@ -19,9 +23,21 @@ class DiscogsRateLimitState {
 		return this.rateLimit.remaining !== null && this.rateLimit.remaining <= 0;
 	}
 
+	updateFromClient(info: RateLimitInfo): void {
+		this.rateLimit = info;
+	}
+
 	updateFromHeaders(headers: Headers): void {
-		this.rateLimit = parseRateLimitHeaders(headers);
+		const fromHeaders = parseRateLimitHeaders(headers);
+
+		if (fromHeaders.limit !== null && fromHeaders.remaining !== null) {
+			this.rateLimit = fromHeaders;
+		}
 	}
 }
 
 export const discogsRateLimit = new DiscogsRateLimitState();
+
+if (!dev) {
+	discogsRateLimit.updateFromClient(getClientRateLimit());
+}
