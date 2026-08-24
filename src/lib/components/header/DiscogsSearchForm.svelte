@@ -7,6 +7,12 @@
 
 	import type { SearchResult, SearchType } from '$lib/discogs/types';
 
+	interface Props { part: 'input' | 'actions'; }
+
+	let { part }: Props = $props();
+
+	const SEARCH_FORM_ID = 'discogs-search';
+
 	const typeOptions: { value: SearchType | ''; label: string }[] = [
 		{ value: '', label: 'All types' },
 		{ value: 'artist', label: 'Artist' },
@@ -100,6 +106,8 @@
 	}
 
 	$effect(() => {
+		if (part !== 'input') return;
+
 		if (discogsApi.searchResults.length === 0) return;
 
 		const handleKeydown = (event: KeyboardEvent) => {
@@ -114,6 +122,8 @@
 	});
 
 	$effect(() => {
+		if (part !== 'input') return;
+
 		if (!discogsApi.searchQuery.trim()) {
 			discogsApi.clearSearchResults();
 			emptyMessage = null;
@@ -121,7 +131,12 @@
 	});
 </script>
 
-<form class="flex flex-wrap items-center gap-2" onsubmit={handleSearch}>
+{#if part === 'input'}
+	<form
+		id={SEARCH_FORM_ID}
+		class="hidden min-w-0 flex-1 items-center gap-2 md:flex"
+		onsubmit={handleSearch}
+	>
 		<div class="group relative z-[100] flex shrink-0 items-center">
 			<span
 				class="hover:text-gray-200 block p-1 {iconToneClass}"
@@ -149,46 +164,26 @@
 			</div>
 		</div>
 
-		<div class="relative flex min-w-0 flex-1 flex-wrap gap-2">
-			<div class="relative min-w-0 flex-1">
-				<input
-					type="search"
-					class="{fieldClass} w-full pr-9"
-					placeholder="Search Discogs…"
-					bind:value={discogsApi.searchQuery}
-					disabled={discogsApi.searching || discogsApi.isRateLimited}
-				/>
-
-				{#if discogsApi.searchQuery.length > 0}
-					<button
-						type="button"
-						class="text-muted hover:text-gray-200 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer border-none bg-transparent p-0 text-lg leading-none disabled:cursor-not-allowed disabled:opacity-50"
-						aria-label="Clear search"
-						disabled={discogsApi.searching}
-						onclick={() => discogsApi.clearSearch()}
-					>
-						×
-					</button>
-				{/if}
-			</div>
-
-			<select
-				class="{fieldClass} cursor-pointer"
-				bind:value={discogsApi.searchType}
+		<div class="relative min-w-0 flex-1">
+			<input
+				type="search"
+				class="{fieldClass} w-full pr-9"
+				placeholder="Search Discogs…"
+				bind:value={discogsApi.searchQuery}
 				disabled={discogsApi.searching || discogsApi.isRateLimited}
-			>
-				{#each typeOptions as option}
-					<option value={option.value}>{option.label}</option>
-				{/each}
-			</select>
+			/>
 
-			<button
-				type="submit"
-				class="{fieldClass} border-accent bg-accent cursor-pointer text-white"
-				disabled={discogsApi.searching || !discogsApi.searchQuery.trim() || discogsApi.isRateLimited}
-			>
-				{discogsApi.searching ? 'Searching…' : 'Search'}
-			</button>
+			{#if discogsApi.searchQuery.length > 0}
+				<button
+					type="button"
+					class="text-muted hover:text-gray-200 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer border-none bg-transparent p-0 text-lg leading-none disabled:cursor-not-allowed disabled:opacity-50"
+					aria-label="Clear search"
+					disabled={discogsApi.searching}
+					onclick={() => discogsApi.clearSearch()}
+				>
+					×
+				</button>
+			{/if}
 
 			{#if discogsApi.searchResults.length > 0}
 				<ul
@@ -213,3 +208,26 @@
 			{/if}
 		</div>
 	</form>
+{:else}
+	<div class="hidden w-full min-w-0 items-center justify-start gap-2 md:col-start-2 md:flex">
+		<select
+			form={SEARCH_FORM_ID}
+			class="{fieldClass} min-w-0 flex-1 cursor-pointer"
+			bind:value={discogsApi.searchType}
+			disabled={discogsApi.searching || discogsApi.isRateLimited}
+		>
+			{#each typeOptions as option}
+				<option value={option.value}>{option.label}</option>
+			{/each}
+		</select>
+
+		<button
+			type="submit"
+			form={SEARCH_FORM_ID}
+			class="{fieldClass} flex-1 border-accent bg-accent cursor-pointer text-white"
+			disabled={discogsApi.searching || !discogsApi.searchQuery.trim() || discogsApi.isRateLimited}
+		>
+			{discogsApi.searching ? 'Searching…' : 'Search'}
+		</button>
+	</div>
+{/if}
