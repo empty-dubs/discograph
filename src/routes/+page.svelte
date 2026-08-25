@@ -6,10 +6,10 @@
 
 <main class="flex h-screen flex-col gap-4 overflow-hidden p-4">
 	<Header />
-	<div class="hidden min-h-0 flex-1 flex-col md:flex">
+	<div class="hidden min-h-0 flex-1 flex-col sufficient:flex">
 		<Workspace />
 	</div>
-	<div class="flex min-h-0 flex-1 md:hidden">
+	<div class="flex min-h-0 flex-1 sufficient:hidden">
 		<InsufficientSpaceMessage />
 	</div>
 </main>
