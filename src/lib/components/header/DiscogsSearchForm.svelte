@@ -134,40 +134,14 @@
 {#if part === 'input'}
 	<form
 		id={SEARCH_FORM_ID}
-		class="hidden min-w-0 flex-1 items-center gap-2 md:flex"
+		class="hidden min-w-0 flex-1 md:block"
 		onsubmit={handleSearch}
 	>
-		<div class="group relative z-[100] flex shrink-0 items-center">
-			<span
-				class="hover:text-gray-200 block p-1 {iconToneClass}"
-				aria-label="API and search status"
-			>
-				<Icon data={infoCircle} />
-			</span>
-
-			<div
-				role="tooltip"
-				class="border-border bg-panel pointer-events-none absolute top-full left-0 z-[100] mt-2 min-w-max rounded-md border px-3 py-2 text-sm opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
-			>
-				{#each searchInfo as line (line.id)}
-					<p
-						class="m-0 {line.wrap ? 'max-w-xs whitespace-normal' : 'whitespace-nowrap'}"
-						class:text-muted={line.tone === 'muted'}
-						class:text-warning={line.tone === 'warning'}
-						class:text-danger={line.tone === 'danger'}
-					>
-						{line.text}
-					</p>
-				{:else}
-					<p class="text-muted m-0 whitespace-nowrap">Search for an artist, label, or release to begin.</p>
-				{/each}
-			</div>
-		</div>
-
-		<div class="relative min-w-0 flex-1">
+		<div class="relative min-w-0">
 			<input
 				type="search"
 				class="{fieldClass} discogs-search-input w-full pr-9"
+				class:pr-14={discogsApi.searchQuery.length > 0}
 				placeholder="Search Discogs…"
 				bind:value={discogsApi.searchQuery}
 				disabled={discogsApi.searching || discogsApi.isRateLimited}
@@ -176,7 +150,7 @@
 			{#if discogsApi.searchQuery.length > 0}
 				<button
 					type="button"
-					class="text-muted hover:text-gray-200 absolute top-1/2 right-2 -translate-y-1/2 cursor-pointer border-none bg-transparent p-0 text-lg leading-none disabled:cursor-not-allowed disabled:opacity-50"
+					class="text-muted hover:text-gray-200 absolute top-1/2 right-8 -translate-y-1/2 cursor-pointer border-none bg-transparent p-0 text-lg leading-none disabled:cursor-not-allowed disabled:opacity-50"
 					aria-label="Clear search"
 					disabled={discogsApi.searching}
 					onclick={() => discogsApi.clearSearch()}
@@ -184,6 +158,33 @@
 					×
 				</button>
 			{/if}
+
+			<div class="group absolute top-1/2 right-2 z-[100] -translate-y-1/2">
+				<span
+					class="hover:text-gray-200 block p-1 {iconToneClass}"
+					aria-label="API and search status"
+				>
+					<Icon data={infoCircle} />
+				</span>
+
+				<div
+					role="tooltip"
+					class="border-border bg-panel pointer-events-none absolute top-full right-0 z-[100] mt-2 min-w-max rounded-md border px-3 py-2 text-sm opacity-0 shadow-lg transition-opacity group-hover:opacity-100"
+				>
+					{#each searchInfo as line (line.id)}
+						<p
+							class="m-0 {line.wrap ? 'max-w-xs whitespace-normal' : 'whitespace-nowrap'}"
+							class:text-muted={line.tone === 'muted'}
+							class:text-warning={line.tone === 'warning'}
+							class:text-danger={line.tone === 'danger'}
+						>
+							{line.text}
+						</p>
+					{:else}
+						<p class="text-muted m-0 whitespace-nowrap">Search for an artist, label, or release to begin.</p>
+					{/each}
+				</div>
+			</div>
 
 			{#if discogsApi.searchResults.length > 0}
 				<ul
