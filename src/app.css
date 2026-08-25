@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant sufficient (@media (min-width: 768px) and (min-height: 640px));
+
 @theme {
 	--color-surface: #12121f;
 	--color-canvas: #1a1a2e;

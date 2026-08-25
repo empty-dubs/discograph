@@ -134,7 +134,7 @@
 {#if part === 'input'}
 	<form
 		id={SEARCH_FORM_ID}
-		class="hidden min-w-0 flex-1 md:block"
+		class="hidden min-w-0 flex-1 sufficient:block"
 		onsubmit={handleSearch}
 	>
 		<div class="relative min-w-0">
@@ -210,7 +210,7 @@
 		</div>
 	</form>
 {:else}
-	<div class="hidden w-full min-w-0 items-center justify-start gap-2 md:col-start-2 md:flex">
+	<div class="hidden w-full min-w-0 items-center justify-start gap-2 sufficient:col-start-2 sufficient:flex">
 		<select
 			form={SEARCH_FORM_ID}
 			class="{fieldClass} discogs-search-field text-center min-w-0 flex-1 cursor-pointer"

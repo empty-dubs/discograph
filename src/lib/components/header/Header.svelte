@@ -9,8 +9,8 @@
 	const headerTextClass = 'mt-1 mb-0 text-sm';
 </script>
 
-<header class="flex flex-wrap items-start gap-4 md:grid md:grid-cols-[minmax(0,1fr)_280px] md:items-end">
-	<div class="flex min-w-0 items-end gap-4 md:col-start-1">
+<header class="flex flex-wrap items-start gap-4 sufficient:grid sufficient:grid-cols-[minmax(0,1fr)_280px] sufficient:items-end">
+	<div class="flex min-w-0 items-end gap-4 sufficient:col-start-1">
 		<div class="shrink-0">
 			<div class="flex items-center gap-2">
 				<h1 class="m-0 text-2xl font-bold">Discograph</h1>
