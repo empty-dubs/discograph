@@ -3,6 +3,6 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-	base: '/discograph/',
+	base: 'https://empty-dubs.github.io/discograph/',
 	plugins: [tailwindcss(), sveltekit()]
 });
