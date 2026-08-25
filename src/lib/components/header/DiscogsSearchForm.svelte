@@ -22,7 +22,7 @@
 	];
 
 	const fieldClass =
-		'rounded-md border border-border bg-panel px-3 py-2 text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50';
+		'box-border h-9 rounded-md border border-border bg-panel px-3 text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50';
 
 	let emptyMessage = $state<string | null>(null);
 
@@ -167,7 +167,7 @@
 		<div class="relative min-w-0 flex-1">
 			<input
 				type="search"
-				class="{fieldClass} w-full pr-9"
+				class="{fieldClass} discogs-search-input w-full pr-9"
 				placeholder="Search Discogs…"
 				bind:value={discogsApi.searchQuery}
 				disabled={discogsApi.searching || discogsApi.isRateLimited}
@@ -212,7 +212,7 @@
 	<div class="hidden w-full min-w-0 items-center justify-start gap-2 md:col-start-2 md:flex">
 		<select
 			form={SEARCH_FORM_ID}
-			class="{fieldClass} min-w-0 flex-1 cursor-pointer"
+			class="{fieldClass} discogs-search-field text-center min-w-0 flex-1 cursor-pointer"
 			bind:value={discogsApi.searchType}
 			disabled={discogsApi.searching || discogsApi.isRateLimited}
 		>
@@ -224,10 +224,26 @@
 		<button
 			type="submit"
 			form={SEARCH_FORM_ID}
-			class="{fieldClass} flex-1 border-accent bg-accent cursor-pointer text-white"
+			class="{fieldClass} inline-flex flex-1 items-center justify-center border-accent bg-accent cursor-pointer text-white"
 			disabled={discogsApi.searching || !discogsApi.searchQuery.trim() || discogsApi.isRateLimited}
 		>
 			{discogsApi.searching ? 'Searching…' : 'Search'}
 		</button>
 	</div>
 {/if}
+
+<style>
+	.discogs-search-input::-webkit-search-cancel-button {
+		-webkit-appearance: none;
+		appearance: none;
+	}
+
+	.discogs-search-input::-ms-clear {
+		display: none;
+	}
+
+	select.discogs-search-field {
+		appearance: auto;
+		line-height: 1.25rem;
+	}
+</style>
