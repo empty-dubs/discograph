@@ -5,9 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
-		"build:pages": "BASE_PATH=/discograph vite build",
-		"preview": "vite preview",
+		"build": "BASE_PATH=/discograph vite build",
+		"preview": "BASE_PATH=/discograph vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
