@@ -1,13 +1,23 @@
 import { graph } from '../graph';
 
 import { LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
+import type { LoadAction } from '$lib/components/workspace/actions/constants';
 import { stripDiscogsWikiMarkup } from '$lib/components/workspace/node-panel/transformations';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 import { DETAIL_CONFIG } from '$lib/graph/node-load-config';
+import { getNodeId } from '$lib/graph/operations/patches/compositions';
 import { parseNodeId } from '$lib/graph/operations/transformations';
 import { collectDescendants } from '../operations/crawlers';
 
 import type { GraphNode, NodeType } from '../types';
+
+const PATCH_LOAD_ACTIONS = new Set<LoadAction>([
+	'artists',
+	'labels',
+	'aliases',
+	'companies',
+	'credited_artists'
+]);
 
 export interface SelectedNodeInterface {
 	id: string | null;
@@ -25,6 +35,7 @@ export interface SelectedNodeInterface {
 	isBlocked: boolean;
 	releaseTotal: number | null;
 	visibleLoadActions: string[];
+	hasRelatedTargets: (action: LoadAction) => boolean;
 	collapseNode: () => void;
 	fetchNodeDetails: () => Promise<void>;
 	fetchNodeProfile: () => Promise<void>;
@@ -59,39 +70,80 @@ class SelectedNodeState implements SelectedNodeInterface {
 				: null;
 	});
 
-	private _hasRelatedArtists = $derived.by(() => {
-		if (this.data?.type !== 'artist') return true;
-	
-		return (this.data?.members?.length ?? 0) > 0 || (this.data?.groups?.length ?? 0) > 0;
-	});
-
-	private _hasRelatedLabels = $derived.by(() => {
-		if (this.data?.type !== 'label') return true;
-	
-		return Boolean(this.data?.parent_label) || (this.data?.sublabels?.length ?? 0) > 0;
-	});
-	
-	private _hasRelatedAliases = $derived.by(() => {
-		if (this.data?.type !== 'artist') return true;
-	
-		return (this.data?.aliases?.length ?? 0) > 0;
-	});
-	
 	private _hasMainRelease = $derived.by(() => {
 		if (this.data?.type !== 'master') return true;
 
 		return Boolean(this.data?.main_release_info);
 	});
 
+	private getRelatedTargetNodes(action: LoadAction): string[] {
+		const node = this.data;
+
+		if (!node) return [];
+
+		switch (action) {
+			case 'artists':
+				if (node.type === 'artist') {
+					return [
+						...(node.members ?? []).map((member) => getNodeId('artist', member.id)),
+						...(node.groups ?? []).map((group) => getNodeId('artist', group.id))
+					];
+				}
+
+				if (node.type === 'release' || node.type === 'master') {
+					return (node.artists ?? []).map((artist) => getNodeId('artist', artist.id));
+				}
+
+				return [];
+
+			case 'labels':
+				if (node.type === 'label') {
+					const targets: string[] = [];
+
+					if (node.parent_label) {
+						targets.push(getNodeId('label', node.parent_label.id));
+					}
+
+					for (const sublabel of node.sublabels ?? []) {
+						targets.push(getNodeId('label', sublabel.id));
+					}
+
+					return targets;
+				}
+
+				if (node.type === 'release') {
+					return (node.labels ?? []).map((label) => getNodeId('label', label.id));
+				}
+
+				return [];
+
+			case 'aliases':
+				return (node.aliases ?? []).map((alias) => getNodeId('artist', alias.id));
+
+			case 'companies':
+				return (node.companies ?? []).map((company) => getNodeId('label', company.id));
+
+			case 'credited_artists':
+				return (node.credits ?? []).map((credit) => getNodeId('artist', credit.id));
+
+			default:
+				return [];
+		}
+	}
+
+	hasRelatedTargets(action: LoadAction): boolean {
+		if (!PATCH_LOAD_ACTIONS.has(action)) return true;
+
+		return this.getRelatedTargetNodes(action).length > 0;
+	}
+
 	visibleLoadActions = $derived.by(() => {
 		if (!this.data || this.isBlocked) return [];
 
 		return LOAD_ACTIONS[this.data.type].filter((action) => {
-			if (action === 'artists' && !this._hasRelatedArtists) return false;
-			if (action === 'labels' && !this._hasRelatedLabels) return false;
-			if (action === 'aliases' && !this._hasRelatedAliases) return false;
 			if (action === 'main_release' && !this._hasMainRelease) return false;
-	
+			if (!this.hasRelatedTargets(action)) return false;
+
 			return true;
 		});
 	});
