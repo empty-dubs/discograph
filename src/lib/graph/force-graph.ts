@@ -256,6 +256,7 @@ export class ForceGraph {
 			.on('click', (_, d) => onNodeClick(d.id))
 			.on('contextmenu', (event, d) => {
 				event.preventDefault();
+				event.stopPropagation();
 				onNodeContextMenu?.(d.id, event);
 			})
 			.on('mouseenter', (event, d) => {
