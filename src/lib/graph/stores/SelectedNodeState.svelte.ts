@@ -35,7 +35,7 @@ export interface SelectedNodeInterface {
 	isBlocked: boolean;
 	releaseTotal: number | null;
 	visibleLoadActions: string[];
-	hasRelatedTargets: (action: LoadAction) => boolean;
+	hasRelatedNeighbors: (action: LoadAction) => boolean;
 	collapseNode: () => void;
 	fetchNodeDetails: () => Promise<void>;
 	fetchNodeProfile: () => Promise<void>;
@@ -76,7 +76,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 		return Boolean(this.data?.main_release_info);
 	});
 
-	private getRelatedTargetNodes(action: LoadAction): string[] {
+	private targetNeighbors(action: LoadAction): string[] {
 		const node = this.data;
 
 		if (!node) return [];
@@ -131,10 +131,10 @@ class SelectedNodeState implements SelectedNodeInterface {
 		}
 	}
 
-	hasRelatedTargets(action: LoadAction): boolean {
+	hasRelatedNeighbors(action: LoadAction): boolean {
 		if (!PATCH_LOAD_ACTIONS.has(action)) return true;
 
-		return this.getRelatedTargetNodes(action).length > 0;
+		return this.targetNeighbors(action).length > 0;
 	}
 
 	visibleLoadActions = $derived.by(() => {
@@ -142,7 +142,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 
 		return LOAD_ACTIONS[this.data.type].filter((action) => {
 			if (action === 'main_release' && !this._hasMainRelease) return false;
-			if (!this.hasRelatedTargets(action)) return false;
+			if (!this.hasRelatedNeighbors(action)) return false;
 
 			return true;
 		});
