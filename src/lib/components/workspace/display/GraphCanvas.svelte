@@ -11,6 +11,16 @@
 	let contextMenu = $state<{ nodeId: string; x: number; y: number } | null>(null);
 	let forceGraph: ForceGraph | null = null;
 
+	const handleRightClick = (event: MouseEvent) => {
+		event.preventDefault();
+
+		const target = event.target as Element;
+
+		if (!target.closest('g.node')) {
+			contextMenu = null;
+		}
+	};
+
 	onMount(() => {
 		forceGraph = new ForceGraph(container!, {
 			onNodeClick: (id) => {
@@ -78,6 +88,7 @@
 		bind:this={container}
 		role="img"
 		aria-label="Discogs relationship graph"
+		oncontextmenu={handleRightClick}
 	></div>
 
 	{#if graph.data.isEmpty}
