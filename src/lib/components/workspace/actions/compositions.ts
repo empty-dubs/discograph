@@ -41,7 +41,7 @@ export function resolveArtistDisplayName(
 	return null;
 }
 
-export function getYouTubeSearchUrl(node: GraphNode, artistDisplayName?: string | null): string | null {
+export function getYouTubeSearchUrl(node: GraphNode): string | null {
 	const parts: string[] = [stripDiscogsDisambiguation(node.displayName)];
 
 	if (node.type === 'artist') {

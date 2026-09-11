@@ -14,12 +14,7 @@
 
 	const websiteUrl = $derived(node ? getDiscogsWebsiteUrl(node) : null);
 	const apiUrl = $derived(node ? getDiscogsProxyUrl(node) : null);
-	const artistDisplayName = $derived(
-		node && (node.type === 'release' || node.type === 'master')
-			? resolveArtistDisplayName(node, graph.data.linkList, (id) => graph.data.nodes.get(id))
-			: null
-	);
-	const youtubeUrl = $derived(node ? getYouTubeSearchUrl(node, artistDisplayName) : null);
+	const youtubeUrl = $derived(node ? getYouTubeSearchUrl(node) : null);
 
 	const linkClass =
 		'border-border bg-panel-hover text-center rounded-md border px-3 py-2 text-sm text-gray-300 no-underline';
