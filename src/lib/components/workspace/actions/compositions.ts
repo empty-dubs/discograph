@@ -1,4 +1,4 @@
-import { API_BASE, API_SEGMENTS, DISCOGS_WEB_ORIGIN, WEB_SEGMENTS } from '$lib/discogs/constants';
+import { API_BASE, API_SEGMENTS, BLOCKED_DISCOGS_IDS, DISCOGS_WEB_ORIGIN, WEB_SEGMENTS } from '$lib/discogs/constants';
 
 import type { GraphLink, GraphNode } from '$lib/graph/types';
 
@@ -49,8 +49,10 @@ export function getYouTubeSearchUrl(node: GraphNode, artistDisplayName?: string 
 	} else if (node.type === 'label') {
 		parts.push('record label');
 	} else if (node.type === 'release' || node.type === 'master') {
-		if (artistDisplayName) parts.push(stripDiscogsDisambiguation(artistDisplayName));
+		const artist = node.artists?.[0];
 		const year = node.meta?.year;
+
+		if (artist?.name && artist.id && !BLOCKED_DISCOGS_IDS['artist']?.has(artist.id)) parts.push(stripDiscogsDisambiguation(artist.name));
 		if (year != null && year !== '') parts.push(String(year));
 	}
 
