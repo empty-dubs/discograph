@@ -17,7 +17,8 @@ const PATCH_LOAD_ACTIONS = new Set<LoadAction>([
 	'aliases',
 	'companies',
 	'credited_artists',
-	'main_release'
+	'main_release',
+	'linked_master'
 ]);
 
 export type RelatedNeighbors = {
@@ -101,11 +102,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 				}
 
 				if (node.type === 'master') {
-					const sourceNodeId =  node.main_release
-					? `${node.id}-${getNodeId('release', node.main_release)}`
-					: node.id;
 					const nodes = (node.artists ?? []).map((artist) => getNodeId('artist', artist.id));
-					const edges = nodes.map((id) => getLinkId(id, 'released', sourceNodeId));
+					const edges = nodes.map((id) => getLinkId(id, 'released', node.id));
 
 					return { nodes, edges };
 				}
@@ -174,11 +172,24 @@ class SelectedNodeState implements SelectedNodeInterface {
 					return { nodes: [], edges: [] };
 				}
 
-				const releaseId = getNodeId('release', node.main_release_info.id);
+				const releaseNodeId = getNodeId('release', node.main_release_info.id);
 
 				return {
-					nodes: [releaseId],
-					edges: [getLinkId(node.id, 'version_of', releaseId)]
+					nodes: [releaseNodeId],
+					edges: [getLinkId(releaseNodeId, 'version_of', node.id)]
+				};
+			}
+
+			case 'linked_master': {
+				if (node.type !== 'release' || !node.linked_master) {
+					return { nodes: [], edges: [] };
+				}
+
+				const masterNodeId = getNodeId('master', node.linked_master.id);
+
+				return {
+					nodes: [masterNodeId],
+					edges: [getLinkId(node.id, 'version_of', masterNodeId)]
 				};
 			}
 

@@ -50,7 +50,8 @@ import {
 	buildFromArtistReleases,
 	buildFromLabelReleases,
 	buildFromMasterVersions,
-	buildMainReleaseFromMaster
+	buildMainReleaseFromMaster,
+	buildMasterFromRelease
 } from '$lib/graph/operations/patches/releases';
 
 import type { GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
@@ -261,6 +262,24 @@ export const LOAD_ACTION_CONFIG: Partial<
 
 				graph.applyPatchFromExpansion(node.id, buildMainReleaseFromMaster(release, node));
 				graph.visitedNodes.markActionLoaded(node.id, 'main_release');
+			}
+		}
+	},
+	linked_master: {
+		release: {
+			kind: 'custom',
+			run: async ({ graph, node }) => {
+				const linkedMasterId = graph.data.nodes.get(node.id)?.linked_master?.id;
+
+				if (!linkedMasterId) {
+					discogsApi.setError('This release has no linked master');
+					return;
+				}
+
+				const master = await getMaster(linkedMasterId);
+
+				graph.applyPatchFromExpansion(node.id, buildMasterFromRelease(master, node));
+				graph.visitedNodes.markActionLoaded(node.id, 'linked_master');
 			}
 		}
 	}

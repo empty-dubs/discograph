@@ -85,6 +85,8 @@
 				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'labels');
 			case 'main_release':
 				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'main_release');
+			case 'linked_master':
+				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'linked_master');
 			case 'companies':
 				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'companies');
 			case 'credited_artists':
