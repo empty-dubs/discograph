@@ -12,7 +12,6 @@ export const ALL_EDGE_TYPES: EdgeType[] = [
 	'released',
 	'version_of',
 	'credited_on',
-	'parent_label',
 	'sublabel_of',
 	'on_label',
 	'company_on',
@@ -21,7 +20,6 @@ export const ALL_EDGE_TYPES: EdgeType[] = [
 export const ARTIST_EDGE_TYPES: EdgeType[] = ['member_of', 'alias_of', 'credited_on'];
 export const MASTER_RELEASE_EDGE_TYPES: EdgeType[] = ['released', 'version_of'];
 export const LABEL_EDGE_TYPES: EdgeType[] = [
-	'parent_label',
 	'sublabel_of',
 	'on_label',
 	'company_on',
@@ -54,7 +52,6 @@ export const EDGE_TYPE_LABELS: Record<EdgeType, string> = {
 	released: 'Released',
 	version_of: 'Version of',
 	credited_on: 'Credited on',
-	parent_label: 'Parent label',
 	sublabel_of: 'Sublabel of',
 	on_label: 'On label',
 	company_on: 'Company on',
@@ -66,7 +63,6 @@ export const EDGE_COLORS: Record<EdgeType, string> = {
 	released: '#f59e0b',
 	version_of: '#c084fc',
 	credited_on: '#6eb5ff',
-	parent_label: '#34d399',
 	sublabel_of: '#34d399',
 	on_label: '#34d399',
 	company_on: '#34d399',

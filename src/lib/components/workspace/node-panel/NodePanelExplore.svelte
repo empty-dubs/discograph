@@ -3,10 +3,8 @@
 		getDiscogsProxyUrl,
 		getDiscogsWebsiteUrl,
 		getYouTubeSearchUrl,
-		resolveArtistDisplayName
 	} from '$lib/components/workspace/actions/compositions';
 	import { isDev } from '$lib/app/dev';
-	import { graph } from '$lib/graph/graph';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	const selectedId = $derived(selectedNodeState.id);

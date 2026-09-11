@@ -5,7 +5,7 @@ import type { LoadAction } from '$lib/components/workspace/actions/constants';
 import { stripDiscogsWikiMarkup } from '$lib/components/workspace/node-panel/transformations';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 import { DETAIL_CONFIG } from '$lib/graph/node-load-config';
-import { getNodeId } from '$lib/graph/operations/patches/compositions';
+import { getLinkId, getNodeId } from '$lib/graph/operations/patches/compositions';
 import { parseNodeId } from '$lib/graph/operations/transformations';
 import { collectDescendants } from '../operations/crawlers';
 
@@ -16,8 +16,14 @@ const PATCH_LOAD_ACTIONS = new Set<LoadAction>([
 	'labels',
 	'aliases',
 	'companies',
-	'credited_artists'
+	'credited_artists',
+	'main_release'
 ]);
+
+export type RelatedNeighbors = {
+	nodes: string[];
+	edges: string[];
+};
 
 export interface SelectedNodeInterface {
 	id: string | null;
@@ -35,7 +41,7 @@ export interface SelectedNodeInterface {
 	isBlocked: boolean;
 	releaseTotal: number | null;
 	visibleLoadActions: string[];
-	hasRelatedNeighbors: (action: LoadAction) => boolean;
+	hasFullyLinkedNeighbors: (action: LoadAction) => boolean;
 	collapseNode: () => void;
 	fetchNodeDetails: () => Promise<void>;
 	fetchNodeProfile: () => Promise<void>;
@@ -70,82 +76,129 @@ class SelectedNodeState implements SelectedNodeInterface {
 				: null;
 	});
 
-	private _hasMainRelease = $derived.by(() => {
-		if (this.data?.type !== 'master') return true;
-
-		return Boolean(this.data?.main_release_info);
-	});
-
-	private targetNeighbors(action: LoadAction): string[] {
+	private relatedNeighbors(action: LoadAction): RelatedNeighbors {
 		const node = this.data;
 
-		if (!node) return [];
+		if (!node) return { nodes: [], edges: [] };
 
 		switch (action) {
 			case 'artists':
 				if (node.type === 'artist') {
-					return [
+					const nodes = [
 						...(node.members ?? []).map((member) => getNodeId('artist', member.id)),
 						...(node.groups ?? []).map((group) => getNodeId('artist', group.id))
 					];
+					const edges = [
+						...(node.members ?? []).map((member) =>
+							getLinkId(getNodeId(node.type, member.id), 'member_of', node.id)
+						),
+						...(node.groups ?? []).map((group) =>
+							getLinkId(node.id, 'member_of', getNodeId(node.type, group.id))
+						)
+					];
+
+					return { nodes, edges };
 				}
 
-				if (node.type === 'release' || node.type === 'master') {
-					return (node.artists ?? []).map((artist) => getNodeId('artist', artist.id));
-				}
+				if (node.type === 'master') {
+					const sourceNodeId =  node.main_release
+					? `${node.id}-${getNodeId('release', node.main_release)}`
+					: node.id;
+					const nodes = (node.artists ?? []).map((artist) => getNodeId('artist', artist.id));
+					const edges = nodes.map((id) => getLinkId(id, 'released', sourceNodeId));
 
-				return [];
-
-			case 'labels':
-				if (node.type === 'label') {
-					const targets: string[] = [];
-
-					if (node.parent_label) {
-						targets.push(getNodeId('label', node.parent_label.id));
-					}
-
-					for (const sublabel of node.sublabels ?? []) {
-						targets.push(getNodeId('label', sublabel.id));
-					}
-
-					return targets;
+					return { nodes, edges };
 				}
 
 				if (node.type === 'release') {
-					return (node.labels ?? []).map((label) => getNodeId('label', label.id));
+					const nodes = (node.artists ?? []).map((artist) => getNodeId('artist', artist.id));
+					const edges = nodes.map((id) => getLinkId(id, 'released', node.id));
+
+					return { nodes, edges };
 				}
 
-				return [];
+				return { nodes: [], edges: [] };
 
-			case 'aliases':
-				return (node.aliases ?? []).map((alias) => getNodeId('artist', alias.id));
+			case 'labels':
+				if (node.type === 'label') {
+					const nodes: string[] = [];
+					const edges: string[] = [];
 
-			case 'companies':
-				return (node.companies ?? []).map((company) => getNodeId('label', company.id));
+					for (const sublabel of node.sublabels ?? []) {
+						const id = getNodeId(node.type, sublabel.id);
+						nodes.push(id);
+						edges.push(getLinkId(id, 'sublabel_of', node.id));
+					}
 
-			case 'credited_artists':
-				return (node.credits ?? []).map((credit) => getNodeId('artist', credit.id));
+					if (node.parent_label) {
+						const id = getNodeId(node.type, node.parent_label.id);
+						nodes.push(id);
+						edges.push(getLinkId(node.id, 'sublabel_of', id));
+					}
+
+					return { nodes, edges };
+				}
+
+				if (node.type === 'release') {
+					const nodes = (node.labels ?? []).map((label) => getNodeId('label', label.id));
+					const edges = nodes.map((id) => getLinkId(node.id, 'on_label', id));
+
+					return { nodes, edges };
+				}
+
+				return { nodes: [], edges: [] };
+
+			case 'aliases': {
+				const nodes = (node.aliases ?? []).map((alias) => getNodeId(node.type, alias.id));
+				const edges = nodes.map((id) => getLinkId(id, 'alias_of', node.id));
+
+				return { nodes, edges };
+			}
+
+			case 'companies': {
+				const nodes = (node.companies ?? []).map((company) => getNodeId('label', company.id));
+				const edges = nodes.map((id) => getLinkId(id, 'company_on', node.id));
+
+				return { nodes, edges };
+			}
+
+			case 'credited_artists': {
+				const nodes = (node.credits ?? []).map((credit) => getNodeId('artist', credit.id));
+				const edges = nodes.map((id) => getLinkId(id, 'credited_on', node.id));
+
+				return { nodes, edges };
+			}
+
+			case 'main_release': {
+				if (node.type !== 'master' || !node.main_release_info) {
+					return { nodes: [], edges: [] };
+				}
+
+				const releaseId = getNodeId('release', node.main_release_info.id);
+
+				return {
+					nodes: [releaseId],
+					edges: [getLinkId(node.id, 'version_of', releaseId)]
+				};
+			}
 
 			default:
-				return [];
+				return { nodes: [], edges: [] };
 		}
 	}
 
-	hasRelatedNeighbors(action: LoadAction): boolean {
-		if (!PATCH_LOAD_ACTIONS.has(action)) return true;
+	hasFullyLinkedNeighbors(action: LoadAction): boolean {
+		if (!PATCH_LOAD_ACTIONS.has(action)) return false;
 
-		return this.targetNeighbors(action).length > 0;
+		const { edges } = this.relatedNeighbors(action);
+
+		return edges.every((id) => graph.data.links.has(id));
 	}
 
 	visibleLoadActions = $derived.by(() => {
 		if (!this.data || this.isBlocked) return [];
 
-		return LOAD_ACTIONS[this.data.type].filter((action) => {
-			if (action === 'main_release' && !this._hasMainRelease) return false;
-			if (!this.hasRelatedNeighbors(action)) return false;
-
-			return true;
-		});
+		return LOAD_ACTIONS[this.data.type];
 	});
 
 	collapseNode() {
