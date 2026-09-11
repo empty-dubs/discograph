@@ -1,5 +1,6 @@
-import { getLinkId, getNodeId } from './compositions';
+import { getNodeId } from './compositions';
 import { createMasterNode, createReleaseNode } from './nodes';
+import { createEdge } from './edges';
 
 import type { ArtistRelease, LabelRelease, MasterVersion, Release } from '$lib/discogs/types';
 import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
@@ -40,13 +41,7 @@ export function buildFromArtistReleases(
 
 		const role = item.role?.toLowerCase();
 
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType,
-			label: role && role !== 'main' ? role : undefined
-		});
+		links.push(createEdge(sourceNodeId, targetNodeId, edgeType, role && role !== 'main' ? role : undefined));
 	}
 
 	return { nodes, links };
@@ -83,12 +78,7 @@ export function buildFromLabelReleases(
 			targetNodeId = release.id;
 		}
 
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType
-		});
+		links.push(createEdge(targetNodeId, sourceNodeId, edgeType));
 	}
 
 	return { nodes, links };
@@ -104,12 +94,7 @@ export function buildFromMasterVersions(versions: MasterVersion[], master: Graph
 		const targetNodeId = getNodeId('release', version.id);
 
 		nodes.push(createReleaseNode(version, { year: version.released }));
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType
-		});
+		links.push(createEdge(targetNodeId, sourceNodeId, edgeType));
 	}
 
 	return { nodes, links };
@@ -122,13 +107,6 @@ export function buildMainReleaseFromMaster(release: Release, master: GraphNode):
 
 	return {
 		nodes: [createReleaseNode(release, { year: release.year ?? release.released })],
-		links: [
-			{
-				id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-				source: sourceNodeId,
-				target: targetNodeId,
-				type: edgeType
-			}
-		]
+		links: [createEdge(sourceNodeId, targetNodeId, edgeType)]
 	};
 }

@@ -1,5 +1,6 @@
-import { getLinkId, getNodeId } from './compositions';
+import {getNodeId } from './compositions';
 import { createLabelNode } from './nodes';
+import { createEdge } from './edges';
 
 import type { Label, Release } from '$lib/discogs/types';
 
@@ -16,13 +17,7 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 		const targetNodeId = getNodeId(nodeType, label.id);
 
 		nodes.push(createLabelNode(label));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType
-		});
+		links.push(createEdge(sourceNodeId, targetNodeId, edgeType));
 	}
 
 	return { nodes, links };
@@ -39,14 +34,7 @@ export function buildCompaniesFromRelease(release: Release): GraphPatch {
 		const targetNodeId = getNodeId(nodeType, company.id);
 
 		nodes.push(createLabelNode(company));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType,
-			label: company.entity_type_name?.toLowerCase()
-		});
+		links.push(createEdge(targetNodeId, sourceNodeId, edgeType, company.entity_type_name?.toLowerCase()));
 	}
 
 	return { nodes, links };
@@ -63,27 +51,14 @@ export function buildFromLabel(label: Label): GraphPatch {
 		const targetNodeId = getNodeId(nodeType, sublabel.id);
 
 		nodes.push(createLabelNode(sublabel));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType
-		});
+		links.push(createEdge(targetNodeId, sourceNodeId, edgeType));
 	}
 
 	if (label.parent_label) {
-		edgeType = 'parent_label' as EdgeType;
 		const targetNodeId = getNodeId(nodeType, label.parent_label.id);
 
 		nodes.push(createLabelNode(label.parent_label));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType
-		});
+		links.push(createEdge(sourceNodeId, targetNodeId, edgeType));
 	}
 
 	return { nodes, links };

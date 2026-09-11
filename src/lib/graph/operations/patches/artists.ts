@@ -1,5 +1,6 @@
-import { getNodeId, getLinkId } from './compositions';
+import { getNodeId } from './compositions';
 import { createArtistNode } from './nodes';
+import { createEdge } from './edges';
 
 import type { Artist, Master, Release } from '$lib/discogs/types';
 import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
@@ -15,26 +16,14 @@ export function buildFromArtist(artist: Artist): GraphPatch {
 		const targetNodeId = getNodeId(nodeType, member.id);
 
 		nodes.push(createArtistNode(member));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType
-		});
+		links.push(createEdge(targetNodeId, sourceNodeId, edgeType));
 	}
 
 	for (const group of artist.groups ?? []) {
 		const targetNodeId = getNodeId(nodeType, group.id);
 
 		nodes.push(createArtistNode(group));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType,
-		});
+		links.push(createEdge(sourceNodeId, targetNodeId, edgeType));
 	}
 
 	return { nodes, links };
@@ -51,13 +40,7 @@ export function buildAliasesFromArtist(artist: Artist): GraphPatch {
 		const targetNodeId = getNodeId(nodeType, alias.id);
 
 		nodes.push(createArtistNode(alias));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType
-		});
+		links.push(createEdge(targetNodeId, sourceNodeId, edgeType));
 	}
 
 	return { nodes, links };
@@ -74,13 +57,7 @@ export function buildArtistsFromRelease(release: Release): GraphPatch {
 		const targetNodeId = getNodeId(nodeType, artist.id);
 
 		nodes.push(createArtistNode(artist));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType
-		});
+		links.push(createEdge(targetNodeId, sourceNodeId, edgeType));
 	}
 
 	return { nodes, links };
@@ -97,14 +74,7 @@ export function buildCreditedArtistsFromRelease(release: Release): GraphPatch {
 		const targetNodeId = getNodeId(nodeType, artist.id);
 
 		nodes.push(createArtistNode(artist));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType,
-			label: artist.role?.toLowerCase()
-		});
+		links.push(createEdge(targetNodeId, sourceNodeId, edgeType, artist.role?.toLowerCase()));
 	}
 
 	return { nodes, links };
@@ -121,13 +91,7 @@ export function buildFromMaster(master: Master): GraphPatch {
 		const targetNodeId = getNodeId(nodeType, artist.id);
 
 		nodes.push(createArtistNode(artist));
-
-		links.push({
-			id: getLinkId(sourceNodeId, edgeType, targetNodeId),
-			source: sourceNodeId,
-			target: targetNodeId,
-			type: edgeType
-		});
+		links.push(createEdge(targetNodeId, sourceNodeId, edgeType));
 	}
 
 	return { nodes, links };

@@ -98,7 +98,7 @@
 
 		const state = getActionState(action);
 
-		return isLoading || state.exhausted || !node.hasRelatedNeighbors(action);
+		return isLoading || state.exhausted || node.hasFullyLinkedNeighbors(action);
 	}
 
 	async function runAction(action: LoadAction) {
