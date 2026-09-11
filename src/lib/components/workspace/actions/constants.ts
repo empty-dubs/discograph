@@ -6,6 +6,7 @@ export type LoadAction =
 	| 'releases'
 	| 'master_releases'
 	| 'main_release'
+	| 'linked_master'
 	| 'companies'
 	| 'credited_artists'
 	| 'aliases';
@@ -13,7 +14,7 @@ export type LoadAction =
 export const LOAD_ACTIONS: Record<NodeType, LoadAction[]> = {
 	artist: ['artists', 'aliases', 'releases', 'master_releases'],
 	label: ['labels', 'releases'],
-	release: ['artists', 'labels', 'companies', 'credited_artists'],
+	release: ['artists', 'labels', 'companies', 'credited_artists', 'linked_master'],
 	master: ['artists', 'releases', 'main_release']
 };
 
@@ -24,6 +25,7 @@ export const LOAD_ACTION_LABELS: Record<LoadAction, string> = {
 	releases: 'Load releases',
 	master_releases: 'Load master releases',
 	main_release: 'Load main release',
+	linked_master: 'Load linked master',
 	companies: 'Load related companies',
 	credited_artists: 'Load credited artists'
 };
@@ -35,6 +37,7 @@ export const ALL_LOAD_ACTIONS: LoadAction[] = [
 	'master_releases',
 	'releases',
 	'main_release',
+	'linked_master',
 	'companies',
 	'credited_artists'
 ];
@@ -45,7 +48,12 @@ export const ARTIST_LOAD_ACTIONS: LoadAction[] = [
 	'credited_artists',
 ];
 
-export const MASTER_RELEASE_LOAD_ACTIONS: LoadAction[] = ['master_releases', 'releases', 'main_release'];
+export const MASTER_RELEASE_LOAD_ACTIONS: LoadAction[] = [
+	'master_releases',
+	'releases',
+	'main_release',
+	'linked_master'
+];
 export const LABEL_LOAD_ACTIONS: LoadAction[] = ['labels', 'companies'];
 
 export type PagedLoadButtonState = {

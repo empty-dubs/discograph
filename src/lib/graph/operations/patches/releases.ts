@@ -2,8 +2,8 @@ import { getNodeId } from './compositions';
 import { createMasterNode, createReleaseNode } from './nodes';
 import { createEdge } from './edges';
 
-import type { ArtistRelease, LabelRelease, MasterVersion, Release } from '$lib/discogs/types';
-import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
+import type { ArtistRelease, LabelRelease, Master, MasterVersion, Release } from '$lib/discogs/types';
+import type { EdgeType, GraphLink, GraphNode, GraphPatch } from '$lib/graph/types';
 
 function labelReleaseKind(item: LabelRelease): 'master' | 'release' {
 	if (item.type) return item.type;
@@ -88,6 +88,7 @@ export function buildFromMasterVersions(versions: MasterVersion[], master: Graph
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const edgeType: EdgeType = 'version_of';
+
 	const sourceNodeId = master.id;
 
 	for (const version of versions) {
@@ -107,6 +108,19 @@ export function buildMainReleaseFromMaster(release: Release, master: GraphNode):
 
 	return {
 		nodes: [createReleaseNode(release, { year: release.year ?? release.released })],
+		links: [createEdge(targetNodeId, sourceNodeId, edgeType)]
+	};
+}
+
+export function buildMasterFromRelease(master: Master, release: GraphNode): GraphPatch {
+	const sourceNodeId = release.id;
+	const masterNode = createMasterNode(master, { year: master.year });
+	const edgeType: EdgeType = 'version_of';
+
+	const targetNodeId = masterNode.id;
+
+	return {
+		nodes: [masterNode],
 		links: [createEdge(sourceNodeId, targetNodeId, edgeType)]
 	};
 }
