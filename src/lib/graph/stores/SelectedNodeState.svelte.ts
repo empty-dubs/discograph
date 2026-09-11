@@ -172,12 +172,11 @@ class SelectedNodeState implements SelectedNodeInterface {
 					return { nodes: [], edges: [] };
 				}
 
-				const sourceNodeId = node.id;
-				const targetNodeId = getNodeId('release', node.main_release_info.id);
+				const releaseNodeId = getNodeId('release', node.main_release_info.id);
 
 				return {
-					nodes: [targetNodeId],
-					edges: [getLinkId(targetNodeId, 'version_of', sourceNodeId)]
+					nodes: [releaseNodeId],
+					edges: [getLinkId(releaseNodeId, 'version_of', node.id)]
 				};
 			}
 
@@ -186,12 +185,11 @@ class SelectedNodeState implements SelectedNodeInterface {
 					return { nodes: [], edges: [] };
 				}
 
-				const sourceNodeId = node.id;
-				const targetNodeId = getNodeId('master', node.linked_master.id);
+				const masterNodeId = getNodeId('master', node.linked_master.id);
 
 				return {
-					nodes: [targetNodeId],
-					edges: [getLinkId(sourceNodeId, 'version_of', targetNodeId)]
+					nodes: [masterNodeId],
+					edges: [getLinkId(node.id, 'version_of', masterNodeId)]
 				};
 			}
 
