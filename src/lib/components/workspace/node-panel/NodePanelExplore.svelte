@@ -12,7 +12,6 @@
 
 	const websiteUrl = $derived(node ? getDiscogsWebsiteUrl(node) : null);
 	const apiUrl = $derived(node ? getDiscogsProxyUrl(node) : null);
-
 	const youtubeUrl = $derived(node ? getYouTubeSearchUrl(node) : null);
 
 	const linkClass =
