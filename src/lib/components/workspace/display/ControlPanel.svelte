@@ -1,47 +1,82 @@
 <script lang="ts">
-	import {
-		ARTIST_EDGE_TYPES,
-		ARTIST_NODE_TYPES,
-		LABEL_EDGE_TYPES,
-		LABEL_NODE_TYPES,
-		MASTER_RELEASE_EDGE_TYPES,
-		MASTER_RELEASE_NODE_TYPES
-	} from '$lib/graph/constants';
+	import ControlPanelCrawlTab from './control-panel/ControlPanelCrawl.svelte';
+	import ControlPanelSettings from './control-panel/ControlPanelSettings.svelte';
+	import ControlPanelExplore from './control-panel/ControlPanelExplore.svelte';
 
-	import {
-		ARTIST_LOAD_ACTIONS,
-		LABEL_LOAD_ACTIONS,
-		MASTER_RELEASE_LOAD_ACTIONS
-	} from '$lib/components/workspace/actions/constants';
+	type TabId = 'explore' | 'crawl' | 'settings';
 
-	import NodeLoadActions from '$lib/components/workspace/actions/NodeLoadActions.svelte';
+	let activeTab = $state<TabId>('explore');
 
-	import ControlPanelSection from './control-panel/ControlPanelSection.svelte';
-	import GraphEdgeFilters from './control-panel/GraphEdgeFilters.svelte';
-	import GraphGlobalSettings from './control-panel/GraphGlobalSettings.svelte';
-	import GraphNodeFilters from './control-panel/GraphNodeFilters.svelte';
+	const tabClass =
+		'cursor-pointer border-none bg-transparent py-2 pl-0 pr-3 text-left text-sm font-medium transition-colors';
+
+	function tabButtonClass(tab: TabId): string {
+		return activeTab === tab
+			? `${tabClass} border-accent text-gray-200 border-b-2`
+			: `${tabClass} text-muted hover:text-gray-200 border-b-2 border-transparent`;
+	}
 </script>
 
-<div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-	<ControlPanelSection title="Global Settings">
-		<GraphGlobalSettings />
-	</ControlPanelSection>
+<div class="flex flex-col gap-4">
+	<div role="tablist" aria-label="Control panel sections" class="flex gap-1 border-b border-border">
+		<button
+			type="button"
+			role="tab"
+			id="control-panel-tab-explore"
+			class={tabButtonClass('explore')}
+			aria-selected={activeTab === 'explore'}
+			aria-controls="control-panel-panel-explore"
+			onclick={() => (activeTab = 'explore')}
+		>
+			Explore
+		</button>
+		<button
+			type="button"
+			role="tab"
+			id="control-panel-tab-crawl"
+			class={tabButtonClass('crawl')}
+			aria-selected={activeTab === 'crawl'}
+			aria-controls="control-panel-panel-crawl"
+			onclick={() => (activeTab = 'crawl')}
+		>
+			Crawl
+		</button>
+		<button
+			type="button"
+			role="tab"
+			id="control-panel-tab-settings"
+			class={tabButtonClass('settings')}
+			aria-selected={activeTab === 'settings'}
+			aria-controls="control-panel-panel-settings"
+			onclick={() => (activeTab = 'settings')}
+		>
+			Settings
+		</button>
+	</div>
 
-	<ControlPanelSection title="Artists" nodeTypes={ARTIST_NODE_TYPES}>
-		<GraphNodeFilters types={ARTIST_NODE_TYPES} />
-		<GraphEdgeFilters edgeTypes={ARTIST_EDGE_TYPES} />
-		<NodeLoadActions showAllActions actionTypes={ARTIST_LOAD_ACTIONS} />
-	</ControlPanelSection>
-
-	<ControlPanelSection title="Masters/Releases" nodeTypes={MASTER_RELEASE_NODE_TYPES}>
-		<GraphNodeFilters types={MASTER_RELEASE_NODE_TYPES} />
-		<GraphEdgeFilters edgeTypes={MASTER_RELEASE_EDGE_TYPES} />
-		<NodeLoadActions showAllActions actionTypes={MASTER_RELEASE_LOAD_ACTIONS} />
-	</ControlPanelSection>
-
-	<ControlPanelSection title="Labels" nodeTypes={LABEL_NODE_TYPES}>
-		<GraphNodeFilters types={LABEL_NODE_TYPES} />
-		<GraphEdgeFilters edgeTypes={LABEL_EDGE_TYPES} />
-		<NodeLoadActions showAllActions actionTypes={LABEL_LOAD_ACTIONS} />
-	</ControlPanelSection>
+	{#if activeTab === 'explore'}
+		<div
+			role="tabpanel"
+			id="control-panel-panel-explore"
+			aria-labelledby="control-panel-tab-explore"
+		>
+			<ControlPanelExplore />
+		</div>
+	{:else if activeTab === 'settings'}
+		<div
+			role="tabpanel"
+			id="control-panel-panel-settings"
+			aria-labelledby="control-panel-tab-settings"
+		>
+			<ControlPanelSettings />
+		</div>
+	{:else}
+		<div
+			role="tabpanel"
+			id="control-panel-panel-crawl"
+			aria-labelledby="control-panel-tab-crawl"
+		>
+			<ControlPanelCrawlTab />
+		</div>
+	{/if}
 </div>

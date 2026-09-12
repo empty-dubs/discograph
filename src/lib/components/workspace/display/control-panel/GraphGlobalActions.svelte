@@ -24,15 +24,7 @@
 	);
 </script>
 
-<div class="flex flex-col gap-2" role="group" aria-label="Global graph settings">
-	<ControlPanelButton
-		pressed={graph.display.showNodeLabels}
-		disabled={graph.data.isEmpty}
-		onclick={() => graph.display.toggleNodeLabels()}
-	>
-		{graph.display.showNodeLabels ? 'Hide labels' : 'Show labels'}
-	</ControlPanelButton>
-
+<div class="flex flex-col gap-2" role="group" aria-label="Global graph actions">
 	<ControlPanelButton disabled={collapseDisabled} onclick={() => node.collapseNode()}>
 		Collapse children
 	</ControlPanelButton>
