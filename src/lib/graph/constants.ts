@@ -33,10 +33,10 @@ export const NODE_COLORS: Record<NodeType, string> = {
 };
 
 export const NODE_TYPE_LABELS: Record<NodeType, string> = {
-	artist: 'Artists',
-	label: 'Labels',
-	master: 'Masters',
-	release: 'Releases'
+	artist: 'Related artists',
+	label: 'Related labels',
+	master: 'Related masters',
+	release: 'Related releases'
 };
 
 export const NODE_RADIUS: Record<NodeType, number> = {
@@ -47,14 +47,14 @@ export const NODE_RADIUS: Record<NodeType, number> = {
 };
 
 export const EDGE_TYPE_LABELS: Record<EdgeType, string> = {
-	member_of: 'Member of',
-	alias_of: 'Alias of',
-	released: 'Released',
-	version_of: 'Version of',
-	credited_on: 'Credited on',
-	sublabel_of: 'Sublabel of',
-	on_label: 'On label',
-	company_on: 'Company on',
+	member_of: 'Membership',
+	alias_of: 'Aliases',
+	released: 'Artist releases',
+	version_of: 'Release versions',
+	credited_on: 'Credits',
+	sublabel_of: 'Sublabels',
+	on_label: 'Label releases',
+	company_on: 'Companies',
 };
 
 export const EDGE_COLORS: Record<EdgeType, string> = {
