@@ -6,9 +6,12 @@
 
 	const node = $derived(selectedNodeState.data);
 
-	const isArtistOrLabel = $derived(node!.type === 'artist' || node!.type === 'label');
 	const isMasterOrRelease = $derived(node!.type === 'master' || node!	.type === 'release');
-	const showReleaseTotal = $derived(isArtistOrLabel && selectedNodeState.releaseTotal !== null);
+	const showReleaseTotal = $derived(
+		(node!.type === 'artist' || node!.type === 'label' || node!.type === 'master') &&
+			selectedNodeState.releaseTotal !== null
+	);
+	const releaseTotalLabel = $derived(node!.type === 'master' ? 'Versions' : 'Releases');
 	const showYear = $derived(isMasterOrRelease && Boolean(node!.meta?.year));
 	const showGenres = $derived(isMasterOrRelease && (node!.meta?.genres?.length ?? 0) > 0);
 	const showStyles = $derived(isMasterOrRelease && (node!.meta?.styles?.length ?? 0) > 0);
@@ -20,7 +23,7 @@
 <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
 	<NodeDetailRow label="Name">{node!.displayName}</NodeDetailRow>
 	<NodeTypeBadge/>
-	<NodeDetailRow label="Releases" show={showReleaseTotal}>
+	<NodeDetailRow label={releaseTotalLabel} show={showReleaseTotal}>
 		{selectedNodeState.releaseTotal!.toLocaleString()}
 	</NodeDetailRow>
 	<NodeDetailRow label="Year" show={showYear}>{node!.meta?.year}</NodeDetailRow>
