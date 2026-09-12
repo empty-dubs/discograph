@@ -78,16 +78,29 @@ export function getArtist(id: number) {
 	return request<Artist>(`artists/${id}`);
 }
 
-export function getArtistReleases(id: number, page: number = 1) {
-	return request<ArtistReleasesResponse>(`artists/${id}/releases`, { page, per_page: 50 });
+export type PagedListParams = {
+	page?: number;
+	per_page?: number;
+	sort?: string;
+};
+
+export function getArtistReleases(id: number, params: PagedListParams = {}) {
+	return request<ArtistReleasesResponse>(`artists/${id}/releases`, {
+		page: params.page ?? 1,
+		per_page: params.per_page,
+		sort: params.sort
+	});
 }
 
 export function getLabel(id: number) {
 	return request<Label>(`labels/${id}`);
 }
 
-export function getLabelReleases(id: number, page: number = 1) {
-	return request<LabelReleasesResponse>(`labels/${id}/releases`, { page, per_page: 50 });
+export function getLabelReleases(id: number, params: PagedListParams = {}) {
+	return request<LabelReleasesResponse>(`labels/${id}/releases`, {
+		page: params.page ?? 1,
+		per_page: params.per_page
+	});
 }
 
 export function getRelease(id: number) {
@@ -98,6 +111,10 @@ export function getMaster(id: number) {
 	return request<Master>(`masters/${id}`);
 }
 
-export function getMasterVersions(id: number, page: number = 1) {
-	return request<MasterVersionsResponse>(`masters/${id}/versions`, { page, per_page: 50 });
+export function getMasterVersions(id: number, params: PagedListParams = {}) {
+	return request<MasterVersionsResponse>(`masters/${id}/versions`, {
+		page: params.page ?? 1,
+		per_page: params.per_page,
+		sort: params.sort
+	});
 }

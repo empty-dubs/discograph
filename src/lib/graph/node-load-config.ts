@@ -8,6 +8,12 @@ import {
 	getRelease
 } from '$lib/discogs/client';
 
+import {
+	artistReleaseFetchParams,
+	labelReleaseFetchParams,
+	masterVersionFetchParams
+} from '$lib/discogs/release-fetch-params';
+
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 import type {
@@ -170,7 +176,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 	releases: {
 		artist: {
 			kind: 'paged',
-			fetchPage: getArtistReleases,
+			fetchPage: (id, page) => getArtistReleases(id, artistReleaseFetchParams(page)),
 			patch: (payload, ctx) =>
 				buildFromArtistReleases(
 					(payload as ArtistReleasesResponse).releases,
@@ -183,7 +189,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 		},
 		label: {
 			kind: 'paged',
-			fetchPage: getLabelReleases,
+			fetchPage: (id, page) => getLabelReleases(id, labelReleaseFetchParams(page)),
 			patch: (payload, ctx) =>
 				buildFromLabelReleases(
 					(payload as LabelReleasesResponse).releases,
@@ -196,7 +202,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 		},
 		master: {
 			kind: 'paged',
-			fetchPage: getMasterVersions,
+			fetchPage: (id, page) => getMasterVersions(id, masterVersionFetchParams(page)),
 			patch: (payload, ctx) =>
 				buildFromMasterVersions(
 					(payload as MasterVersionsResponse).versions,
@@ -210,7 +216,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 	master_releases: {
 		artist: {
 			kind: 'paged',
-			fetchPage: getArtistReleases,
+			fetchPage: (id, page) => getArtistReleases(id, artistReleaseFetchParams(page)),
 			patch: (payload, ctx) =>
 				buildFromArtistReleases(
 					(payload as ArtistReleasesResponse).releases,
@@ -223,7 +229,7 @@ export const LOAD_ACTION_CONFIG: Partial<
 		},
 		label: {
 			kind: 'paged',
-			fetchPage: getLabelReleases,
+			fetchPage: (id, page) => getLabelReleases(id, labelReleaseFetchParams(page)),
 			patch: (payload, ctx) =>
 				buildFromLabelReleases(
 					(payload as LabelReleasesResponse).releases,
