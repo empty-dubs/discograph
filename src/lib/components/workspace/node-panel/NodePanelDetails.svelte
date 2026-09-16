@@ -70,7 +70,7 @@
 	$effect(() => {
 		if (!profileOpen || !showProfile || selected.isDetailsLoading) return;
 
-		selected.fetchNodeProfile();
+		selected.fetchProfile();
 	});
 </script>
 

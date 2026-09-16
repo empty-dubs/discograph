@@ -1,30 +1,16 @@
-import { graph } from '../graph';
-
-import { LOAD_ACTIONS} from '$lib/components/workspace/actions/constants';
-import type { LoadAction } from '$lib/components/workspace/actions/constants';
+import { LOAD_ACTIONS, PATCH_LOAD_ACTIONS } from '$lib/components/workspace/actions/constants';
 import { stripDiscogsWikiMarkup } from '$lib/components/workspace/node-panel/transformations';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
-import { DETAIL_CONFIG } from '$lib/graph/node-load-config';
-import { getLinkId, getNodeId } from '$lib/graph/operations/patches/compositions';
-import { parseNodeId } from '$lib/graph/operations/transformations';
-import { collectDescendants } from '../operations/crawlers';
+import {
+	collectDescendants,
+	getRelatedNeighbors,
+} from '$lib/graph/operations/crawlers';
+import { fetchNodeDetails } from '$lib/graph/operations/fetch-node-details';
 
-import type { GraphNode, NodeType } from '../types';
+import { graph } from '$lib/graph/graph';
 
-const PATCH_LOAD_ACTIONS = new Set<LoadAction>([
-	'artists',
-	'labels',
-	'aliases',
-	'companies',
-	'credited_artists',
-	'main_release',
-	'linked_master'
-]);
-
-export type RelatedNeighbors = {
-	nodes: string[];
-	edges: string[];
-};
+import type { LoadAction } from '$lib/components/workspace/actions/constants';
+import type { GraphNode } from '../types';
 
 export interface SelectedNodeInterface {
 	id: string | null;
@@ -44,8 +30,8 @@ export interface SelectedNodeInterface {
 	visibleLoadActions: string[];
 	hasFullyLinkedNeighbors: (action: LoadAction) => boolean;
 	collapseNode: () => void;
-	fetchNodeDetails: () => Promise<void>;
-	fetchNodeProfile: () => Promise<void>;
+	fetchDetails: () => Promise<void>;
+	fetchProfile: () => Promise<void>;
 }
 
 class SelectedNodeState implements SelectedNodeInterface {
@@ -77,133 +63,18 @@ class SelectedNodeState implements SelectedNodeInterface {
 				: null;
 	});
 
-	private relatedNeighbors(action: LoadAction): RelatedNeighbors {
-		const node = this.data;
-
-		if (!node) return { nodes: [], edges: [] };
-
-		switch (action) {
-			case 'artists':
-				if (node.type === 'artist') {
-					const nodes = [
-						...(node.members ?? []).map((member) => getNodeId('artist', member.id)),
-						...(node.groups ?? []).map((group) => getNodeId('artist', group.id))
-					];
-					const edges = [
-						...(node.members ?? []).map((member) =>
-							getLinkId(getNodeId(node.type, member.id), 'member_of', node.id)
-						),
-						...(node.groups ?? []).map((group) =>
-							getLinkId(node.id, 'member_of', getNodeId(node.type, group.id))
-						)
-					];
-
-					return { nodes, edges };
-				}
-
-				if (node.type === 'master') {
-					const nodes = (node.artists ?? []).map((artist) => getNodeId('artist', artist.id));
-					const edges = nodes.map((id) => getLinkId(id, 'released', node.id));
-
-					return { nodes, edges };
-				}
-
-				if (node.type === 'release') {
-					const nodes = (node.artists ?? []).map((artist) => getNodeId('artist', artist.id));
-					const edges = nodes.map((id) => getLinkId(id, 'released', node.id));
-
-					return { nodes, edges };
-				}
-
-				return { nodes: [], edges: [] };
-
-			case 'labels':
-				if (node.type === 'label') {
-					const nodes: string[] = [];
-					const edges: string[] = [];
-
-					for (const sublabel of node.sublabels ?? []) {
-						const id = getNodeId(node.type, sublabel.id);
-						nodes.push(id);
-						edges.push(getLinkId(id, 'sublabel_of', node.id));
-					}
-
-					if (node.parent_label) {
-						const id = getNodeId(node.type, node.parent_label.id);
-						nodes.push(id);
-						edges.push(getLinkId(node.id, 'sublabel_of', id));
-					}
-
-					return { nodes, edges };
-				}
-
-				if (node.type === 'release') {
-					const nodes = (node.labels ?? []).map((label) => getNodeId('label', label.id));
-					const edges = nodes.map((id) => getLinkId(node.id, 'on_label', id));
-
-					return { nodes, edges };
-				}
-
-				return { nodes: [], edges: [] };
-
-			case 'aliases': {
-				const nodes = (node.aliases ?? []).map((alias) => getNodeId(node.type, alias.id));
-				const edges = nodes.map((id) => getLinkId(id, 'alias_of', node.id));
-
-				return { nodes, edges };
-			}
-
-			case 'companies': {
-				const nodes = (node.companies ?? []).map((company) => getNodeId('label', company.id));
-				const edges = nodes.map((id) => getLinkId(id, 'company_on', node.id));
-
-				return { nodes, edges };
-			}
-
-			case 'credited_artists': {
-				const nodes = (node.credits ?? []).map((credit) => getNodeId('artist', credit.id));
-				const edges = nodes.map((id) => getLinkId(id, 'credited_on', node.id));
-
-				return { nodes, edges };
-			}
-
-			case 'main_release': {
-				if (node.type !== 'master' || !node.main_release_info) {
-					return { nodes: [], edges: [] };
-				}
-
-				const releaseNodeId = getNodeId('release', node.main_release_info.id);
-
-				return {
-					nodes: [releaseNodeId],
-					edges: [getLinkId(releaseNodeId, 'version_of', node.id)]
-				};
-			}
-
-			case 'linked_master': {
-				if (node.type !== 'release' || !node.linked_master) {
-					return { nodes: [], edges: [] };
-				}
-
-				const masterNodeId = getNodeId('master', node.linked_master.id);
-
-				return {
-					nodes: [masterNodeId],
-					edges: [getLinkId(node.id, 'version_of', masterNodeId)]
-				};
-			}
-
-			default:
-				return { nodes: [], edges: [] };
-		}
-	}
-
-	hasFullyLinkedNeighbors(action: LoadAction): boolean {
+	hasFullyLinkedNeighbors(
+		action: LoadAction,
+		options?: { requireEdges?: boolean }
+	): boolean {
+		if (!this.data) return false;
 		if (!PATCH_LOAD_ACTIONS.has(action)) return false;
-
-		const { edges } = this.relatedNeighbors(action);
-
-		return edges.every((id) => graph.data.links.has(id));
+	
+		const { edges } = getRelatedNeighbors(this.data, action);
+	
+		if (options?.requireEdges && edges.length === 0) return false;
+	
+		return edges.every((id: string) => graph.data.links.has(id));
 	}
 
 	visibleLoadActions = $derived.by(() => {
@@ -229,38 +100,13 @@ class SelectedNodeState implements SelectedNodeInterface {
 		}
 	}
 
-	async fetchNodeDetails() {
-		if (this.isDetailsFetched || this.isDetailsLoading || this.isDetailsFailed) return;
+	async fetchDetails() {
+		if (!this.id || !this.data) return;
 
-		const { type, discogsId } = parseNodeId(this.id!);
-
-		if (!type || !discogsId) return;
-
-		if (this.isBlocked) {
-			graph.visitedNodes.setDetailStatus(this.id!, 'fetched');
-			return;
-		}
-
-		graph.visitedNodes.setDetailStatus(this.id!, 'loading');
-
-		const config = DETAIL_CONFIG[type as NodeType];
-
-		const payload = await discogsApi.withRequest(
-			() => config.fetch(discogsId),
-			config.errorMessage
-		);
-
-		if (!payload) {
-			graph.visitedNodes.setDetailStatus(this.id!, 'failed');
-			return;
-		}
-
-		await config.merge(this.data!, graph, payload);
-
-		graph.visitedNodes.setDetailStatus(this.id!, 'fetched');
+		await fetchNodeDetails(graph, this.data);
 	}
 
-	async fetchNodeProfile() {
+	async fetchProfile() {
 		const nodeId = this.id;
 		const profile = this.data?.profile;
 

@@ -18,6 +18,16 @@ export const LOAD_ACTIONS: Record<NodeType, LoadAction[]> = {
 	master: ['artists', 'releases', 'main_release']
 };
 
+export const PATCH_LOAD_ACTIONS = new Set<LoadAction>([
+	'artists',
+	'labels',
+	'aliases',
+	'companies',
+	'credited_artists',
+	'main_release',
+	'linked_master'
+]);
+
 export const LOAD_ACTION_LABELS: Record<LoadAction, string> = {
 	artists: 'Load related artists',
 	aliases: 'Load artist aliases',

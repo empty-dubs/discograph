@@ -56,11 +56,11 @@
 		'hover:bg-panel-hover block w-full border-none bg-transparent px-3 py-2 text-left text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent';
 
 	function getLoadButtonState(
-		loadedActions: Map<string, Set<LoadAction>>,
+		loadedNeighborNodeTypes: Map<string, Set<LoadAction>>,
 		nodeId: string,
 		action: LoadAction
 	): PagedLoadButtonState {
-		const loaded = loadedActions.get(nodeId)?.has(action) ?? false;
+		const loaded = loadedNeighborNodeTypes.get(nodeId)?.has(action) ?? false;
 
 		return {
 			loaded,
@@ -78,19 +78,19 @@
 			case 'master_releases':
 				return masterReleasesState;
 			case 'artists':
-				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'artists');
+				return getLoadButtonState(graph.visitedNodes.loadedNeighborNodeTypes, nodeId, 'artists');
 			case 'aliases':
-				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'aliases');
+				return getLoadButtonState(graph.visitedNodes.loadedNeighborNodeTypes, nodeId, 'aliases');
 			case 'labels':
-				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'labels');
+				return getLoadButtonState(graph.visitedNodes.loadedNeighborNodeTypes, nodeId, 'labels');
 			case 'main_release':
-				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'main_release');
+				return getLoadButtonState(graph.visitedNodes.loadedNeighborNodeTypes, nodeId, 'main_release');
 			case 'linked_master':
-				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'linked_master');
+				return getLoadButtonState(graph.visitedNodes.loadedNeighborNodeTypes, nodeId, 'linked_master');
 			case 'companies':
-				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'companies');
+				return getLoadButtonState(graph.visitedNodes.loadedNeighborNodeTypes, nodeId, 'companies');
 			case 'credited_artists':
-				return getLoadButtonState(graph.visitedNodes.loadedActions, nodeId, 'credited_artists');
+				return getLoadButtonState(graph.visitedNodes.loadedNeighborNodeTypes, nodeId, 'credited_artists');
 		}
 	}
 
@@ -104,24 +104,26 @@
 	}
 
 	async function runAction(action: LoadAction) {
+		if (node.isBlocked) return;
+
 		const state = getActionState(action);
 
 		if (action === 'releases') {
 			await runLoadAction(
 				graph,
-				node,
+				node.data!,
 				'releases',
 				state.loaded ? { page: 'next' } : undefined
 			);
 		} else if (action === 'master_releases') {
 			await runLoadAction(
 				graph,
-				node,
+				node.data!,
 				'master_releases',
 				state.loaded ? { page: 'next' } : undefined
 			);
 		} else {
-			await runLoadAction(graph, node, action);
+			await runLoadAction(graph, node.data!, action);
 		}
 
 		onAction?.();

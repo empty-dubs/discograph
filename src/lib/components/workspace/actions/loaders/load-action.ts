@@ -4,7 +4,6 @@ import { LOAD_ACTION_LABELS, type LoadAction } from '../constants';
 
 import type { Pagination } from '$lib/discogs/types';
 import type { GraphInterface } from '$lib/graph/graph';
-import type { SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
 import type { GraphNode } from '$lib/graph/types';
 
 interface RunLoadOptions<T> {
@@ -45,22 +44,21 @@ function loadErrorMessage(action: LoadAction): string {
 
 export async function runLoadAction(
 	graph: GraphInterface,
-	node: SelectedNodeInterface,
+	node: GraphNode,
 	action: LoadAction,
 	options?: RunLoadActionOptions
 ): Promise<void> {
-	if (!node.data?.discogsId) return;
-	if (node.isBlocked) return;
+	if (!node.discogsId) return;
 
-	const config = LOAD_ACTION_CONFIG[action]?.[node.data?.type!];
+	const config = LOAD_ACTION_CONFIG[action]?.[node.type!];
 
 	if (!config) return;
 
-	const ctx = { graph, node: node.data };
+	const ctx = { graph, node };
 	const errorMessage = loadErrorMessage(action);
 
 	if (config.kind === 'custom') {
-		await runLoad(graph, node.data, {
+		await runLoad(graph, node, {
 			fetch: () => config.run(ctx),
 			merge: () => {},
 			errorMessage
@@ -69,8 +67,8 @@ export async function runLoadAction(
 	}
 
 	if (config.kind === 'patch') {
-		await runLoad(graph, node.data, {
-			fetch: () => config.fetch(node.data?.discogsId!) as Promise<unknown>,
+		await runLoad(graph, node, {
+			fetch: () => config.fetch(node.discogsId!) as Promise<unknown>,
 			merge: (payload) => {
 				graph.applyPatchFromExpansion(node.id!, config.patch(payload));
 				graph.visitedNodes.markActionLoaded(node.id!, config.markActionLoaded ?? action);
@@ -92,8 +90,8 @@ export async function runLoadAction(
 		page = options?.page ?? 1;
 	}
 
-	await runLoad(graph, node.data, {
-		fetch: () => config.fetchPage(node.data?.discogsId!, page),
+	await runLoad(graph, node, {
+		fetch: () => config.fetchPage(node.discogsId!, page),
 		merge: (payload) => {
 			graph.applyPatchFromExpansion(node.id!, config.patch(payload, ctx));
 			config.setPaging(
