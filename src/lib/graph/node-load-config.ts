@@ -247,18 +247,6 @@ export const LOAD_ACTION_CONFIG: Partial<
 			run: async ({ graph, node }) => {
 				let mainReleaseId = graph.data.nodes.get(node.id)?.main_release_info?.id;
 
-				// If the master has no main release, fetch the master and set the main release
-				// Likely leftover from a previous implementation where nodes were only partially loaded
-				// This doesn't do anything right now because the master should already be loaded
-				// TODO: Remove this after further consideration of lazy loading
-				if (!mainReleaseId) {
-					const master = await getMaster(node.discogsId!);
-
-					await updateMasterNode(graph.data.nodes.get(node.id)!, graph, master);
-
-					mainReleaseId = master.main_release;
-				}
-
 				if (!mainReleaseId) {
 					discogsApi.setError('This master has no main release');
 					return;
