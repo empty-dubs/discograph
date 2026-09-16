@@ -9,7 +9,7 @@ type ReleasePaging = { page: number; pages: number; items: number };
 
 export class VisitedNodesState {
 	knownChildren = $state<SvelteMap<string, Set<string>>>(new SvelteMap());
-	loadedActions = $state<SvelteMap<string, Set<LoadAction>>>(new SvelteMap());
+	loadedNeighborNodeTypes = $state<SvelteMap<string, Set<LoadAction>>>(new SvelteMap());
 	withLoadingChildren = $state<SvelteSet<string>>(new SvelteSet());
 	masterReleasePages = $state<SvelteMap<string, ReleasePaging>>(new SvelteMap());
 	releasePages = $state<SvelteMap<string, ReleasePaging>>(new SvelteMap());
@@ -29,10 +29,10 @@ export class VisitedNodesState {
 	}
 
 	markActionLoaded(nodeId: string, action: LoadAction) {
-		const actions = new Set(this.loadedActions.get(nodeId) ?? []);
+		const actions = new Set(this.loadedNeighborNodeTypes.get(nodeId) ?? []);
 
 		actions.add(action);
-		this.loadedActions.set(nodeId, actions);
+		this.loadedNeighborNodeTypes.set(nodeId, actions);
 	}
 
 	setDetailStatus(nodeId: string, status: DetailStatus) {
@@ -58,7 +58,7 @@ export class VisitedNodesState {
 			this.knownChildren.delete(id);
 			this.releasePages.delete(id);
 			this.masterReleasePages.delete(id);
-			this.loadedActions.delete(id);
+			this.loadedNeighborNodeTypes.delete(id);
 		}
 
 		for (const id of descendants) {
@@ -70,7 +70,7 @@ export class VisitedNodesState {
 
 	clear() {
 		this.knownChildren = new SvelteMap();
-		this.loadedActions = new SvelteMap();
+		this.loadedNeighborNodeTypes = new SvelteMap();
 		this.withLoadingChildren = new SvelteSet();
 		this.masterReleasePages = new SvelteMap();
 		this.releasePages = new SvelteMap();
