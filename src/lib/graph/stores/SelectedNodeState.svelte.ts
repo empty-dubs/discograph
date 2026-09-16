@@ -1,9 +1,9 @@
-import { LOAD_ACTIONS } from '$lib/components/workspace/actions/constants';
+import { LOAD_ACTIONS, PATCH_LOAD_ACTIONS } from '$lib/components/workspace/actions/constants';
 import { stripDiscogsWikiMarkup } from '$lib/components/workspace/node-panel/transformations';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 import {
 	collectDescendants,
-	hasFullyLinkedNeighbors as hasFullyLinkedNeighborsForNode
+	getRelatedNeighbors,
 } from '$lib/graph/operations/crawlers';
 import { fetchNodeDetails } from '$lib/graph/operations/fetch-node-details';
 
@@ -63,10 +63,18 @@ class SelectedNodeState implements SelectedNodeInterface {
 				: null;
 	});
 
-	hasFullyLinkedNeighbors(action: LoadAction): boolean {
+	hasFullyLinkedNeighbors(
+		action: LoadAction,
+		options?: { requireEdges?: boolean }
+	): boolean {
 		if (!this.data) return false;
-
-		return hasFullyLinkedNeighborsForNode(graph, this.data, action);
+		if (!PATCH_LOAD_ACTIONS.has(action)) return false;
+	
+		const { edges } = getRelatedNeighbors(this.data, action);
+	
+		if (options?.requireEdges && edges.length === 0) return false;
+	
+		return edges.every((id: string) => graph.data.links.has(id));
 	}
 
 	visibleLoadActions = $derived.by(() => {

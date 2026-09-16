@@ -6,12 +6,6 @@ import type { GraphNode } from '$lib/graph/types';
 
 type FetchNodeDetailsResult = 'fetched' | 'skipped' | 'failed';
 
-export function shouldFetchNodeDetails(graph: GraphInterface, nodeId: string): boolean {
-	const status = graph.visitedNodes.status.get(nodeId);
-
-	return status !== 'fetched' && status !== 'loading' && status !== 'failed';
-}
-
 export async function fetchNodeDetails(
 	graph: GraphInterface,
 	node: GraphNode,
