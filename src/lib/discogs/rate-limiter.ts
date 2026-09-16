@@ -40,3 +40,16 @@ export async function acquireRateLimitSlot(): Promise<void> {
 		await new Promise((resolve) => setTimeout(resolve, waitMs));
 	}
 }
+
+let lastCrawlRequestAt = 0;
+
+export async function awaitFetchRequestSlot(): Promise<void> {
+	const delayMs = Math.ceil(WINDOW_MS / MAX_REQUESTS_PER_MINUTE);
+	const elapsed = Date.now() - lastCrawlRequestAt;
+
+	if (lastCrawlRequestAt > 0 && elapsed < delayMs) {
+		await new Promise((resolve) => setTimeout(resolve, delayMs - elapsed));
+	}
+
+	lastCrawlRequestAt = Date.now();
+}
