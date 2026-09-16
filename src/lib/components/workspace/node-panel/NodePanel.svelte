@@ -28,7 +28,7 @@
 	$effect(() => {
 		if (!node.id) return;
 
-		node.fetchNodeDetails();
+		node.fetchDetails();
 	});
 
 	$effect(() => {
