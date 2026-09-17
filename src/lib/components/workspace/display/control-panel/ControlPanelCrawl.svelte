@@ -15,6 +15,9 @@
 	const buttonClass =
 		'box-border h-9 w-full cursor-pointer rounded-md border border-accent bg-accent px-3 text-sm text-white disabled:cursor-not-allowed disabled:opacity-50';
 
+	const stopButtonClass =
+		'box-border h-9 w-full cursor-pointer rounded-md border border-border bg-panel px-3 text-sm text-gray-200 hover:bg-panel-hover';
+
 	const node = $derived(selectedNodeState);
 
 	const crawlNodeType = $derived(getCrawlNodeType(crawlState.mode));
@@ -44,7 +47,7 @@
 
 		discogsApi.clearError();
 
-		crawlState.isRunning = true;
+		crawlState.beginCrawl();
 
 		await runBFSCrawl(
 			graph,
@@ -73,10 +76,17 @@
 		id="crawl-depth"
 		label="Depth"
 		max={10}
+		disabled={crawlState.isRunning}
 		bind:value={crawlState.depth}
 	/>
 
-	<button type="button" class={buttonClass} disabled={isCrawlDisabled} onclick={crawl}>
-		{crawlState.isRunning ? 'Crawling…' : 'Crawl'}
-	</button>
+	{#if crawlState.isRunning}
+		<button type="button" class={stopButtonClass} onclick={() => crawlState.requestStop()}>
+			Stop
+		</button>
+	{:else}
+		<button type="button" class={buttonClass} disabled={isCrawlDisabled} onclick={crawl}>
+			Crawl
+		</button>
+	{/if}
 </div>

@@ -211,6 +211,8 @@ export async function runBFSCrawl(
 
 	try {
 		while (queue.length > 0) {
+			if (crawlState.cancelRequested) break;
+
 			const { nodeId, depth } = queue.shift()!;
 
 			if (depth >= maxDepth) continue;
@@ -240,6 +242,6 @@ export async function runBFSCrawl(
 	} catch (err) {
 		discogsApi.setError(err instanceof Error ? err.message : 'Crawl failed');
 	} finally {
-		crawlState.isRunning = false;
+		crawlState.finishCrawl();
 	}
 }
