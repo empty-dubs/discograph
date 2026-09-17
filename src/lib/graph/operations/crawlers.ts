@@ -198,7 +198,7 @@ function isCrawlableNeighbor(nodeId: string, nodeType: NodeType): boolean {
 	return !discogsApi.isBlockedDiscogsEntity(type, discogsId);
 }
 
-export async function runRelationshipCrawl(
+export async function runBFSCrawl(
 	graph: GraphInterface,
 	seedNode: GraphNode,
 	mode: CrawlMode,

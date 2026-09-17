@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
-	import { getCrawlNodeType, runRelationshipCrawl } from '$lib/graph/operations/crawlers';
+	import { getCrawlNodeType, runBFSCrawl } from '$lib/graph/operations/crawlers';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
@@ -34,7 +34,7 @@
 		|| discogsApi.isRateLimited
 	);
 
-	async function startCrawl() {
+	async function crawl() {
 		if (isCrawlDisabled || !node.data || node.isBlocked) return;
 
 		if (node.data.type !== crawlNodeType) {
@@ -46,7 +46,7 @@
 
 		crawlState.isRunning = true;
 
-		await runRelationshipCrawl(
+		await runBFSCrawl(
 			graph,
 			node.data,
 			crawlState.mode,
@@ -76,7 +76,7 @@
 		bind:value={crawlState.depth}
 	/>
 
-	<button type="button" class={buttonClass} disabled={isCrawlDisabled} onclick={startCrawl}>
+	<button type="button" class={buttonClass} disabled={isCrawlDisabled} onclick={crawl}>
 		{crawlState.isRunning ? 'Crawling…' : 'Crawl'}
 	</button>
 </div>
