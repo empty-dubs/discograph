@@ -1,7 +1,7 @@
 import { dev } from '$app/environment';
 
 import { API_BASE } from './constants';
-import { acquireRateLimitSlot, getClientRateLimit } from './rate-limiter';
+import { acquireRateLimitSlot } from './rate-limiter';
 import { discogsRateLimit } from './rate-limit-state.svelte';
 
 import type {
@@ -32,7 +32,7 @@ async function request<T>(
 ): Promise<T> {
 	await acquireRateLimitSlot();
 
-	discogsRateLimit.updateFromClient(getClientRateLimit());
+	discogsRateLimit.scheduleRefresh();
 
 	const normalizedPath = path.replace(/^\//, '');
 
@@ -49,8 +49,6 @@ async function request<T>(
 	}
 
 	const response = await fetch(url);
-
-	discogsRateLimit.updateFromHeaders(response.headers);
 
 	if (!response.ok) {
 		let message = `Request failed (${response.status})`;

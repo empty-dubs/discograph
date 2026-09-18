@@ -1,7 +1,11 @@
 <script lang="ts">
+	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
+
 	import ControlPanelCrawlTab from './control-panel/ControlPanelCrawl.svelte';
 	import ControlPanelSettings from './control-panel/ControlPanelSettings.svelte';
 	import ControlPanelExplore from './control-panel/ControlPanelExplore.svelte';
+	import LoadingIcon from './control-panel/LoadingIcon.svelte';
 
 	type TabId = 'explore' | 'crawl' | 'settings';
 
@@ -28,6 +32,7 @@
 			aria-controls="control-panel-panel-explore"
 			onclick={() => (activeTab = 'explore')}
 		>
+			{#if selectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
 			Explore
 		</button>
 		<button
@@ -39,7 +44,10 @@
 			aria-controls="control-panel-panel-crawl"
 			onclick={() => (activeTab = 'crawl')}
 		>
-			Crawl
+			<span class="inline-flex items-center gap-1.5">
+				{#if crawlState.isRunning}<LoadingIcon />{/if}
+				Crawl
+			</span>
 		</button>
 		<button
 			type="button"

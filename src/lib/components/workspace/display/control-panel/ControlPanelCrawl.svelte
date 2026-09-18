@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
-	import { getCrawlNodeType, runRelationshipCrawl } from '$lib/graph/operations/crawlers';
+	import { getCrawlNodeType, runBFSCrawl } from '$lib/graph/operations/crawlers';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
@@ -14,6 +14,9 @@
 
 	const buttonClass =
 		'box-border h-9 w-full cursor-pointer rounded-md border border-accent bg-accent px-3 text-sm text-white disabled:cursor-not-allowed disabled:opacity-50';
+
+	const stopButtonClass =
+		'box-border h-9 w-full cursor-pointer rounded-md border border-border bg-panel px-3 text-sm text-gray-200 hover:bg-panel-hover';
 
 	const node = $derived(selectedNodeState);
 
@@ -34,7 +37,7 @@
 		|| discogsApi.isRateLimited
 	);
 
-	async function startCrawl() {
+	async function crawl() {
 		if (isCrawlDisabled || !node.data || node.isBlocked) return;
 
 		if (node.data.type !== crawlNodeType) {
@@ -44,9 +47,9 @@
 
 		discogsApi.clearError();
 
-		crawlState.isRunning = true;
+		crawlState.beginCrawl();
 
-		await runRelationshipCrawl(
+		await runBFSCrawl(
 			graph,
 			node.data,
 			crawlState.mode,
@@ -73,10 +76,17 @@
 		id="crawl-depth"
 		label="Depth"
 		max={10}
+		disabled={crawlState.isRunning}
 		bind:value={crawlState.depth}
 	/>
 
-	<button type="button" class={buttonClass} disabled={isCrawlDisabled} onclick={startCrawl}>
-		{crawlState.isRunning ? 'Crawling…' : 'Crawl'}
-	</button>
+	{#if crawlState.isRunning}
+		<button type="button" class={stopButtonClass} onclick={() => crawlState.requestStop()}>
+			Stop
+		</button>
+	{:else}
+		<button type="button" class={buttonClass} disabled={isCrawlDisabled} onclick={crawl}>
+			Crawl
+		</button>
+	{/if}
 </div>

@@ -5,12 +5,13 @@
 		min?: number;
 		max: number;
 		value: number;
+		disabled?: boolean;
 	}
 
-	let { id, label, min = 1, max, value = $bindable() }: Props = $props();
+	let { id, label, min = 1, max, value = $bindable(), disabled = false }: Props = $props();
 
 	const fieldClass =
-		'box-border h-9 w-full rounded-md border border-border bg-panel px-3 text-sm text-gray-200';
+		'box-border h-9 w-full rounded-md border border-border bg-panel px-3 text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50';
 
 	const labelClass = 'text-muted text-xs font-semibold tracking-wide uppercase';
 
@@ -35,6 +36,7 @@
 		class={fieldClass}
 		{min}
 		{max}
+		{disabled}
 		bind:value
 		oninput={handleInput}
 	/>

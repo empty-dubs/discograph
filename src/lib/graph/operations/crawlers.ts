@@ -1,4 +1,3 @@
-import { PATCH_LOAD_ACTIONS } from '$lib/components/workspace/actions/constants';
 import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
 import { awaitFetchRequestSlot } from '$lib/discogs/rate-limiter';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
@@ -198,7 +197,7 @@ function isCrawlableNeighbor(nodeId: string, nodeType: NodeType): boolean {
 	return !discogsApi.isBlockedDiscogsEntity(type, discogsId);
 }
 
-export async function runRelationshipCrawl(
+export async function runBFSCrawl(
 	graph: GraphInterface,
 	seedNode: GraphNode,
 	mode: CrawlMode,
@@ -211,6 +210,8 @@ export async function runRelationshipCrawl(
 
 	try {
 		while (queue.length > 0) {
+			if (crawlState.cancelRequested) break;
+
 			const { nodeId, depth } = queue.shift()!;
 
 			if (depth >= maxDepth) continue;
@@ -240,6 +241,6 @@ export async function runRelationshipCrawl(
 	} catch (err) {
 		discogsApi.setError(err instanceof Error ? err.message : 'Crawl failed');
 	} finally {
-		crawlState.isRunning = false;
+		crawlState.finishCrawl();
 	}
 }

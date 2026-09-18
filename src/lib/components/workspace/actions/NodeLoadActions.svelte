@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { graph } from '$lib/graph/graph';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
-
 	import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
+	import { graph } from '$lib/graph/graph';
+	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
+
 	import ControlPanelButton from '$lib/components/workspace/display/control-panel/ControlPanelButton.svelte';
 
 	import { selectedNodeState, type SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
@@ -95,7 +96,7 @@
 	}
 
 	function isActionDisabled(action: LoadAction): boolean {
-		if (!node.id || !node.isDetailsFetched || node.isBlocked) return true;
+		if (!node.id || !node.isDetailsFetched || node.isBlocked || crawlState.isRunning) return true;
 		if (showAllActions && !actions.includes(action)) return true;
 
 		const state = getActionState(action);

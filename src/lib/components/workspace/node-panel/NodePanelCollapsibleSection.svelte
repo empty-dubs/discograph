@@ -10,10 +10,11 @@
 		id: string;
 		title: string;
 		show?: boolean;
+		count?: number;
 		children: Snippet;
 	}
 
-	let { id, title, show = true, children }: Props = $props();
+	let { id, title, show = true, count, children }: Props = $props();
 
 	const accordion = getContext<NodePanelAccordion>(NODE_PANEL_ACCORDION_KEY);
 	const open = $derived(accordion.openSectionId === id);
@@ -27,7 +28,7 @@
 			aria-expanded={open}
 			onclick={() => accordion.toggle(id)}
 		>
-			<span>{title}</span>
+			<span>{title} {#if count !== undefined && count > 0} ({count.toLocaleString()}){/if}</span>
 			<Icon data={open ? chevronDown : chevronRight} />
 		</button>
 

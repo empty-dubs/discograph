@@ -3,40 +3,44 @@ import { dev } from '$app/environment';
 import type { RateLimitInfo } from './types';
 
 const MAX_REQUESTS_PER_MINUTE = dev ? 55 : 25;
+const SLOT_RELEASE_BUFFER_MS = 50;
 const WINDOW_MS = 60_000;
 
-const timestamps: number[] = [];
+const requestTimestamps: number[] = [];
 
 function pruneTimestamps(now: number): void {
-	while (timestamps.length > 0 && now - timestamps[0]! >= WINDOW_MS) {
-		timestamps.shift();
+	while (requestTimestamps.length > 0 && (now - requestTimestamps[0]!) >= WINDOW_MS) {
+		requestTimestamps.shift();
 	}
 }
 
-export function getClientRateLimit(): RateLimitInfo {
-	const now = Date.now();
+export function getClientRateLimit(now = Date.now()): RateLimitInfo {
 	pruneTimestamps(now);
 
-	const used = timestamps.length;
+	const used = requestTimestamps.length;
 
 	return {
 		limit: MAX_REQUESTS_PER_MINUTE,
 		used,
-		remaining: MAX_REQUESTS_PER_MINUTE - used
+		remaining: MAX_REQUESTS_PER_MINUTE - used,
+		queueClearTimeMs:
+			requestTimestamps.length === 0
+				? null
+				: WINDOW_MS - (now - requestTimestamps[0]!) + SLOT_RELEASE_BUFFER_MS
 	};
 }
 
-export async function acquireRateLimitSlot(): Promise<void> {
+export async function acquireRateLimitSlot(now = Date.now()): Promise<void> {
 	while (true) {
-		const now = Date.now();
 		pruneTimestamps(now);
 
-		if (timestamps.length < MAX_REQUESTS_PER_MINUTE) {
-			timestamps.push(now);
+		if (requestTimestamps.length < MAX_REQUESTS_PER_MINUTE) {
+			requestTimestamps.push(now);
 			return;
 		}
 
-		const waitMs = WINDOW_MS - (now - timestamps[0]!) + 100;
+		const waitMs = WINDOW_MS - (now - requestTimestamps[0]!) + 2 * SLOT_RELEASE_BUFFER_MS;
+
 		await new Promise((resolve) => setTimeout(resolve, waitMs));
 	}
 }
