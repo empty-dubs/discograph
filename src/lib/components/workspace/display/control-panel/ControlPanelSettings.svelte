@@ -6,7 +6,7 @@
 	import GraphLabelToggle from './GraphLabelToggle.svelte';
 	import GraphNodeFilters from './GraphNodeFilters.svelte';
 
-	type SettingsTabId = 'display' | 'expansion';
+	type SettingsTabId = 'display' | 'relationships' | 'expansion';
 
 	let activeSettingsTab = $state<SettingsTabId>('display');
 </script>
@@ -31,6 +31,19 @@
 		<button
 			type="button"
 			role="tab"
+			id="settings-tab-relationships"
+			class={activeSettingsTab === 'relationships'
+				? 'ui-tab ui-tab-active-left'
+				: 'ui-tab ui-tab-inactive-left'}
+			aria-selected={activeSettingsTab === 'relationships'}
+			aria-controls="settings-panel-relationships"
+			onclick={() => (activeSettingsTab = 'relationships')}
+		>
+			Relationships
+		</button>
+		<button
+			type="button"
+			role="tab"
 			id="settings-tab-expansion"
 			class={activeSettingsTab === 'expansion' ? 'ui-tab ui-tab-active-left' : 'ui-tab ui-tab-inactive-left'}
 			aria-selected={activeSettingsTab === 'expansion'}
@@ -48,21 +61,21 @@
 				id="settings-panel-display"
 				aria-labelledby="settings-tab-display"
 			>
-				<div class="grid grid-cols-1 gap-4 text-sm text-gray-400 md:grid-cols-2">
-					<div class="min-w-0">
-						<div class="ui-stack">
-							<h4 class="ui-label">Toggle Nodes</h4>
-							<GraphLabelToggle />
-							<GraphNodeFilters types={ALL_NODE_TYPES} />
-						</div>
-					</div>
-
-					<div class="min-w-0">
-						<div class="ui-stack">
-							<h4 class="ui-label">Highlight Relationships</h4>
-							<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
-						</div>
-					</div>
+				<div class="ui-stack text-sm text-gray-400">
+					<h4 class="ui-label">Toggle Nodes</h4>
+					<GraphLabelToggle />
+					<GraphNodeFilters types={ALL_NODE_TYPES} />
+				</div>
+			</div>
+		{:else if activeSettingsTab === 'relationships'}
+			<div
+				role="tabpanel"
+				id="settings-panel-relationships"
+				aria-labelledby="settings-tab-relationships"
+			>
+				<div class="ui-stack text-sm text-gray-400">
+					<h4 class="ui-label">Highlight Relationships</h4>
+					<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
 				</div>
 			</div>
 		{:else}
