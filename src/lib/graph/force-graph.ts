@@ -160,7 +160,8 @@ export class ForceGraph {
 				this.gLabels
 					?.selectAll<SVGTextElement, SimulationNode>('text')
 					.attr('x', d => d.x ?? 0)
-					.attr('y', d => (d.y ?? 0) + 4);
+					.attr('y', d => (d.y ?? 0) + 4)
+					.style('text-shadow', '0 0 2px #000000');
 			});
 	}
 
@@ -335,7 +336,7 @@ export class ForceGraph {
 		this.gNodes
 			?.selectAll<SVGGElement, SimulationNode>('g.node')
 			.select('circle')
-			.attr('stroke', d => (d.id === this.selectedId ? '#fff' : 'none'))
+			.attr('stroke', d => (d.id === this.selectedId ? '#f2c782' : 'none'))
 			.attr('stroke-width', d => (d.id === this.selectedId ? 2 : 0));
 
 		const highlightedType = this.highlightedEdgeType;
