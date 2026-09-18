@@ -5,7 +5,10 @@
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
+	import { CONTROL_PANEL_HELPER_TEXT } from './control-panel/constants';
+
 	import ControlPanelCrawlTab from './control-panel/ControlPanelCrawl.svelte';
+	import ControlPanelHelperLayout from './control-panel/ControlPanelHelperLayout.svelte';
 	import ControlPanelSettings from './control-panel/ControlPanelSettings.svelte';
 	import ControlPanelExplore from './control-panel/ControlPanelExplore.svelte';
 	import LoadingIcon from './control-panel/LoadingIcon.svelte';
@@ -36,13 +39,13 @@
 			<Icon data={chevronUp} />
 		{/if}
 	</button>
-	<div class={isExpanded ? "flex flex-col gap-4" : "flex flex-col"}>
-		<div role="tablist" aria-label="Control panel sections" class={isExpanded ? "flex gap-1 border-b border-border" : "flex gap-1"}>
+	<div class="flex flex-col {isExpanded ? 'gap-4' : ''}">
+		<div role="tablist" aria-label="Control panel sections" class="flex gap-1 {isExpanded ? 'border-b border-border' : ''}">
 			<button
 				type="button"
 				role="tab"
 				id="control-panel-tab-explore"
-				class={activeTab === 'explore' ? 'ui-tab ui-tab-active-bottom' : 'ui-tab ui-tab-inactive-bottom'}
+				class="ui-tab {activeTab === 'explore' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
 				aria-selected={activeTab === 'explore'}
 				aria-controls="control-panel-panel-explore"
 				onclick={() => selectTab('explore')}
@@ -54,7 +57,7 @@
 				type="button"
 				role="tab"
 				id="control-panel-tab-crawl"
-				class={activeTab === 'crawl' ? 'ui-tab ui-tab-active-bottom' : 'ui-tab ui-tab-inactive-bottom'}
+				class="ui-tab {activeTab === 'crawl' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
 				aria-selected={activeTab === 'crawl'}
 				aria-controls="control-panel-panel-crawl"
 				onclick={() => selectTab('crawl')}
@@ -68,7 +71,7 @@
 				type="button"
 				role="tab"
 				id="control-panel-tab-settings"
-				class={activeTab === 'settings' ? 'ui-tab ui-tab-active-bottom' : 'ui-tab ui-tab-inactive-bottom'}
+				class="ui-tab {activeTab === 'settings' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
 				aria-selected={activeTab === 'settings'}
 				aria-controls="control-panel-panel-settings"
 				onclick={() => selectTab('settings')}
@@ -93,7 +96,9 @@
 							? 'invisible pointer-events-none'
 							: ''}"
 					>
-						<ControlPanelExplore />
+						<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.explore}>
+							<ControlPanelExplore />
+						</ControlPanelHelperLayout>
 					</div>
 					<div
 						role="tabpanel"
@@ -115,7 +120,9 @@
 							? 'invisible pointer-events-none'
 							: ''}"
 					>
-						<ControlPanelCrawlTab />
+						<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.crawl}>
+							<ControlPanelCrawlTab />
+						</ControlPanelHelperLayout>
 					</div>
 				</div>
 			</div>

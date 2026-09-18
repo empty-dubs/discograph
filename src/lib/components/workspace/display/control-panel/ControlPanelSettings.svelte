@@ -1,7 +1,10 @@
 <script lang="ts">
 	import { ALL_EDGE_TYPES, ALL_NODE_TYPES } from '$lib/graph/constants';
+	
+	import { CONTROL_PANEL_HELPER_TEXT } from './constants';
 
 	import ControlPanelCrawlSettings from './ControlPanelCrawlSettings.svelte';
+	import ControlPanelHelperLayout from './ControlPanelHelperLayout.svelte';
 	import GraphEdgeFilters from './GraphEdgeFilters.svelte';
 	import GraphLabelToggle from './GraphLabelToggle.svelte';
 	import GraphNodeFilters from './GraphNodeFilters.svelte';
@@ -21,7 +24,7 @@
 			type="button"
 			role="tab"
 			id="settings-tab-nodes"
-			class={activeSettingsTab === 'nodes' ? 'ui-tab ui-tab-active-left' : 'ui-tab ui-tab-inactive-left'}
+			class="ui-tab {activeSettingsTab === 'nodes' ? 'ui-tab-active-left' : 'ui-tab-inactive-left'}"
 			aria-selected={activeSettingsTab === 'nodes'}
 			aria-controls="settings-panel-nodes"
 			onclick={() => (activeSettingsTab = 'nodes')}
@@ -32,9 +35,9 @@
 			type="button"
 			role="tab"
 			id="settings-tab-relationships"
-			class={activeSettingsTab === 'relationships'
-				? 'ui-tab ui-tab-active-left'
-				: 'ui-tab ui-tab-inactive-left'}
+			class="ui-tab {activeSettingsTab === 'relationships'
+				? 'ui-tab-active-left'
+				: 'ui-tab-inactive-left'}"
 			aria-selected={activeSettingsTab === 'relationships'}
 			aria-controls="settings-panel-relationships"
 			onclick={() => (activeSettingsTab = 'relationships')}
@@ -45,7 +48,7 @@
 			type="button"
 			role="tab"
 			id="settings-tab-expansion"
-			class={activeSettingsTab === 'expansion' ? 'ui-tab ui-tab-active-left' : 'ui-tab ui-tab-inactive-left'}
+			class="ui-tab {activeSettingsTab === 'expansion' ? 'ui-tab-active-left' : 'ui-tab-inactive-left'}"
 			aria-selected={activeSettingsTab === 'expansion'}
 			aria-controls="settings-panel-expansion"
 			onclick={() => (activeSettingsTab = 'expansion')}
@@ -64,11 +67,13 @@
 				? 'invisible pointer-events-none'
 				: ''}"
 		>
-			<div class="ui-stack text-sm text-gray-400">
-				<h4 class="ui-label">Toggle Nodes</h4>
-				<GraphLabelToggle />
-				<GraphNodeFilters types={ALL_NODE_TYPES} />
-			</div>
+			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.nodes}>
+				<div class="ui-stack text-sm text-gray-400">
+					<h4 class="ui-label">Toggle Nodes</h4>
+					<GraphLabelToggle />
+					<GraphNodeFilters types={ALL_NODE_TYPES} />
+				</div>
+			</ControlPanelHelperLayout>
 		</div>
 		<div
 			role="tabpanel"
@@ -79,10 +84,12 @@
 				? 'invisible pointer-events-none'
 				: ''}"
 		>
-			<div class="ui-stack text-sm text-gray-400">
-				<h4 class="ui-label">Highlight Relationships</h4>
-				<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
-			</div>
+			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.relationships}>
+				<div class="ui-stack text-sm text-gray-400">
+					<h4 class="ui-label">Highlight Relationships</h4>
+					<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
+				</div>
+			</ControlPanelHelperLayout>
 		</div>
 		<div
 			role="tabpanel"
@@ -93,9 +100,11 @@
 				? 'invisible pointer-events-none'
 				: ''}"
 		>
-			<div class="max-w-xs">
-				<ControlPanelCrawlSettings />
-			</div>
+			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.expansion}>
+				<div class="max-w-xs">
+					<ControlPanelCrawlSettings />
+				</div>
+			</ControlPanelHelperLayout>
 		</div>
 	</div>
 </div>
