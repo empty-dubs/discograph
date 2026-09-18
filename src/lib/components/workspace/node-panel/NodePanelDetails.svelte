@@ -104,7 +104,7 @@
 	<NodePanelItemList items={node!.namevariations ?? []} />
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="aliases" show={showAliases} title="Aliases">
+<NodePanelCollapsibleSection id="aliases" show={showAliases} title="Aliases" count={node!.aliases?.length}>
 	<NodePanelSearchableList
 		searchType="artist"
 		items={(node!.aliases ?? []).map((alias) => ({
@@ -116,7 +116,7 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="members" show={showMembers} title="Members">
+<NodePanelCollapsibleSection id="members" show={showMembers} title="Members" count={node!.members?.length}>
 	<NodePanelSearchableList
 		searchType="artist"
 		items={(node!.members ?? []).map((member) => ({
@@ -128,7 +128,7 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="groups" show={showGroups} title="Groups">
+<NodePanelCollapsibleSection id="groups" show={showGroups} title="Groups" count={node!.groups?.length}>
 	<NodePanelSearchableList
 		searchType="artist"
 		items={(node!.groups ?? []).map((group) => ({
@@ -154,7 +154,7 @@
 	{/if}
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="sublabels" show={showSublabels} title="Sublabels">
+<NodePanelCollapsibleSection id="sublabels" show={showSublabels} title="Sublabels" count={node!.sublabels?.length}>
 	<NodePanelSearchableList
 		searchType="label"
 		items={(node!.sublabels ?? []).map((sublabel) => ({
@@ -166,7 +166,7 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="urls" show={showUrls} title="Links">
+<NodePanelCollapsibleSection id="urls" show={showUrls} title="Links" count={node!.urls?.length}>
 	<NodePanelUrls urls={node!.urls ?? []} />
 </NodePanelCollapsibleSection>
 
@@ -199,7 +199,7 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="artists" show={showArtists} title="Artists">
+<NodePanelCollapsibleSection id="artists" show={showArtists} title="Artists" count={node!.artists?.length}>
 	<NodePanelSearchableList
 		searchType="artist"
 		items={(node!.artists ?? []).map((artist) => ({
@@ -211,7 +211,7 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="labels" show={showLabels} title="Labels">
+<NodePanelCollapsibleSection id="labels" show={showLabels} title="Labels" count={node!.labels?.length}>
 	<NodePanelSearchableList
 		searchType="label"
 		items={(node!.labels ?? []).map((label) => ({
@@ -223,7 +223,7 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="credits" show={showCredits} title="Credits">
+<NodePanelCollapsibleSection id="credits" show={showCredits} title="Credits" count={node!.credits?.length}>
 	<NodePanelSearchableList
 		searchType="artist"
 		items={(node!.credits ?? []).map((credit, index) => ({
@@ -235,7 +235,7 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="companies" show={showCompanies} title="Companies">
+<NodePanelCollapsibleSection id="companies" show={showCompanies} title="Companies" count={node!.companies?.length}>
 	<NodePanelSearchableList
 		searchType="label"
 		items={(node!.companies ?? []).map((company, index) => ({
@@ -249,7 +249,7 @@
 	/>
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="tracklist" show={showTracklist} title="Track list">
+<NodePanelCollapsibleSection id="tracklist" show={showTracklist} title="Track list" count={node!.tracklist?.length}>
 	<NodePanelItemList items={(node!.tracklist ?? []).map(formatTrack)} />
 </NodePanelCollapsibleSection>
 
