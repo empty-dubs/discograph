@@ -6,22 +6,9 @@
 	import GraphLabelToggle from './GraphLabelToggle.svelte';
 	import GraphNodeFilters from './GraphNodeFilters.svelte';
 
-	type SettingsTabId = 'display' | 'expansion';
+	type SettingsTabId = 'nodes' | 'relationships' | 'expansion';
 
-	let activeSettingsTab = $state<SettingsTabId>('display');
-
-	const labelClass = 'text-muted text-xs font-semibold tracking-wide uppercase';
-
-	const groupClass = 'flex flex-col gap-2';
-
-	const tabClass =
-		'w-full cursor-pointer border-none bg-transparent py-2 pl-0 pr-3 text-left text-sm font-medium transition-colors';
-
-	function tabButtonClass(tab: SettingsTabId): string {
-		return activeSettingsTab === tab
-			? `${tabClass} border-accent text-gray-200 border-l-2`
-			: `${tabClass} text-muted hover:text-gray-200 border-l-2 border-transparent`;
-	}
+	let activeSettingsTab = $state<SettingsTabId>('nodes');
 </script>
 
 <div class="flex flex-row gap-4">
@@ -33,19 +20,32 @@
 		<button
 			type="button"
 			role="tab"
-			id="settings-tab-display"
-			class={tabButtonClass('display')}
-			aria-selected={activeSettingsTab === 'display'}
-			aria-controls="settings-panel-display"
-			onclick={() => (activeSettingsTab = 'display')}
+			id="settings-tab-nodes"
+			class={activeSettingsTab === 'nodes' ? 'ui-tab ui-tab-active-left' : 'ui-tab ui-tab-inactive-left'}
+			aria-selected={activeSettingsTab === 'nodes'}
+			aria-controls="settings-panel-nodes"
+			onclick={() => (activeSettingsTab = 'nodes')}
 		>
-			Display
+			Nodes
+		</button>
+		<button
+			type="button"
+			role="tab"
+			id="settings-tab-relationships"
+			class={activeSettingsTab === 'relationships'
+				? 'ui-tab ui-tab-active-left'
+				: 'ui-tab ui-tab-inactive-left'}
+			aria-selected={activeSettingsTab === 'relationships'}
+			aria-controls="settings-panel-relationships"
+			onclick={() => (activeSettingsTab = 'relationships')}
+		>
+			Relationships
 		</button>
 		<button
 			type="button"
 			role="tab"
 			id="settings-tab-expansion"
-			class={tabButtonClass('expansion')}
+			class={activeSettingsTab === 'expansion' ? 'ui-tab ui-tab-active-left' : 'ui-tab ui-tab-inactive-left'}
 			aria-selected={activeSettingsTab === 'expansion'}
 			aria-controls="settings-panel-expansion"
 			onclick={() => (activeSettingsTab = 'expansion')}
@@ -54,40 +54,48 @@
 		</button>
 	</div>
 
-	<div class="min-w-0 flex-1">
-		{#if activeSettingsTab === 'display'}
-			<div
-				role="tabpanel"
-				id="settings-panel-display"
-				aria-labelledby="settings-tab-display"
-			>
-				<div class="grid grid-cols-1 gap-4 text-sm text-gray-400 md:grid-cols-2">
-					<div class="min-w-0">
-						<div class={groupClass}>
-							<h4 class={labelClass}>Toggle Nodes</h4>
-							<GraphLabelToggle />
-							<GraphNodeFilters types={ALL_NODE_TYPES} />
-						</div>
-					</div>
-
-					<div class="min-w-0">
-						<div class={groupClass}>
-							<h4 class={labelClass}>Highlight Relationships</h4>
-							<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
-						</div>
-					</div>
-				</div>
+	<div class="grid min-w-0 flex-1">
+		<div
+			role="tabpanel"
+			id="settings-panel-nodes"
+			aria-labelledby="settings-tab-nodes"
+			aria-hidden={activeSettingsTab !== 'nodes'}
+			class="col-start-1 row-start-1 {activeSettingsTab !== 'nodes'
+				? 'invisible pointer-events-none'
+				: ''}"
+		>
+			<div class="ui-stack text-sm text-gray-400">
+				<h4 class="ui-label">Toggle Nodes</h4>
+				<GraphLabelToggle />
+				<GraphNodeFilters types={ALL_NODE_TYPES} />
 			</div>
-		{:else}
-			<div
-				role="tabpanel"
-				id="settings-panel-expansion"
-				aria-labelledby="settings-tab-expansion"
-			>
-				<div class="max-w-xs">
-					<ControlPanelCrawlSettings />
-				</div>
+		</div>
+		<div
+			role="tabpanel"
+			id="settings-panel-relationships"
+			aria-labelledby="settings-tab-relationships"
+			aria-hidden={activeSettingsTab !== 'relationships'}
+			class="col-start-1 row-start-1 {activeSettingsTab !== 'relationships'
+				? 'invisible pointer-events-none'
+				: ''}"
+		>
+			<div class="ui-stack text-sm text-gray-400">
+				<h4 class="ui-label">Highlight Relationships</h4>
+				<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
 			</div>
-		{/if}
+		</div>
+		<div
+			role="tabpanel"
+			id="settings-panel-expansion"
+			aria-labelledby="settings-tab-expansion"
+			aria-hidden={activeSettingsTab !== 'expansion'}
+			class="col-start-1 row-start-1 {activeSettingsTab !== 'expansion'
+				? 'invisible pointer-events-none'
+				: ''}"
+		>
+			<div class="max-w-xs">
+				<ControlPanelCrawlSettings />
+			</div>
+		</div>
 	</div>
 </div>

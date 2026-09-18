@@ -31,7 +31,7 @@
 		{#if isSearchable(item)}
 			<button
 				type="button"
-				class="hover:bg-panel-hover block w-full rounded border-none bg-transparent px-0 py-0.5 text-left disabled:cursor-not-allowed disabled:opacity-50"
+				class="ui-list-button px-0 py-0.5"
 				disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
 				onclick={() => discogsApi.search(item.query ?? '', searchType || undefined)}
 			>

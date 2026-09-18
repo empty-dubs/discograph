@@ -6,7 +6,6 @@
 
 	import DiscogsSearchForm from './DiscogsSearchForm.svelte';
 
-	const headerTextClass = 'mt-1 mb-0 text-sm';
 </script>
 
 <header class="flex flex-wrap items-start gap-4 sufficient:grid sufficient:grid-cols-[minmax(0,1fr)_280px] sufficient:items-end">
@@ -24,7 +23,7 @@
 					<Icon data={github} scale={1.25} />
 				</a>
 			</div>
-			<p class="text-muted {headerTextClass}">
+			<p class="text-muted mt-1 mb-0 text-sm">
 				Explore music relationships from
 				<a
 					href={pageLinks.discogs}

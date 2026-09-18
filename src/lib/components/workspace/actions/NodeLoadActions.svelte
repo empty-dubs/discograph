@@ -53,9 +53,6 @@
 
 	const isLoading = $derived(node.hasLoadingChildren || discogsApi.isRateLimited);
 
-	const menuClass =
-		'hover:bg-panel-hover block w-full border-none bg-transparent px-3 py-2 text-left text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent';
-
 	function getLoadButtonState(
 		loadedNeighborNodeTypes: Map<string, Set<LoadAction>>,
 		nodeId: string,
@@ -135,7 +132,7 @@
 	{#if layout === 'menu'}
 		<button
 			type="button"
-			class={menuClass}
+			class="ui-list-button"
 			disabled={isActionDisabled(action)}
 			onclick={() => runAction(action)}
 		>

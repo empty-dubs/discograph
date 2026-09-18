@@ -7,17 +7,6 @@
 
 	import ControlPanelNumberInput from './ControlPanelNumberInput.svelte';
 
-	const fieldClass =
-		'box-border h-9 w-full rounded-md border border-border bg-panel px-3 text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50';
-
-	const labelClass = 'text-muted text-xs font-semibold tracking-wide uppercase';
-
-	const buttonClass =
-		'box-border h-9 w-full cursor-pointer rounded-md border border-accent bg-accent px-3 text-sm text-white disabled:cursor-not-allowed disabled:opacity-50';
-
-	const stopButtonClass =
-		'box-border h-9 w-full cursor-pointer rounded-md border border-border bg-panel px-3 text-sm text-gray-200 hover:bg-panel-hover';
-
 	const node = $derived(selectedNodeState);
 
 	const crawlNodeType = $derived(getCrawlNodeType(crawlState.mode));
@@ -59,11 +48,11 @@
 </script>
 
 <div class="flex max-w-xs flex-col gap-3" role="group" aria-label="Crawl settings">
-	<div class="flex flex-col gap-1.5">
-		<label class={labelClass} for="crawl-mode">Mode</label>
+	<div class="ui-stack">
+		<label class="ui-label" for="crawl-mode">Mode</label>
 		<select
 			id="crawl-mode"
-			class={fieldClass}
+			class="ui-field w-full"
 			bind:value={crawlState.mode}
 			disabled={crawlState.isRunning}
 		>
@@ -81,11 +70,11 @@
 	/>
 
 	{#if crawlState.isRunning}
-		<button type="button" class={stopButtonClass} onclick={() => crawlState.requestStop()}>
+		<button type="button" class="ui-button w-full" onclick={() => crawlState.requestStop()}>
 			Stop
 		</button>
 	{:else}
-		<button type="button" class={buttonClass} disabled={isCrawlDisabled} onclick={crawl}>
+		<button type="button" class="ui-button w-full" disabled={isCrawlDisabled} onclick={crawl}>
 			Crawl
 		</button>
 	{/if}
