@@ -70,6 +70,8 @@ export class ForceGraph {
 	private showNodeLabels = true;
 	private selectedId: string | null = null;
 	private highlightedEdgeType: EdgeType | null = null;
+	private lastStructureRevision = -1;
+	private lastVisibilityRevision = -1;
 
 	private dragBehavior: DragBehavior<SVGGElement, SimulationNode, SimulationNode | SubjectPosition> =
 		drag<SVGGElement, SimulationNode>()
@@ -165,8 +167,20 @@ export class ForceGraph {
 			});
 	}
 
-	update(nodes: GraphNode[], links: GraphLink[]) {
+	update(
+		nodes: GraphNode[],
+		links: GraphLink[],
+		structureRevision: number,
+		visibilityRevision: number
+	) {
 		if (!this.simulation || !this.gLinks || !this.gNodes || !this.gLabels) return;
+
+		const structureChanged =
+			structureRevision !== this.lastStructureRevision
+			|| visibilityRevision !== this.lastVisibilityRevision;
+
+		this.lastStructureRevision = structureRevision;
+		this.lastVisibilityRevision = visibilityRevision;
 
 		const nodeMap = new Map(this.simulationNodes.map(n => [n.id, n]));
 
@@ -309,7 +323,10 @@ export class ForceGraph {
 		);
 
 		this.simulation.force('center', forceCenter(this.width / 2, this.height / 2));
-		this.simulation.alpha(0.5).restart();
+
+		if (structureChanged) {
+			this.simulation.alpha(0.5).restart();
+		}
 	}
 
 	setSelectedId(id: string | null): void {
@@ -375,6 +392,8 @@ export class ForceGraph {
 		this.tooltipText = null;
 		this.selectedId = null;
 		this.highlightedEdgeType = null;
+		this.lastStructureRevision = -1;
+		this.lastVisibilityRevision = -1;
 		this.options.onTooltip(null);
 	}
 

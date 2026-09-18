@@ -3,6 +3,7 @@ import type { GraphLink, GraphNode, GraphPatch } from '../types';
 export class GraphDataState {
 	nodes = $state<Map<string, GraphNode>>(new Map());
 	links = $state<Map<string, GraphLink>>(new Map());
+	structureRevision = $state(0);
 
 	get nodeList(): GraphNode[] {
 		return Array.from(this.nodes.values());
@@ -38,6 +39,8 @@ export class GraphDataState {
 	
 
 	applyPatch(patch: GraphPatch) {
+		const prevNodeSize = this.nodes.size;
+		const prevLinkSize = this.links.size;
 		const nextNodes = new Map(this.nodes);
 		const nextLinks = new Map(this.links);
 
@@ -45,6 +48,10 @@ export class GraphDataState {
 
 		this.nodes = nextNodes;
 		this.links = nextLinks;
+
+		if (nextNodes.size !== prevNodeSize || nextLinks.size !== prevLinkSize) {
+			this.structureRevision++;
+		}
 	}
 
 	updateNode(nodeId: string, patch: Partial<GraphNode>) {
@@ -77,11 +84,13 @@ export class GraphDataState {
 
 		this.nodes = nextNodes;
 		this.links = nextLinks;
+		this.structureRevision++;
 	}
 
 	clear() {
 		this.nodes = new Map();
 		this.links = new Map();
+		this.structureRevision = 0;
 	}
 }
 
