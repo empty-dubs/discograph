@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { seedFromNode } from '$lib/components/workspace/actions/loaders/seed';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
-	import { seedFromNode } from '$lib/components/workspace/actions/loaders/seed';
+	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import ControlPanelButton from './ControlPanelButton.svelte';
@@ -13,6 +14,7 @@
 		|| node.isBlocked
 		|| !node.hasChildren
 		|| node.hasLoadingChildren
+		|| crawlState.isRunning
 	);
 
 	const resetDisabled = $derived(
@@ -21,6 +23,13 @@
 		|| !node.data
 		|| node.hasLoadingChildren
 		|| discogsApi.isRateLimited
+		|| crawlState.isRunning
+	);
+
+	const clearDisabled = $derived(
+		graph.data.isEmpty
+		|| node.hasLoadingChildren
+		|| crawlState.isRunning
 	);
 </script>
 
@@ -34,7 +43,7 @@
 	</ControlPanelButton>
 
 	<ControlPanelButton
-		disabled={graph.data.isEmpty || node.hasLoadingChildren}
+		disabled={clearDisabled}
 		onclick={() => {
 			graph.clear();
 			discogsApi.clear();
