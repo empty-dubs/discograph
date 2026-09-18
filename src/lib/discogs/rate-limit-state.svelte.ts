@@ -25,7 +25,6 @@ class DiscogsRateLimitState {
 		this.rateLimit = getClientRateLimit();
 
 		const refreshDelayMs = this.rateLimit.queueClearTimeMs;
-		console.log('scheduleRefresh', 'refreshDelayMs', refreshDelayMs);
 
 		if (refreshDelayMs === null) return;
 
