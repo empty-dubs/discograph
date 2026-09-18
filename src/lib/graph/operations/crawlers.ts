@@ -1,4 +1,3 @@
-import { PATCH_LOAD_ACTIONS } from '$lib/components/workspace/actions/constants';
 import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
 import { awaitFetchRequestSlot } from '$lib/discogs/rate-limiter';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
