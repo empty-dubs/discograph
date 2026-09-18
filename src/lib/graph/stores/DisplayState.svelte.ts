@@ -13,6 +13,7 @@ export class GraphDisplayState {
 	viewResetToken = $state(0);
 	showNodeLabels = $state(true);
 	highlightedEdgeType = $state<EdgeType | null>(null);
+	visibilityRevision = $state(0);
 
 	get pinnedIds(): Set<string> {
 		const pinned = new Set<string>();
@@ -60,16 +61,22 @@ export class GraphDisplayState {
 
 	setTypeVisible(type: NodeType, visible: boolean) {
 		if (visible) {
+			if (this.visibleTypes.has(type)) return;
+
 			this.visibleTypes.add(type);
+			this.visibilityRevision++;
 			return;
 		}
 
 		if (this.visibleTypes.size <= 1 && this.visibleTypes.has(type)) return;
 
 		this.visibleTypes.delete(type);
+		this.visibilityRevision++;
 	}
 
 	selectNode(id: string | null) {
+		if (this.selectedId === id) return;
+
 		this.selectedId = id;
 	}
 
@@ -86,6 +93,7 @@ export class GraphDisplayState {
 		this.visibleTypes = new SvelteSet(ALL_NODE_TYPES);
 		this.showNodeLabels = true;
 		this.highlightedEdgeType = null;
+		this.visibilityRevision = 0;
 		this.viewResetToken++;
 	}
 }

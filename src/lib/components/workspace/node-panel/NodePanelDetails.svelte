@@ -100,7 +100,7 @@
 	{node!.realname}
 </NodePanelCollapsibleSection>
 
-<NodePanelCollapsibleSection id="name-variations" show={showNameVariations} title="Name variations">
+<NodePanelCollapsibleSection id="name-variations" show={showNameVariations} title="Name variations" count={node!.namevariations?.length}>
 	<NodePanelItemList items={node!.namevariations ?? []} />
 </NodePanelCollapsibleSection>
 

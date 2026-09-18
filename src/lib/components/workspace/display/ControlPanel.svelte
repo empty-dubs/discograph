@@ -15,8 +15,13 @@
 
 	type TabId = 'explore' | 'crawl' | 'settings';
 
+	interface Props {
+		isExpanded?: boolean;
+	}
+
+	let { isExpanded = $bindable(true) }: Props = $props();
+
 	let activeTab = $state<TabId>('explore');
-	let isExpanded = $state(true);
 
 	function selectTab(tab: TabId) {
 		activeTab = tab;
@@ -24,10 +29,10 @@
 	}
 </script>
 
-<div class="flex flex-col">
+<div class="flex h-full min-h-0 flex-col">
 	<button
 		type="button"
-		class="ui-collapse-handle"
+		class="ui-collapse-handle shrink-0"
 		aria-expanded={isExpanded}
 		aria-controls="control-panel-body"
 		aria-label="Collapse control panel"
@@ -39,8 +44,12 @@
 			<Icon data={chevronUp} />
 		{/if}
 	</button>
-	<div class="flex flex-col {isExpanded ? 'gap-4' : ''}">
-		<div role="tablist" aria-label="Control panel sections" class="flex gap-1 {isExpanded ? 'border-b border-border' : ''}">
+	<div class="flex min-h-0 flex-col {isExpanded ? 'flex-1 gap-4' : ''}">
+		<div
+			role="tablist"
+			aria-label="Control panel sections"
+			class="flex shrink-0 gap-1 {isExpanded ? 'border-b border-border' : ''}"
+		>
 			<button
 				type="button"
 				role="tab"
@@ -82,19 +91,17 @@
 
 		<div
 			id="control-panel-body"
-			class="grid transition-[grid-template-rows] duration-300 ease-in-out"
+			class="grid min-h-0 flex-1 transition-[grid-template-rows] duration-300 ease-in-out"
 			style:grid-template-rows={isExpanded ? '1fr' : '0fr'}
 		>
 			<div class="min-h-0 overflow-hidden">
-				<div class="grid">
+				<div class="grid h-full min-h-0">
 					<div
 						role="tabpanel"
 						id="control-panel-panel-explore"
 						aria-labelledby="control-panel-tab-explore"
 						aria-hidden={activeTab !== 'explore' || !isExpanded}
-						class="col-start-1 row-start-1 {activeTab !== 'explore'
-							? 'invisible pointer-events-none'
-							: ''}"
+						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'explore' ? 'hidden' : ''}"
 					>
 						<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.explore}>
 							<ControlPanelExplore />
@@ -105,9 +112,7 @@
 						id="control-panel-panel-settings"
 						aria-labelledby="control-panel-tab-settings"
 						aria-hidden={activeTab !== 'settings' || !isExpanded}
-						class="col-start-1 row-start-1 {activeTab !== 'settings'
-							? 'invisible pointer-events-none'
-							: ''}"
+						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'settings' ? 'hidden' : ''}"
 					>
 						<ControlPanelSettings />
 					</div>
@@ -116,11 +121,12 @@
 						id="control-panel-panel-crawl"
 						aria-labelledby="control-panel-tab-crawl"
 						aria-hidden={activeTab !== 'crawl' || !isExpanded}
-						class="col-start-1 row-start-1 {activeTab !== 'crawl'
-							? 'invisible pointer-events-none'
-							: ''}"
+						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'crawl' ? 'hidden' : ''}"
 					>
-						<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.crawl}>
+						<ControlPanelHelperLayout
+							helperText={CONTROL_PANEL_HELPER_TEXT.crawl}
+							helperShare="half"
+						>
 							<ControlPanelCrawlTab />
 						</ControlPanelHelperLayout>
 					</div>

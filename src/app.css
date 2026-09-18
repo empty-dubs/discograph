@@ -58,7 +58,7 @@
 
 	.ui-ghost-button {
 		font: inherit;
-		@apply hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent;
+		@apply hover:bg-panel flex cursor-pointer items-center text-left gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent;
 	}
 
 	.ui-list-button {

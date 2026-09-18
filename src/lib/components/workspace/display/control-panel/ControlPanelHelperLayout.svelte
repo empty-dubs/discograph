@@ -3,24 +3,30 @@
 
 	interface Props {
 		helperText: readonly string[];
+		helperShare?: 'fixed' | 'half';
 		children: Snippet;
 	}
 
-	let { helperText, children }: Props = $props();
+	let { helperText, helperShare = 'fixed', children }: Props = $props();
 </script>
 
-<div class="grid min-h-0 grid-cols-[minmax(0,1fr)_12rem] gap-4 md:grid-cols-[minmax(0,1fr)_16rem]">
-	<div class="min-w-0">
+<div class="flex h-full min-h-0 gap-4">
+	<div
+		class="scrollbar-hidden min-h-0 min-w-0 overflow-y-auto {helperShare === 'half'
+			? 'flex-1 basis-0'
+			: 'flex-1'}"
+	>
 		{@render children()}
 	</div>
-	<div class="relative min-h-0">
-		<aside
-			class="ui-helper-column scrollbar-hidden absolute inset-0 flex flex-col gap-2 overflow-y-auto"
-			aria-label="Help"
-		>
-			{#each helperText as paragraph, index (index)}
-				<p class="text-muted m-0 text-sm leading-relaxed">{paragraph}</p>
-			{/each}
-		</aside>
-	</div>
+	<aside
+		class="ui-helper-column overflow-y-auto {helperShare === 'half'
+			? 'min-w-0 flex-1 basis-0'
+			: 'w-48 shrink-0 md:w-64'}"
+		aria-label="Help"
+	>
+		{#each helperText as paragraph, index (index)}
+			<p class="text-muted text-sm leading-relaxed">{paragraph}</p>
+			<br />
+		{/each}
+	</aside>
 </div>

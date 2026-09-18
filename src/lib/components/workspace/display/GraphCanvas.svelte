@@ -50,9 +50,11 @@
 		if (!forceGraph) return;
 		const nodes = graph.display.visibleNodeList;
 		const links = graph.display.visibleLinkList;
+		const { structureRevision } = graph.data;
+		const { visibilityRevision } = graph.display;
 
 		if (nodes.length > 0) {
-			forceGraph.update(nodes, links);
+			forceGraph.update(nodes, links, structureRevision, visibilityRevision);
 		} else {
 			forceGraph.clear();
 		}
