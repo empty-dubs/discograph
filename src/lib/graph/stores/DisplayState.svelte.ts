@@ -58,14 +58,15 @@ export class GraphDisplayState {
 		return this.visibleTypes.has(type);
 	}
 
-	toggleType(type: NodeType) {
-		if (this.visibleTypes.has(type)) {
-			if (this.visibleTypes.size === 0) return;
-
-			this.visibleTypes.delete(type);
-		} else {
+	setTypeVisible(type: NodeType, visible: boolean) {
+		if (visible) {
 			this.visibleTypes.add(type);
+			return;
 		}
+
+		if (this.visibleTypes.size <= 1 && this.visibleTypes.has(type)) return;
+
+		this.visibleTypes.delete(type);
 	}
 
 	selectNode(id: string | null) {
