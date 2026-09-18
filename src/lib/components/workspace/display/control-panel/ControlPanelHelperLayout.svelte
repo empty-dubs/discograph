@@ -19,13 +19,14 @@
 		{@render children()}
 	</div>
 	<aside
-		class="ui-helper-column scrollbar-hidden overflow-y-auto {helperShare === 'half'
+		class="ui-helper-column overflow-y-auto {helperShare === 'half'
 			? 'min-w-0 flex-1 basis-0'
 			: 'w-48 shrink-0 md:w-64'}"
 		aria-label="Help"
 	>
 		{#each helperText as paragraph, index (index)}
-			<p class="text-muted m-0 text-sm leading-relaxed">{paragraph}</p>
+			<p class="text-muted text-sm leading-relaxed">{paragraph}</p>
+			<br />
 		{/each}
 	</aside>
 </div>
