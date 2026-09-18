@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
+	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 
 	import type { SearchType } from '$lib/discogs/types';
 
@@ -31,7 +32,7 @@
 			<button
 				type="button"
 				class="hover:bg-panel-hover block w-full rounded border-none bg-transparent px-0 py-0.5 text-left disabled:cursor-not-allowed disabled:opacity-50"
-				disabled={discogsApi.searching || discogsApi.isRateLimited}
+				disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
 				onclick={() => discogsApi.search(item.query ?? '', searchType || undefined)}
 			>
 				{item.label}
