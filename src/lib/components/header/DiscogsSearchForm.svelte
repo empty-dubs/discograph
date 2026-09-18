@@ -4,6 +4,7 @@
 	import { seedFromResult } from '$lib/components/workspace/actions/loaders/seed';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
+	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 
 	import type { SearchResult, SearchType } from '$lib/discogs/types';
 
@@ -48,6 +49,15 @@
 			wrap?: boolean;
 		}[] = [];
 
+		if (crawlState.isRunning) {
+			lines.push({
+				id: 'crawl-running',
+				text: 'Crawl in progress...',
+				tone: 'warning',
+				wrap: true
+			});
+		}
+
 		if (rateLimitText) {
 			lines.push({
 				id: 'rate-limit',
@@ -79,7 +89,7 @@
 	const iconToneClass = $derived(
 		discogsApi.error
 			? 'text-danger'
-			: discogsApi.isRateLimited
+			: discogsApi.isRateLimited || crawlState.isRunning
 				? 'text-warning'
 				: 'text-muted'
 	);
@@ -144,7 +154,7 @@
 				class:pr-14={discogsApi.searchQuery.length > 0}
 				placeholder="Search Discogs…"
 				bind:value={discogsApi.searchQuery}
-				disabled={discogsApi.searching || discogsApi.isRateLimited}
+				disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
 			/>
 
 			{#if discogsApi.searchQuery.length > 0}
@@ -215,7 +225,7 @@
 			form={SEARCH_FORM_ID}
 			class="{fieldClass} discogs-search-field text-center min-w-0 flex-1 cursor-pointer"
 			bind:value={discogsApi.searchType}
-			disabled={discogsApi.searching || discogsApi.isRateLimited}
+			disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
 		>
 			{#each typeOptions as option}
 				<option value={option.value}>{option.label}</option>
@@ -226,7 +236,7 @@
 			type="submit"
 			form={SEARCH_FORM_ID}
 			class="{fieldClass} inline-flex flex-1 items-center justify-center border-accent bg-accent cursor-pointer text-white"
-			disabled={discogsApi.searching || !discogsApi.searchQuery.trim() || discogsApi.isRateLimited}
+			disabled={discogsApi.searching || !discogsApi.searchQuery.trim() || discogsApi.isRateLimited || crawlState.isRunning}
 		>
 			{discogsApi.searching ? 'Searching…' : 'Search'}
 		</button>
