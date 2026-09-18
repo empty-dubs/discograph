@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ALL_EDGE_TYPES, ALL_NODE_TYPES } from '$lib/graph/constants';
-	
+
 	import { CONTROL_PANEL_HELPER_TEXT } from './constants';
 
 	import ControlPanelCrawlSettings from './ControlPanelCrawlSettings.svelte';
@@ -14,7 +14,7 @@
 	let activeSettingsTab = $state<SettingsTabId>('nodes');
 </script>
 
-<div class="flex flex-row gap-4">
+<div class="flex h-full min-h-0 gap-4">
 	<div
 		role="tablist"
 		aria-label="Settings sections"
@@ -57,15 +57,13 @@
 		</button>
 	</div>
 
-	<div class="grid min-w-0 flex-1">
+	<div class="grid min-h-0 min-w-0 flex-1">
 		<div
 			role="tabpanel"
 			id="settings-panel-nodes"
 			aria-labelledby="settings-tab-nodes"
 			aria-hidden={activeSettingsTab !== 'nodes'}
-			class="col-start-1 row-start-1 {activeSettingsTab !== 'nodes'
-				? 'invisible pointer-events-none'
-				: ''}"
+			class="col-start-1 row-start-1 h-full min-h-0 {activeSettingsTab !== 'nodes' ? 'hidden' : ''}"
 		>
 			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.nodes}>
 				<div class="ui-stack text-sm text-gray-400">
@@ -80,8 +78,8 @@
 			id="settings-panel-relationships"
 			aria-labelledby="settings-tab-relationships"
 			aria-hidden={activeSettingsTab !== 'relationships'}
-			class="col-start-1 row-start-1 {activeSettingsTab !== 'relationships'
-				? 'invisible pointer-events-none'
+			class="col-start-1 row-start-1 h-full min-h-0 {activeSettingsTab !== 'relationships'
+				? 'hidden'
 				: ''}"
 		>
 			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.relationships}>
@@ -96,9 +94,7 @@
 			id="settings-panel-expansion"
 			aria-labelledby="settings-tab-expansion"
 			aria-hidden={activeSettingsTab !== 'expansion'}
-			class="col-start-1 row-start-1 {activeSettingsTab !== 'expansion'
-				? 'invisible pointer-events-none'
-				: ''}"
+			class="col-start-1 row-start-1 h-full min-h-0 {activeSettingsTab !== 'expansion' ? 'hidden' : ''}"
 		>
 			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.expansion}>
 				<div class="max-w-xs">
