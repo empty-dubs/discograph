@@ -54,40 +54,48 @@
 		</button>
 	</div>
 
-	<div class="min-w-0 flex-1">
-		{#if activeSettingsTab === 'nodes'}
-			<div
-				role="tabpanel"
-				id="settings-panel-nodes"
-				aria-labelledby="settings-tab-nodes"
-			>
-				<div class="ui-stack text-sm text-gray-400">
-					<h4 class="ui-label">Toggle Nodes</h4>
-					<GraphLabelToggle />
-					<GraphNodeFilters types={ALL_NODE_TYPES} />
-				</div>
+	<div class="grid min-w-0 flex-1">
+		<div
+			role="tabpanel"
+			id="settings-panel-nodes"
+			aria-labelledby="settings-tab-nodes"
+			aria-hidden={activeSettingsTab !== 'nodes'}
+			class="col-start-1 row-start-1 {activeSettingsTab !== 'nodes'
+				? 'invisible pointer-events-none'
+				: ''}"
+		>
+			<div class="ui-stack text-sm text-gray-400">
+				<h4 class="ui-label">Toggle Nodes</h4>
+				<GraphLabelToggle />
+				<GraphNodeFilters types={ALL_NODE_TYPES} />
 			</div>
-		{:else if activeSettingsTab === 'relationships'}
-			<div
-				role="tabpanel"
-				id="settings-panel-relationships"
-				aria-labelledby="settings-tab-relationships"
-			>
-				<div class="ui-stack text-sm text-gray-400">
-					<h4 class="ui-label">Highlight Relationships</h4>
-					<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
-				</div>
+		</div>
+		<div
+			role="tabpanel"
+			id="settings-panel-relationships"
+			aria-labelledby="settings-tab-relationships"
+			aria-hidden={activeSettingsTab !== 'relationships'}
+			class="col-start-1 row-start-1 {activeSettingsTab !== 'relationships'
+				? 'invisible pointer-events-none'
+				: ''}"
+		>
+			<div class="ui-stack text-sm text-gray-400">
+				<h4 class="ui-label">Highlight Relationships</h4>
+				<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
 			</div>
-		{:else}
-			<div
-				role="tabpanel"
-				id="settings-panel-expansion"
-				aria-labelledby="settings-tab-expansion"
-			>
-				<div class="max-w-xs">
-					<ControlPanelCrawlSettings />
-				</div>
+		</div>
+		<div
+			role="tabpanel"
+			id="settings-panel-expansion"
+			aria-labelledby="settings-tab-expansion"
+			aria-hidden={activeSettingsTab !== 'expansion'}
+			class="col-start-1 row-start-1 {activeSettingsTab !== 'expansion'
+				? 'invisible pointer-events-none'
+				: ''}"
+		>
+			<div class="max-w-xs">
+				<ControlPanelCrawlSettings />
 			</div>
-		{/if}
+		</div>
 	</div>
 </div>

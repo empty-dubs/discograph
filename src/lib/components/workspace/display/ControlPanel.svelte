@@ -83,35 +83,40 @@
 			style:grid-template-rows={isExpanded ? '1fr' : '0fr'}
 		>
 			<div class="min-h-0 overflow-hidden">
-				<div class="flex flex-col gap-4">
-					{#if activeTab === 'explore'}
-						<div
-							role="tabpanel"
-							id="control-panel-panel-explore"
-							aria-labelledby="control-panel-tab-explore"
-							aria-hidden={!isExpanded}
-						>
-							<ControlPanelExplore />
-						</div>
-					{:else if activeTab === 'settings'}
-						<div
-							role="tabpanel"
-							id="control-panel-panel-settings"
-							aria-labelledby="control-panel-tab-settings"
-							aria-hidden={!isExpanded}
-						>
-							<ControlPanelSettings />
-						</div>
-					{:else}
-						<div
-							role="tabpanel"
-							id="control-panel-panel-crawl"
-							aria-labelledby="control-panel-tab-crawl"
-							aria-hidden={!isExpanded}
-						>
-							<ControlPanelCrawlTab />
-						</div>
-					{/if}
+				<div class="grid">
+					<div
+						role="tabpanel"
+						id="control-panel-panel-explore"
+						aria-labelledby="control-panel-tab-explore"
+						aria-hidden={activeTab !== 'explore' || !isExpanded}
+						class="col-start-1 row-start-1 {activeTab !== 'explore'
+							? 'invisible pointer-events-none'
+							: ''}"
+					>
+						<ControlPanelExplore />
+					</div>
+					<div
+						role="tabpanel"
+						id="control-panel-panel-settings"
+						aria-labelledby="control-panel-tab-settings"
+						aria-hidden={activeTab !== 'settings' || !isExpanded}
+						class="col-start-1 row-start-1 {activeTab !== 'settings'
+							? 'invisible pointer-events-none'
+							: ''}"
+					>
+						<ControlPanelSettings />
+					</div>
+					<div
+						role="tabpanel"
+						id="control-panel-panel-crawl"
+						aria-labelledby="control-panel-tab-crawl"
+						aria-hidden={activeTab !== 'crawl' || !isExpanded}
+						class="col-start-1 row-start-1 {activeTab !== 'crawl'
+							? 'invisible pointer-events-none'
+							: ''}"
+					>
+						<ControlPanelCrawlTab />
+					</div>
 				</div>
 			</div>
 		</div>
