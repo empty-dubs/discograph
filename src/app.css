@@ -100,4 +100,8 @@
 	.ui-collapse-handle {
 		@apply flex cursor-pointer text-muted w-full items-center justify-center bg-transparent transition-colors hover:text-gray-200;
 	}
+
+	.ui-helper-column {
+		@apply border-border w-full shrink-0 border-l pl-4;
+	}
 }
