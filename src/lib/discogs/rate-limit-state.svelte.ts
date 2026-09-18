@@ -1,43 +1,39 @@
-import { dev } from '$app/environment';
-
 import { getClientRateLimit } from './rate-limiter';
 
 import type { RateLimitInfo } from './types';
 
-function parseRateLimitHeaders(headers: Headers): RateLimitInfo {
-	const limit = headers.get('x-discogs-ratelimit');
-	const used = headers.get('x-discogs-ratelimit-used');
-	const remaining = headers.get('x-discogs-ratelimit-remaining');
-
-	return {
-		limit: limit ? Number(limit) : null,
-		used: used ? Number(used) : null,
-		remaining: remaining ? Number(remaining) : null
-	};
-}
-
 class DiscogsRateLimitState {
-	rateLimit = $state<RateLimitInfo>({ limit: null, used: null, remaining: null });
+	rateLimit = $state<RateLimitInfo>({
+		limit: null,
+		used: null,
+		remaining: null,
+		queueClearTimeMs: null
+	});
+
+	private refreshTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
 
 	get isRateLimited(): boolean {
 		return this.rateLimit.remaining !== null && this.rateLimit.remaining <= 0;
 	}
 
-	updateFromClient(info: RateLimitInfo): void {
-		this.rateLimit = info;
-	}
-
-	updateFromHeaders(headers: Headers): void {
-		const fromHeaders = parseRateLimitHeaders(headers);
-
-		if (fromHeaders.limit !== null && fromHeaders.remaining !== null) {
-			this.rateLimit = fromHeaders;
+	scheduleRefresh(): void {
+		if (this.refreshTimeout !== undefined) {
+			clearTimeout(this.refreshTimeout);
+			this.refreshTimeout = undefined;
 		}
+
+		this.rateLimit = getClientRateLimit();
+
+		const refreshDelayMs = this.rateLimit.queueClearTimeMs;
+		console.log('scheduleRefresh', 'refreshDelayMs', refreshDelayMs);
+
+		if (refreshDelayMs === null) return;
+
+		this.refreshTimeout = setTimeout(() => this.scheduleRefresh(), refreshDelayMs);
 	}
 }
 
 export const discogsRateLimit = new DiscogsRateLimitState();
 
-if (!dev) {
-	discogsRateLimit.updateFromClient(getClientRateLimit());
-}
+// initial rate limitrefresh
+discogsRateLimit.scheduleRefresh();

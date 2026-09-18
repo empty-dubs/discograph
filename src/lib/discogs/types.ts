@@ -218,6 +218,7 @@ export interface RateLimitInfo {
 	limit: number | null;
 	used: number | null;
 	remaining: number | null;
+	queueClearTimeMs: number | null;
 }
 
 export type NodePayload =
