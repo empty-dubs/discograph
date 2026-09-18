@@ -41,7 +41,7 @@
 				style:background={NODE_COLORS[sectionNodeType(title)!]}
 			></span>
 		{/if}
-		<h3 class="text-muted m-0 text-xs font-semibold tracking-wide uppercase">{title}</h3>
+		<h3 class="ui-label">{title}</h3>
 		{#each nodeTypes ?? [] as type (type)}
 			{@const count = graph.display.typeCounts[type]}
 			{#if count > 0}

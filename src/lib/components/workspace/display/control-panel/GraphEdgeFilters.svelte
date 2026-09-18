@@ -16,10 +16,6 @@
 
 	let { edgeTypes = ALL_EDGE_TYPES }: Props = $props();
 
-	const itemClass =
-		'flex items-center gap-1.5 rounded px-1.5 py-0.5 hover:bg-panel cursor-default';
-	const disabledClass = 'flex items-center gap-1.5 rounded px-1.5 py-0.5 opacity-50 cursor-default';
-
 	function isEnabled(type: EdgeType): boolean {
 		return !graph.data.isEmpty && graph.display.edgeTypeCounts[type] > 0;
 	}
@@ -39,7 +35,7 @@
 				{@const enabled = isEnabled(type)}
 				<span
 					role="presentation"
-					class={enabled ? itemClass : disabledClass}
+					class={enabled ? 'ui-list-item hover:bg-panel' : 'ui-list-item opacity-50'}
 					onmouseenter={() => {
 						if (enabled) graph.display.selectEdgeType(type);
 					}}

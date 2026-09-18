@@ -14,11 +14,6 @@
 	const apiUrl = $derived(node ? getDiscogsProxyUrl(node) : null);
 	const youtubeUrl = $derived(node ? getYouTubeSearchUrl(node) : null);
 
-	const linkClass =
-		'border-border bg-panel-hover text-center rounded-md border px-3 py-2 text-sm text-gray-300 no-underline';
-	const enabledClass = `${linkClass} cursor-pointer`;
-	const disabledClass = `${linkClass} disabled:cursor-not-allowed disabled:opacity-50`;
-
 	const actions = $derived([
 		{ label: 'View on Discogs', url: websiteUrl },
 		{ label: 'Search on YouTube', url: youtubeUrl },
@@ -34,12 +29,12 @@
 					href={action.url}
 					target="_blank"
 					rel="noopener noreferrer"
-					class={enabledClass}
+					class="ui-explore-link"
 				>
 					{action.label}
 				</a>
 			{:else}
-				<button type="button" disabled class={disabledClass}>
+				<button type="button" disabled class="ui-explore-link cursor-not-allowed opacity-50">
 					{action.label}
 				</button>
 			{/if}

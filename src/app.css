@@ -42,3 +42,58 @@
 		display: none;
 	}
 }
+
+@layer components {
+	.ui-label {
+		@apply text-muted text-xs font-semibold tracking-wide uppercase m-0;
+	}
+
+	.ui-stack {
+		@apply flex flex-col gap-1.5;
+	}
+
+	.ui-field {
+		@apply box-border h-9 rounded-md border border-border bg-panel px-3 text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50;
+	}
+
+	.ui-ghost-button {
+		font: inherit;
+		@apply hover:bg-panel flex cursor-pointer items-center gap-1.5 rounded border-none bg-transparent px-1.5 py-0.5 text-inherit disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent;
+	}
+
+	.ui-list-button {
+		@apply cursor-pointer hover:bg-panel-hover block w-full border-none bg-transparent px-3 py-2 text-left text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent;
+	}
+
+	.ui-button {
+		@apply box-border h-9 cursor-pointer rounded-md border border-border bg-panel px-3 text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 hover:bg-sky-600;
+	}
+
+	.ui-tab {
+		@apply cursor-pointer border-none bg-transparent py-2 pl-0 pr-3 text-left text-sm font-medium transition-colors;
+	}
+
+	.ui-tab-active-bottom {
+		@apply border-b-2 border-accent text-gray-200;
+	}
+
+	.ui-tab-inactive-bottom {
+		@apply border-b-2 border-transparent text-muted hover:text-gray-200;
+	}
+
+	.ui-tab-active-left {
+		@apply border-l-2 border-accent text-gray-200 w-full;
+	}
+
+	.ui-tab-inactive-left {
+		@apply border-l-2 border-transparent text-muted hover:text-gray-200 w-full;
+	}
+
+	.ui-list-item {
+		@apply flex items-center gap-1.5 rounded px-1.5 py-0.5 cursor-default hover:bg-panel;
+	}
+
+	.ui-explore-link {
+		@apply border-border bg-panel-hover text-center rounded-md border px-3 py-2 text-sm text-gray-300 no-underline cursor-pointer hover:bg-sky-600;
+	}
+}

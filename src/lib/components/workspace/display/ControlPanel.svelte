@@ -10,15 +10,6 @@
 	type TabId = 'explore' | 'crawl' | 'settings';
 
 	let activeTab = $state<TabId>('explore');
-
-	const tabClass =
-		'cursor-pointer border-none bg-transparent py-2 pl-0 pr-3 text-left text-sm font-medium transition-colors';
-
-	function tabButtonClass(tab: TabId): string {
-		return activeTab === tab
-			? `${tabClass} border-accent text-gray-200 border-b-2`
-			: `${tabClass} text-muted hover:text-gray-200 border-b-2 border-transparent`;
-	}
 </script>
 
 <div class="flex flex-col gap-4">
@@ -27,7 +18,7 @@
 			type="button"
 			role="tab"
 			id="control-panel-tab-explore"
-			class={tabButtonClass('explore')}
+			class={activeTab === 'explore' ? 'ui-tab ui-tab-active-bottom' : 'ui-tab ui-tab-inactive-bottom'}
 			aria-selected={activeTab === 'explore'}
 			aria-controls="control-panel-panel-explore"
 			onclick={() => (activeTab = 'explore')}
@@ -39,7 +30,7 @@
 			type="button"
 			role="tab"
 			id="control-panel-tab-crawl"
-			class={tabButtonClass('crawl')}
+			class={activeTab === 'crawl' ? 'ui-tab ui-tab-active-bottom' : 'ui-tab ui-tab-inactive-bottom'}
 			aria-selected={activeTab === 'crawl'}
 			aria-controls="control-panel-panel-crawl"
 			onclick={() => (activeTab = 'crawl')}
@@ -53,7 +44,7 @@
 			type="button"
 			role="tab"
 			id="control-panel-tab-settings"
-			class={tabButtonClass('settings')}
+			class={activeTab === 'settings' ? 'ui-tab ui-tab-active-bottom' : 'ui-tab ui-tab-inactive-bottom'}
 			aria-selected={activeTab === 'settings'}
 			aria-controls="control-panel-panel-settings"
 			onclick={() => (activeTab = 'settings')}

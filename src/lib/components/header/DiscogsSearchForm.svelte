@@ -22,9 +22,6 @@
 		{ value: 'master', label: 'Master' }
 	];
 
-	const fieldClass =
-		'box-border h-9 rounded-md border border-border bg-panel px-3 text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50';
-
 	let emptyMessage = $state<string | null>(null);
 
 	const rateLimitText = $derived.by(() => {
@@ -150,7 +147,7 @@
 		<div class="relative min-w-0">
 			<input
 				type="search"
-				class="{fieldClass} discogs-search-input w-full pr-9"
+				class="ui-field discogs-search-input w-full pr-9"
 				class:pr-14={discogsApi.searchQuery.length > 0}
 				placeholder="Search Discogs…"
 				bind:value={discogsApi.searchQuery}
@@ -204,7 +201,7 @@
 						<li class="border-border border-t first:border-t-0">
 							<button
 								type="button"
-								class="hover:bg-panel-hover flex w-full items-center gap-2 border-none bg-transparent px-3 py-2 text-left"
+								class="ui-list-button flex items-center gap-2"
 								onclick={() => pickResult(result)}
 							>
 								<span class="min-w-16 text-muted text-xs uppercase">{result.type}</span>
@@ -223,7 +220,7 @@
 	<div class="hidden w-full min-w-0 items-center justify-start gap-2 sufficient:col-start-2 sufficient:flex">
 		<select
 			form={SEARCH_FORM_ID}
-			class="{fieldClass} discogs-search-field text-center min-w-0 flex-1 cursor-pointer"
+			class="ui-field discogs-search-field min-w-0 flex-1 cursor-pointer text-center"
 			bind:value={discogsApi.searchType}
 			disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
 		>
@@ -235,7 +232,7 @@
 		<button
 			type="submit"
 			form={SEARCH_FORM_ID}
-			class="{fieldClass} inline-flex flex-1 items-center justify-center border-accent bg-accent cursor-pointer text-white"
+			class="ui-button inline-flex flex-1 items-center justify-center"
 			disabled={discogsApi.searching || !discogsApi.searchQuery.trim() || discogsApi.isRateLimited || crawlState.isRunning}
 		>
 			{discogsApi.searching ? 'Searching…' : 'Search'}
