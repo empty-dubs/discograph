@@ -96,4 +96,8 @@
 	.ui-explore-link {
 		@apply border-border bg-panel-hover text-center rounded-md border px-3 py-2 text-sm text-gray-300 no-underline cursor-pointer hover:bg-sky-600;
 	}
+
+	.ui-collapse-handle {
+		@apply flex cursor-pointer text-muted w-full items-center justify-center bg-transparent transition-colors hover:text-gray-200;
+	}
 }
