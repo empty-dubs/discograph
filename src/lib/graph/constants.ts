@@ -33,10 +33,10 @@ export const NODE_COLORS: Record<NodeType, string> = {
 };
 
 export const NODE_TYPE_LABELS: Record<NodeType, string> = {
-	artist: 'Related artists',
-	label: 'Related labels',
-	master: 'Related masters',
-	release: 'Related releases'
+	artist: 'Show related artists',
+	label: 'Show related labels',
+	master: 'Show related masters',
+	release: 'Show related releases'
 };
 
 export const NODE_RADIUS: Record<NodeType, number> = {
