@@ -6,9 +6,9 @@
 	import GraphLabelToggle from './GraphLabelToggle.svelte';
 	import GraphNodeFilters from './GraphNodeFilters.svelte';
 
-	type SettingsTabId = 'display' | 'relationships' | 'expansion';
+	type SettingsTabId = 'nodes' | 'relationships' | 'expansion';
 
-	let activeSettingsTab = $state<SettingsTabId>('display');
+	let activeSettingsTab = $state<SettingsTabId>('nodes');
 </script>
 
 <div class="flex flex-row gap-4">
@@ -20,13 +20,13 @@
 		<button
 			type="button"
 			role="tab"
-			id="settings-tab-display"
-			class={activeSettingsTab === 'display' ? 'ui-tab ui-tab-active-left' : 'ui-tab ui-tab-inactive-left'}
-			aria-selected={activeSettingsTab === 'display'}
-			aria-controls="settings-panel-display"
-			onclick={() => (activeSettingsTab = 'display')}
+			id="settings-tab-nodes"
+			class={activeSettingsTab === 'nodes' ? 'ui-tab ui-tab-active-left' : 'ui-tab ui-tab-inactive-left'}
+			aria-selected={activeSettingsTab === 'nodes'}
+			aria-controls="settings-panel-nodes"
+			onclick={() => (activeSettingsTab = 'nodes')}
 		>
-			Display
+			Nodes
 		</button>
 		<button
 			type="button"
@@ -55,11 +55,11 @@
 	</div>
 
 	<div class="min-w-0 flex-1">
-		{#if activeSettingsTab === 'display'}
+		{#if activeSettingsTab === 'nodes'}
 			<div
 				role="tabpanel"
-				id="settings-panel-display"
-				aria-labelledby="settings-tab-display"
+				id="settings-panel-nodes"
+				aria-labelledby="settings-tab-nodes"
 			>
 				<div class="ui-stack text-sm text-gray-400">
 					<h4 class="ui-label">Toggle Nodes</h4>

@@ -68,10 +68,6 @@ export class GraphDisplayState {
 		}
 	}
 
-	toggleNodeLabels() {
-		this.showNodeLabels = !this.showNodeLabels;
-	}
-
 	selectNode(id: string | null) {
 		this.selectedId = id;
 	}
