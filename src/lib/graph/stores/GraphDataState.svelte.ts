@@ -4,6 +4,7 @@ export class GraphDataState {
 	nodes = $state<Map<string, GraphNode>>(new Map());
 	links = $state<Map<string, GraphLink>>(new Map());
 	structureRevision = $state(0);
+	layoutGeneration = $state(0);
 
 	get nodeList(): GraphNode[] {
 		return Array.from(this.nodes.values());
@@ -91,6 +92,7 @@ export class GraphDataState {
 		this.nodes = new Map();
 		this.links = new Map();
 		this.structureRevision = 0;
+		this.layoutGeneration++;
 	}
 }
 
