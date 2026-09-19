@@ -47,27 +47,31 @@
 	}
 </script>
 
-<div class="flex max-w-xs flex-col gap-3" role="group" aria-label="Crawl settings">
-	<div class="ui-stack">
-		<label class="ui-label" for="crawl-mode">Mode</label>
-		<select
-			id="crawl-mode"
-			class="ui-field w-full"
-			bind:value={crawlState.mode}
-			disabled={crawlState.isRunning}
-		>
-			<option value="artist-artist">artist-artist</option>
-			<option value="label-label">label-label</option>
-		</select>
-	</div>
+<div class="flex w-full min-w-0 flex-col gap-3" role="group" aria-label="Crawl settings">
+	<div class="grid min-w-0 grid-cols-2 gap-3">
+		<div class="ui-stack min-w-0">
+			<label class="ui-label" for="crawl-mode">Mode</label>
+			<select
+				id="crawl-mode"
+				class="ui-field w-full"
+				bind:value={crawlState.mode}
+				disabled={crawlState.isRunning}
+			>
+				<option value="artist-artist">artist-artist</option>
+				<option value="label-label">label-label</option>
+			</select>
+		</div>
 
-	<ControlPanelNumberInput
-		id="crawl-depth"
-		label="Depth"
-		max={5}
-		disabled={crawlState.isRunning}
-		bind:value={crawlState.depth}
-	/>
+		<div class="min-w-0">
+			<ControlPanelNumberInput
+				id="crawl-depth"
+				label="Depth"
+				max={5}
+				disabled={crawlState.isRunning}
+				bind:value={crawlState.depth}
+			/>
+		</div>
+	</div>
 
 	{#if crawlState.isRunning}
 		<button type="button" class="ui-button w-full" onclick={() => crawlState.requestStop()}>
