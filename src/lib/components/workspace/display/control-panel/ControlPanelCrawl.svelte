@@ -64,7 +64,7 @@
 	<ControlPanelNumberInput
 		id="crawl-depth"
 		label="Depth"
-		max={10}
+		max={5}
 		disabled={crawlState.isRunning}
 		bind:value={crawlState.depth}
 	/>
