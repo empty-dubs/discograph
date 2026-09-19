@@ -95,9 +95,7 @@ class SelectedNodeState implements SelectedNodeInterface {
 		graph.data.removeNodes(descendants);
 		graph.visitedNodes.resetNodeMaps(collapsedIds, descendants);
 
-		if (graph.data.nodes.size === 1) {
-			graph.display.viewResetToken++;
-		}
+		graph.display.viewResetToken++;
 	}
 
 	async fetchDetails() {
