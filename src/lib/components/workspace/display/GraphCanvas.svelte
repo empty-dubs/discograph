@@ -79,6 +79,12 @@
 	});
 
 	$effect(() => {
+		if (!forceGraph || graph.display.visibleNodeList.length === 0) return;
+
+		forceGraph.setDirectedEdges(graph.display.showDirectedEdges);
+	});
+
+	$effect(() => {
 		void graph.display.viewResetToken;
 		forceGraph?.resetZoom();
 	});
