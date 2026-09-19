@@ -123,10 +123,7 @@
 						aria-hidden={activeTab !== 'crawl' || !isExpanded}
 						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'crawl' ? 'hidden' : ''}"
 					>
-						<ControlPanelHelperLayout
-							helperText={CONTROL_PANEL_HELPER_TEXT.crawl}
-							helperShare="half"
-						>
+						<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.crawl}>
 							<ControlPanelCrawlTab />
 						</ControlPanelHelperLayout>
 					</div>

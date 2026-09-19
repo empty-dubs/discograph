@@ -5,6 +5,7 @@
 
 	import ControlPanelCrawlSettings from './ControlPanelCrawlSettings.svelte';
 	import ControlPanelHelperLayout from './ControlPanelHelperLayout.svelte';
+	import GraphDirectedEdgesToggle from './GraphDirectedEdgesToggle.svelte';
 	import GraphEdgeFilters from './GraphEdgeFilters.svelte';
 	import GraphLabelToggle from './GraphLabelToggle.svelte';
 	import GraphNodeFilters from './GraphNodeFilters.svelte';
@@ -86,6 +87,7 @@
 				<div class="ui-stack text-sm text-gray-400">
 					<h4 class="ui-label">Highlight Relationships</h4>
 					<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
+					<GraphDirectedEdgesToggle />
 				</div>
 			</ControlPanelHelperLayout>
 		</div>

@@ -102,6 +102,6 @@
 	}
 
 	.ui-helper-column {
-		@apply border-border w-full shrink-0 border-l pl-4;
+		@apply border-border min-w-0 border-l pl-4;
 	}
 }

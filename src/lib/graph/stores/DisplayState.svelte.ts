@@ -12,6 +12,7 @@ export class GraphDisplayState {
 	visibleTypes = $state<SvelteSet<NodeType>>(new SvelteSet(ALL_NODE_TYPES));
 	viewResetToken = $state(0);
 	showNodeLabels = $state(true);
+	showDirectedEdges = $state(true);
 	highlightedEdgeType = $state<EdgeType | null>(null);
 	visibilityRevision = $state(0);
 
@@ -92,6 +93,7 @@ export class GraphDisplayState {
 		this.selectedId = null;
 		this.visibleTypes = new SvelteSet(ALL_NODE_TYPES);
 		this.showNodeLabels = true;
+		this.showDirectedEdges = true;
 		this.highlightedEdgeType = null;
 		this.visibilityRevision = 0;
 		this.viewResetToken++;
