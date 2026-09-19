@@ -2,7 +2,7 @@ import { dev } from '$app/environment';
 
 import type { RateLimitInfo } from './types';
 
-const MAX_REQUESTS_PER_MINUTE = dev ? 55 : 25;
+const MAX_REQUESTS_PER_MINUTE = dev ? 55 : 20;
 const SLOT_RELEASE_BUFFER_MS = 50;
 const WINDOW_MS = 60_000;
 
