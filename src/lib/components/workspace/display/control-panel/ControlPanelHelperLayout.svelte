@@ -3,30 +3,22 @@
 
 	interface Props {
 		helperText: readonly string[];
-		helperShare?: 'fixed' | 'half';
 		children: Snippet;
 	}
 
-	let { helperText, helperShare = 'fixed', children }: Props = $props();
+	let { helperText, children }: Props = $props();
 </script>
 
 <div class="flex h-full min-h-0 gap-4">
-	<div
-		class="scrollbar-hidden min-h-0 min-w-0 overflow-y-auto {helperShare === 'half'
-			? 'flex-1 basis-0'
-			: 'flex-1'}"
-	>
+	<div class="scrollbar-hidden min-h-0 min-w-0 flex-[3] basis-0 overflow-y-auto">
 		{@render children()}
 	</div>
 	<aside
-		class="ui-helper-column overflow-y-auto {helperShare === 'half'
-			? 'min-w-0 flex-1 basis-0'
-			: 'w-48 shrink-0 md:w-64'}"
+		class="ui-helper-column min-h-0 min-w-0 flex-1 basis-0 overflow-y-auto"
 		aria-label="Help"
 	>
 		{#each helperText as paragraph, index (index)}
-			<p class="text-muted text-sm leading-relaxed">{paragraph}</p>
-			<br />
+			<p class="text-muted m-0 pb-2 text-sm leading-relaxed">{paragraph}</p>
 		{/each}
 	</aside>
 </div>
