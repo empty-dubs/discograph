@@ -50,13 +50,14 @@
 		if (!forceGraph) return;
 		const nodes = graph.display.visibleNodeList;
 		const links = graph.display.visibleLinkList;
-		const { structureRevision, layoutGeneration } = graph.data;
-		const { visibilityRevision } = graph.display;
+		const structureRevision = graph.data.revisionCounter;
+		const visibilityRevision = graph.display.revisionCounter;
 
 		if (nodes.length > 0) {
-			forceGraph.update(nodes, links, structureRevision, visibilityRevision, layoutGeneration);
+			forceGraph.update(nodes, links, structureRevision, visibilityRevision);
 		} else {
 			forceGraph.clear();
+			forceGraph.resetZoom();
 		}
 	});
 
@@ -85,8 +86,7 @@
 	});
 
 	$effect(() => {
-		void graph.display.viewResetToken;
-		forceGraph?.resetZoom();
+		if (graph.display.visibleNodeList.length < 2) forceGraph?.resetZoom();
 	});
 </script>
 

@@ -10,11 +10,10 @@ import type { EdgeType, GraphNode, NodeType } from '../types';
 export class GraphDisplayState {
 	selectedId = $state<string | null>(null);
 	visibleTypes = $state<SvelteSet<NodeType>>(new SvelteSet(ALL_NODE_TYPES));
-	viewResetToken = $state(0);
 	showNodeLabels = $state(true);
 	showDirectedEdges = $state(true);
 	highlightedEdgeType = $state<EdgeType | null>(null);
-	visibilityRevision = $state(0);
+	revisionCounter = $state(0);
 
 	get pinnedIds(): Set<string> {
 		const pinned = new Set<string>();
@@ -65,14 +64,14 @@ export class GraphDisplayState {
 			if (this.visibleTypes.has(type)) return;
 
 			this.visibleTypes.add(type);
-			this.visibilityRevision++;
+			this.revisionCounter++;
 			return;
 		}
 
 		if (this.visibleTypes.size <= 1 && this.visibleTypes.has(type)) return;
 
 		this.visibleTypes.delete(type);
-		this.visibilityRevision++;
+		this.revisionCounter++;
 	}
 
 	selectNode(id: string | null) {
@@ -95,8 +94,7 @@ export class GraphDisplayState {
 		this.showNodeLabels = true;
 		this.showDirectedEdges = true;
 		this.highlightedEdgeType = null;
-		this.visibilityRevision = 0;
-		this.viewResetToken++;
+		this.revisionCounter = 0;
 	}
 }
 
