@@ -76,7 +76,6 @@ export class ForceGraph {
 	private highlightedEdgeType: EdgeType | null = null;
 	private lastStructureRevision = -1;
 	private lastVisibilityRevision = -1;
-	private lastLayoutGeneration = -1;
 
 	private dragBehavior: DragBehavior<SVGGElement, SimulationNode, SimulationNode | SubjectPosition> =
 		drag<SVGGElement, SimulationNode>()
@@ -160,17 +159,15 @@ export class ForceGraph {
 		nodes: GraphNode[],
 		links: GraphLink[],
 		structureRevision: number,
-		visibilityRevision: number,
-		layoutGeneration: number
+		visibilityRevision: number
 	) {
 		if (!this.simulation || !this.gLinks || !this.gNodes || !this.gLabels) return;
 
-		if (layoutGeneration !== this.lastLayoutGeneration) {
+		const revisionDelta = structureRevision - this.lastStructureRevision;
+
+		if (revisionDelta > 1) {
 			this.simulationNodes = [];
 			this.simulationLinks = [];
-			this.lastLayoutGeneration = layoutGeneration;
-			this.lastStructureRevision = -1;
-			this.lastVisibilityRevision = -1;
 		}
 
 		const containerWidth = this.container.clientWidth;
