@@ -147,6 +147,21 @@ export function getRelatedNeighbors(node: GraphNode, action: LoadAction): Relate
 	}
 }
 
+export function getCrawlNeighborIds(node: GraphNode, mode: CrawlMode): string[] {
+	if (!node) return [];
+
+	const ids = new Set<string>();
+
+	for (const action of getCrawlLoadActions(mode)) {
+		for (const id of getRelatedNeighbors(node, action).nodes) {
+			ids.add(id);
+		}
+	}
+
+	return [...ids];
+}
+
+
 export function collectDescendants(
 	rootId: string,
 	knownChildren: Map<string, Set<string>>
