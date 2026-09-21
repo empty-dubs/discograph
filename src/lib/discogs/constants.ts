@@ -22,6 +22,6 @@ export const WEB_SEGMENTS: Record<SearchType, string> = {
 };
 
 export const BLOCKED_DISCOGS_IDS: Partial<Record<SearchType, ReadonlySet<number>>> = {
-	artist: new Set([194, 355]),
+	artist: new Set([0, 194, 355]),
 	label: new Set([1818])
 };
