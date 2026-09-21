@@ -22,8 +22,8 @@ type QueueItem = {
 	depth: number;
 };
 
-function getCrawlLoadAction(mode: CrawlMode): LoadAction {
-	return mode === 'artist-artist' ? 'artists' : 'labels';
+function getCrawlLoadActions(mode: CrawlMode): LoadAction[] {
+	return mode === 'artist-artist' ? ['artists', 'aliases'] : ['labels'];
 }
 
 export function getCrawlNodeType(mode: CrawlMode): NodeType {
@@ -172,21 +172,35 @@ export function collectDescendants(
 	return descendants;
 }
 
-async function resolveNeighborIds(
+async function getAssociatedNeighborIds(
 	graph: GraphInterface,
 	node: GraphNode,
-	mode: CrawlMode
+	association: LoadAction
 ): Promise<string[]> {
-	const action = getCrawlLoadAction(mode);
-	const { nodes, edges } = getRelatedNeighbors(node, action);
+	const { nodes, edges } = getRelatedNeighbors(node, association);
 
 	if (edges.length === 0) return nodes;
 
 	if (edges.every((id) => graph.data.links.has(id))) return nodes;
 
-	await runLoadAction(graph, node, action);
+	await runLoadAction(graph, node, association);
 
 	return nodes;
+}
+
+async function resolveNeighborIds(
+	graph: GraphInterface,
+	node: GraphNode,
+	mode: CrawlMode
+): Promise<string[]> {
+	const neighborIds = new Set<string>();
+
+	for (const association of getCrawlLoadActions(mode)) {
+		const ids = await getAssociatedNeighborIds(graph, node, association);
+		for (const id of ids) neighborIds.add(id);
+	}
+
+	return [...neighborIds];
 }
 
 function isCrawlableNeighbor(nodeId: string, nodeType: NodeType): boolean {
