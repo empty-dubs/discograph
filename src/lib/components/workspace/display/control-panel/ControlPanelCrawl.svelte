@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
-	import { getCrawlNodeType, runBFSCrawl } from '$lib/graph/operations/crawlers';
+	import { getCrawlNeighborIds, getCrawlNodeType, runBFSCrawl } from '$lib/graph/operations/crawlers';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
@@ -11,6 +11,7 @@
 
 	const crawlNodeType = $derived(getCrawlNodeType(crawlState.mode));
 	const seedMatchesMode = $derived(node.data?.type === crawlNodeType);
+	const hasNoCrawlNeighbors = $derived(getCrawlNeighborIds(node.data!, crawlState.mode).length === 0);
 
 	const isSeedBlocked = $derived(
 		node.data
@@ -20,11 +21,24 @@
 
 	const isCrawlDisabled = $derived(
 		!node.id
+		|| !node.data
+		|| !node.isDetailsFetched
+		|| node.hasLoadingChildren
 		|| !seedMatchesMode
 		|| isSeedBlocked
+		|| hasNoCrawlNeighbors
 		|| crawlState.isRunning
 		|| discogsApi.isRateLimited
 	);
+
+	$effect(() => {
+		if (crawlState.isRunning) return;
+
+		const type = node.data?.type;
+
+		if (type === 'artist') crawlState.mode = 'artist-artist';
+		else if (type === 'label') crawlState.mode = 'label-label';
+	});
 
 	async function crawl() {
 		if (isCrawlDisabled || !node.data || node.isBlocked) return;

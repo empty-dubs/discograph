@@ -8,6 +8,7 @@
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
 	import NodePanelItemList from './NodePanelItemList.svelte';
 	import NodePanelSearchableList from './NodePanelSearchableList.svelte';
+	import NodePanelTracklist from './NodePanelTracklist.svelte';
 	import NodePanelUrls from './NodePanelUrlList.svelte';
 
 	const selected = $derived(selectedNodeState);
@@ -51,10 +52,6 @@
 
 	function formatMemberName(member: { name: string; active?: boolean }): string {
 		return member.active === false ? `${member.name} (inactive)` : member.name;
-	}
-
-	function formatTrack(track: { position: string; title: string; duration?: string }): string {
-		return `${track.position}. ${track.title}${track.duration ? ` (${track.duration})` : ''}`;
 	}
 
 	function buildArtistTitleSearchQuery(title: string | undefined, artistName?: string ): string {
@@ -250,7 +247,7 @@
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection id="tracklist" show={showTracklist} title="Track list" count={node!.tracklist?.length}>
-	<NodePanelItemList items={(node!.tracklist ?? []).map(formatTrack)} />
+	<NodePanelTracklist node={node!} tracks={node!.tracklist ?? []} />
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection id="notes" show={showNotes} title="Notes">
