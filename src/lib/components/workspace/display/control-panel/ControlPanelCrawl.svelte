@@ -26,6 +26,15 @@
 		|| discogsApi.isRateLimited
 	);
 
+	$effect(() => {
+		if (crawlState.isRunning) return;
+
+		const type = node.data?.type;
+
+		if (type === 'artist') crawlState.mode = 'artist-artist';
+		else if (type === 'label') crawlState.mode = 'label-label';
+	});
+
 	async function crawl() {
 		if (isCrawlDisabled || !node.data || node.isBlocked) return;
 
