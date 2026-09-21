@@ -41,6 +41,21 @@ export function resolveArtistDisplayName(
 	return null;
 }
 
+function appendReleaseMasterYouTubeContext(parts: string[], node: GraphNode): void {
+	const artist = node.artists?.[0];
+	const year = node.meta?.year;
+
+	if (artist?.name && artist.id && !BLOCKED_DISCOGS_IDS['artist']?.has(artist.id)) {
+		parts.push(stripDiscogsDisambiguation(artist.name));
+	}
+
+	if (year != null && year !== '') parts.push(String(year));
+}
+
+function buildYouTubeSearchUrl(parts: string[]): string {
+	return `${YOUTUBE_SEARCH_BASE}?search_query=${encodeURIComponent(parts.join(' '))}`;
+}
+
 export function getYouTubeSearchUrl(node: GraphNode): string | null {
 	const parts: string[] = [stripDiscogsDisambiguation(node.displayName)];
 
@@ -49,12 +64,24 @@ export function getYouTubeSearchUrl(node: GraphNode): string | null {
 	} else if (node.type === 'label') {
 		parts.push('record label');
 	} else if (node.type === 'release' || node.type === 'master') {
-		const artist = node.artists?.[0];
-		const year = node.meta?.year;
-
-		if (artist?.name && artist.id && !BLOCKED_DISCOGS_IDS['artist']?.has(artist.id)) parts.push(stripDiscogsDisambiguation(artist.name));
-		if (year != null && year !== '') parts.push(String(year));
+		appendReleaseMasterYouTubeContext(parts, node);
 	}
 
-	return `${YOUTUBE_SEARCH_BASE}?search_query=${encodeURIComponent(parts.join(' '))}`;
+	return buildYouTubeSearchUrl(parts);
+}
+
+export function getYouTubeTrackSearchUrl(node: GraphNode, trackTitle: string): string | null {
+	if (node.type !== 'release' && node.type !== 'master') return null;
+
+	const title = trackTitle.trim();
+	if (!title) return null;
+
+	const parts: string[] = [
+		stripDiscogsDisambiguation(node.displayName),
+		stripDiscogsDisambiguation(title)
+	];
+
+	appendReleaseMasterYouTubeContext(parts, node);
+
+	return buildYouTubeSearchUrl(parts);
 }
