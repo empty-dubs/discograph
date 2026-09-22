@@ -24,13 +24,14 @@
 				</a>
 			</div>
 			<p class="text-muted mt-1 mb-0 text-sm">
-				Explore music relationships from
+				Explore
 				<a
 					href={pageLinks.discogs}
 					target="_blank"
 					rel="noopener noreferrer"
 					class="underline hover:text-gray-200">Discogs</a
 				>
+				entity relationships
 			</p>
 		</div>
 
