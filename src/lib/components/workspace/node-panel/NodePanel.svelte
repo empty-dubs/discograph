@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 
+	import { NODE_PANEL_ACCORDION_KEY } from '$lib/components/shared/accordion';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-	import { NODE_PANEL_ACCORDION_KEY } from '../accordion';
 
-	import type { NodePanelAccordion } from '../accordion';
+	import type { NodePanelAccordion } from '$lib/components/shared/accordion';
 
 	import NodePanelDetails from './NodePanelDetails.svelte';
 	import NodePanelNavigate from './NodePanelNavigate.svelte';

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 
+	import { DISCOVER_ENTITIES_ACCORDION_KEY } from '$lib/components/shared/accordion';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-	import { DISCOVER_ENTITIES_ACCORDION_KEY } from '../accordion';
 	import { CONTROL_PANEL_HELPER_TEXT } from './constants';
 
-	import type { NodePanelAccordion } from '../accordion';
+	import type { NodePanelAccordion } from '$lib/components/shared/accordion';
 
 	import ControlPanelCrawl from './ControlPanelCrawl.svelte';
 	import ControlPanelDiscoverEntities from './ControlPanelDiscoverEntities.svelte';

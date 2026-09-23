@@ -4,7 +4,7 @@
 
 	import type { DiscoverEntitySectionId } from './control-panel-discover-sections';
 
-	import NodePanelSearchableList from '$lib/components/workspace/node-panel/NodePanelSearchableList.svelte';
+	import SearchableList from '$lib/components/shared/SearchableList.svelte';
 
 	interface Props {
 		sectionId: DiscoverEntitySectionId;
@@ -16,7 +16,7 @@
 </script>
 
 {#if sectionId === 'aliases'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="artist"
 		items={(node.aliases ?? []).map((alias) => ({
 			key: String(alias.id),
@@ -26,7 +26,7 @@
 		}))}
 	/>
 {:else if sectionId === 'members'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="artist"
 		items={(node.members ?? []).map((member) => ({
 			key: String(member.id),
@@ -36,7 +36,7 @@
 		}))}
 	/>
 {:else if sectionId === 'groups'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="artist"
 		items={(node.groups ?? []).map((group) => ({
 			key: String(group.id),
@@ -47,7 +47,7 @@
 	/>
 {:else if sectionId === 'parent-label'}
 	{#if node.parent_label}
-		<NodePanelSearchableList
+		<SearchableList
 			searchType="label"
 			items={[{
 				key: String(node.parent_label.id),
@@ -58,7 +58,7 @@
 		/>
 	{/if}
 {:else if sectionId === 'sublabels'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="label"
 		items={(node.sublabels ?? []).map((sublabel) => ({
 			key: String(sublabel.id),
@@ -68,7 +68,7 @@
 		}))}
 	/>
 {:else if sectionId === 'main-release'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="release"
 		items={[{
 			key: String(node.id),
@@ -81,7 +81,7 @@
 		}]}
 	/>
 {:else if sectionId === 'linked-master'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="master"
 		items={[{
 			key: String(node.id),
@@ -93,7 +93,7 @@
 		}]}
 	/>
 {:else if sectionId === 'artists'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="artist"
 		items={(node.artists ?? []).map((artist) => ({
 			key: String(artist.id),
@@ -103,7 +103,7 @@
 		}))}
 	/>
 {:else if sectionId === 'labels'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="label"
 		items={(node.labels ?? []).map((label) => ({
 			key: `${label.id}-${label.catno ?? ''}`,
@@ -113,7 +113,7 @@
 		}))}
 	/>
 {:else if sectionId === 'credits'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="artist"
 		items={(node.credits ?? []).map((credit, index) => ({
 			key: `${credit.id}-${credit.role ?? ''}-${index}`,
@@ -123,7 +123,7 @@
 		}))}
 	/>
 {:else if sectionId === 'companies'}
-	<NodePanelSearchableList
+	<SearchableList
 		searchType="label"
 		items={(node.companies ?? []).map((company, index) => ({
 			key: `${company.id}-${company.entity_type_name ?? ''}-${index}`,

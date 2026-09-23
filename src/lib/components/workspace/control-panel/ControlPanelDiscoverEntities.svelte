@@ -2,7 +2,7 @@
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	import { getDiscoverEntitySectionCount, getVisibleEntitySections } from './control-panel-discover-sections';
 
-	import NodePanelCollapsibleSection from '$lib/components/workspace/node-panel/NodePanelCollapsibleSection.svelte';
+	import CollapsibleSection from '$lib/components/shared/CollapsibleSection.svelte';
 	import ControlPanelDiscoverSectionBody from './ControlPanelDiscoverSectionBody.svelte';
 
 	const node = $derived(selectedNodeState);
@@ -18,13 +18,13 @@
 {:else}
 	{#each visibleSections as section (section.id)}
 		{@const count = getDiscoverEntitySectionCount(node.data, section.id)}
-		<NodePanelCollapsibleSection
+		<CollapsibleSection
 			id={section.id}
 			title={section.title}
 			count={count}
 			useDiscoverEntitiesAccordion
 		>
 			<ControlPanelDiscoverSectionBody sectionId={section.id} />
-		</NodePanelCollapsibleSection>
+		</CollapsibleSection>
 	{/each}
 {/if}
