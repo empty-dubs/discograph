@@ -62,7 +62,7 @@
 	}
 
 	.ui-list-button {
-		@apply cursor-pointer hover:bg-panel-hover block w-full border-none bg-transparent px-3 py-2 text-left text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent;
+		@apply cursor-pointer hover:bg-panel-hover block w-full bg-transparent px-3 py-2 text-left text-sm text-gray-200 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent;
 	}
 
 	.ui-button {
