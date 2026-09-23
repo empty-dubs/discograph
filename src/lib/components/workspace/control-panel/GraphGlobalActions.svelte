@@ -5,7 +5,7 @@
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	import ControlPanelButton from './ControlPanelButton.svelte';
+	import NodeLoadButton from '../actions/NodeLoadButton.svelte';
 
 	const node = $derived(selectedNodeState);
 
@@ -34,15 +34,15 @@
 </script>
 
 <div class="flex flex-col gap-2" role="group" aria-label="Global graph actions">
-	<ControlPanelButton disabled={collapseDisabled} onclick={() => node.collapseNode()}>
+	<NodeLoadButton disabled={collapseDisabled} onclick={() => node.collapseNode()}>
 		Collapse children
-	</ControlPanelButton>
+	</NodeLoadButton>
 
-	<ControlPanelButton disabled={resetDisabled} onclick={() => seedFromNode(graph, node.data!)}>
+	<NodeLoadButton disabled={resetDisabled} onclick={() => seedFromNode(graph, node.data!)}>
 		Reset graph to this node
-	</ControlPanelButton>
+	</NodeLoadButton>
 
-	<ControlPanelButton
+	<NodeLoadButton
 		disabled={clearDisabled}
 		onclick={() => {
 			graph.clear();
@@ -50,5 +50,5 @@
 		}}
 	>
 		Clear graph
-	</ControlPanelButton>
+	</NodeLoadButton>
 </div>

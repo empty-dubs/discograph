@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 
-	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from '../accordion';
+	import { NODE_PANEL_ACCORDION_KEY } from '$lib/components/shared/accordion';
+
+	import type { NodePanelAccordion } from '$lib/components/shared/accordion';
+	
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	import NodePanelCollapsibleSection from './NodePanelCollapsibleSection.svelte';
+	import CollapsibleSection from '$lib/components/shared/CollapsibleSection.svelte';
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
 	import NodePanelItemList from './NodePanelItemList.svelte';
 	import NodePanelTracklist from './NodePanelTracklist.svelte';
-	import NodePanelUrls from './NodePanelUrlList.svelte';
+	import NodePanelUrlList from './NodePanelUrlList.svelte';
 
 	const selected = $derived(selectedNodeState);
 	const node = $derived(selected.data);
@@ -48,7 +51,7 @@
 	<p class="text-muted m-0 text-sm">Could not load details.</p>
 {/if}
 
-<NodePanelCollapsibleSection id="profile" show={showProfile} title="Profile">
+<CollapsibleSection id="profile" show={showProfile} title="Profile">
 	<div class="text-muted whitespace-pre-wrap text-sm" class:loading={selected.isDetailsLoading}>
 		{#if selected.isProfileLoading}
 			<p class="text-muted m-0 text-sm">Loading profile…</p>
@@ -58,24 +61,24 @@
 			{node!.profile}
 		{/if}
 	</div>
-</NodePanelCollapsibleSection>
+</CollapsibleSection>
 
-<NodePanelCollapsibleSection id="real-name" show={showRealName} title="Real name">
+<CollapsibleSection id="real-name" show={showRealName} title="Real name">
 	{node!.realname}
-</NodePanelCollapsibleSection>
+</CollapsibleSection>
 
-<NodePanelCollapsibleSection id="name-variations" show={showNameVariations} title="Name variations" count={node!.namevariations?.length}>
+<CollapsibleSection id="name-variations" show={showNameVariations} title="Name variations" count={node!.namevariations?.length}>
 	<NodePanelItemList items={node!.namevariations ?? []} />
-</NodePanelCollapsibleSection>
+</CollapsibleSection>
 
-<NodePanelCollapsibleSection id="urls" show={showUrls} title="Links" count={node!.urls?.length}>
-	<NodePanelUrls urls={node!.urls ?? []} />
-</NodePanelCollapsibleSection>
+<CollapsibleSection id="urls" show={showUrls} title="Links" count={node!.urls?.length}>
+	<NodePanelUrlList urls={node!.urls ?? []} />
+</CollapsibleSection>
 
-<NodePanelCollapsibleSection id="notes" show={showNotes} title="Notes">
+<CollapsibleSection id="notes" show={showNotes} title="Notes">
 	<div class="text-muted whitespace-pre-wrap text-sm">{node!.notes}</div>
-</NodePanelCollapsibleSection>
+</CollapsibleSection>
 
-<NodePanelCollapsibleSection id="tracklist" show={showTracklist} title="Track list" count={node!.tracklist?.length}>
+<CollapsibleSection id="tracklist" show={showTracklist} title="Track list" count={node!.tracklist?.length}>
 	<NodePanelTracklist node={node!} />
-</NodePanelCollapsibleSection>
+</CollapsibleSection>

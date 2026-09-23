@@ -4,7 +4,7 @@
 	import { graph } from '$lib/graph/graph';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 
-	import ControlPanelButton from '$lib/components/workspace/control-panel/ControlPanelButton.svelte';
+	import NodeLoadButton from '$lib/components/workspace/actions/NodeLoadButton.svelte';
 
 	import { selectedNodeState, type SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
 
@@ -139,8 +139,8 @@
 			{getActionState(action).label}
 		</button>
 	{:else}
-		<ControlPanelButton disabled={isActionDisabled(action)} onclick={() => runAction(action)}>
+		<NodeLoadButton disabled={isActionDisabled(action)} onclick={() => runAction(action)}>
 			{getActionState(action).label}
-		</ControlPanelButton>
+		</NodeLoadButton>
 	{/if}
 {/each}
