@@ -11,6 +11,19 @@ function labelReleaseKind(item: LabelRelease): 'master' | 'release' {
 	return item.resource_url?.includes('/masters/') ? 'master' : 'release';
 }
 
+function firstArtistName(artists?: { name: string }[]): string | undefined {
+	return artists?.[0]?.name.trim() || undefined;
+}
+
+function listingMeta(year?: number | string, artistName?: string | null): GraphNode['meta'] {
+	const trimmed = artistName?.trim();
+
+	return {
+		year,
+		...(trimmed ? { artistName: trimmed } : {})
+	};
+}
+
 export function buildFromArtistReleases(
 	releases: ArtistRelease[],
 	artist: GraphNode,
@@ -21,18 +34,20 @@ export function buildFromArtistReleases(
 	const links: GraphLink[] = [];
 	const sourceNodeId = artist.id;
 	const edgeType: EdgeType = 'released';
+	const parentArtistName = artist.displayName ?? artist.name;
 
 	for (const item of filtered) {
 		let targetNodeId: string | null = null;
+		const meta = listingMeta(item.year, item.artist ?? parentArtistName);
 
 		if (item.type === 'master') {
-			const master = createMasterNode(item, { year: item.year });
+			const master = createMasterNode(item, meta);
 
 			nodes.push(master);
 
 			targetNodeId = master.id;
 		} else {
-			const release = createReleaseNode(item, { year: item.year });
+			const release = createReleaseNode(item, meta);
 
 			targetNodeId = release.id;
 
@@ -62,16 +77,18 @@ export function buildFromLabelReleases(
 
 	for (const item of filtered) {
 		const releaseType = labelReleaseKind(item);
+		const meta = listingMeta(item.year, item.artist);
+
 		let targetNodeId: string | null = null;
 
 		if (releaseType === 'master') {
-			const master = createMasterNode(item, { year: item.year });
+			const master = createMasterNode(item, meta);
 
 			nodes.push(master);
 
 			targetNodeId = master.id;
 		} else {
-			const release = createReleaseNode(item, { year: item.year });
+			const release = createReleaseNode(item, meta);
 
 			nodes.push(release);
 
@@ -90,11 +107,12 @@ export function buildFromMasterVersions(versions: MasterVersion[], master: Graph
 	const edgeType: EdgeType = 'version_of';
 
 	const sourceNodeId = master.id;
+	const versionArtistName = firstArtistName(master.artists);
 
 	for (const version of versions) {
 		const targetNodeId = getNodeId('release', version.id);
 
-		nodes.push(createReleaseNode(version, { year: version.released }));
+		nodes.push(createReleaseNode(version, listingMeta(version.released, versionArtistName)));
 		links.push(createEdge(targetNodeId, sourceNodeId, edgeType));
 	}
 
@@ -107,14 +125,19 @@ export function buildMainReleaseFromMaster(release: Release, master: GraphNode):
 	const edgeType: EdgeType = 'version_of';
 
 	return {
-		nodes: [createReleaseNode(release, { year: release.year ?? release.released })],
+		nodes: [
+			createReleaseNode(
+				release,
+				listingMeta(release.year ?? release.released, firstArtistName(release.artists))
+			)
+		],
 		links: [createEdge(targetNodeId, sourceNodeId, edgeType)]
 	};
 }
 
 export function buildMasterFromRelease(master: Master, release: GraphNode): GraphPatch {
 	const sourceNodeId = release.id;
-	const masterNode = createMasterNode(master, { year: master.year });
+	const masterNode = createMasterNode(master, listingMeta(master.year, firstArtistName(master.artists)));
 	const edgeType: EdgeType = 'version_of';
 
 	const targetNodeId = masterNode.id;

@@ -31,19 +31,6 @@ export function formatMemberName(member: { name: string; active?: boolean }): st
 	return member.active === false ? `${member.name} (inactive)` : member.name;
 }
 
-export function buildArtistTitleSearchQuery(
-	title: string | undefined,
-	artistName?: string
-): string {
-	if (!title) return '';
-
-	const name = artistName?.trim();
-
-	if (!name) return title;
-
-	return `${name} ${title}`;
-}
-
 export function getDiscoverEntitySectionVisibility(
 	node: GraphNode
 ): Record<DiscoverEntitySectionId, boolean> {
