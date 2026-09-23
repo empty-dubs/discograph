@@ -28,17 +28,18 @@
 
 <div class="space-y-1">
 	{#each items as item (item.key)}
-		{#if isSearchable(item)}
-			<button
-				type="button"
-				class="ui-list-button border-t border-border px-0 py-0.5"
-				disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
-				onclick={() => discogsApi.search(item.query ?? '', searchType || undefined)}
-			>
-				{item.label}
-			</button>
-		{:else}
-			<span class="block px-0 py-0.5 text-sm">{item.label}</span>
-		{/if}
+		<button
+			type="button"
+			class="ui-list-button border-t border-border px-0 py-0.5"
+			disabled={
+				discogsApi.searching
+				|| discogsApi.isRateLimited
+				|| crawlState.isRunning
+				|| !isSearchable(item)
+			}
+			onclick={() => discogsApi.search(item.query ?? '', searchType || undefined)}
+		>
+			{item.label}
+		</button>
 	{/each}
 </div>
