@@ -6,6 +6,14 @@ export const CONTROL_PANEL_HELPER_TEXT = {
 		'Selecting Reset graph to this node will remove all entities apart from the selected node from the graph.',
 		'Selecting Clear graph will remove all entities from the graph.'
 	],
+	discover: {
+		entities: [
+			'Search for an artist, label, release, or master above to begin.',
+			'Browse aliases, members, labels, credits, and other related entities for the selected node.',
+			'Expand a section to view related entities.',
+			'Click a name to search Discogs and add results to the graph.'
+		]
+	},
 	crawl: [
 		'Search for an artist or label above to begin.',
 		'Once a node has been selected, select an option to crawl related entities.',

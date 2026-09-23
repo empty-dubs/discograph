@@ -2,14 +2,20 @@
 	import { setContext } from 'svelte';
 
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from '../accordion';
+	import { NODE_PANEL_ACCORDION_KEY } from '../accordion';
+
+	import type { NodePanelAccordion } from '../accordion';
+
 	import NodePanelDetails from './NodePanelDetails.svelte';
 	import NodePanelExplore from './NodePanelExplore.svelte';
 
 	const node = $derived(selectedNodeState);
 
 	let openSectionId = $state<string | null>(null);
-	let titleTextColor = $state<string>('text-base');
+	let lastSelectedId = $state<string | null>(null);
+
+	const showUrls = $derived(node.isArtistOrLabel && (node.data?.urls?.length ?? 0) > 0);
+	const showTracklist = $derived(node.isMasterOrRelease && (node.data?.tracklist?.length ?? 0) > 0);
 
 	const accordion: NodePanelAccordion = {
 		get openSectionId() {
@@ -37,12 +43,37 @@
 	});
 
 	$effect(() => {
-		titleTextColor = node?.id ? 'text-base' : 'text-muted';
+		if (!node.id || !node.data) {
+			lastSelectedId = null;
+			openSectionId = null;
+			return;
+		}
+
+		const defaultId = showTracklist
+			? 'tracklist'
+			: showUrls
+				? 'urls'
+				: null;
+
+		if (node.id !== lastSelectedId) {
+			lastSelectedId = node.id;
+			openSectionId = defaultId;
+			return;
+		}
+
+		if (showTracklist && openSectionId === 'urls') {
+			openSectionId = 'tracklist';
+			return;
+		}
+
+		if (defaultId && openSectionId === null) {
+			openSectionId = defaultId;
+		}
 	});
 </script>
 
 <aside class="bg-panel flex h-full min-h-0 flex-col rounded-lg p-4">
-	<h2 class="mb-4 shrink-0 font-semibold {titleTextColor}">Node details</h2>
+	<h2 class="mb-4 shrink-0 font-semibold {node?.id ? 'text-base' : 'text-muted'}">Node details</h2>
 
 	<div class="min-h-0 flex-1 overflow-y-auto">
 		{#if node.id}

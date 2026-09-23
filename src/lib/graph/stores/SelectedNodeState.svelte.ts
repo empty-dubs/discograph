@@ -49,6 +49,8 @@ class SelectedNodeState implements SelectedNodeInterface {
 	isProfileFailed = $derived(graph.visitedNodes.profileStatus.get(this.id!) === 'failed');
 	hasLoadingChildren = $derived(graph.visitedNodes.withLoadingChildren.has(this.id!));
 	isBlocked = $derived(discogsApi.isBlockedDiscogsEntity(this.data?.type!, this.data?.discogsId!));
+	isArtistOrLabel = $derived(this.data?.type === 'artist' || this.data?.type === 'label');
+	isMasterOrRelease = $derived(this.data?.type === 'master' || this.data?.type === 'release');
 
 	releaseTotal = $derived.by(() => {
 		if (!this.id) return null;

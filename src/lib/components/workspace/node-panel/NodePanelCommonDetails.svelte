@@ -4,20 +4,20 @@
 	import NodeDetailRow from './NodeDetailRow.svelte';
 	import NodeTypeBadge from './NodeTypeBadge.svelte';
 
+	const selected = $derived(selectedNodeState);
 	const node = $derived(selectedNodeState.data);
 
-	const isMasterOrRelease = $derived(node!.type === 'master' || node!	.type === 'release');
 	const showReleaseTotal = $derived(
 		(node!.type === 'artist' || node!.type === 'label' || node!.type === 'master') &&
 			selectedNodeState.releaseTotal !== null
 	);
 	const releaseTotalLabel = $derived(node!.type === 'master' ? 'Versions' : 'Releases');
-	const showYear = $derived(isMasterOrRelease && Boolean(node!.meta?.year));
-	const showGenres = $derived(isMasterOrRelease && (node!.meta?.genres?.length ?? 0) > 0);
-	const showStyles = $derived(isMasterOrRelease && (node!.meta?.styles?.length ?? 0) > 0);
-	const showReleaseYear = $derived(isMasterOrRelease && Boolean(node!.meta?.released) && (String(node!.meta?.released) !== String(node!.meta?.year)));
-	const showCountry = $derived(isMasterOrRelease && Boolean(node!.meta?.country));
-	const showFormat = $derived(isMasterOrRelease && Boolean(node!.meta?.format));
+	const showYear = $derived(selected.isMasterOrRelease && Boolean(node!.meta?.year));
+	const showGenres = $derived(selected.isMasterOrRelease && (node!.meta?.genres?.length ?? 0) > 0);
+	const showStyles = $derived(selected.isMasterOrRelease && (node!.meta?.styles?.length ?? 0) > 0);
+	const showReleaseYear = $derived(selected.isMasterOrRelease && Boolean(node!.meta?.released) && (String(node!.meta?.released) !== String(node!.meta?.year)));
+	const showCountry = $derived(selected.isMasterOrRelease && Boolean(node!.meta?.country));
+	const showFormat = $derived(selected.isMasterOrRelease && Boolean(node!.meta?.format));
 </script>
 
 <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
