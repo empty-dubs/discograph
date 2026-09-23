@@ -3,7 +3,7 @@
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import { CONTROL_PANEL_HELPER_TEXT } from './constants';
-	import ControlPanelCrawlTab from './ControlPanelCrawl.svelte';
+	import ControlPanelCrawl from './ControlPanelCrawl.svelte';
 	import ControlPanelExplore from './ControlPanelExplore.svelte';
 	import ControlPanelHelperLayout from './ControlPanelHelperLayout.svelte';
 	import LoadingIcon from './LoadingIcon.svelte';
@@ -79,7 +79,7 @@
 			class="col-start-1 row-start-1 h-full min-h-0 {activeExploreTab !== 'crawl' ? 'hidden' : ''}"
 		>
 			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.crawl}>
-				<ControlPanelCrawlTab />
+				<ControlPanelCrawl />
 			</ControlPanelHelperLayout>
 		</div>
 	</div>
