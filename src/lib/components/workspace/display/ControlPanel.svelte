@@ -2,18 +2,11 @@
 	import { Icon } from 'svelte-awesome';
 	import { chevronDown, chevronUp } from 'svelte-awesome/icons';
 
-	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-
-	import { CONTROL_PANEL_HELPER_TEXT } from './control-panel/constants';
-
-	import ControlPanelCrawlTab from './control-panel/ControlPanelCrawl.svelte';
-	import ControlPanelHelperLayout from './control-panel/ControlPanelHelperLayout.svelte';
 	import ControlPanelSettings from './control-panel/ControlPanelSettings.svelte';
-	import ControlPanelExplore from './control-panel/ControlPanelExplore.svelte';
+	import ControlPanelDiscover from './control-panel/ControlPanelDiscover.svelte';
 	import LoadingIcon from './control-panel/LoadingIcon.svelte';
 
-	type TabId = 'explore' | 'crawl' | 'settings';
+	type TabId = 'discover' | 'settings';
 
 	interface Props {
 		isExpanded?: boolean;
@@ -21,7 +14,8 @@
 
 	let { isExpanded = $bindable(true) }: Props = $props();
 
-	let activeTab = $state<TabId>('explore');
+	let activeTab = $state<TabId>('discover');
+	let isLoading = $state(false);
 
 	function selectTab(tab: TabId) {
 		activeTab = tab;
@@ -53,28 +47,14 @@
 			<button
 				type="button"
 				role="tab"
-				id="control-panel-tab-explore"
-				class="ui-tab {activeTab === 'explore' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
-				aria-selected={activeTab === 'explore'}
-				aria-controls="control-panel-panel-explore"
-				onclick={() => selectTab('explore')}
+				id="control-panel-tab-discover"
+				class="ui-tab {activeTab === 'discover' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
+				aria-selected={activeTab === 'discover'}
+				aria-controls="control-panel-panel-discover"
+				onclick={() => selectTab('discover')}
 			>
-				{#if selectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
-				Explore
-			</button>
-			<button
-				type="button"
-				role="tab"
-				id="control-panel-tab-crawl"
-				class="ui-tab {activeTab === 'crawl' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
-				aria-selected={activeTab === 'crawl'}
-				aria-controls="control-panel-panel-crawl"
-				onclick={() => selectTab('crawl')}
-			>
-				<span class="inline-flex items-center gap-1.5">
-					{#if crawlState.isRunning}<LoadingIcon />{/if}
-					Crawl
-				</span>
+				{#if isLoading}<LoadingIcon />{/if}
+				Discover
 			</button>
 			<button
 				type="button"
@@ -98,14 +78,12 @@
 				<div class="grid h-full min-h-0">
 					<div
 						role="tabpanel"
-						id="control-panel-panel-explore"
-						aria-labelledby="control-panel-tab-explore"
-						aria-hidden={activeTab !== 'explore' || !isExpanded}
-						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'explore' ? 'hidden' : ''}"
+						id="control-panel-panel-discover"
+						aria-labelledby="control-panel-tab-discover"
+						aria-hidden={activeTab !== 'discover' || !isExpanded}
+						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'discover' ? 'hidden' : ''}"
 					>
-						<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.explore}>
-							<ControlPanelExplore />
-						</ControlPanelHelperLayout>
+						<ControlPanelDiscover bind:isLoading={isLoading} />
 					</div>
 					<div
 						role="tabpanel"
@@ -115,17 +93,6 @@
 						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'settings' ? 'hidden' : ''}"
 					>
 						<ControlPanelSettings />
-					</div>
-					<div
-						role="tabpanel"
-						id="control-panel-panel-crawl"
-						aria-labelledby="control-panel-tab-crawl"
-						aria-hidden={activeTab !== 'crawl' || !isExpanded}
-						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'crawl' ? 'hidden' : ''}"
-					>
-						<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.crawl}>
-							<ControlPanelCrawlTab />
-						</ControlPanelHelperLayout>
 					</div>
 				</div>
 			</div>
