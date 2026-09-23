@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ControlPanel from './display/ControlPanel.svelte';
+	import ControlPanel from './control-panel/ControlPanel.svelte';
 	import GraphCanvas from './display/GraphCanvas.svelte';
 	import NodePanel from './node-panel/NodePanel.svelte';
 

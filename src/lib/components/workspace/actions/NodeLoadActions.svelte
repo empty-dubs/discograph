@@ -4,7 +4,7 @@
 	import { graph } from '$lib/graph/graph';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 
-	import ControlPanelButton from '$lib/components/workspace/display/control-panel/ControlPanelButton.svelte';
+	import ControlPanelButton from '$lib/components/workspace/control-panel/ControlPanelButton.svelte';
 
 	import { selectedNodeState, type SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
 
