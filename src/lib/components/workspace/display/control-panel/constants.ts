@@ -16,7 +16,10 @@ export const CONTROL_PANEL_HELPER_TEXT = {
 		'Note: more advanced crawl options will be added in the future.'
 	],
 	settings: {
-		nodes: ['Enable/disable node visibility and labels on the graph.'],
+		entities: [
+			'Enable/disable node visibility and labels on the graph.',
+			'Note: the selected node will always be visible.'
+		],
 		relationships: ['Hover over relationship types to emphasize edges on the graph.'],
 		expansion: ['Configure fetch expansion and release loading behavior.']
 	}

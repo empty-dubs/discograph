@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { ALL_EDGE_TYPES, ALL_NODE_TYPES } from '$lib/graph/constants';
-
 	import { CONTROL_PANEL_HELPER_TEXT } from './constants';
 
 	import ControlPanelCrawlSettings from './ControlPanelCrawlSettings.svelte';
@@ -10,9 +8,9 @@
 	import GraphLabelToggle from './GraphLabelToggle.svelte';
 	import GraphNodeFilters from './GraphNodeFilters.svelte';
 
-	type SettingsTabId = 'nodes' | 'relationships' | 'expansion';
+	type SettingsTabId = 'entities' | 'relationships' | 'expansion';
 
-	let activeSettingsTab = $state<SettingsTabId>('nodes');
+	let activeSettingsTab = $state<SettingsTabId>('entities');
 </script>
 
 <div class="flex h-full min-h-0 gap-4">
@@ -24,13 +22,13 @@
 		<button
 			type="button"
 			role="tab"
-			id="settings-tab-nodes"
-			class="ui-tab {activeSettingsTab === 'nodes' ? 'ui-tab-active-left' : 'ui-tab-inactive-left'}"
-			aria-selected={activeSettingsTab === 'nodes'}
-			aria-controls="settings-panel-nodes"
-			onclick={() => (activeSettingsTab = 'nodes')}
+			id="settings-tab-entities"
+			class="ui-tab {activeSettingsTab === 'entities' ? 'ui-tab-active-left' : 'ui-tab-inactive-left'}"
+			aria-selected={activeSettingsTab === 'entities'}
+			aria-controls="settings-panel-entities"
+			onclick={() => (activeSettingsTab = 'entities')}
 		>
-			Nodes
+			Entities
 		</button>
 		<button
 			type="button"
@@ -61,16 +59,17 @@
 	<div class="grid min-h-0 min-w-0 flex-1">
 		<div
 			role="tabpanel"
-			id="settings-panel-nodes"
-			aria-labelledby="settings-tab-nodes"
-			aria-hidden={activeSettingsTab !== 'nodes'}
-			class="col-start-1 row-start-1 h-full min-h-0 {activeSettingsTab !== 'nodes' ? 'hidden' : ''}"
+			id="settings-panel-entities"
+			aria-labelledby="settings-tab-entities"
+			aria-hidden={activeSettingsTab !== 'entities'}
+			class="col-start-1 row-start-1 h-full min-h-0 {activeSettingsTab !== 'entities' ? 'hidden' : ''}"
 		>
-			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.nodes}>
+			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.entities}>
 				<div class="ui-stack text-sm text-gray-400">
-					<h4 class="ui-label">Toggle Nodes</h4>
+					<h4 class="ui-label">Nodes</h4>
+					<GraphNodeFilters />
+					<h4 class="ui-label">Labels</h4>
 					<GraphLabelToggle />
-					<GraphNodeFilters types={ALL_NODE_TYPES} />
 				</div>
 			</ControlPanelHelperLayout>
 		</div>
@@ -86,7 +85,8 @@
 			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.relationships}>
 				<div class="ui-stack text-sm text-gray-400">
 					<h4 class="ui-label">Highlight Relationships</h4>
-					<GraphEdgeFilters edgeTypes={ALL_EDGE_TYPES} />
+					<GraphEdgeFilters />
+					<h4 class="ui-label">Edge Style</h4>
 					<GraphDirectedEdgesToggle />
 				</div>
 			</ControlPanelHelperLayout>

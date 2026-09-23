@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ALL_NODE_TYPES, NODE_TYPE_LABELS } from '$lib/graph/constants';
+	import { ALL_NODE_TYPES } from '$lib/graph/constants';
 	import { graph } from '$lib/graph/graph';
 
 	import type { NodeType } from '$lib/graph/types';
@@ -20,12 +20,14 @@
 				type="checkbox"
 				class="accent-accent size-4 rounded border-border disabled:cursor-not-allowed disabled:opacity-50"
 				checked={visible}
-				disabled={graph.data.isEmpty ||
-					count === 0 ||
-					(visible && graph.display.visibleTypes.size === 1)}
+				disabled={
+					graph.data.isEmpty
+					|| count === 0
+					|| (visible && graph.data.nodeList.filter((n) => n.type === type).length === 1)
+				}
 				onchange={(e) => graph.display.setTypeVisible(type, e.currentTarget.checked)}
 			/>
-			{NODE_TYPE_LABELS[type]}
+			Show {type}s
 		</label>
 	{/each}
 </div>
