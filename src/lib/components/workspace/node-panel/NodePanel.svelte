@@ -14,9 +14,6 @@
 	let openSectionId = $state<string | null>(null);
 	let lastSelectedId = $state<string | null>(null);
 
-	const showUrls = $derived(node.isArtistOrLabel && (node.data?.urls?.length ?? 0) > 0);
-	const showTracklist = $derived(node.isMasterOrRelease && (node.data?.tracklist?.length ?? 0) > 0);
-
 	const accordion: NodePanelAccordion = {
 		get openSectionId() {
 			return openSectionId;
@@ -48,6 +45,9 @@
 			openSectionId = null;
 			return;
 		}
+
+		const showUrls = node.isArtistOrLabel && (node.data?.urls?.length ?? 0) > 0;
+		const showTracklist = node.isMasterOrRelease && (node.data?.tracklist?.length ?? 0) > 0;
 
 		const defaultId = showTracklist
 			? 'tracklist'
