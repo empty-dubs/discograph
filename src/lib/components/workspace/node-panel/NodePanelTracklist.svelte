@@ -7,20 +7,23 @@
 
 	interface Props {
 		node: GraphNode;
-		tracks: Track[];
 	}
 
-	let { node, tracks }: Props = $props();
+	let { node}: Props = $props();
 
 	function formatTrack(track: Track): string {
-		return `${track.position}. ${track.title}${track.duration ? ` (${track.duration})` : ''}`;
+		return track.position === ''
+		? track.title
+		: `${track.position}. ${track.title}${track.duration? ` (${track.duration})`: ''}`;
 	}
 </script>
 
 <div class="space-y-1">
-	{#each tracks as track, index ( `${track.position}-${track.title}-${index}` )}
+	{#each node.tracklist ?? [] as track, index ( `${track.position}-${track.title}-${index}` )}
 		{@const url = getYouTubeTrackSearchUrl(node, track.title)}
-		{#if url}
+		{#if track.position === '' || !url}
+			<span class="block px-0 py-0.5 text-sm text-gray-200">{formatTrack(track)}</span>
+		{:else}
 			<a
 				href={url}
 				target="_blank"
@@ -30,8 +33,6 @@
 			>
 				{formatTrack(track)}
 			</a>
-		{:else}
-			<span class="block px-0 py-0.5 text-sm text-gray-200">{formatTrack(track)}</span>
 		{/if}
 	{/each}
 </div>

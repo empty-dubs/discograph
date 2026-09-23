@@ -4,23 +4,37 @@
 	import { chevronRight } from 'svelte-awesome/icons';
 	import { getContext, type Snippet } from 'svelte';
 
-	import { NODE_PANEL_ACCORDION_KEY, type NodePanelAccordion } from '../accordion';
+	import { DISCOVER_ENTITIES_ACCORDION_KEY, NODE_PANEL_ACCORDION_KEY } from '../accordion';
+
+	import type { NodePanelAccordion } from '../accordion';
 
 	interface Props {
 		id: string;
 		title: string;
 		show?: boolean;
 		count?: number;
+		useDiscoverEntitiesAccordion?: boolean;
 		children: Snippet;
 	}
 
-	let { id, title, show = true, count, children }: Props = $props();
+	let {
+		id,
+		title,
+		show = true,
+		count,
+		useDiscoverEntitiesAccordion = false,
+		children
+	}: Props = $props();
 
-	const accordion = getContext<NodePanelAccordion>(NODE_PANEL_ACCORDION_KEY);
-	const open = $derived(accordion.openSectionId === id);
+	const nodePanelAccordion = getContext<NodePanelAccordion>(NODE_PANEL_ACCORDION_KEY);
+	const discoverEntitiesAccordion = getContext<NodePanelAccordion>(
+		DISCOVER_ENTITIES_ACCORDION_KEY
+	);
 </script>
 
 {#if show}
+	{@const accordion = useDiscoverEntitiesAccordion ? discoverEntitiesAccordion : nodePanelAccordion}
+	{@const open = accordion.openSectionId === id}
 	<div class="border-border/50 border-b py-1.5 text-sm last:border-b-0">
 		<button
 			type="button"
