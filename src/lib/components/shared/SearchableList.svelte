@@ -17,13 +17,6 @@
 	}
 
 	let { items, searchType = '' }: Props = $props();
-
-	function isSearchable(item: Item): boolean {
-		if (searchType !== 'artist' && searchType !== 'label') return true;
-		if (item.discogsId === null) return true;
-
-		return !discogsApi.isBlockedDiscogsEntity(searchType, item.discogsId!);
-	}
 </script>
 
 <div class="space-y-1">
@@ -35,7 +28,7 @@
 				discogsApi.searching
 				|| discogsApi.isRateLimited
 				|| crawlState.isRunning
-				|| !isSearchable(item)
+				|| discogsApi.isBlockedDiscogsEntity(searchType as SearchType, item.discogsId!)
 			}
 			onclick={() => discogsApi.search(item.query ?? '', searchType || undefined)}
 		>
