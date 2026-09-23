@@ -3,7 +3,7 @@
 	import { chevronDown, chevronUp } from 'svelte-awesome/icons';
 
 	import ControlPanelSettings from './control-panel/ControlPanelSettings.svelte';
-	import ControlPanelDiscoverTab from './control-panel/ControlPanelDiscoverTab.svelte';
+	import ControlPanelDiscover from './control-panel/ControlPanelDiscover.svelte';
 	import LoadingIcon from './control-panel/LoadingIcon.svelte';
 
 	type TabId = 'discover' | 'settings';
@@ -83,7 +83,7 @@
 						aria-hidden={activeTab !== 'discover' || !isExpanded}
 						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'discover' ? 'hidden' : ''}"
 					>
-						<ControlPanelDiscoverTab bind:isLoading={isLoading} />
+						<ControlPanelDiscover bind:isLoading={isLoading} />
 					</div>
 					<div
 						role="tabpanel"
