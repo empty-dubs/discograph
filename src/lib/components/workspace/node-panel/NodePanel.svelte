@@ -7,7 +7,7 @@
 	import type { NodePanelAccordion } from '../accordion';
 
 	import NodePanelDetails from './NodePanelDetails.svelte';
-	import NodePanelExplore from './NodePanelExplore.svelte';
+	import NodePanelNavigate from './NodePanelNavigate.svelte';
 
 	const node = $derived(selectedNodeState);
 
@@ -81,5 +81,5 @@
 		{/if}
 	</div>
 
-	<NodePanelExplore />
+	<NodePanelNavigate />
 </aside>
