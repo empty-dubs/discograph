@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-	import { buildArtistTitleSearchQuery, formatMemberName} from './control-panel-discover-sections';
+	import { formatMemberName} from './control-panel-discover-sections';
+	import { releaseListRowText } from './transformations';
 
 	import type { DiscoverEntitySectionId } from './control-panel-discover-sections';
 
@@ -71,11 +72,8 @@
 	<SearchableList
 		items={[{
 			key: String(node.id),
-			label: node.main_release_info?.title,
-			query: buildArtistTitleSearchQuery(
-				node.main_release_info?.title,
-				node.main_release_info?.artistName ?? node.artists?.[0]?.name
-			),
+			label: releaseListRowText(node).label,
+			query: releaseListRowText(node).query,
 			discogsId: node.main_release_info?.id,
 			searchType: 'release'
 		}]}
@@ -84,11 +82,8 @@
 	<SearchableList
 		items={[{
 			key: String(node.id),
-			label: node.linked_master?.title,
-			query: buildArtistTitleSearchQuery(
-				node.linked_master?.title,
-				node.linked_master?.artistName ?? node.artists?.[0]?.name
-			),
+			label: releaseListRowText(node).label,
+			query: releaseListRowText(node).query,
 			discogsId: node.linked_master?.id,
 			searchType: 'master'
 		}]}

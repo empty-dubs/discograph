@@ -1,3 +1,5 @@
+import { releaseTitle, releaseListRowText } from './transformations';
+
 import type { GraphInterface } from '$lib/graph/graph';
 import type { GraphLink, GraphNode, NodeType } from '$lib/graph/types';
 
@@ -8,21 +10,6 @@ type DiscoverReleaseListItem = {
 	discogsId?: number;
 	searchType: 'release' | 'master';
 };
-
-function releaseListTitle(node: GraphNode): string {
-	return node.title ?? node.displayName ?? node.name ?? 'Unknown';
-}
-
-export function formatReleaseListLabel(node: GraphNode): string {
-	const title = releaseListTitle(node);
-	const year = node.meta?.year;
-
-	if (year != null && year !== '') {
-		return `${title} (${year})`;
-	}
-
-	return title;
-}
 
 function parseYearForSort(node: GraphNode): number {
 	const year = node.meta?.year;
@@ -84,8 +71,6 @@ export function getDiscoverReleaseListItems(
 	for (const link of graph.data.linkList) {
 		const neighborId = getLinkedNeighborId(parent, link);
 
-		console.log(neighborId);
-
 		if (!neighborId) continue;
 
 		const neighbor = graph.data.nodes.get(neighborId);
@@ -96,26 +81,23 @@ export function getDiscoverReleaseListItems(
 		nodeNieghborMap.set(neighbor.id, neighbor);
 	}
 
-	console.log(nodeNieghborMap);
-
 	return [...nodeNieghborMap.values()]
 		.sort((a, b) => {
 			const yearDiff = parseYearForSort(b) - parseYearForSort(a);
 
 			if (yearDiff !== 0) return yearDiff;
 
-			return releaseListTitle(a).localeCompare(releaseListTitle(b));
+			return releaseTitle(a).localeCompare(releaseTitle(b));
 		})
 		.map((neighbor): DiscoverReleaseListItem => {
-			const title = releaseListTitle(neighbor);
-			const searchType = neighbor.type as 'release' | 'master';
+			const { label, query } = releaseListRowText(neighbor);
 
 			return {
 				key: neighbor.id,
-				label: formatReleaseListLabel(neighbor),
-				query: title,
+				label,
+				query,
 				discogsId: neighbor.discogsId ?? undefined,
-				searchType
+				searchType: neighbor.type as 'release' | 'master'
 			};
 		});
 }

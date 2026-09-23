@@ -40,6 +40,7 @@ export interface GraphNode {
 	meta?: {
 		year?: number | string;
 		role?: string;
+		artistName?: string;
 		genres?: string[];
 		styles?: string[];
 		released?: string;
