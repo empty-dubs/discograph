@@ -8,7 +8,7 @@
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
 	import NodePanelItemList from './NodePanelItemList.svelte';
 	import NodePanelTracklist from './NodePanelTracklist.svelte';
-	import NodePanelUrls from './NodePanelUrlList.svelte';
+	import NodePanelUrlList from './NodePanelUrlList.svelte';
 
 	const selected = $derived(selectedNodeState);
 	const node = $derived(selected.data);
@@ -69,7 +69,7 @@
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection id="urls" show={showUrls} title="Links" count={node!.urls?.length}>
-	<NodePanelUrls urls={node!.urls ?? []} />
+	<NodePanelUrlList urls={node!.urls ?? []} />
 </NodePanelCollapsibleSection>
 
 <NodePanelCollapsibleSection id="notes" show={showNotes} title="Notes">
