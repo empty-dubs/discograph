@@ -2,9 +2,9 @@
 	import { Icon } from 'svelte-awesome';
 	import { chevronDown, chevronUp } from 'svelte-awesome/icons';
 
-	import ControlPanelSettings from './control-panel/ControlPanelSettings.svelte';
-	import ControlPanelDiscover from './control-panel/ControlPanelDiscover.svelte';
-	import LoadingIcon from './control-panel/LoadingIcon.svelte';
+	import ControlPanelSettings from './ControlPanelSettings.svelte';
+	import ControlPanelDiscover from './ControlPanelDiscover.svelte';
+	import LoadingIcon from './LoadingIcon.svelte';
 
 	type TabId = 'discover' | 'settings';
 

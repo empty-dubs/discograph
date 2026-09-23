@@ -2,8 +2,8 @@
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	import { getDiscoverEntitySectionCount, getVisibleEntitySections } from './control-panel-discover-sections';
 
-	import ControlPanelDiscoverSectionBody from './ControlPanelDiscoverSectionBody.svelte';
 	import NodePanelCollapsibleSection from '$lib/components/workspace/node-panel/NodePanelCollapsibleSection.svelte';
+	import ControlPanelDiscoverSectionBody from './ControlPanelDiscoverSectionBody.svelte';
 
 	const node = $derived(selectedNodeState);
 	const visibleSections = $derived(node.data ? getVisibleEntitySections(node.data) : []);
