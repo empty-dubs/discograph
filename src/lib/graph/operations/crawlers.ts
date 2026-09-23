@@ -10,7 +10,7 @@ import { getLinkId, getNodeId } from './patches/compositions';
 import type { LoadAction } from '$lib/components/workspace/actions/constants';
 import type { GraphInterface } from '$lib/graph/graph';
 import type { CrawlMode } from '$lib/graph/stores/CrawlState.svelte';
-import type { GraphNode, NodeType } from '$lib/graph/types';
+import type { GraphLink, GraphNode, NodeType } from '$lib/graph/types';
 
 type RelatedNeighbors = {
 	nodes: string[];
@@ -30,7 +30,54 @@ export function getCrawlNodeType(mode: CrawlMode): NodeType {
 	return mode === 'artist-artist' ? 'artist' : 'label';
 }
 
-export function getRelatedNeighbors(node: GraphNode, action: LoadAction): RelatedNeighbors {
+function getPagedReleaseNeighborId(parent: GraphNode, link: GraphLink): string | null {
+	if (parent.type === 'artist') {
+		if (link.type === 'released' && link.source === parent.id) return link.target;
+	}
+
+	if (parent.type === 'label') {
+		if (link.type === 'on_label' && link.target === parent.id) return link.source;
+	}
+
+	if (parent.type === 'master') {
+		if (link.type === 'version_of' && link.target === parent.id) return link.source;
+	}
+
+	return null;
+}
+
+function collectPagedReleaseNeighbors(
+	parent: GraphNode,
+	graph: GraphInterface,
+	neighborType: 'release' | 'master'
+): RelatedNeighbors {
+	const nodes: string[] = [];
+	const edges: string[] = [];
+	const seen = new Set<string>();
+
+	for (const link of graph.data.linkList) {
+		const neighborId = getPagedReleaseNeighborId(parent, link);
+
+		if (!neighborId) continue;
+
+		const neighbor = graph.data.nodes.get(neighborId);
+
+		if (!neighbor || neighbor.type !== neighborType) continue;
+		if (seen.has(neighbor.id)) continue;
+
+		seen.add(neighbor.id);
+		nodes.push(neighbor.id);
+		edges.push(link.id);
+	}
+
+	return { nodes, edges };
+}
+
+export function getRelatedNeighbors(
+	node: GraphNode,
+	action: LoadAction,
+	graph?: GraphInterface
+): RelatedNeighbors {
 	switch (action) {
 		case 'artists':
 			if (node.type === 'artist') {
@@ -140,6 +187,34 @@ export function getRelatedNeighbors(node: GraphNode, action: LoadAction): Relate
 				nodes: [masterNodeId],
 				edges: [getLinkId(node.id, 'version_of', masterNodeId)]
 			};
+		}
+
+		case 'releases': {
+			if (!graph) return { nodes: [], edges: [] };
+
+			if (node.type !== 'artist' && node.type !== 'label' && node.type !== 'master') {
+				return { nodes: [], edges: [] };
+			}
+
+			if (!graph.visitedNodes.releasePages.has(node.id)) {
+				return { nodes: [], edges: [] };
+			}
+
+			return collectPagedReleaseNeighbors(node, graph, 'release');
+		}
+
+		case 'master_releases': {
+			if (!graph) return { nodes: [], edges: [] };
+
+			if (node.type !== 'artist' && node.type !== 'label') {
+				return { nodes: [], edges: [] };
+			}
+
+			if (!graph.visitedNodes.masterReleasePages.has(node.id)) {
+				return { nodes: [], edges: [] };
+			}
+
+			return collectPagedReleaseNeighbors(node, graph, 'master');
 		}
 
 		default:
