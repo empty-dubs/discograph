@@ -10,11 +10,12 @@
 
 	import ControlPanelCrawl from './ControlPanelCrawl.svelte';
 	import ControlPanelRelatedEntities from './ControlPanelRelatedEntities.svelte';
+	import ControlPanelReleases from './ControlPanelReleases.svelte';
 	import ControlPanelExplore from './ControlPanelExplore.svelte';
 	import ControlPanelHelperLayout from './ControlPanelHelperLayout.svelte';
 	import LoadingIcon from './LoadingIcon.svelte';
 
-	type DiscoverSubTabId = 'crawl' | 'related-entities' | 'explore';
+	type DiscoverSubTabId = 'explore' | 'crawl' | 'related-entities' | 'releases';
 
 	interface Props {
 		isLoading?: boolean;
@@ -94,6 +95,20 @@
 		>
 			Related
 		</button>
+		<button
+			type="button"
+			role="tab"
+			id="discover-subtab-releases"
+			class="ui-tab {activeTab === 'releases' ? 'ui-tab-active-left' : 'ui-tab-inactive-left'}"
+			aria-selected={activeTab === 'releases'}
+			aria-controls="discover-panel-releases"
+			onclick={() => (activeTab = 'releases')}
+		>
+			<span class="inline-flex items-center gap-1.5">
+				{#if selectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
+				Releases
+			</span>
+		</button>
 	</div>
 
 	<div class="grid min-h-0 min-w-0 flex-1">
@@ -128,6 +143,17 @@
 		>
 			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.discover.related}>
 				<ControlPanelRelatedEntities />
+			</ControlPanelHelperLayout>
+		</div>
+		<div
+			role="tabpanel"
+			id="discover-panel-releases"
+			aria-labelledby="discover-subtab-releases"
+			aria-hidden={activeTab !== 'releases'}
+			class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'releases' ? 'hidden' : ''}"
+		>
+			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.discover.releases}>
+				<ControlPanelReleases />
 			</ControlPanelHelperLayout>
 		</div>
 	</div>
