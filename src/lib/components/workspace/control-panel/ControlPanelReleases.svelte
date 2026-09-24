@@ -3,7 +3,7 @@
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import {
-		getDiscoverReleaseListItems,
+		getReleaseListItems,
 		isReleaseParentType
 	} from './control-panel-discover-releases';
 
@@ -12,7 +12,7 @@
 	const node = $derived(selectedNodeState);
 	const releaseListItems = $derived(
 		node.data
-		? getDiscoverReleaseListItems(node.data, graph)
+		? getReleaseListItems(node.data, graph)
 		: []
 	);
 </script>

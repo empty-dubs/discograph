@@ -1,9 +1,10 @@
+import { getRelatedNeighbors } from '$lib/graph/operations/crawlers';
 import { releaseTitle, releaseListRowText } from './transformations';
 
 import type { GraphInterface } from '$lib/graph/graph';
-import type { GraphLink, GraphNode, NodeType } from '$lib/graph/types';
+import type { GraphNode, NodeType } from '$lib/graph/types';
 
-type DiscoverReleaseListItem = {
+type ReleaseListItem = {
 	key: string;
 	label: string;
 	query: string;
@@ -21,67 +22,34 @@ function parseYearForSort(node: GraphNode): number {
 	return Number.isFinite(parsed) ? parsed : Number.NEGATIVE_INFINITY;
 }
 
-function getLinkedNeighborId(parent: GraphNode, link: GraphLink): string | null {
-	if (parent.type === 'artist') {
-		if (link.type === 'released' && link.source === parent.id) return link.target;
-	}
-
-	if (parent.type === 'label') {
-		if (link.type === 'on_label' && link.target === parent.id) return link.source;
-	}
-
-	if (parent.type === 'master') {
-		if (link.type === 'version_of' && link.target === parent.id) return link.source;
-	}
-
-	return null;
-}
-
-function shouldIncludeNeighbor(
-	parent: GraphNode,
-	neighbor: GraphNode,
+function collectLoadedReleaseNeighbors(
+	node: GraphNode,
 	graph: GraphInterface
-): boolean {
-	if (neighbor.type === 'release') {
-		return graph.visitedNodes.releasePages.has(parent.id);
+): GraphNode[] {
+	const nodeNeighborMap = new Map<string, GraphNode>();
+
+	const { nodes: releaseIds } = getRelatedNeighbors(node, 'releases', graph);
+
+	for (const id of releaseIds) {
+		const neighbor = graph.data.nodes.get(id);
+
+		if (neighbor) nodeNeighborMap.set(id, neighbor);
 	}
 
-	if (neighbor.type === 'master') {
-		return (
-			(parent.type === 'artist' || parent.type === 'label')
-			&& graph.visitedNodes.masterReleasePages.has(parent.id)
-		);
-	}
-
-	return false;
+	return [...nodeNeighborMap.values()];
 }
 
 export function isReleaseParentType(type: NodeType): type is 'artist' | 'label' | 'master' {
 	return type === 'artist' || type === 'label' || type === 'master';
 }
 
-export function getDiscoverReleaseListItems(
-	parent: GraphNode,
+export function getReleaseListItems(
+	node: GraphNode,
 	graph: GraphInterface
-): DiscoverReleaseListItem[] {
-	if (!isReleaseParentType(parent.type)) return [];
+): ReleaseListItem[] {
+	if (!isReleaseParentType(node.type)) return [];
 
-	const nodeNieghborMap = new Map<string, GraphNode>();
-
-	for (const link of graph.data.linkList) {
-		const neighborId = getLinkedNeighborId(parent, link);
-
-		if (!neighborId) continue;
-
-		const neighbor = graph.data.nodes.get(neighborId);
-
-		if (!neighbor || (neighbor.type !== 'release' && neighbor.type !== 'master')) continue;
-		if (!shouldIncludeNeighbor(parent, neighbor, graph)) continue;
-
-		nodeNieghborMap.set(neighbor.id, neighbor);
-	}
-
-	return [...nodeNieghborMap.values()]
+	return collectLoadedReleaseNeighbors(node, graph)
 		.sort((a, b) => {
 			const yearDiff = parseYearForSort(b) - parseYearForSort(a);
 
@@ -89,7 +57,7 @@ export function getDiscoverReleaseListItems(
 
 			return releaseTitle(a).localeCompare(releaseTitle(b));
 		})
-		.map((neighbor): DiscoverReleaseListItem => {
+		.map((neighbor): ReleaseListItem => {
 			const { label, query } = releaseListRowText(neighbor);
 
 			return {
