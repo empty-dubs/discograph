@@ -46,7 +46,7 @@ function appendReleaseMasterYouTubeContext(parts: string[], node: GraphNode): vo
 	const year = node.meta?.year;
 
 	if (artist?.name && artist.id && !BLOCKED_DISCOGS_IDS['artist']?.has(artist.id)) {
-		parts.push(stripDiscogsDisambiguation(artist.name));
+		parts.unshift(stripDiscogsDisambiguation(artist.name));
 	}
 
 	if (year != null && year !== '') parts.push(String(year));
@@ -76,12 +76,17 @@ export function getYouTubeTrackSearchUrl(node: GraphNode, trackTitle: string): s
 	const title = trackTitle.trim();
 	if (!title) return null;
 
-	const parts: string[] = [
-		stripDiscogsDisambiguation(node.displayName),
-		stripDiscogsDisambiguation(title)
-	];
+	const parts: string[] = [];
 
-	appendReleaseMasterYouTubeContext(parts, node);
+	const artist = node.artists?.[0];
+	if (artist?.name && artist.id && !BLOCKED_DISCOGS_IDS['artist']?.has(artist.id)) {
+		parts.push(stripDiscogsDisambiguation(artist.name));
+	}
+
+	parts.push(stripDiscogsDisambiguation(node.displayName), stripDiscogsDisambiguation(title));
+
+	const year = node.meta?.year;
+	if (year != null && year !== '') parts.push(String(year));
 
 	return buildYouTubeSearchUrl(parts);
 }
