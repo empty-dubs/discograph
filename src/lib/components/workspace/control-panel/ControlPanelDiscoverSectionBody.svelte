@@ -102,7 +102,7 @@
 	<SearchableList
 		items={(node.labels ?? []).map((label) => ({
 			key: `${label.id}-${label.catno ?? ''}`,
-			label: label.name,
+			label: `${label.name} (${label.catno ?? ''})`,
 			query: label.name,
 			discogsId: label.id,
 			searchType: 'label'

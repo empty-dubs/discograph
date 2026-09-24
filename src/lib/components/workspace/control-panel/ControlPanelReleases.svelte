@@ -10,8 +10,13 @@
 	import SearchableList from '$lib/components/shared/SearchableList.svelte';
 
 	const node = $derived(selectedNodeState);
+
 	const releaseListItems = $derived(
-		node.data
+		node.id && node.data
+		&& (
+			graph.visitedNodes.releasePages.get(node.id)
+			|| graph.visitedNodes.masterReleasePages.get(node.id)
+		)
 		? getReleaseListItems(node.data, graph)
 		: []
 	);

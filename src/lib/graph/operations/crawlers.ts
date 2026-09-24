@@ -190,27 +190,15 @@ export function getRelatedNeighbors(
 				return { nodes: [], edges: [] };
 			}
 
-			if (!graph.visitedNodes.releasePages.has(node.id)) {
+			if (
+				!graph.visitedNodes.releasePages.has(node.id)
+				&& !graph.visitedNodes.masterReleasePages.has(node.id)
+			) {
 				return { nodes: [], edges: [] };
 			}
 
 			return collectPagedReleaseNeighbors(node, graph);
 		}
-
-		case 'master_releases': {
-			if (!graph) return { nodes: [], edges: [] };
-
-			if (node.type !== 'artist' && node.type !== 'label') {
-				return { nodes: [], edges: [] };
-			}
-
-			if (!graph.visitedNodes.masterReleasePages.has(node.id)) {
-				return { nodes: [], edges: [] };
-			}
-
-			return collectPagedReleaseNeighbors(node, graph);
-		}
-
 		default:
 			return { nodes: [], edges: [] };
 	}
