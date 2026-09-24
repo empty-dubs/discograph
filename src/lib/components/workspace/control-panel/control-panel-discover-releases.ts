@@ -4,7 +4,7 @@ import { releaseTitle, releaseListRowText } from './transformations';
 import type { GraphInterface } from '$lib/graph/graph';
 import type { GraphNode, NodeType } from '$lib/graph/types';
 
-type DiscoverReleaseListItem = {
+type ReleaseListItem = {
 	key: string;
 	label: string;
 	query: string;
@@ -23,27 +23,17 @@ function parseYearForSort(node: GraphNode): number {
 }
 
 function collectLoadedReleaseNeighbors(
-	parent: GraphNode,
+	node: GraphNode,
 	graph: GraphInterface
 ): GraphNode[] {
 	const nodeNeighborMap = new Map<string, GraphNode>();
 
-	const { nodes: releaseIds } = getRelatedNeighbors(parent, 'releases', graph);
+	const { nodes: releaseIds } = getRelatedNeighbors(node, 'releases', graph);
 
 	for (const id of releaseIds) {
 		const neighbor = graph.data.nodes.get(id);
 
 		if (neighbor) nodeNeighborMap.set(id, neighbor);
-	}
-
-	if (parent.type === 'artist' || parent.type === 'label') {
-		const { nodes: masterIds } = getRelatedNeighbors(parent, 'master_releases', graph);
-
-		for (const id of masterIds) {
-			const neighbor = graph.data.nodes.get(id);
-
-			if (neighbor) nodeNeighborMap.set(id, neighbor);
-		}
 	}
 
 	return [...nodeNeighborMap.values()];
@@ -53,13 +43,13 @@ export function isReleaseParentType(type: NodeType): type is 'artist' | 'label' 
 	return type === 'artist' || type === 'label' || type === 'master';
 }
 
-export function getDiscoverReleaseListItems(
-	parent: GraphNode,
+export function getReleaseListItems(
+	node: GraphNode,
 	graph: GraphInterface
-): DiscoverReleaseListItem[] {
-	if (!isReleaseParentType(parent.type)) return [];
+): ReleaseListItem[] {
+	if (!isReleaseParentType(node.type)) return [];
 
-	return collectLoadedReleaseNeighbors(parent, graph)
+	return collectLoadedReleaseNeighbors(node, graph)
 		.sort((a, b) => {
 			const yearDiff = parseYearForSort(b) - parseYearForSort(a);
 
@@ -67,7 +57,7 @@ export function getDiscoverReleaseListItems(
 
 			return releaseTitle(a).localeCompare(releaseTitle(b));
 		})
-		.map((neighbor): DiscoverReleaseListItem => {
+		.map((neighbor): ReleaseListItem => {
 			const { label, query } = releaseListRowText(neighbor);
 
 			return {

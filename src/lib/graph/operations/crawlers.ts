@@ -30,42 +30,36 @@ export function getCrawlNodeType(mode: CrawlMode): NodeType {
 	return mode === 'artist-artist' ? 'artist' : 'label';
 }
 
-function getPagedReleaseNeighborId(parent: GraphNode, link: GraphLink): string | null {
-	if (parent.type === 'artist') {
-		if (link.type === 'released' && link.source === parent.id) return link.target;
-	}
+function getReleaseNeighborId(node: GraphNode, link: GraphLink): string | null {
+	if (node.type === 'artist' && link.type === 'released' && link.source === node.id) return link.target;
 
-	if (parent.type === 'label') {
-		if (link.type === 'on_label' && link.target === parent.id) return link.source;
-	}
+	if (node.type === 'label' && link.type === 'on_label' && link.target === node.id) return link.source;
 
-	if (parent.type === 'master') {
-		if (link.type === 'version_of' && link.target === parent.id) return link.source;
-	}
+	if (node.type === 'master' && link.type === 'version_of' && link.target === node.id) return link.source;
 
 	return null;
 }
 
 function collectPagedReleaseNeighbors(
-	parent: GraphNode,
+	node: GraphNode,
 	graph: GraphInterface,
-	neighborType: 'release' | 'master'
 ): RelatedNeighbors {
 	const nodes: string[] = [];
 	const edges: string[] = [];
-	const seen = new Set<string>();
-
-	for (const link of graph.data.linkList) {
-		const neighborId = getPagedReleaseNeighborId(parent, link);
+	
+	const releaseLinks = Array.from(graph.data.links.values())
+	.filter((link: GraphLink) => link.type === 'released' || link.type === 'version_of' || link.type === 'on_label')
+	.filter((link: GraphLink) => link.source === node.id || link.target === node.id);
+	
+	for (const link of releaseLinks) {
+		const neighborId = getReleaseNeighborId(node, link);
 
 		if (!neighborId) continue;
 
 		const neighbor = graph.data.nodes.get(neighborId);
 
-		if (!neighbor || neighbor.type !== neighborType) continue;
-		if (seen.has(neighbor.id)) continue;
+		if (!neighbor) continue;
 
-		seen.add(neighbor.id);
 		nodes.push(neighbor.id);
 		edges.push(link.id);
 	}
@@ -200,7 +194,7 @@ export function getRelatedNeighbors(
 				return { nodes: [], edges: [] };
 			}
 
-			return collectPagedReleaseNeighbors(node, graph, 'release');
+			return collectPagedReleaseNeighbors(node, graph);
 		}
 
 		case 'master_releases': {
@@ -214,7 +208,7 @@ export function getRelatedNeighbors(
 				return { nodes: [], edges: [] };
 			}
 
-			return collectPagedReleaseNeighbors(node, graph, 'master');
+			return collectPagedReleaseNeighbors(node, graph);
 		}
 
 		default:
