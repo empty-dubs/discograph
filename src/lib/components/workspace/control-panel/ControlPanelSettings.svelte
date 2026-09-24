@@ -8,51 +8,56 @@
 	import GraphLabelToggle from './GraphLabelToggle.svelte';
 	import GraphNodeFilters from './GraphNodeFilters.svelte';
 
-	type SettingsTabId = 'entities' | 'relationships' | 'expansion';
+	type SettingsTabId = 'entities' | 'relationships' | 'fetch';
 
-	let activeSettingsTab = $state<SettingsTabId>('entities');
+	let activeTab = $state<SettingsTabId>('entities');
 </script>
 
 <div class="flex h-full min-h-0 gap-4">
-	<div
-		role="tablist"
-		aria-label="Settings sections"
-		class="border-border flex shrink-0 flex-col border-r pr-2"
-	>
+	<div role="tablist" aria-label="Settings sections" class="control-panel-subtabs">
 		<button
 			type="button"
 			role="tab"
 			id="settings-tab-entities"
-			class="ui-tab {activeSettingsTab === 'entities' ? 'ui-tab-active-left' : 'ui-tab-inactive-left'}"
-			aria-selected={activeSettingsTab === 'entities'}
+			class="ui-tab {activeTab === 'entities' ? 'ui-tab-active-left' : 'ui-tab-inactive-left'}"
+			aria-selected={activeTab === 'entities'}
 			aria-controls="settings-panel-entities"
-			onclick={() => (activeSettingsTab = 'entities')}
+			onclick={() => (activeTab = 'entities')}
 		>
-			Entities
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot"></span>
+				Entities
+			</span>
 		</button>
 		<button
 			type="button"
 			role="tab"
 			id="settings-tab-relationships"
-			class="ui-tab {activeSettingsTab === 'relationships'
+			class="ui-tab {activeTab === 'relationships'
 				? 'ui-tab-active-left'
 				: 'ui-tab-inactive-left'}"
-			aria-selected={activeSettingsTab === 'relationships'}
+			aria-selected={activeTab === 'relationships'}
 			aria-controls="settings-panel-relationships"
-			onclick={() => (activeSettingsTab = 'relationships')}
+			onclick={() => (activeTab = 'relationships')}
 		>
-			Relationships
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot"></span>
+				Relationships
+			</span>
 		</button>
 		<button
 			type="button"
 			role="tab"
-			id="settings-tab-expansion"
-			class="ui-tab {activeSettingsTab === 'expansion' ? 'ui-tab-active-left' : 'ui-tab-inactive-left'}"
-			aria-selected={activeSettingsTab === 'expansion'}
-			aria-controls="settings-panel-expansion"
-			onclick={() => (activeSettingsTab = 'expansion')}
+			id="settings-tab-fetch"
+			class="ui-tab {activeTab === 'fetch' ? 'ui-tab-active-left' : 'ui-tab-inactive-left'}"
+			aria-selected={activeTab === 'fetch'}
+			aria-controls="settings-panel-fetch"
+			onclick={() => (activeTab = 'fetch')}
 		>
-			Expansion
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot"></span>
+				Fetch
+			</span>
 		</button>
 	</div>
 
@@ -61,8 +66,8 @@
 			role="tabpanel"
 			id="settings-panel-entities"
 			aria-labelledby="settings-tab-entities"
-			aria-hidden={activeSettingsTab !== 'entities'}
-			class="col-start-1 row-start-1 h-full min-h-0 {activeSettingsTab !== 'entities' ? 'hidden' : ''}"
+			aria-hidden={activeTab !== 'entities'}
+			class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'entities' ? 'hidden' : ''}"
 		>
 			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.entities}>
 				<div class="ui-stack text-sm text-gray-400">
@@ -77,8 +82,8 @@
 			role="tabpanel"
 			id="settings-panel-relationships"
 			aria-labelledby="settings-tab-relationships"
-			aria-hidden={activeSettingsTab !== 'relationships'}
-			class="col-start-1 row-start-1 h-full min-h-0 {activeSettingsTab !== 'relationships'
+			aria-hidden={activeTab !== 'relationships'}
+			class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'relationships'
 				? 'hidden'
 				: ''}"
 		>
@@ -93,12 +98,12 @@
 		</div>
 		<div
 			role="tabpanel"
-			id="settings-panel-expansion"
-			aria-labelledby="settings-tab-expansion"
-			aria-hidden={activeSettingsTab !== 'expansion'}
-			class="col-start-1 row-start-1 h-full min-h-0 {activeSettingsTab !== 'expansion' ? 'hidden' : ''}"
+			id="settings-panel-fetch"
+			aria-labelledby="settings-tab-fetch"
+			aria-hidden={activeTab !== 'fetch'}
+			class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'fetch' ? 'hidden' : ''}"
 		>
-			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.expansion}>
+			<ControlPanelHelperLayout helperText={CONTROL_PANEL_HELPER_TEXT.settings.fetch}>
 				<div class="max-w-xs">
 					<ControlPanelCrawlSettings />
 				</div>
