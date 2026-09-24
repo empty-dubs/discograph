@@ -10,7 +10,7 @@
 </script>
 
 <div class="flex h-full min-h-0 gap-4">
-	<div class="scrollbar-hidden min-h-0 min-w-0 flex-[2] basis-0 overflow-y-auto">
+	<div class="min-h-0 min-w-0 flex-[2] basis-0 overflow-y-auto">
 		{@render children()}
 	</div>
 	<aside

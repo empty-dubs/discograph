@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon } from 'svelte-awesome';
-	import { chevronDown, chevronUp } from 'svelte-awesome/icons';
+	import { chevronDown, chevronUp, gear, lightbulbO } from 'svelte-awesome/icons';
 
 	import ControlPanelSettings from './ControlPanelSettings.svelte';
 	import ControlPanelDiscover from './ControlPanelDiscover.svelte';
@@ -55,7 +55,11 @@
 			>
 				<span class="control-panel-subtab-inner">
 					<span class="control-panel-subtab-icon-slot">
-						{#if isLoading}<LoadingIcon />{/if}
+						{#if isLoading}
+							<LoadingIcon />
+						{:else}
+							<Icon data={lightbulbO} class="inline-block shrink-0" scale={0.875} />
+						{/if}
 					</span>
 					Discover
 				</span>
@@ -70,16 +74,17 @@
 				onclick={() => selectTab('settings')}
 			>
 				<span class="control-panel-subtab-inner">
-					<span class="control-panel-subtab-icon-slot"></span>
+					<span class="control-panel-subtab-icon-slot">
+						<Icon data={gear} class="inline-block shrink-0" scale={0.875} />
+					</span>
 					Settings
 				</span>
 			</button>
 		</div>
-
 		<div
 			id="control-panel-body"
-			class="grid min-h-0 flex-1 transition-[grid-template-rows] duration-300 ease-in-out"
-			style:grid-template-rows={isExpanded ? '1fr' : '0fr'}
+			class="grid min-h-0 flex-1"
+			style:max-height={isExpanded ? '100%' : '0px'}
 		>
 			<div class="min-h-0 overflow-hidden">
 				<div class="grid h-full min-h-0">

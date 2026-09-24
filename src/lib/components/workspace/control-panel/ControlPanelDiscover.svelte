@@ -51,7 +51,7 @@
 </script>
 
 <div class="flex h-full min-h-0 gap-4">
-	<div role="tablist" aria-label="Discover sections" class="control-panel-subtabs">
+	<div role="tablist" aria-label="Discover sections" class="control-panel-subtabs overflow-y-auto overflow-x-hidden">
 		<button
 			type="button"
 			role="tab"
