@@ -81,11 +81,10 @@
 				</span>
 			</button>
 		</div>
-
 		<div
 			id="control-panel-body"
-			class="grid min-h-0 flex-1 transition-[grid-template-rows] duration-300 ease-in-out"
-			style:grid-template-rows={isExpanded ? '1fr' : '0fr'}
+			class="grid min-h-0 flex-1"
+			style:max-height={isExpanded ? '100%' : '0px'}
 		>
 			<div class="min-h-0 overflow-hidden">
 				<div class="grid h-full min-h-0">
