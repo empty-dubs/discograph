@@ -28,3 +28,4 @@ docs
 git-update-routine.sh
 .vscode
 data
+gh-pages-routine.sh
