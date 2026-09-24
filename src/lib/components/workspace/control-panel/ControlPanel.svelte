@@ -53,8 +53,12 @@
 				aria-controls="control-panel-panel-discover"
 				onclick={() => selectTab('discover')}
 			>
-				{#if isLoading}<LoadingIcon />{/if}
-				Discover
+				<span class="control-panel-subtab-inner">
+					<span class="control-panel-subtab-icon-slot">
+						{#if isLoading}<LoadingIcon />{/if}
+					</span>
+					Discover
+				</span>
 			</button>
 			<button
 				type="button"
@@ -65,7 +69,10 @@
 				aria-controls="control-panel-panel-settings"
 				onclick={() => selectTab('settings')}
 			>
-				Settings
+				<span class="control-panel-subtab-inner">
+					<span class="control-panel-subtab-icon-slot"></span>
+					Settings
+				</span>
 			</button>
 		</div>
 

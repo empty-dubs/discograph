@@ -51,11 +51,7 @@
 </script>
 
 <div class="flex h-full min-h-0 gap-4">
-	<div
-		role="tablist"
-		aria-label="Discover sections"
-		class="border-border flex shrink-0 flex-col border-r pr-2"
-	>
+	<div role="tablist" aria-label="Discover sections" class="control-panel-subtabs">
 		<button
 			type="button"
 			role="tab"
@@ -65,8 +61,10 @@
 			aria-controls="discover-panel-explore"
 			onclick={() => (activeTab = 'explore')}
 		>
-			<span class="inline-flex items-center gap-1.5">
-				{#if selectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot">
+					{#if selectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
+				</span>
 				Explore
 			</span>
 		</button>
@@ -79,8 +77,10 @@
 			aria-controls="discover-panel-crawl"
 			onclick={() => (activeTab = 'crawl')}
 		>
-			<span class="inline-flex items-center gap-1.5">
-				{#if crawlState.isRunning}<LoadingIcon />{/if}
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot">
+					{#if crawlState.isRunning}<LoadingIcon />{/if}
+				</span>
 				Crawl
 			</span>
 		</button>
@@ -93,7 +93,10 @@
 			aria-controls="discover-panel-related-entities"
 			onclick={() => (activeTab = 'related-entities')}
 		>
-			Related
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot"></span>
+				Related
+			</span>
 		</button>
 		<button
 			type="button"
@@ -104,8 +107,10 @@
 			aria-controls="discover-panel-releases"
 			onclick={() => (activeTab = 'releases')}
 		>
-			<span class="inline-flex items-center gap-1.5">
-				{#if selectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot">
+					{#if selectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
+				</span>
 				Releases
 			</span>
 		</button>

@@ -14,11 +14,7 @@
 </script>
 
 <div class="flex h-full min-h-0 gap-4">
-	<div
-		role="tablist"
-		aria-label="Settings sections"
-		class="border-border flex shrink-0 flex-col border-r pr-2"
-	>
+	<div role="tablist" aria-label="Settings sections" class="control-panel-subtabs">
 		<button
 			type="button"
 			role="tab"
@@ -28,7 +24,10 @@
 			aria-controls="settings-panel-entities"
 			onclick={() => (activeTab = 'entities')}
 		>
-			Entities
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot"></span>
+				Entities
+			</span>
 		</button>
 		<button
 			type="button"
@@ -41,7 +40,10 @@
 			aria-controls="settings-panel-relationships"
 			onclick={() => (activeTab = 'relationships')}
 		>
-			Relationships
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot"></span>
+				Relationships
+			</span>
 		</button>
 		<button
 			type="button"
@@ -52,7 +54,10 @@
 			aria-controls="settings-panel-fetch"
 			onclick={() => (activeTab = 'fetch')}
 		>
-			Fetch
+			<span class="control-panel-subtab-inner">
+				<span class="control-panel-subtab-icon-slot"></span>
+				Fetch
+			</span>
 		</button>
 	</div>
 

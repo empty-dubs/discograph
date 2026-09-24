@@ -109,4 +109,16 @@
 		background: color-mix(in srgb, var(--badge-color) 25%, transparent);
 		color: var(--badge-color);
 	}
+
+	.control-panel-subtabs {
+		@apply border-border flex w-32 shrink-0 flex-col border-r pr-2;
+	}
+
+	.control-panel-subtab-inner {
+		@apply inline-flex w-full min-w-0 items-center gap-1.5;
+	}
+
+	.control-panel-subtab-icon-slot {
+		@apply flex h-4 w-4 shrink-0 items-center justify-center;
+	}
 }
