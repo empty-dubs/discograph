@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Icon } from 'svelte-awesome';
-	import { chevronDown, chevronUp } from 'svelte-awesome/icons';
+	import { chevronDown, chevronUp, gear, lightbulbO } from 'svelte-awesome/icons';
 
 	import ControlPanelSettings from './ControlPanelSettings.svelte';
 	import ControlPanelDiscover from './ControlPanelDiscover.svelte';
@@ -55,7 +55,11 @@
 			>
 				<span class="control-panel-subtab-inner">
 					<span class="control-panel-subtab-icon-slot">
-						{#if isLoading}<LoadingIcon />{/if}
+						{#if isLoading}
+							<LoadingIcon />
+						{:else}
+							<Icon data={lightbulbO} class="inline-block shrink-0" scale={0.875} />
+						{/if}
 					</span>
 					Discover
 				</span>
@@ -70,7 +74,9 @@
 				onclick={() => selectTab('settings')}
 			>
 				<span class="control-panel-subtab-inner">
-					<span class="control-panel-subtab-icon-slot"></span>
+					<span class="control-panel-subtab-icon-slot">
+						<Icon data={gear} class="inline-block shrink-0" scale={0.875} />
+					</span>
 					Settings
 				</span>
 			</button>

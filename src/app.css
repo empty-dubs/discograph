@@ -70,7 +70,7 @@
 	}
 
 	.ui-tab {
-		@apply cursor-pointer border-none bg-transparent py-2 pl-0 pr-3 text-left text-sm font-medium transition-colors;
+		@apply cursor-pointer bg-transparent py-2 pl-0 mr-2 text-left text-sm font-medium transition-colors;
 	}
 
 	.ui-tab-active-bottom {
@@ -78,7 +78,7 @@
 	}
 
 	.ui-tab-inactive-bottom {
-		@apply border-b-2 border-transparent text-muted hover:text-gray-200;
+		@apply border-transparent text-muted hover:text-gray-200;
 	}
 
 	.ui-tab-active-left {
@@ -111,7 +111,7 @@
 	}
 
 	.control-panel-subtabs {
-		@apply border-border flex w-32 shrink-0 flex-col border-r pr-2;
+		@apply border-border flex w-30 shrink-0 flex-col border-r pr-2;
 	}
 
 	.control-panel-subtab-inner {
