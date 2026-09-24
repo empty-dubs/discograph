@@ -36,6 +36,6 @@ export const CONTROL_PANEL_HELPER_TEXT = {
 			'Note: the selected node will always be visible.'
 		],
 		relationships: ['Hover over relationship types to emphasize edges on the graph.'],
-		expansion: ['Configure fetch expansion and release loading behavior.']
+		fetch: ['Configure fetch expansion and release loading behavior.']
 	}
 };
