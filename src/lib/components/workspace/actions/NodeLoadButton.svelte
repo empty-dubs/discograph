@@ -4,17 +4,29 @@
 	interface Props {
 		disabled?: boolean;
 		pressed?: boolean;
+		variant?: 'ghost' | 'standard';
 		class?: string;
 		onclick?: (event: MouseEvent) => void;
 		children: Snippet;
 	}
 
-	let { disabled = false, pressed, class: className = '', onclick, children }: Props = $props();
+	let {
+		disabled = false,
+		pressed,
+		variant = 'ghost',
+		class: className = '',
+		onclick,
+		children
+	}: Props = $props();
 </script>
 
 <button
 	type="button"
-	class="ui-ghost-button {className}"
+	class={
+		variant === 'standard'
+		? `ui-button ${className}`
+		: `ui-ghost-button ${className}`
+	}
 	{disabled}
 	aria-pressed={pressed}
 	{onclick}
