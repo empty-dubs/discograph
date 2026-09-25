@@ -25,7 +25,7 @@ export const CONTROL_PANEL_HELPER_TEXT = {
 		],
 		releases: [
 			'Search for an artist, label, or master above to begin.',
-			'Use Explore → Load (master) releases or related entries to fetch release data.',
+			'Use Load master releases or Load releases to fetch release data.',
 			'Loaded rows show a release or master type badge with title and year.',
 			'Click a row to search Discogs and add that release or master to the graph.'
 		]

@@ -64,6 +64,12 @@ export const MASTER_RELEASE_LOAD_ACTIONS: LoadAction[] = [
 	'main_release',
 	'linked_master'
 ];
+
+export const RELEASES_TAB_LOAD_ACTIONS: LoadAction[] = [
+	'master_releases',
+	'releases'
+];
+
 export const LABEL_LOAD_ACTIONS: LoadAction[] = ['labels', 'companies'];
 
 export type PagedLoadButtonState = {

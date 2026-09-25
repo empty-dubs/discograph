@@ -19,10 +19,19 @@
 		layout?: 'menu' | 'stack';
 		showAllActions?: boolean;
 		actionTypes?: LoadAction[];
+		buttonVariant?: 'ghost' | 'standard';
+		buttonLayout?: 'column' | 'row';
 		onAction?: () => void;
 	}
 
-	let { layout = 'stack', showAllActions = false, actionTypes, onAction }: Props = $props();
+	let {
+		layout = 'stack',
+		showAllActions = false,
+		actionTypes,
+		buttonVariant = 'ghost',
+		buttonLayout = 'column',
+		onAction
+	}: Props = $props();
 
 	const node = $derived(selectedNodeState as SelectedNodeInterface);
 
@@ -128,8 +137,8 @@
 	}
 </script>
 
-{#each renderedActions as action (action)}
-	{#if layout === 'menu'}
+{#if layout === 'menu'}
+	{#each renderedActions as action (action)}
 		<button
 			type="button"
 			class="ui-list-button"
@@ -138,9 +147,28 @@
 		>
 			{getActionState(action).label}
 		</button>
-	{:else}
-		<NodeLoadButton disabled={isActionDisabled(action)} onclick={() => runAction(action)}>
+	{/each}
+{:else if buttonLayout === 'row'}
+	<div class="flex w-full min-w-0 gap-2">
+		{#each renderedActions as action (action)}
+			<NodeLoadButton
+				variant={buttonVariant}
+				class="min-w-0 flex-1"
+				disabled={isActionDisabled(action)}
+				onclick={() => runAction(action)}
+			>
+				{getActionState(action).label}
+			</NodeLoadButton>
+		{/each}
+	</div>
+{:else}
+	{#each renderedActions as action (action)}
+		<NodeLoadButton
+			variant={buttonVariant}
+			disabled={isActionDisabled(action)}
+			onclick={() => runAction(action)}
+		>
 			{getActionState(action).label}
 		</NodeLoadButton>
-	{/if}
-{/each}
+	{/each}
+{/if}
