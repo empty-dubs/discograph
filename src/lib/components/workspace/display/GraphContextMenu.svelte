@@ -15,9 +15,10 @@
 	const node = $derived(selectedNodeState);
 
 	function handleKeydown(event: KeyboardEvent) {
-		event.preventDefault();
-
-		if (event.key === 'Escape') onClose();
+		if (event.key === 'Escape') {
+			event.preventDefault();
+			onClose();
+		}
 	}
 
 	onMount(() => {
