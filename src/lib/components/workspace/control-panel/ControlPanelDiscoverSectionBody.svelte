@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-	import { releaseListRowText } from './transformations';
+	import { releaseListRowText, releaseTitle } from './transformations';
 
 	import type { DiscoverEntitySectionId } from './control-panel-discover-sections';
 
@@ -72,7 +72,7 @@
 		items={[{
 			key: String(node.id),
 			label: releaseListRowText(node).label,
-			query: releaseListRowText(node).query,
+			query: releaseTitle(node),
 			discogsId: node.main_release_info?.id,
 			searchType: 'release',
 			artists: node.artists ?? [],
@@ -84,7 +84,7 @@
 		items={[{
 			key: String(node.id),
 			label: releaseListRowText(node).label,
-			query: releaseListRowText(node).query,
+			query: releaseTitle(node),
 			discogsId: node.linked_master?.id,
 			searchType: 'master',
 			artists: node.artists ?? [],

@@ -20,14 +20,12 @@ export const CONTROL_PANEL_HELPER_TEXT = {
 			'Search for an artist, label, release, or master above to begin.',
 			'Browse aliases, members, labels, credits, and other related entities for the selected node.',
 			'Expand a section to view related entities.',
-			'Each row shows a type badge for the Discogs entity kind you will search.',
-			'Click a name to search Discogs and add results to the graph.'
+			'Select a row to view navigation options (reset graph, Discogs, YouTube).'
 		],
 		releases: [
 			'Search for an artist, label, or master above to begin.',
 			'Use Load master releases or Load releases to fetch release data.',
-			'Loaded rows show a release or master type badge with title and year.',
-			'Click a row to search Discogs and add that release or master to the graph.'
+			'Select a row to view navigation options (reset graph, Discogs, YouTube).'
 		]
 	},
 	settings: {

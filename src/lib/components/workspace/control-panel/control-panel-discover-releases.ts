@@ -10,6 +10,8 @@ type ReleaseListItem = {
 	query: string;
 	discogsId?: number;
 	searchType: 'release' | 'master';
+	artists?: { id: number; name: string }[];
+	meta?: { year?: number | string; genres?: string[]; styles?: string[] };
 };
 
 function parseYearForSort(node: GraphNode): number {
@@ -65,7 +67,9 @@ export function getReleaseListItems(
 				label,
 				query,
 				discogsId: neighbor.discogsId ?? undefined,
-				searchType: neighbor.type as 'release' | 'master'
+				searchType: neighbor.type as 'release' | 'master',
+				artists: neighbor.artists,
+				meta: neighbor.meta,
 			};
 		});
 }
