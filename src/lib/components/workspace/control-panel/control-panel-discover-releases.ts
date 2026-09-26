@@ -68,7 +68,7 @@ export function getReleaseListItems(
 				query,
 				discogsId: neighbor.discogsId ?? undefined,
 				searchType: neighbor.type as 'release' | 'master',
-				artists: neighbor.artists,
+				artists: neighbor.meta?.artistName ? [{ id: neighbor.discogsId!, name: neighbor.meta.artistName }] : [],
 				meta: neighbor.meta,
 			};
 		});

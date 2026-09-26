@@ -1,17 +1,16 @@
 import type { GraphNode } from "$lib/graph/types";
 
-function buildReleaseTitleSearchQuery(
+function buildReleaseTitleLabel(
 	title: string | undefined,
-	artistName?: string,
+	artist?: string | undefined,
 	year?: number | string
 ): string {
 	if (!title) return '';
 
-	const name = artistName?.trim();
+	const artistName = artist?.trim();
+	const releaseYear = year != null && year !== '' && year !== '0' ? year : null;
 
-	if (!name) return title;
-
-	return `${name} - ${title}${year != null && year !== '' ? ` (${year})` : ''}`;
+	return `${artistName ? `${artistName} - ` : ''}${title}${releaseYear ? ` (${releaseYear})` : ''}`;
 }
 
 
@@ -21,8 +20,8 @@ export function releaseTitle(node: GraphNode): string {
 
 export function releaseListRowText(node: GraphNode): { label: string; query: string } {
 	const title = releaseTitle(node);
-	const query = buildReleaseTitleSearchQuery(title, node.meta?.artistName, node.meta?.year);
-	const label = query;
+	const label = buildReleaseTitleLabel(title, node.meta?.artistName, node.meta?.year);
+	const query = title;
 
 	return { label, query };
 }

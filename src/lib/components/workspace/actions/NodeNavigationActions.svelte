@@ -16,6 +16,8 @@
 
 	import type { GraphNode } from '$lib/graph/types';
 
+	import NodeNavigationButton from '$lib/components/workspace/actions/NodeNavigationButton.svelte';
+
 	interface Props {
 		node: GraphNode;
 		layout?: 'panel' | 'menu';
@@ -51,49 +53,35 @@
 		)
 	]);
 
+	const menuRole = $derived(layout === 'menu' ? 'menuitem' : undefined);
+
 	function handleReset() {
 		if (isResetDisabled || !node) return;
 
 		seedFromNode(graph, node);
 		onAction?.();
 	}
-
-	const layoutClass = $derived(layout === 'menu' ? 'ui-list-button' : 'ui-explore-link');
-	const disabledClass = $derived(isResetDisabled ? 'opacity-50 cursor-not-allowed' : '');
 </script>
 
 <div class={layout === 'panel' ? 'flex flex-col gap-2' : ''}>
-	<button
-		type="button"
-			role={layout === 'menu' ? 'menuitem' : undefined}
-			class="{layoutClass} {disabledClass}"
-			disabled={isResetDisabled}
-			onclick={handleReset}
-		>
+	<NodeNavigationButton
+		{layout}
+		role={menuRole}
+		disabled={isResetDisabled}
+		onclick={handleReset}
+	>
 		Reset graph to this node
-	</button>
+	</NodeNavigationButton>
 
 	{#each externalActions as action (action.label)}
-		{#if node && action.url}
-			<a
-				href={action.url}
-				target="_blank"
-				rel="noopener noreferrer"
-				role={layout === 'menu' ? 'menuitem' : undefined}
-				class="{layoutClass} block"
-				onclick={() => onAction?.()}
-			>
-				{action.label}
-			</a>
-		{:else}
-			<button
-				type="button"
-				role={layout === 'menu' ? 'menuitem' : undefined}
-				disabled
-				class="{layoutClass} {disabledClass}"
-			>
-				{action.label}
-			</button>
-		{/if}
+		<NodeNavigationButton
+			{layout}
+			role={menuRole}
+			href={node && action.url ? action.url : undefined}
+			disabled={!node || !action.url}
+			onclick={() => onAction?.()}
+		>
+			{action.label}
+		</NodeNavigationButton>
 	{/each}
 </div>

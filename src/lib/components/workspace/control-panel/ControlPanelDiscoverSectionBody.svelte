@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-	import { releaseListRowText, releaseTitle } from './transformations';
+	import { releaseListRowText } from './transformations';
 
 	import type { DiscoverEntitySectionId } from './control-panel-discover-sections';
 
@@ -13,6 +13,7 @@
 	let { sectionId }: Props = $props();
 
 	const node = $derived(selectedNodeState.data!);
+	const releaseDisplayData = $derived(releaseListRowText(node));
 </script>
 
 {#if sectionId === 'aliases'}
@@ -71,8 +72,8 @@
 	<SearchableList
 		items={[{
 			key: String(node.id),
-			label: releaseListRowText(node).label,
-			query: releaseTitle(node),
+			label: releaseDisplayData.label,
+			query: releaseDisplayData.query,
 			discogsId: node.main_release_info?.id,
 			searchType: 'release',
 			artists: node.artists ?? [],
@@ -83,8 +84,8 @@
 	<SearchableList
 		items={[{
 			key: String(node.id),
-			label: releaseListRowText(node).label,
-			query: releaseTitle(node),
+			label: releaseDisplayData.label,
+			query: releaseDisplayData.query,
 			discogsId: node.linked_master?.id,
 			searchType: 'master',
 			artists: node.artists ?? [],
