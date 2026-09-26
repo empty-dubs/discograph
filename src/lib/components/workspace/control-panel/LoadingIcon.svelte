@@ -3,4 +3,4 @@
 	import { spinner } from 'svelte-awesome/icons';
 </script>
 
-<Icon data={spinner} class="inline-block shrink-0 animate-spin" scale={0.875} />
+<Icon data={spinner} class="inline-block shrink-0 animate-spin ml-1" scale={0.875} />
