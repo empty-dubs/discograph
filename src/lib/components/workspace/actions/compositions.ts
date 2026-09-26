@@ -49,7 +49,7 @@ function appendReleaseMasterYouTubeContext(parts: string[], node: GraphNode): vo
 		parts.unshift(stripDiscogsDisambiguation(artist.name));
 	}
 
-	if (year != null && year !== '') parts.push(String(year));
+	if (year != null && year !== '' && year !== '0') parts.push(String(year));
 }
 
 function buildYouTubeSearchUrl(parts: string[]): string {
@@ -86,7 +86,7 @@ export function getYouTubeTrackSearchUrl(node: GraphNode, trackTitle: string): s
 	parts.push(stripDiscogsDisambiguation(node.displayName), stripDiscogsDisambiguation(title));
 
 	const year = node.meta?.year;
-	if (year != null && year !== '') parts.push(String(year));
+	if (year != null && year !== '' && year !== '0') parts.push(String(year));
 
 	return buildYouTubeSearchUrl(parts);
 }

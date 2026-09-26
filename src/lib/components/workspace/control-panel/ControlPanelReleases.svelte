@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { RELEASES_TAB_LOAD_ACTIONS } from '$lib/components/workspace/actions/constants';
-	import NodeLoadActions from '$lib/components/workspace/actions/NodeLoadActions.svelte';
 	import { graph } from '$lib/graph/graph';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	
+	import NodeLoadActions from '$lib/components/workspace/actions/NodeLoadActions.svelte';
 	import SearchableList from './SearchableList.svelte';
 
 	import {
@@ -14,7 +14,8 @@
 	const node = $derived(selectedNodeState);
 
 	const releaseListItems = $derived(
-		node.id && node.data
+		node.id
+		&& node.data
 		&& (
 			graph.visitedNodes.releasePages.get(node.id)
 			|| graph.visitedNodes.masterReleasePages.get(node.id)
@@ -42,7 +43,7 @@
 			</p>
 		{:else if !isReleaseParentType(node.data.type)}
 			<p class="text-muted m-0 text-sm">Selected node must be an artist, label, or master.</p>
-		{:else if node.hasLoadingChildren}
+		{:else if node.hasLoadingChildren && releaseListItems.length === 0}
 			<p class="text-muted m-0 text-sm">Loading releases...</p>
 		{:else if releaseListItems.length === 0}
 			<p class="text-muted m-0 text-sm">

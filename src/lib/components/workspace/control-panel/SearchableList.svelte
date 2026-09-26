@@ -9,7 +9,6 @@
 	import SearchableListContextMenu from './SearchableListContextMenu.svelte';
 
 	import type { SearchType } from '$lib/discogs/types';
-	import type { GraphNode } from '$lib/graph/types';
 
 	type SearchableListItem = {
 		key: string;
@@ -29,22 +28,20 @@
 
 	let menu = $state<{ item: SearchableListItem; x: number; y: number } | null>(null);
 
-	function getNodeDetails(item: SearchableListItem): GraphNode | null {
-		if (item.discogsId && item.searchType) {
+	const node = $derived.by(() => {
+		if (menu && menu.item.discogsId && menu.item.searchType) {
 			return {
-				id: getNodeId(item.searchType, item.discogsId),
-				type: item.searchType,
-				discogsId: item.discogsId,
-				displayName: (item.query ?? '').trim() || 'Unknown',
-				artists: item.artists,
-				meta: item.meta,
+				id: getNodeId(menu.item.searchType, menu.item.discogsId),
+				type: menu.item.searchType,
+				discogsId: menu.item.discogsId,
+				displayName: (menu.item.query ?? '').trim() || 'Unknown',
+				artists: menu.item.artists,
+				meta: menu.item.meta,
 			};
 		}
 
 		return null;
-	}
-
-	const menuNode = $derived(menu ? getNodeDetails(menu.item) : null);
+	});
 
 	function isRowDisabled(item: SearchableListItem): boolean {
 		return (
@@ -86,6 +83,6 @@
 	{/each}
 </div>
 
-{#if menu && menuNode}
-	<SearchableListContextMenu node={menuNode} x={menu.x} y={menu.y} onClose={closeMenu} />
+{#if menu && node}
+	<SearchableListContextMenu {node} x={menu.x} y={menu.y} onClose={closeMenu} />
 {/if}
