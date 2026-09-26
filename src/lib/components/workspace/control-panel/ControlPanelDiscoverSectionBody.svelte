@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-	import { formatMemberName} from './control-panel-discover-sections';
-	import { releaseListRowText } from './transformations';
+	import { releaseListRowText, releaseTitle } from './transformations';
 
 	import type { DiscoverEntitySectionId } from './control-panel-discover-sections';
 
@@ -30,7 +29,7 @@
 	<SearchableList
 		items={(node.members ?? []).map((member) => ({
 			key: String(member.id),
-			label: formatMemberName(member),
+			label: member.active === false ? `${member.name} (inactive)` : member.name,
 			query: member.name,
 			discogsId: member.id,
 			searchType: 'artist'
@@ -73,9 +72,11 @@
 		items={[{
 			key: String(node.id),
 			label: releaseListRowText(node).label,
-			query: releaseListRowText(node).query,
+			query: releaseTitle(node),
 			discogsId: node.main_release_info?.id,
-			searchType: 'release'
+			searchType: 'release',
+			artists: node.artists ?? [],
+			meta: node.meta ?? {}
 		}]}
 	/>
 {:else if sectionId === 'linked-master'}
@@ -83,9 +84,11 @@
 		items={[{
 			key: String(node.id),
 			label: releaseListRowText(node).label,
-			query: releaseListRowText(node).query,
+			query: releaseTitle(node),
 			discogsId: node.linked_master?.id,
-			searchType: 'master'
+			searchType: 'master',
+			artists: node.artists ?? [],
+			meta: node.meta ?? {}
 		}]}
 	/>
 {:else if sectionId === 'artists'}
@@ -102,7 +105,7 @@
 	<SearchableList
 		items={(node.labels ?? []).map((label) => ({
 			key: `${label.id}-${label.catno ?? ''}`,
-			label: `${label.name} (${label.catno ?? ''})`,
+			label: label.catno ? `${label.name} (${label.catno})` : label.name,
 			query: label.name,
 			discogsId: label.id,
 			searchType: 'label'
@@ -122,8 +125,12 @@
 	<SearchableList
 		items={(node.companies ?? []).map((company, index) => ({
 			key: `${company.id}-${company.entity_type_name ?? ''}-${index}`,
-			label: company.entity_type_name
+			label: company.entity_type_name && company.catno
+				? `${company.name} — ${company.entity_type_name} (${company.catno})`
+				: company.entity_type_name
 				? `${company.name} — ${company.entity_type_name}`
+				: company.catno
+				? `${company.name} (${company.catno})`
 				: company.name,
 			query: company.name,
 			discogsId: company.id,

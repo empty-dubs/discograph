@@ -6,8 +6,8 @@
 
 	import type { NodePanelAccordion } from '$lib/components/shared/accordion';
 
+	import NodeNavigationActions from '$lib/components/shared/NodeNavigationActions.svelte';
 	import NodePanelDetails from './NodePanelDetails.svelte';
-	import NodePanelNavigate from './NodePanelNavigate.svelte';
 
 	const node = $derived(selectedNodeState);
 
@@ -81,5 +81,9 @@
 		{/if}
 	</div>
 
-	<NodePanelNavigate />
+	<div class="border-border/50 mt-3 shrink-0 border-t pt-3">
+		{#if node.data}
+			<NodeNavigationActions node={node.data} layout="panel"/>
+		{/if}
+	</div>
 </aside>

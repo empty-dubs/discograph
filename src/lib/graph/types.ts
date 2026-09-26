@@ -36,7 +36,7 @@ export interface GraphNode {
 	notes?: string;
 	labels?: { id: number; name: string; catno?: string }[];
 	credits?: { id: number; name: string; role?: string }[];
-	companies?: { id: number; name: string; entity_type_name?: string }[];
+	companies?: { id: number; name: string; entity_type_name?: string; catno?: string }[];
 	meta?: {
 		year?: number | string;
 		role?: string;

@@ -27,10 +27,6 @@ export const ENTITY_SECTION_ORDER: { id: DiscoverEntitySectionId; title: string 
 	{ id: 'companies', title: 'Companies' }
 ];
 
-export function formatMemberName(member: { name: string; active?: boolean }): string {
-	return member.active === false ? `${member.name} (inactive)` : member.name;
-}
-
 export function getDiscoverEntitySectionVisibility(
 	node: GraphNode
 ): Record<DiscoverEntitySectionId, boolean> {
