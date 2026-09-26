@@ -4,7 +4,7 @@
 
 	import type { DiscoverEntitySectionId } from './control-panel-discover-sections';
 
-	import SearchableList from '$lib/components/shared/SearchableList.svelte';
+	import SearchableList from './SearchableList.svelte';
 
 	interface Props {
 		sectionId: DiscoverEntitySectionId;

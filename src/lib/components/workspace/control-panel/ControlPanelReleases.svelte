@@ -4,7 +4,7 @@
 	import { graph } from '$lib/graph/graph';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	
-	import SearchableList from '$lib/components/shared/SearchableList.svelte';
+	import SearchableList from './SearchableList.svelte';
 
 	import {
 		getReleaseListItems,

@@ -5,7 +5,7 @@
 	import { getNodeId } from '$lib/graph/operations/patches/compositions';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 
-	import NodeTypePill from './NodeTypePill.svelte';
+	import NodeTypePill from '$lib/components/shared/NodeTypePill.svelte';
 	import SearchableListContextMenu from './SearchableListContextMenu.svelte';
 
 	import type { SearchType } from '$lib/discogs/types';
