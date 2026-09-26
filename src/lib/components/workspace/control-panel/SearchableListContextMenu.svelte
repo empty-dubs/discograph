@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import NodeNavigationActions from './NodeNavigationActions.svelte';
+	import NodeNavigationActions from '$lib/components/workspace/actions/NodeNavigationActions.svelte';
 
 	import type { GraphNode } from '$lib/graph/types';
 
