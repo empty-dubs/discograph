@@ -1,4 +1,4 @@
-import { LOAD_ACTIONS, PATCH_LOAD_ACTIONS } from '$lib/components/workspace/actions/constants';
+import { LOAD_ACTIONS, PATCH_LOAD_ACTIONS } from '$lib/components/shared/constants';
 import { stripDiscogsWikiMarkup } from '$lib/components/workspace/node-panel/transformations';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 import {
@@ -9,7 +9,7 @@ import { fetchNodeDetails } from '$lib/graph/operations/fetch-node-details';
 
 import { graph } from '$lib/graph/graph';
 
-import type { LoadAction } from '$lib/components/workspace/actions/constants';
+import type { LoadAction } from '$lib/components/shared/constants';
 import type { GraphNode } from '../types';
 
 export interface SelectedNodeInterface {

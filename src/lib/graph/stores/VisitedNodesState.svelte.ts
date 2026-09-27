@@ -1,6 +1,6 @@
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
-import type { LoadAction } from '$lib/components/workspace/actions/constants';
+import type { LoadAction } from '$lib/components/shared/constants';
 
 type DetailStatus = 'idle' | 'loading' | 'fetched' | 'failed';
 type ProfileStatus = 'loading' | 'fetched' | 'failed';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RELEASES_TAB_LOAD_ACTIONS } from '$lib/components/workspace/actions/constants';
+	import { RELEASES_TAB_LOAD_ACTIONS } from '$lib/components/shared/constants';
 	import { graph } from '$lib/graph/graph';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	

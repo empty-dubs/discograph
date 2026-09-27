@@ -4,7 +4,7 @@
 		LOAD_ACTION_LABELS,
 		type LoadAction,
 		type PagedLoadButtonState
-	} from '$lib/components/workspace/actions/constants';
+	} from '$lib/components/shared/constants';
 	import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
 
 	import { discogsApi } from '$lib/discogs/discogs.svelte';

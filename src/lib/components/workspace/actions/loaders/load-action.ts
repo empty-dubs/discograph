@@ -1,7 +1,8 @@
+import { LOAD_ACTION_LABELS } from '$lib/components/shared/constants';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 import { LOAD_ACTION_CONFIG } from '$lib/graph/node-load-config';
-import { LOAD_ACTION_LABELS, type LoadAction } from '../constants';
 
+import type { LoadAction } from '$lib/components/shared/constants';
 import type { Pagination } from '$lib/discogs/types';
 import type { GraphInterface } from '$lib/graph/graph';
 import type { GraphNode } from '$lib/graph/types';
