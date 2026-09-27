@@ -8,12 +8,12 @@
 	import {
 		ALL_LOAD_ACTIONS,
 		LOAD_ACTION_LABELS,
-		type LoadAction,
-		type PagedLoadButtonState
 	} from './constants';
 	import { runLoadAction } from './loaders/load-action';
 
 	import NodeLoadButton from './NodeLoadButton.svelte';
+
+	import type { LoadAction, PagedLoadButtonState } from './types';
 
 	interface Props {
 		layout?: 'menu' | 'stack';

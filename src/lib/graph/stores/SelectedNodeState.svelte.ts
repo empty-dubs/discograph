@@ -9,7 +9,7 @@ import { fetchNodeDetails } from '$lib/graph/operations/fetch-node-details';
 
 import { graph } from '$lib/graph/graph';
 
-import type { LoadAction } from '$lib/components/shared/constants';
+import type { LoadAction } from '$lib/components/shared/types';
 import type { GraphNode } from '../types';
 
 export interface SelectedNodeInterface {
