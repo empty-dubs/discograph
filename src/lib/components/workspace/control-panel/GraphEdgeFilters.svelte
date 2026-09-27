@@ -46,7 +46,7 @@
 					<span class:opacity-45={activeHighlight && !highlighted}>{EDGE_TYPE_LABELS[type]}</span>
 
 					{#if count > 0}
-						<span class="text-xs text-gray-500">{count}</span>
+						<span class="text-sm text-gray-500">{count}</span>
 					{/if}
 				</span>
 			{/each}
