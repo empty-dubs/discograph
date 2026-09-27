@@ -101,6 +101,10 @@
 		@apply flex cursor-pointer text-muted w-full items-center justify-center bg-transparent transition-colors hover:text-gray-200;
 	}
 
+	.control-panel-header {
+		@apply relative grid shrink-0;
+	}
+
 	.ui-helper-column {
 		@apply border-border min-w-0 border-l pl-4;
 	}
