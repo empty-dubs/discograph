@@ -1,12 +1,35 @@
 <script lang="ts">
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
+	import SearchableListItemButton from '$lib/components/shared/SearchableListItemButton.svelte';
 	import NodeDetailRow from './NodeDetailRow.svelte';
 	import NodeTypeBadge from './NodeTypeBadge.svelte';
+
+	import type { SearchableListItem } from '$lib/components/shared/types';
 
 	const selected = $derived(selectedNodeState);
 	const node = $derived(selectedNodeState.data);
 
+	const primaryArtistItem = $derived.by((): SearchableListItem | null => {
+		if (!selected.isMasterOrRelease || !node) return null;
+		if (!node.artists) return null;
+
+		const first = node.artists[0];
+
+		if (first.id && first?.name?.trim()) {
+			return {
+				key: String(first.id),
+				label: first.name.trim(),
+				query: first.name.trim(),
+				discogsId: first.id,
+				searchType: 'artist'
+			};
+		}
+
+		return null;
+	});
+
+	const showPrimaryArtist = $derived(Boolean(primaryArtistItem));
 	const showReleaseTotal = $derived(
 		(node!.type === 'artist' || node!.type === 'label' || node!.type === 'master') &&
 			selectedNodeState.releaseTotal !== null
@@ -23,6 +46,12 @@
 <dl class="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
 	<NodeDetailRow label="Name">{node!.displayName}</NodeDetailRow>
 	<NodeTypeBadge/>
+	<NodeDetailRow label="Artist" show={showPrimaryArtist}>
+		<SearchableListItemButton
+			item={primaryArtistItem!}
+			hasPill={false}
+		/>
+	</NodeDetailRow>
 	<NodeDetailRow label={releaseTotalLabel} show={showReleaseTotal}>
 		{selectedNodeState.releaseTotal!.toLocaleString()}
 	</NodeDetailRow>
