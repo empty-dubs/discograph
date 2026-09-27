@@ -13,6 +13,7 @@
 	let { part }: Props = $props();
 
 	const SEARCH_FORM_ID = 'discogs-search';
+	const EMPTY_HINT_ID = 'discogs-search-empty-hint';
 
 	const typeOptions: { value: SearchType | ''; label: string }[] = [
 		{ value: '', label: 'All types' },
@@ -22,6 +23,7 @@
 		{ value: 'master', label: 'Master' }
 	];
 
+	let showEmptyResults = $state(false);
 	let emptyMessage = $state<string | null>(null);
 
 	const rateLimitText = $derived.by(() => {
@@ -91,36 +93,51 @@
 				: 'text-muted'
 	);
 
+	function clearEmptySearchFeedback() {
+		showEmptyResults = false;
+		emptyMessage = null;
+	}
+
+	function setEmptySearchFeedback() {
+		showEmptyResults = true;
+		emptyMessage = 'No results found';
+	}
+
 	async function handleSearch(event: Event) {
 		event.preventDefault();
 
-		emptyMessage = null;
+		clearEmptySearchFeedback();
 
 		await discogsApi.search(
 			discogsApi.searchQuery,
 			discogsApi.searchType || undefined
 		);
 
-		if (discogsApi.searchResults.length === 0 && discogsApi.searchQuery.trim()) {
-			emptyMessage = 'No results found';
+		if (
+			discogsApi.searchResults.length === 0
+			&& discogsApi.searchQuery.trim() !== ''
+			&& discogsApi.error === null
+		) {
+			setEmptySearchFeedback();
 		}
 	}
 
 	async function pickResult(result: SearchResult) {
 		await seedFromResult(graph, result);
 
-		emptyMessage = null;
+		clearEmptySearchFeedback();
 	}
 
 	$effect(() => {
 		if (part !== 'input') return;
 
-		if (discogsApi.searchResults.length === 0) return;
+		if (discogsApi.searchResults.length === 0 && !showEmptyResults) return;
 
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') {
 				event.preventDefault();
 				discogsApi.clearSearchResults();
+				clearEmptySearchFeedback();
 			}
 		};
 
@@ -133,7 +150,7 @@
 
 		if (!discogsApi.searchQuery.trim()) {
 			discogsApi.clearSearchResults();
-			emptyMessage = null;
+			clearEmptySearchFeedback();
 		}
 	});
 </script>
@@ -147,11 +164,13 @@
 		<div class="relative min-w-0">
 			<input
 				type="search"
-				class="ui-field discogs-search-input w-full pr-9"
+				class="ui-field discogs-search-input w-full pr-9 {showEmptyResults ? 'ring-1 ring-warning/50' : ''}"
 				class:pr-14={discogsApi.searchQuery.length > 0}
 				placeholder="Search Discogs…"
 				bind:value={discogsApi.searchQuery}
 				disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
+				aria-invalid={showEmptyResults ? true : undefined}
+				aria-describedby={showEmptyResults ? EMPTY_HINT_ID : undefined}
 			/>
 
 			{#if discogsApi.searchQuery.length > 0}
@@ -213,6 +232,19 @@
 						</li>
 					{/each}
 				</ul>
+			{:else if showEmptyResults && discogsApi.searchQuery.trim()}
+				<div
+					id={EMPTY_HINT_ID}
+					role="status"
+					aria-live="polite"
+					class="border-border bg-panel absolute top-full right-0 left-0 z-50 mt-2 rounded-md border px-3 py-2 text-sm shadow-lg"
+				>
+					<p class="text-muted m-0">No results for “{discogsApi.searchQuery}”.</p>
+					<p class="sr-only m-0">No results found for {discogsApi.searchQuery}.</p>
+					{#if discogsApi.searchType}
+						<p class="text-muted m-0 mt-1 text-xs">Try “All types” or check spelling.</p>
+					{/if}
+				</div>
 			{/if}
 		</div>
 	</form>
@@ -253,5 +285,17 @@
 	select.discogs-search-field {
 		appearance: auto;
 		line-height: 1.25rem;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
 	}
 </style>
