@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import NodeLoadActions from '../actions/NodeLoadActions.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
+
+	import NodeLoadActions from '$lib/components/shared/NodeLoadActions.svelte';
 
 	interface Props {
 		x: number;
