@@ -35,7 +35,7 @@
 				{@const enabled = isEnabled(type)}
 				<span
 					role="presentation"
-					class="ui-list-item {enabled ? 'hover:bg-panel' : 'opacity-50'}"
+					class="ui-list-item {enabled ? 'hover:bg-panel' : 'cursor-not-allowed opacity-50'}"
 					onmouseenter={() => {
 						if (enabled) graph.display.selectEdgeType(type);
 					}}

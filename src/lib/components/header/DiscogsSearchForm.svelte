@@ -1,10 +1,16 @@
 <script lang="ts">
 	import { Icon } from 'svelte-awesome';
 	import { infoCircle } from 'svelte-awesome/icons';
+
 	import { seedFromResult } from '$lib/components/workspace/actions/loaders/seed';
+
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
+
+	import { ALL_NODE_TYPES } from '$lib/graph/constants';
 	import { graph } from '$lib/graph/graph';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
+
+	import NodeTypePill from '$lib/components/shared/NodeTypePill.svelte';
 
 	import type { SearchResult, SearchType } from '$lib/discogs/types';
 
@@ -13,6 +19,7 @@
 	let { part }: Props = $props();
 
 	const SEARCH_FORM_ID = 'discogs-search';
+	const EMPTY_HINT_ID = 'discogs-search-empty-hint';
 
 	const typeOptions: { value: SearchType | ''; label: string }[] = [
 		{ value: '', label: 'All types' },
@@ -22,7 +29,15 @@
 		{ value: 'master', label: 'Master' }
 	];
 
-	let emptyMessage = $state<string | null>(null);
+	let showEmptyResults = $state(false);
+
+	const emptyMessage = $derived(showEmptyResults ? 'No results found' : null);
+
+	const isSearchBlocked = $derived(
+		discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning
+	);
+
+	const isSubmitDisabled = $derived(isSearchBlocked || !discogsApi.searchQuery.trim());
 
 	const rateLimitText = $derived.by(() => {
 		const { limit, remaining } = discogsApi.rateLimit;
@@ -34,9 +49,7 @@
 		return `${remaining}/${limit} API requests remaining`;
 	});
 
-	const showRateLimitHint = $derived(
-		discogsApi.error !== null || discogsApi.isRateLimited
-	);
+	const showRateLimitHint = $derived(discogsApi.isRateLimited);
 
 	const searchInfo = $derived.by(() => {
 		const lines: {
@@ -91,36 +104,45 @@
 				: 'text-muted'
 	);
 
+	function clearEmptySearchFeedback() {
+		showEmptyResults = false;
+	}
+
 	async function handleSearch(event: Event) {
 		event.preventDefault();
 
-		emptyMessage = null;
+		clearEmptySearchFeedback();
 
 		await discogsApi.search(
 			discogsApi.searchQuery,
 			discogsApi.searchType || undefined
 		);
 
-		if (discogsApi.searchResults.length === 0 && discogsApi.searchQuery.trim()) {
-			emptyMessage = 'No results found';
+		if (
+			discogsApi.searchResults.length === 0
+			&& discogsApi.searchQuery.trim() !== ''
+			&& discogsApi.error === null
+		) {
+			showEmptyResults = true;
 		}
 	}
 
 	async function pickResult(result: SearchResult) {
 		await seedFromResult(graph, result);
 
-		emptyMessage = null;
+		clearEmptySearchFeedback();
 	}
 
 	$effect(() => {
 		if (part !== 'input') return;
 
-		if (discogsApi.searchResults.length === 0) return;
+		if (discogsApi.searchResults.length === 0 && !showEmptyResults) return;
 
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.key === 'Escape') {
 				event.preventDefault();
 				discogsApi.clearSearchResults();
+				clearEmptySearchFeedback();
 			}
 		};
 
@@ -133,7 +155,7 @@
 
 		if (!discogsApi.searchQuery.trim()) {
 			discogsApi.clearSearchResults();
-			emptyMessage = null;
+			clearEmptySearchFeedback();
 		}
 	});
 </script>
@@ -147,11 +169,13 @@
 		<div class="relative min-w-0">
 			<input
 				type="search"
-				class="ui-field discogs-search-input w-full pr-9"
+				class="ui-field discogs-search-input w-full pr-9 {showEmptyResults ? 'ring-1 ring-warning/50' : ''}"
 				class:pr-14={discogsApi.searchQuery.length > 0}
 				placeholder="Search Discogs…"
 				bind:value={discogsApi.searchQuery}
-				disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
+				disabled={isSearchBlocked}
+				aria-invalid={showEmptyResults ? true : undefined}
+				aria-describedby={showEmptyResults ? EMPTY_HINT_ID : undefined}
 			/>
 
 			{#if discogsApi.searchQuery.length > 0}
@@ -204,7 +228,9 @@
 								class="ui-list-button flex items-center gap-2"
 								onclick={() => pickResult(result)}
 							>
-								<span class="min-w-16 text-muted text-xs uppercase">{result.type}</span>
+								{#if ALL_NODE_TYPES.includes(result.type)}
+									<NodeTypePill type={result.type} />
+								{/if}
 								<span class="flex-1">{result.title ?? result.name}</span>
 								{#if result.year}
 									<span class="text-muted text-sm">{result.year}</span>
@@ -213,6 +239,15 @@
 						</li>
 					{/each}
 				</ul>
+			{:else if showEmptyResults && discogsApi.searchQuery.trim() !== ''}
+				<div
+					id={EMPTY_HINT_ID}
+					role="status"
+					aria-live="polite"
+					class="border-border bg-panel absolute top-full right-0 left-0 z-50 mt-2 rounded-md border px-3 py-2 text-sm shadow-lg"
+				>
+					<p class="text-muted m-0">No results found for “{discogsApi.searchQuery}”.</p>
+				</div>
 			{/if}
 		</div>
 	</form>
@@ -220,9 +255,9 @@
 	<div class="hidden w-full min-w-0 items-center justify-start gap-2 sufficient:col-start-2 sufficient:flex">
 		<select
 			form={SEARCH_FORM_ID}
-			class="ui-field discogs-search-field min-w-0 flex-1 cursor-pointer text-center"
+			class="ui-field discogs-search-field min-w-0 flex-1 cursor-pointer text-center disabled:cursor-not-allowed"
 			bind:value={discogsApi.searchType}
-			disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
+			disabled={isSearchBlocked}
 		>
 			{#each typeOptions as option}
 				<option value={option.value}>{option.label}</option>
@@ -233,7 +268,7 @@
 			type="submit"
 			form={SEARCH_FORM_ID}
 			class="ui-button inline-flex flex-1 items-center justify-center"
-			disabled={discogsApi.searching || !discogsApi.searchQuery.trim() || discogsApi.isRateLimited || crawlState.isRunning}
+			disabled={isSubmitDisabled}
 		>
 			{discogsApi.searching ? 'Searching…' : 'Search'}
 		</button>

@@ -9,6 +9,6 @@
 {#if type}
 	<dt class="text-muted">Type</dt>
 	<dd class="m-0">
-		<NodeTypePill {type} class="px-2 py-0.5 text-sm" />
+		<NodeTypePill {type} />
 	</dd>
 {/if}
