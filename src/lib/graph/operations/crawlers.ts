@@ -7,9 +7,8 @@ import { fetchNodeDetails } from './fetch-node-details';
 import { parseNodeId } from './transformations';
 import { getLinkId, getNodeId } from './patches/compositions';
 
-import type { LoadAction } from '$lib/components/shared/types';
+import type { CrawlMode, LoadAction } from '$lib/components/shared/types';
 import type { GraphInterface } from '$lib/graph/graph';
-import type { CrawlMode } from '$lib/graph/stores/CrawlState.svelte';
 import type { GraphLink, GraphNode, NodeType } from '$lib/graph/types';
 
 type RelatedNeighbors = {

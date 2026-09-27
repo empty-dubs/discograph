@@ -1,5 +1,7 @@
 import type { SearchType } from '$lib/discogs/types';
 
+export type CrawlMode = 'artist-artist' | 'label-label';
+
 export type DiscoverEntitySectionId =
 	| 'aliases'
 	| 'members'
