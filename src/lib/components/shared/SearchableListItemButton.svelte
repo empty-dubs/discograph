@@ -60,7 +60,7 @@
 
 <button
 	type="button"
-	class="ui-list-button flex items-center gap-2 px-0 py-0.5 {className}"
+	class="ui-list-button flex items-center gap-2 {className}"
 	disabled={isRowDisabled(item)}
 	aria-haspopup="menu"
 	onclick={openMenu}

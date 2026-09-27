@@ -24,31 +24,33 @@
 </script>
 
 <div class="flex h-full min-h-0 flex-col">
-	<button
-		type="button"
-		class="ui-collapse-handle shrink-0"
-		aria-expanded={isExpanded}
-		aria-controls="control-panel-body"
-		aria-label="Collapse control panel"
-		onclick={() => (isExpanded = !isExpanded)}
+	<div
+		class="control-panel-header {isExpanded ? 'border-b border-border' : ''}"
 	>
-		{#if isExpanded}
-			<Icon data={chevronDown} />
-		{:else}
-			<Icon data={chevronUp} />
-		{/if}
-	</button>
-	<div class="flex min-h-0 flex-col {isExpanded ? 'flex-1 gap-4' : ''}">
+		<button
+			type="button"
+			class="ui-collapse-handle col-start-1 row-start-1 z-0 w-full min-h-full"
+			aria-expanded={isExpanded}
+			aria-controls="control-panel-body"
+			aria-label={isExpanded ? 'Collapse control panel' : 'Expand control panel'}
+			onclick={() => (isExpanded = !isExpanded)}
+		>
+			{#if isExpanded}
+				<Icon data={chevronDown} />
+			{:else}
+				<Icon data={chevronUp} />
+			{/if}
+		</button>
 		<div
 			role="tablist"
 			aria-label="Control panel sections"
-			class="flex shrink-0 gap-1 {isExpanded ? 'border-b border-border' : ''}"
+			class="pointer-events-none col-start-1 row-start-1 z-10 flex items-start gap-1 self-start"
 		>
 			<button
 				type="button"
 				role="tab"
 				id="control-panel-tab-discover"
-				class="ui-tab {activeTab === 'discover' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
+				class="ui-tab pointer-events-auto {activeTab === 'discover' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
 				aria-selected={activeTab === 'discover'}
 				aria-controls="control-panel-panel-discover"
 				onclick={() => selectTab('discover')}
@@ -68,7 +70,7 @@
 				type="button"
 				role="tab"
 				id="control-panel-tab-settings"
-				class="ui-tab {activeTab === 'settings' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
+				class="ui-tab pointer-events-auto {activeTab === 'settings' ? 'ui-tab-active-bottom' : 'ui-tab-inactive-bottom'}"
 				aria-selected={activeTab === 'settings'}
 				aria-controls="control-panel-panel-settings"
 				onclick={() => selectTab('settings')}
@@ -81,6 +83,8 @@
 				</span>
 			</button>
 		</div>
+	</div>
+	<div class="flex min-h-0 flex-col mt-2 {isExpanded ? 'flex-1 gap-4' : ''}">
 		<div
 			id="control-panel-body"
 			class="grid min-h-0 flex-1"

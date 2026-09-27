@@ -49,6 +49,7 @@
 	<NodeDetailRow label="Artist" show={showPrimaryArtist}>
 		<SearchableListItemButton
 			item={primaryArtistItem!}
+			class="px-0 py-0.5"
 			hasPill={false}
 		/>
 	</NodeDetailRow>

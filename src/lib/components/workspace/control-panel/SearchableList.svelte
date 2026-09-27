@@ -10,7 +10,7 @@
 	let { items }: Props = $props();
 </script>
 
-<div class="space-y-1">
+<div>
 	{#each items as item (item.key)}
 		<SearchableListItemButton {item} class={"border-t border-border"}/>
 	{/each}
