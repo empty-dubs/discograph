@@ -19,7 +19,7 @@ export interface SearchResult {
 	name?: string;
 	resource_url?: string;
 	title?: string;
-	type: string;
+	type: SearchType;
 	uri?: string;
 	year?: string;
 }

@@ -1,10 +1,16 @@
 <script lang="ts">
 	import { Icon } from 'svelte-awesome';
 	import { infoCircle } from 'svelte-awesome/icons';
+
 	import { seedFromResult } from '$lib/components/workspace/actions/loaders/seed';
+
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
+
+	import { ALL_NODE_TYPES } from '$lib/graph/constants';
 	import { graph } from '$lib/graph/graph';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
+
+	import NodeTypePill from '$lib/components/shared/NodeTypePill.svelte';
 
 	import type { SearchResult, SearchType } from '$lib/discogs/types';
 
@@ -222,7 +228,9 @@
 								class="ui-list-button flex items-center gap-2"
 								onclick={() => pickResult(result)}
 							>
-								<span class="min-w-16 text-muted text-xs uppercase">{result.type}</span>
+								{#if ALL_NODE_TYPES.includes(result.type)}
+									<NodeTypePill type={result.type} />
+								{/if}
 								<span class="flex-1">{result.title ?? result.name}</span>
 								{#if result.year}
 									<span class="text-muted text-sm">{result.year}</span>

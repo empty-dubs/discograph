@@ -12,7 +12,7 @@
 </script>
 
 <span
-	class="node-type-surface inline-block shrink-0 rounded px-1.5 py-0 text-xs capitalize {className}"
+	class="node-type-surface box-border inline-flex w-[4.5rem] shrink-0 items-center justify-center rounded text-sm capitalize {className}"
 	style:--badge-color={NODE_COLORS[type]}
 >
 	{type}

@@ -106,8 +106,8 @@
 	}
 
 	.node-type-surface {
-		background: color-mix(in srgb, var(--badge-color) 25%, transparent);
-		color: var(--badge-color);
+		background: color-mix(in srgb, var(--badge-color) 50%, transparent);
+		color: white;
 	}
 
 	.control-panel-subtabs {
