@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getYouTubeTrackSearchUrl } from '$lib/components/workspace/actions/compositions';
+	import { getYouTubeTrackSearchUrl } from '$lib/components/shared/compositions';
 
 	import type { GraphNode } from '$lib/graph/types';
 

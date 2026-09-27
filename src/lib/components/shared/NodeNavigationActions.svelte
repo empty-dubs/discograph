@@ -5,7 +5,7 @@
 		getDiscogsProxyUrl,
 		getDiscogsWebsiteUrl,
 		getYouTubeSearchUrl
-	} from '$lib/components/workspace/actions/compositions';
+	} from '$lib/components/shared/compositions';
 	import { seedFromNode } from '$lib/components/workspace/actions/loaders/seed';
 
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
