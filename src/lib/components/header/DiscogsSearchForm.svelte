@@ -24,7 +24,14 @@
 	];
 
 	let showEmptyResults = $state(false);
-	let emptyMessage = $state<string | null>(null);
+
+	const emptyMessage = $derived(showEmptyResults ? 'No results found' : null);
+
+	const isSearchBlocked = $derived(
+		discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning
+	);
+
+	const isSubmitDisabled = $derived(isSearchBlocked || !discogsApi.searchQuery.trim());
 
 	const rateLimitText = $derived.by(() => {
 		const { limit, remaining } = discogsApi.rateLimit;
@@ -36,9 +43,7 @@
 		return `${remaining}/${limit} API requests remaining`;
 	});
 
-	const showRateLimitHint = $derived(
-		discogsApi.error !== null || discogsApi.isRateLimited
-	);
+	const showRateLimitHint = $derived(discogsApi.isRateLimited);
 
 	const searchInfo = $derived.by(() => {
 		const lines: {
@@ -95,12 +100,6 @@
 
 	function clearEmptySearchFeedback() {
 		showEmptyResults = false;
-		emptyMessage = null;
-	}
-
-	function setEmptySearchFeedback() {
-		showEmptyResults = true;
-		emptyMessage = 'No results found';
 	}
 
 	async function handleSearch(event: Event) {
@@ -118,7 +117,7 @@
 			&& discogsApi.searchQuery.trim() !== ''
 			&& discogsApi.error === null
 		) {
-			setEmptySearchFeedback();
+			showEmptyResults = true;
 		}
 	}
 
@@ -168,7 +167,7 @@
 				class:pr-14={discogsApi.searchQuery.length > 0}
 				placeholder="Search Discogs…"
 				bind:value={discogsApi.searchQuery}
-				disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
+				disabled={isSearchBlocked}
 				aria-invalid={showEmptyResults ? true : undefined}
 				aria-describedby={showEmptyResults ? EMPTY_HINT_ID : undefined}
 			/>
@@ -232,18 +231,14 @@
 						</li>
 					{/each}
 				</ul>
-			{:else if showEmptyResults && discogsApi.searchQuery.trim()}
+			{:else if showEmptyResults && discogsApi.searchQuery.trim() !== ''}
 				<div
 					id={EMPTY_HINT_ID}
 					role="status"
 					aria-live="polite"
 					class="border-border bg-panel absolute top-full right-0 left-0 z-50 mt-2 rounded-md border px-3 py-2 text-sm shadow-lg"
 				>
-					<p class="text-muted m-0">No results for “{discogsApi.searchQuery}”.</p>
-					<p class="sr-only m-0">No results found for {discogsApi.searchQuery}.</p>
-					{#if discogsApi.searchType}
-						<p class="text-muted m-0 mt-1 text-xs">Try “All types” or check spelling.</p>
-					{/if}
+					<p class="text-muted m-0">No results found for “{discogsApi.searchQuery}”.</p>
 				</div>
 			{/if}
 		</div>
@@ -252,9 +247,9 @@
 	<div class="hidden w-full min-w-0 items-center justify-start gap-2 sufficient:col-start-2 sufficient:flex">
 		<select
 			form={SEARCH_FORM_ID}
-			class="ui-field discogs-search-field min-w-0 flex-1 cursor-pointer text-center"
+			class="ui-field discogs-search-field min-w-0 flex-1 cursor-pointer text-center disabled:cursor-not-allowed"
 			bind:value={discogsApi.searchType}
-			disabled={discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning}
+			disabled={isSearchBlocked}
 		>
 			{#each typeOptions as option}
 				<option value={option.value}>{option.label}</option>
@@ -265,7 +260,7 @@
 			type="submit"
 			form={SEARCH_FORM_ID}
 			class="ui-button inline-flex flex-1 items-center justify-center"
-			disabled={discogsApi.searching || !discogsApi.searchQuery.trim() || discogsApi.isRateLimited || crawlState.isRunning}
+			disabled={isSubmitDisabled}
 		>
 			{discogsApi.searching ? 'Searching…' : 'Search'}
 		</button>
@@ -285,17 +280,5 @@
 	select.discogs-search-field {
 		appearance: auto;
 		line-height: 1.25rem;
-	}
-
-	.sr-only {
-		position: absolute;
-		width: 1px;
-		height: 1px;
-		padding: 0;
-		margin: -1px;
-		overflow: hidden;
-		clip: rect(0, 0, 0, 0);
-		white-space: nowrap;
-		border: 0;
 	}
 </style>
