@@ -1,6 +1,8 @@
 import { LOAD_ACTIONS, PATCH_LOAD_ACTIONS } from '$lib/components/shared/constants';
 import { stripDiscogsWikiMarkup } from '$lib/components/workspace/node-panel/transformations';
+
 import { discogsApi } from '$lib/discogs/discogs.svelte';
+
 import {
 	collectDescendants,
 	getRelatedNeighbors,
@@ -10,7 +12,7 @@ import { fetchNodeDetails } from '$lib/graph/operations/fetch-node-details';
 import { graph } from '$lib/graph/graph';
 
 import type { LoadAction } from '$lib/components/shared/types';
-import type { GraphNode } from '../types';
+import type { GraphNode } from '$lib/graph/types';
 
 export interface SelectedNodeInterface {
 	id: string | null;

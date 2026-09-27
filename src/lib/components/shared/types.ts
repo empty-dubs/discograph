@@ -1,5 +1,18 @@
 import type { SearchType } from '$lib/discogs/types';
 
+export type DiscoverEntitySectionId =
+	| 'aliases'
+	| 'members'
+	| 'groups'
+	| 'parent-label'
+	| 'sublabels'
+	| 'main-release'
+	| 'linked-master'
+	| 'artists'
+	| 'labels'
+	| 'credits'
+	| 'companies';
+
 export type LoadAction =
 	| 'artists'
 	| 'labels'

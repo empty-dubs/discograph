@@ -1,4 +1,4 @@
-export type FetchOrder = 'year' | 'title';
+type FetchOrder = 'year' | 'title';
 
 class ControlPanelSettingsState {
 	fetchOrder = $state<FetchOrder>('year');

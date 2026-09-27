@@ -2,7 +2,7 @@
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	import { releaseListRowText } from './transformations';
 
-	import type { DiscoverEntitySectionId } from './control-panel-discover-sections';
+	import type { DiscoverEntitySectionId } from '$lib/components/shared/types';
 
 	import SearchableList from './SearchableList.svelte';
 
