@@ -3,7 +3,6 @@ import { createLabelNode } from './nodes';
 import { createEdge } from './edges';
 
 import type { Label, Release } from '$lib/discogs/types';
-
 import type { EdgeType, GraphLink, GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
 
 export function buildLabelsFromRelease(release: Release): GraphPatch {

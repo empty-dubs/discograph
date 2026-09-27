@@ -15,8 +15,6 @@
 
 	import NodeLoadButton from './NodeLoadButton.svelte';
 
-	import type { SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
-
 	interface Props {
 		layout?: 'menu' | 'stack';
 		showAllActions?: boolean;
@@ -35,7 +33,7 @@
 		onAction
 	}: Props = $props();
 
-	const node = $derived(selectedNodeState as SelectedNodeInterface);
+	const node = $derived(selectedNodeState);
 
 	const actions = $derived((node.visibleLoadActions ?? []) as LoadAction[]);
 	const renderedActions = $derived(
