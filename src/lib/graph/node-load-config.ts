@@ -16,21 +16,6 @@ import {
 
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 
-import type {
-	Artist,
-	ArtistReleasesResponse,
-	Label,
-	LabelReleasesResponse,
-	Master,
-	MasterVersionsResponse,
-	Pagination,
-	Release
-} from '$lib/discogs/types';
-
-import type { LoadAction } from '$lib/components/workspace/actions/constants';
-
-import type { GraphInterface } from '$lib/graph/graph';
-
 import {
 	updateArtistNode,
 	updateLabelNode,
@@ -60,6 +45,19 @@ import {
 	buildMasterFromRelease
 } from '$lib/graph/operations/patches/releases';
 
+import type {
+	Artist,
+	ArtistReleasesResponse,
+	Label,
+	LabelReleasesResponse,
+	Master,
+	MasterVersionsResponse,
+	Pagination,
+	Release
+} from '$lib/discogs/types';
+
+import type { LoadAction } from '$lib/components/workspace/actions/constants';
+import type { GraphInterface } from '$lib/graph/graph';
 import type { GraphNode, GraphPatch, NodeType } from '$lib/graph/types';
 
 type LoadContext = {

@@ -14,9 +14,9 @@
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	import type { GraphNode } from '$lib/graph/types';
+	import NodeNavigationButton from './NodeNavigationButton.svelte';
 
-	import NodeNavigationButton from '$lib/components/workspace/actions/NodeNavigationButton.svelte';
+	import type { GraphNode } from '$lib/graph/types';
 
 	interface Props {
 		node: GraphNode;

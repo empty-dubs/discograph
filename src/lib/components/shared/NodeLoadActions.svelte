@@ -1,19 +1,19 @@
 <script lang="ts">
-	import { discogsApi } from '$lib/discogs/discogs.svelte';
-	import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
-	import { graph } from '$lib/graph/graph';
-	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
-
-	import NodeLoadButton from '$lib/components/workspace/actions/NodeLoadButton.svelte';
-
-	import { selectedNodeState, type SelectedNodeInterface } from '$lib/graph/stores/SelectedNodeState.svelte';
-
 	import {
 		ALL_LOAD_ACTIONS,
 		LOAD_ACTION_LABELS,
 		type LoadAction,
 		type PagedLoadButtonState
-	} from './constants';
+	} from '$lib/components/workspace/actions/constants';
+	import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
+
+	import { discogsApi } from '$lib/discogs/discogs.svelte';
+
+	import { graph } from '$lib/graph/graph';
+	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
+	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
+
+	import NodeLoadButton from './NodeLoadButton.svelte';
 
 	interface Props {
 		layout?: 'menu' | 'stack';
@@ -33,7 +33,7 @@
 		onAction
 	}: Props = $props();
 
-	const node = $derived(selectedNodeState as SelectedNodeInterface);
+	const node = $derived(selectedNodeState);
 
 	const actions = $derived((node.visibleLoadActions ?? []) as LoadAction[]);
 	const renderedActions = $derived(

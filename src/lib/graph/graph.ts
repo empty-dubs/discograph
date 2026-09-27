@@ -1,6 +1,7 @@
 import { graphDataState, type GraphDataState } from './stores/GraphDataState.svelte';
 import { visitedNodesState, type VisitedNodesState } from './stores/VisitedNodesState.svelte';
 import { graphDisplayState, type GraphDisplayState } from './stores/DisplayState.svelte';
+
 import type { GraphPatch } from './types';
 
 export interface GraphInterface {

@@ -5,7 +5,7 @@
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
-	import NodeLoadButton from '../actions/NodeLoadButton.svelte';
+	import NodeLoadButton from '$lib/components/shared/NodeLoadButton.svelte';
 
 	const node = $derived(selectedNodeState);
 
