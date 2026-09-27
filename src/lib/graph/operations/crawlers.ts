@@ -1,4 +1,4 @@
-import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
+import { runLoadAction } from '$lib/components/shared/loaders/load-action';
 import { awaitFetchRequestSlot } from '$lib/discogs/rate-limiter';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
 import { crawlState } from '$lib/graph/stores/CrawlState.svelte';

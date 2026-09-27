@@ -2,7 +2,7 @@
 	import { Icon } from 'svelte-awesome';
 	import { infoCircle } from 'svelte-awesome/icons';
 
-	import { seedFromResult } from '$lib/components/workspace/actions/loaders/seed';
+	import { seedFromResult } from '$lib/components/shared/loaders/seed';
 
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 
