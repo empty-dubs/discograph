@@ -1,15 +1,5 @@
 import type { NodeType } from '$lib/graph/types';
-
-export type LoadAction =
-	| 'artists'
-	| 'labels'
-	| 'releases'
-	| 'master_releases'
-	| 'main_release'
-	| 'linked_master'
-	| 'companies'
-	| 'credited_artists'
-	| 'aliases';
+import type { LoadAction } from './types';
 
 export const LOAD_ACTIONS: Record<NodeType, LoadAction[]> = {
 	artist: ['artists', 'aliases', 'releases', 'master_releases'],
@@ -71,9 +61,3 @@ export const RELEASES_TAB_LOAD_ACTIONS: LoadAction[] = [
 ];
 
 export const LABEL_LOAD_ACTIONS: LoadAction[] = ['labels', 'companies'];
-
-export type PagedLoadButtonState = {
-	label: string;
-	loaded: boolean;
-	exhausted: boolean;
-};

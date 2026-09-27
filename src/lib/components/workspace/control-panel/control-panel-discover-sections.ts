@@ -1,19 +1,7 @@
+import type { DiscoverEntitySectionId } from '$lib/components/shared/types';
 import type { GraphNode } from '$lib/graph/types';
 
-export type DiscoverEntitySectionId =
-	| 'aliases'
-	| 'members'
-	| 'groups'
-	| 'parent-label'
-	| 'sublabels'
-	| 'main-release'
-	| 'linked-master'
-	| 'artists'
-	| 'labels'
-	| 'credits'
-	| 'companies';
-
-export const ENTITY_SECTION_ORDER: { id: DiscoverEntitySectionId; title: string }[] = [
+const ENTITY_SECTION_ORDER: { id: DiscoverEntitySectionId; title: string }[] = [
 	{ id: 'aliases', title: 'Aliases' },
 	{ id: 'members', title: 'Members' },
 	{ id: 'groups', title: 'Groups' },

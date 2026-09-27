@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { seedFromNode } from '$lib/components/workspace/actions/loaders/seed';
+	import { seedFromNode } from '$lib/components/shared/loaders/seed';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';

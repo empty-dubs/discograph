@@ -1,19 +1,19 @@
 <script lang="ts">
-	import {
-		ALL_LOAD_ACTIONS,
-		LOAD_ACTION_LABELS,
-		type LoadAction,
-		type PagedLoadButtonState
-	} from '$lib/components/workspace/actions/constants';
-	import { runLoadAction } from '$lib/components/workspace/actions/loaders/load-action';
-
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 	import { graph } from '$lib/graph/graph';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
+	import {
+		ALL_LOAD_ACTIONS,
+		LOAD_ACTION_LABELS,
+	} from './constants';
+	import { runLoadAction } from './loaders/load-action';
+
 	import NodeLoadButton from './NodeLoadButton.svelte';
+
+	import type { LoadAction, PagedLoadButtonState } from './types';
 
 	interface Props {
 		layout?: 'menu' | 'stack';

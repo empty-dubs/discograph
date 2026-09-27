@@ -3,7 +3,7 @@
 		ARTIST_LOAD_ACTIONS,
 		LABEL_LOAD_ACTIONS,
 		MASTER_RELEASE_LOAD_ACTIONS
-	} from '$lib/components/workspace/actions/constants';
+	} from '$lib/components/shared/constants';
 
 	import {
 		ARTIST_NODE_TYPES,

@@ -1,4 +1,4 @@
-export type CrawlMode = 'artist-artist' | 'label-label';
+import type { CrawlMode } from '$lib/components/shared/types';
 
 class CrawlState {
 	mode = $state<CrawlMode>('artist-artist');

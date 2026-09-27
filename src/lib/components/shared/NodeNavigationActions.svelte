@@ -1,18 +1,18 @@
 <script lang="ts">
 	import { isDev } from '$lib/app/dev';
 
-	import {
-		getDiscogsProxyUrl,
-		getDiscogsWebsiteUrl,
-		getYouTubeSearchUrl
-	} from '$lib/components/workspace/actions/compositions';
-	import { seedFromNode } from '$lib/components/workspace/actions/loaders/seed';
-
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 	import { graph } from '$lib/graph/graph';
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
+
+	import {
+		getDiscogsProxyUrl,
+		getDiscogsWebsiteUrl,
+		getYouTubeSearchUrl
+	} from './compositions';
+	import { seedFromNode } from './loaders/seed';
 
 	import NodeNavigationButton from './NodeNavigationButton.svelte';
 
