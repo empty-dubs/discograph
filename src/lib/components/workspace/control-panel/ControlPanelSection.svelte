@@ -45,7 +45,7 @@
 		{#each nodeTypes ?? [] as type (type)}
 			{@const count = graph.display.typeCounts[type]}
 			{#if count > 0}
-				<span class="text-xs text-gray-500">{count}</span>
+				<span class="text-sm text-gray-500">{count}</span>
 			{/if}
 		{/each}
 	</div>

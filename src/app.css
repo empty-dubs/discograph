@@ -45,7 +45,7 @@
 
 @layer components {
 	.ui-label {
-		@apply text-muted text-xs font-semibold tracking-wide uppercase m-0;
+		@apply text-muted text-sm font-semibold tracking-wide uppercase m-0;
 	}
 
 	.ui-stack {
