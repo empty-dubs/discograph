@@ -6,7 +6,7 @@
 	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 
 	import NodeTypePill from '$lib/components/shared/NodeTypePill.svelte';
-	import SearchableListContextMenu from '../workspace/control-panel/SearchableListContextMenu.svelte';
+	import SearchableListContextMenu from './SearchableListContextMenu.svelte';
 
 	import type { SearchableListItem } from './types';
 
