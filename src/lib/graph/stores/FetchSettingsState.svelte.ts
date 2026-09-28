@@ -1,8 +1,8 @@
 type FetchOrder = 'year' | 'title';
 
-class ControlPanelSettingsState {
+class FetchSettingsState {
 	fetchOrder = $state<FetchOrder>('year');
 	fetchCount = $state(100);
 }
 
-export const controlPanelSettings = new ControlPanelSettingsState();
+export default new FetchSettingsState();
