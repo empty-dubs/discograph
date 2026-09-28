@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FetchSettingsState from '$lib/graph/stores/FetchSettingsState.svelte';
+	import FetchSettingsState from '$lib/stores/FetchSettingsState.svelte';
 
 	import ControlPanelNumberInput from './ControlPanelNumberInput.svelte';
 </script>

@@ -6,7 +6,7 @@
 	import type { NodePanelAccordion } from '$lib/components/shared/accordion';
 
 	import NodeNavigationActions from '$lib/components/shared/NodeNavigationActions.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 	import NodePanelDetails from './NodePanelDetails.svelte';
 
 	const node = $derived(SelectedNodeState);

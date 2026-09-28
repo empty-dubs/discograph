@@ -4,7 +4,7 @@
 	import { graph } from '$lib/graph/graph';
 
 	import NodeLoadButton from '$lib/components/shared/NodeLoadButton.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 	import CrawlState from '$lib/stores/CrawlState.svelte';
 
 	const node = $derived(SelectedNodeState);

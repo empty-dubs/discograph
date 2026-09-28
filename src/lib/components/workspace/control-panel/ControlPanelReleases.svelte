@@ -3,7 +3,7 @@
 	import { graph } from '$lib/graph/graph';
 	
 	import NodeLoadActions from '$lib/components/shared/NodeLoadActions.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 	import SearchableList from './SearchableList.svelte';
 
 	import {

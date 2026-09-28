@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SearchableListItemButton from '$lib/components/shared/SearchableListItemButton.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 	import NodeDetailRow from './NodeDetailRow.svelte';
 	import NodeTypeBadge from './NodeTypeBadge.svelte';
 

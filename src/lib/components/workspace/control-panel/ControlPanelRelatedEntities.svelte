@@ -2,7 +2,7 @@
 	import { getDiscoverEntitySectionCount, getVisibleEntitySections } from './control-panel-discover-sections';
 
 	import CollapsibleSection from '$lib/components/shared/CollapsibleSection.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 	import ControlPanelDiscoverSectionBody from './ControlPanelDiscoverSectionBody.svelte';
 
 	const node = $derived(SelectedNodeState);
