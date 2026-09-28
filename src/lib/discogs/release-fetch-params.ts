@@ -1,12 +1,12 @@
-import { controlPanelSettings } from '$lib/graph/stores/ControlPanelSettingsState.svelte';
+import FetchSettingsState from '$lib/graph/stores/FetchSettingsState.svelte';
 
 import type { PagedListParams } from './client';
 
 export function artistReleaseFetchParams(page: number): PagedListParams {
 	return {
 		page,
-		per_page: controlPanelSettings.fetchCount,
-		sort: controlPanelSettings.fetchOrder
+		per_page: FetchSettingsState.fetchCount,
+		sort: FetchSettingsState.fetchOrder
 	};
 }
 
@@ -14,16 +14,16 @@ export function labelReleaseFetchParams(page: number): PagedListParams {
 	// Label releases API supports page/per_page only — no server-side sort.
 	return {
 		page,
-		per_page: controlPanelSettings.fetchCount
+		per_page: FetchSettingsState.fetchCount
 	};
 }
 
 export function masterVersionFetchParams(page: number): PagedListParams {
-	const sort = controlPanelSettings.fetchOrder === 'year' ? 'released' : 'title';
+	const sort = FetchSettingsState.fetchOrder === 'year' ? 'released' : 'title';
 
 	return {
 		page,
-		per_page: controlPanelSettings.fetchCount,
+		per_page: FetchSettingsState.fetchCount,
 		sort
 	};
 }
