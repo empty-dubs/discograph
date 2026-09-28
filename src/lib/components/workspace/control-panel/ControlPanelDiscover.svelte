@@ -6,8 +6,8 @@
 
 	import type { NodePanelAccordion } from '$lib/components/shared/accordion';
 
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
 	import CrawlState from '$lib/stores/CrawlState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 	import ControlPanelCrawl from './ControlPanelCrawl.svelte';
 	import ControlPanelRelatedEntities from './ControlPanelRelatedEntities.svelte';
 	import ControlPanelReleases from './ControlPanelReleases.svelte';

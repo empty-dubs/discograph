@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 
 	import NodeLoadActions from '$lib/components/shared/NodeLoadActions.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';	
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';	
 
 	interface Props {
 		x: number;

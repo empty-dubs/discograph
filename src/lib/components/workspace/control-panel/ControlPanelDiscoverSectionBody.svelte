@@ -3,7 +3,7 @@
 
 	import type { DiscoverEntitySectionId } from '$lib/components/shared/types';
 
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 	import SearchableList from './SearchableList.svelte';
 
 	interface Props {

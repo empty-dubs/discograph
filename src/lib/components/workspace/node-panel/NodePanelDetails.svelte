@@ -4,7 +4,7 @@
 	import { NODE_PANEL_ACCORDION_KEY } from '$lib/components/shared/accordion';
 	
 	import CollapsibleSection from '$lib/components/shared/CollapsibleSection.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
 	import NodePanelItemList from './NodePanelItemList.svelte';
 	import NodePanelTracklist from './NodePanelTracklist.svelte';

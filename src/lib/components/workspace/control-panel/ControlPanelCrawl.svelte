@@ -4,7 +4,7 @@
 	import { getCrawlNeighborIds, getCrawlNodeType, runBFSCrawl } from '$lib/graph/operations/crawlers';
 
 	import CrawlState from '$lib/stores/CrawlState.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 	import ControlPanelNumberInput from './ControlPanelNumberInput.svelte';
 
 	const node = $derived(SelectedNodeState);

@@ -4,7 +4,7 @@
 	import { graph } from '$lib/graph/graph';
 
 	import CrawlState from '$lib/stores/CrawlState.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 
 	import {
 		getDiscogsProxyUrl,

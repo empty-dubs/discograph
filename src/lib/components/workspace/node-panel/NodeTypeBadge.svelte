@@ -1,6 +1,6 @@
 <script lang="ts">
 	import NodeTypePill from '$lib/components/shared/NodeTypePill.svelte';
-	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import SelectedNodeState from '$lib/stores/SelectedNodeState.svelte';
 
 	const type = $derived(SelectedNodeState.data?.type);
 </script>
