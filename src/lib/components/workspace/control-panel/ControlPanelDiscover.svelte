@@ -2,12 +2,12 @@
 	import { setContext } from 'svelte';
 
 	import { DISCOVER_ENTITIES_ACCORDION_KEY } from '$lib/components/shared/accordion';
-	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	import { CONTROL_PANEL_HELPER_TEXT } from './constants';
 
 	import type { NodePanelAccordion } from '$lib/components/shared/accordion';
 
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import CrawlState from '$lib/stores/CrawlState.svelte';
 	import ControlPanelCrawl from './ControlPanelCrawl.svelte';
 	import ControlPanelRelatedEntities from './ControlPanelRelatedEntities.svelte';
 	import ControlPanelReleases from './ControlPanelReleases.svelte';
@@ -41,11 +41,11 @@
 	setContext(DISCOVER_ENTITIES_ACCORDION_KEY, accordion);
 
 	$effect(() => {
-		isLoading = selectedNodeState.hasLoadingChildren || crawlState.isRunning;
+		isLoading = SelectedNodeState.hasLoadingChildren || CrawlState.isRunning;
 	});
 
 	$effect(() => {
-		selectedNodeState.id;
+		SelectedNodeState.id;
 		openSectionId = null;
 	});
 </script>
@@ -63,7 +63,7 @@
 		>
 			<span class="control-panel-subtab-inner">
 				<span class="control-panel-subtab-icon-slot">
-					{#if selectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
+					{#if SelectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
 				</span>
 				Explore
 			</span>
@@ -79,7 +79,7 @@
 		>
 			<span class="control-panel-subtab-inner">
 				<span class="control-panel-subtab-icon-slot">
-					{#if crawlState.isRunning}<LoadingIcon />{/if}
+					{#if CrawlState.isRunning}<LoadingIcon />{/if}
 				</span>
 				Crawl
 			</span>
@@ -109,7 +109,7 @@
 		>
 			<span class="control-panel-subtab-inner">
 				<span class="control-panel-subtab-icon-slot">
-					{#if selectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
+					{#if SelectedNodeState.hasLoadingChildren}<LoadingIcon />{/if}
 				</span>
 				Releases
 			</span>

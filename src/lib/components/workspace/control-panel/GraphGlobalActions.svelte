@@ -2,19 +2,19 @@
 	import { seedFromNode } from '$lib/components/shared/loaders/seed';
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
-	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import NodeLoadButton from '$lib/components/shared/NodeLoadButton.svelte';
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
+	import CrawlState from '$lib/stores/CrawlState.svelte';
 
-	const node = $derived(selectedNodeState);
+	const node = $derived(SelectedNodeState);
 
 	const collapseDisabled = $derived(
 		!node.isDetailsFetched
 		|| node.isBlocked
 		|| !node.hasChildren
 		|| node.hasLoadingChildren
-		|| crawlState.isRunning
+		|| CrawlState.isRunning
 	);
 
 	const resetDisabled = $derived(
@@ -23,13 +23,13 @@
 		|| !node.data
 		|| node.hasLoadingChildren
 		|| discogsApi.isRateLimited
-		|| crawlState.isRunning
+		|| CrawlState.isRunning
 	);
 
 	const clearDisabled = $derived(
 		graph.data.isEmpty
 		|| node.hasLoadingChildren
-		|| crawlState.isRunning
+		|| CrawlState.isRunning
 	);
 </script>
 

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	import { releaseListRowText } from './transformations';
 
 	import type { DiscoverEntitySectionId } from '$lib/components/shared/types';
 
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
 	import SearchableList from './SearchableList.svelte';
 
 	interface Props {
@@ -12,7 +12,7 @@
 
 	let { sectionId }: Props = $props();
 
-	const node = $derived(selectedNodeState.data!);
+	const node = $derived(SelectedNodeState.data!);
 	const releaseDisplayData = $derived(releaseListRowText(node));
 </script>
 

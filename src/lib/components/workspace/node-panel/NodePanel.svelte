@@ -2,14 +2,14 @@
 	import { setContext } from 'svelte';
 
 	import { NODE_PANEL_ACCORDION_KEY } from '$lib/components/shared/accordion';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import type { NodePanelAccordion } from '$lib/components/shared/accordion';
 
 	import NodeNavigationActions from '$lib/components/shared/NodeNavigationActions.svelte';
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
 	import NodePanelDetails from './NodePanelDetails.svelte';
 
-	const node = $derived(selectedNodeState);
+	const node = $derived(SelectedNodeState);
 
 	let openSectionId = $state<string | null>(null);
 	let lastSelectedId = $state<string | null>(null);

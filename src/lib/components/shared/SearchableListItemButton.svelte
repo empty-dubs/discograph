@@ -3,9 +3,10 @@
 
 	import { ALL_NODE_TYPES } from '$lib/graph/constants';
 	import { getNodeId } from '$lib/graph/operations/patches/compositions';
-	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
+
 
 	import NodeTypePill from '$lib/components/shared/NodeTypePill.svelte';
+	import CrawlState from '$lib/stores/CrawlState.svelte';
 	import SearchableListContextMenu from './SearchableListContextMenu.svelte';
 
 	import type { SearchableListItem } from './types';
@@ -40,7 +41,7 @@
 			!item.discogsId
 			|| !item.searchType
 			|| discogsApi.isRateLimited
-			|| crawlState.isRunning
+			|| CrawlState.isRunning
 			|| discogsApi.isBlockedDiscogsEntity(item.searchType!, item.discogsId!)
 		);
 	}

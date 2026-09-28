@@ -14,7 +14,7 @@ import { graph } from '$lib/graph/graph';
 import type { LoadAction } from '$lib/components/shared/types';
 import type { GraphNode } from '$lib/graph/types';
 
-export interface SelectedNodeInterface {
+interface SelectedNodeInterface {
 	id: string | null;
 	data?: GraphNode;
 	hasChildren: boolean;
@@ -130,4 +130,4 @@ class SelectedNodeState implements SelectedNodeInterface {
 	}
 }
 
-export const selectedNodeState = new SelectedNodeState();
+export default new SelectedNodeState();

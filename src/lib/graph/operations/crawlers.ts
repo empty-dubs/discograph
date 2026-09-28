@@ -1,11 +1,12 @@
 import { runLoadAction } from '$lib/components/shared/loaders/load-action';
 import { awaitFetchRequestSlot } from '$lib/discogs/rate-limiter';
 import { discogsApi } from '$lib/discogs/discogs.svelte';
-import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 
 import { fetchNodeDetails } from './fetch-node-details';
 import { parseNodeId } from './transformations';
 import { getLinkId, getNodeId } from './patches/compositions';
+
+import CrawlState from '$lib/stores/CrawlState.svelte';
 
 import type { CrawlMode, LoadAction } from '$lib/components/shared/types';
 import type { GraphInterface } from '$lib/graph/graph';
@@ -295,7 +296,7 @@ export async function runBFSCrawl(
 
 	try {
 		while (queue.length > 0) {
-			if (crawlState.cancelRequested) break;
+			if (CrawlState.cancelRequested) break;
 
 			const { nodeId, depth } = queue.shift()!;
 
@@ -326,6 +327,6 @@ export async function runBFSCrawl(
 	} catch (err) {
 		discogsApi.setError(err instanceof Error ? err.message : 'Crawl failed');
 	} finally {
-		crawlState.finishCrawl();
+		CrawlState.finishCrawl();
 	}
 }

@@ -21,4 +21,4 @@ class CrawlState {
 	}
 }
 
-export const crawlState = new CrawlState();
+export default new CrawlState();

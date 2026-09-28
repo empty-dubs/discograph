@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { isDev } from '$lib/app/dev';
-
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
-
 	import { graph } from '$lib/graph/graph';
-	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
+
+	import CrawlState from '$lib/stores/CrawlState.svelte';
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import {
 		getDiscogsProxyUrl,
@@ -27,15 +26,15 @@
 	let { node, layout = 'panel', onAction }: Props = $props();
 
 	const isResetDisabled = $derived.by(() => {
-		selectedNodeState.id;
+		SelectedNodeState.id;
 		return (
 			!node
 			|| node.discogsId === null
 			|| discogsApi.isRateLimited
 			|| discogsApi.isBlockedDiscogsEntity(node.type, node.discogsId)
-			|| crawlState.isRunning
-			|| selectedNodeState.hasLoadingChildren
-			|| !selectedNodeState.isDetailsFetched
+			|| CrawlState.isRunning
+			|| SelectedNodeState.hasLoadingChildren
+			|| !SelectedNodeState.isDetailsFetched
 		);
 	});
 

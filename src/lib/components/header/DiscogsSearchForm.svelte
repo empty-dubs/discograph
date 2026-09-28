@@ -8,9 +8,9 @@
 
 	import { ALL_NODE_TYPES } from '$lib/graph/constants';
 	import { graph } from '$lib/graph/graph';
-	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
 
 	import NodeTypePill from '$lib/components/shared/NodeTypePill.svelte';
+	import CrawlState from '$lib/stores/CrawlState.svelte';
 
 	import type { SearchResult, SearchType } from '$lib/discogs/types';
 
@@ -34,7 +34,7 @@
 	const emptyMessage = $derived(showEmptyResults ? 'No results found' : null);
 
 	const isSearchBlocked = $derived(
-		discogsApi.searching || discogsApi.isRateLimited || crawlState.isRunning
+		discogsApi.searching || discogsApi.isRateLimited || CrawlState.isRunning
 	);
 
 	const isSubmitDisabled = $derived(isSearchBlocked || !discogsApi.searchQuery.trim());
@@ -59,7 +59,7 @@
 			wrap?: boolean;
 		}[] = [];
 
-		if (crawlState.isRunning) {
+		if (CrawlState.isRunning) {
 			lines.push({
 				id: 'crawl-running',
 				text: 'Crawl in progress...',
@@ -99,7 +99,7 @@
 	const iconToneClass = $derived(
 		discogsApi.error
 			? 'text-danger'
-			: discogsApi.isRateLimited || crawlState.isRunning
+			: discogsApi.isRateLimited || CrawlState.isRunning
 				? 'text-warning'
 				: 'text-muted'
 	);

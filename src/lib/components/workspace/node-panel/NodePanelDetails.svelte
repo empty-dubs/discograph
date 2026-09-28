@@ -3,9 +3,8 @@
 
 	import { NODE_PANEL_ACCORDION_KEY } from '$lib/components/shared/accordion';
 	
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-
 	import CollapsibleSection from '$lib/components/shared/CollapsibleSection.svelte';
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
 	import NodePanelCommonDetails from './NodePanelCommonDetails.svelte';
 	import NodePanelItemList from './NodePanelItemList.svelte';
 	import NodePanelTracklist from './NodePanelTracklist.svelte';
@@ -13,7 +12,7 @@
 
 	import type { NodePanelAccordion } from '$lib/components/shared/accordion';
 
-	const selected = $derived(selectedNodeState);
+	const selected = $derived(SelectedNodeState);
 	const node = $derived(selected.data);
 	const accordion = getContext<NodePanelAccordion>(NODE_PANEL_ACCORDION_KEY);
 	const profileOpen = $derived(accordion.openSectionId === 'profile');
