@@ -7,7 +7,7 @@ type ProfileStatus = 'loading' | 'fetched' | 'failed';
 
 type ReleasePaging = { page: number; pages: number; items: number };
 
-export class VisitedNodesState {
+class VisitedNodesState {
 	knownChildren = $state<SvelteMap<string, Set<string>>>(new SvelteMap());
 	loadedNeighborNodeTypes = $state<SvelteMap<string, Set<LoadAction>>>(new SvelteMap());
 	withLoadingChildren = $state<SvelteSet<string>>(new SvelteSet());
@@ -79,4 +79,4 @@ export class VisitedNodesState {
 	}
 }
 
-export const visitedNodesState = new VisitedNodesState();
+export default new VisitedNodesState();
