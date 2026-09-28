@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-
 	import NodeLoadActions from '$lib/components/shared/NodeLoadActions.svelte';
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';	
 
 	interface Props {
 		x: number;
@@ -13,7 +12,7 @@
 
 	let { x, y, onClose }: Props = $props();
 
-	const node = $derived(selectedNodeState);
+	const node = $derived(SelectedNodeState);
 
 	function handleKeydown(event: KeyboardEvent) {
 		if (event.key === 'Escape') {

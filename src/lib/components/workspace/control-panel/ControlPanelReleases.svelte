@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { RELEASES_TAB_LOAD_ACTIONS } from '$lib/components/shared/constants';
 	import { graph } from '$lib/graph/graph';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 	
 	import NodeLoadActions from '$lib/components/shared/NodeLoadActions.svelte';
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
 	import SearchableList from './SearchableList.svelte';
 
 	import {
@@ -11,7 +11,7 @@
 		isReleaseParentType
 	} from './control-panel-discover-releases';
 
-	const node = $derived(selectedNodeState);
+	const node = $derived(SelectedNodeState);
 
 	const releaseListItems = $derived(
 		node.id

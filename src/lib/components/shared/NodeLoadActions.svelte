@@ -2,8 +2,9 @@
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 
 	import { graph } from '$lib/graph/graph';
-	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
+
+	import CrawlState from '$lib/stores/CrawlState.svelte';
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
 
 	import {
 		ALL_LOAD_ACTIONS,
@@ -33,7 +34,7 @@
 		onAction
 	}: Props = $props();
 
-	const node = $derived(selectedNodeState);
+	const node = $derived(SelectedNodeState);
 
 	const actions = $derived((node.visibleLoadActions ?? []) as LoadAction[]);
 	const renderedActions = $derived(
@@ -102,7 +103,7 @@
 	}
 
 	function isActionDisabled(action: LoadAction): boolean {
-		if (!node.id || !node.isDetailsFetched || node.isBlocked || crawlState.isRunning) return true;
+		if (!node.id || !node.isDetailsFetched || node.isBlocked || CrawlState.isRunning) return true;
 		if (showAllActions && !actions.includes(action)) return true;
 
 		const state = getActionState(action);

@@ -1,14 +1,13 @@
 <script lang="ts">
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
-
 	import SearchableListItemButton from '$lib/components/shared/SearchableListItemButton.svelte';
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
 	import NodeDetailRow from './NodeDetailRow.svelte';
 	import NodeTypeBadge from './NodeTypeBadge.svelte';
 
 	import type { SearchableListItem } from '$lib/components/shared/types';
 
-	const selected = $derived(selectedNodeState);
-	const node = $derived(selectedNodeState.data);
+	const selected = $derived(SelectedNodeState);
+	const node = $derived(SelectedNodeState.data);
 
 	const primaryArtistItem = $derived.by((): SearchableListItem | null => {
 		if (!selected.isMasterOrRelease || !node) return null;
@@ -32,7 +31,7 @@
 	const showPrimaryArtist = $derived(Boolean(primaryArtistItem));
 	const showReleaseTotal = $derived(
 		(node!.type === 'artist' || node!.type === 'label' || node!.type === 'master') &&
-			selectedNodeState.releaseTotal !== null
+			SelectedNodeState.releaseTotal !== null
 	);
 	const releaseTotalLabel = $derived(node!.type === 'master' ? 'Versions' : 'Releases');
 	const showYear = $derived(selected.isMasterOrRelease && Boolean(node!.meta?.year));
@@ -54,7 +53,7 @@
 		/>
 	</NodeDetailRow>
 	<NodeDetailRow label={releaseTotalLabel} show={showReleaseTotal}>
-		{selectedNodeState.releaseTotal!.toLocaleString()}
+		{SelectedNodeState.releaseTotal!.toLocaleString()}
 	</NodeDetailRow>
 	<NodeDetailRow label="Year" show={showYear}>{node!.meta?.year}</NodeDetailRow>
 	<NodeDetailRow label="Genres" show={showGenres}>{node!.meta?.genres?.join(', ')}</NodeDetailRow>

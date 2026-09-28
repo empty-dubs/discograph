@@ -2,16 +2,16 @@
 	import { discogsApi } from '$lib/discogs/discogs.svelte';
 	import { graph } from '$lib/graph/graph';
 	import { getCrawlNeighborIds, getCrawlNodeType, runBFSCrawl } from '$lib/graph/operations/crawlers';
-	import { crawlState } from '$lib/graph/stores/CrawlState.svelte';
-	import { selectedNodeState } from '$lib/graph/stores/SelectedNodeState.svelte';
 
+	import CrawlState from '$lib/stores/CrawlState.svelte';
+	import SelectedNodeState from '$lib/graph/stores/SelectedNodeState.svelte';
 	import ControlPanelNumberInput from './ControlPanelNumberInput.svelte';
 
-	const node = $derived(selectedNodeState);
+	const node = $derived(SelectedNodeState);
 
-	const crawlNodeType = $derived(getCrawlNodeType(crawlState.mode));
+	const crawlNodeType = $derived(getCrawlNodeType(CrawlState.mode));
 	const seedMatchesMode = $derived(node.data?.type === crawlNodeType);
-	const hasNoCrawlNeighbors = $derived(getCrawlNeighborIds(node.data!, crawlState.mode).length === 0);
+	const hasNoCrawlNeighbors = $derived(getCrawlNeighborIds(node.data!, CrawlState.mode).length === 0);
 
 	const isSeedBlocked = $derived(
 		node.data
@@ -27,36 +27,36 @@
 		|| !seedMatchesMode
 		|| isSeedBlocked
 		|| hasNoCrawlNeighbors
-		|| crawlState.isRunning
+		|| CrawlState.isRunning
 		|| discogsApi.isRateLimited
 	);
 
 	$effect(() => {
-		if (crawlState.isRunning) return;
+		if (CrawlState.isRunning) return;
 
 		const type = node.data?.type;
 
-		if (type === 'artist') crawlState.mode = 'artist-artist';
-		else if (type === 'label') crawlState.mode = 'label-label';
+		if (type === 'artist') CrawlState.mode = 'artist-artist';
+		else if (type === 'label') CrawlState.mode = 'label-label';
 	});
 
 	async function crawl() {
 		if (isCrawlDisabled || !node.data || node.isBlocked) return;
 
 		if (node.data.type !== crawlNodeType) {
-			discogsApi.setError(`Crawl mode ${crawlState.mode} requires a selected ${crawlNodeType} node`);
+			discogsApi.setError(`Crawl mode ${CrawlState.mode} requires a selected ${crawlNodeType} node`);
 			return;
 		}
 
 		discogsApi.clearError();
 
-		crawlState.beginCrawl();
+		CrawlState.beginCrawl();
 
 		await runBFSCrawl(
 			graph,
 			node.data,
-			crawlState.mode,
-			crawlState.depth
+			CrawlState.mode,
+			CrawlState.depth
 		);
 	}
 </script>
@@ -68,8 +68,8 @@
 			<select
 				id="crawl-mode"
 				class="ui-field w-full"
-				bind:value={crawlState.mode}
-				disabled={crawlState.isRunning}
+				bind:value={CrawlState.mode}
+				disabled={CrawlState.isRunning}
 			>
 				<option value="artist-artist">artist-artist</option>
 				<option value="label-label">label-label</option>
@@ -81,14 +81,14 @@
 				id="crawl-depth"
 				label="Depth"
 				max={5}
-				disabled={crawlState.isRunning}
-				bind:value={crawlState.depth}
+				disabled={CrawlState.isRunning}
+				bind:value={CrawlState.depth}
 			/>
 		</div>
 	</div>
 
-	{#if crawlState.isRunning}
-		<button type="button" class="ui-button w-full" onclick={() => crawlState.requestStop()}>
+	{#if CrawlState.isRunning}
+		<button type="button" class="ui-button w-full" onclick={() => CrawlState.requestStop()}>
 			Stop
 		</button>
 	{:else}
