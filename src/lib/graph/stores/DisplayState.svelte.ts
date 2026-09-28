@@ -3,11 +3,11 @@ import { SvelteSet } from 'svelte/reactivity';
 import { ALL_EDGE_TYPES, ALL_NODE_TYPES } from '../constants';
 
 import { filterVisibleLinks, filterVisibleNodes } from '../operations/filters';
-import { graphDataState } from './GraphDataState.svelte';
+import GraphDataState from './GraphDataState.svelte';
 
 import type { EdgeType, GraphNode, NodeType } from '../types';
 
-export class GraphDisplayState {
+class GraphDisplayState {
 	selectedId = $state<string | null>(null);
 	visibleTypes = $state<SvelteSet<NodeType>>(new SvelteSet(ALL_NODE_TYPES));
 	showNodeLabels = $state(true);
@@ -24,19 +24,19 @@ export class GraphDisplayState {
 	}
 
 	get visibleNodeList(): GraphNode[] {
-		return filterVisibleNodes(graphDataState.nodeList, this.visibleTypes, this.pinnedIds);
+		return filterVisibleNodes(GraphDataState.nodeList, this.visibleTypes, this.pinnedIds);
 	}
 
 	get visibleLinkList() {
 		const visibleNodeIds = new Set(this.visibleNodeList.map((n) => n.id));
 
-		return filterVisibleLinks(graphDataState.linkList, visibleNodeIds);
+		return filterVisibleLinks(GraphDataState.linkList, visibleNodeIds);
 	}
 
 	get typeCounts(): Record<NodeType, number> {
 		const counts = Object.fromEntries(ALL_NODE_TYPES.map((t) => [t, 0])) as Record<NodeType, number>;
 
-		for (const node of graphDataState.nodeList) {
+		for (const node of GraphDataState.nodeList) {
 			counts[node.type]++;
 		}
 
@@ -98,4 +98,4 @@ export class GraphDisplayState {
 	}
 }
 
-export const graphDisplayState = new GraphDisplayState();
+export default new GraphDisplayState();

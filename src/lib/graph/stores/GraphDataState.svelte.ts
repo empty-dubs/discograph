@@ -1,6 +1,6 @@
 import type { GraphLink, GraphNode, GraphPatch } from '../types';
 
-export class GraphDataState {
+class GraphDataState {
 	nodes = $state<Map<string, GraphNode>>(new Map());
 	links = $state<Map<string, GraphLink>>(new Map());
 	revisionCounter = $state(0);
@@ -94,4 +94,4 @@ export class GraphDataState {
 	}
 }
 
-export const graphDataState = new GraphDataState();
+export default new GraphDataState();

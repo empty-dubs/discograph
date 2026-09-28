@@ -1,21 +1,21 @@
-import { graphDataState, type GraphDataState } from './stores/GraphDataState.svelte';
-import { visitedNodesState, type VisitedNodesState } from './stores/VisitedNodesState.svelte';
-import { graphDisplayState, type GraphDisplayState } from './stores/DisplayState.svelte';
+import GraphDataState from './stores/GraphDataState.svelte';
+import VisitedNodesState from './stores/VisitedNodesState.svelte';
+import GraphDisplayState from './stores/DisplayState.svelte';
 
 import type { GraphPatch } from './types';
 
 export interface GraphInterface {
-	readonly data: GraphDataState;
-	readonly display: GraphDisplayState;
-	readonly visitedNodes: VisitedNodesState;
+	readonly data: typeof GraphDataState;
+	readonly display: typeof GraphDisplayState;
+	readonly visitedNodes: typeof VisitedNodesState;
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch): void;
 	clear(): void;
 }
 
 class Graph implements GraphInterface {
-	readonly data = graphDataState;
-	readonly display = graphDisplayState;
-	readonly visitedNodes = visitedNodesState;
+	readonly data = GraphDataState;
+	readonly display = GraphDisplayState;
+	readonly visitedNodes = VisitedNodesState;
 
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch) {
 		const prePatchNodeIds = new Set(this.data.nodes.keys());
