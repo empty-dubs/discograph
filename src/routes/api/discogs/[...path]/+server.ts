@@ -1,5 +1,9 @@
 import { json, error } from '@sveltejs/kit';
-import { DiscogsApiError, extractRateLimitHeaders, fetchDiscogs } from '$lib/server/discogs';
+import {
+	DiscogsApiError,
+	extractRateLimitHeaders,
+	fetchDiscogs
+} from '../../../../lib2/server/discogs';
 import type { RequestHandler } from './$types';
 
 export const prerender = false;
