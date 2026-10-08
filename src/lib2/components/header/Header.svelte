@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SearchForm from '../../sources/discogs/SearchForm.svelte';
+	import DiscogsSearchForm from './DiscogsSearchForm.svelte';
 </script>
 
 <header class="relative flex flex-wrap items-end gap-4">
@@ -7,5 +7,5 @@
 		<h1 class="m-0 text-2xl font-bold">Discograph</h1>
 	</div>
 
-	<SearchForm />
+	<DiscogsSearchForm />
 </header>
