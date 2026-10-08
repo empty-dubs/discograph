@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { search } from './client';
-	import { searchResultLabel } from './patches/compositions';
-	import { isBlocked, seedFromResult } from './load';
+	import { seedFromSearchResult } from '../../nexus/bridge';
+	import { discogsPlugin as discogs } from '../../plugins/discogs';
 
-	import type { SearchResult, SearchType } from './types';
+	import type { SearchResult, SearchType } from '../../plugins/discogs';
 
 	let query = $state('');
 	let searchType = $state<SearchType | ''>('');
@@ -22,7 +21,7 @@
 		error = null;
 
 		try {
-			const response = await search(trimmed, searchType || undefined);
+			const response = await discogs.client.search(trimmed, searchType || undefined);
 
 			results = response.results;
 		} catch (err) {
@@ -34,17 +33,17 @@
 	}
 
 	function pick(result: SearchResult) {
-		if (isBlocked(result.type, result.id)) return;
+		if (discogs.isBlocked(result.type, result.id)) return;
 
-		seedFromResult(result);
+		seedFromSearchResult(result);
 		results = [];
 	}
 </script>
 
 <form class="relative flex min-w-0 flex-1 flex-wrap items-center gap-2" onsubmit={submit}>
-	<label class="sr-only" for="catalog-search">Search Discogs</label>
+	<label class="sr-only" for="discogs-search">Search Discogs</label>
 	<input
-		id="catalog-search"
+		id="discogs-search"
 		class="ui-field min-w-48 flex-1"
 		type="search"
 		placeholder="Search Discogs…"
@@ -75,11 +74,11 @@
 					<button
 						type="button"
 						class="ui-list-button"
-						disabled={isBlocked(result.type, result.id)}
+						disabled={discogs.isBlocked(result.type, result.id)}
 						onclick={() => pick(result)}
 					>
 						<span class="text-muted mr-2 uppercase">{result.type}</span>
-						{searchResultLabel(result)}
+						{discogs.transformations.entityLabel(result)}
 						{#if result.year}
 							<span class="text-muted"> {result.year}</span>
 						{/if}

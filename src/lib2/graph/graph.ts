@@ -1,9 +1,9 @@
 import GraphDataState from './stores/GraphDataState.svelte';
-import GraphDisplayState from './stores/GraphPresentationState.svelte';
+import GraphPresentationState from './stores/GraphPresentationState.svelte';
 
 class Graph {
 	readonly data = GraphDataState;
-	readonly presentation = GraphDisplayState;
+	readonly presentation = GraphPresentationState;
 
 	clear() {
 		this.presentation.clear();

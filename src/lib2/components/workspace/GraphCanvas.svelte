@@ -3,15 +3,14 @@
 
 	import { ForceGraph } from '../../graph/force-graph';
 	import { graph } from '../../graph/graph';
-	import { nodePresentation } from '../../sources/active';
-
+	import { nodePresentation } from '../../nexus/bridge';
 	let container = $state<HTMLDivElement | null>(null);
 	let tooltip = $state<{ x: number; y: number; text: string } | null>(null);
 	let forceGraph: ForceGraph | null = null;
 
 	onMount(() => {
 		forceGraph = new ForceGraph(container!, {
-			nodePresentation,
+			nodePresentation: nodePresentation,
 			onNodeClick: (id) => {
 				graph.presentation.selectNode(id);
 			},

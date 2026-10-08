@@ -4,7 +4,7 @@ import GraphDataState from './GraphDataState.svelte';
 
 import type { GraphNode } from '../types';
 
-class GraphDisplayState {
+class GraphPresentationState {
 	selectedId = $state<string | null>(null);
 	visibleTypes = $state<SvelteSet<string>>(new SvelteSet());
 	showNodeLabels = $state(true);
@@ -48,4 +48,4 @@ class GraphDisplayState {
 	}
 }
 
-export default new GraphDisplayState();
+export default new GraphPresentationState();
