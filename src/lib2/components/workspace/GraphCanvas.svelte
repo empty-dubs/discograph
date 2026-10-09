@@ -50,7 +50,7 @@
 
 		forceGraph.setSelectedId(graph.presentation.selectedId);
 		forceGraph.setShowNodeLabels(graph.presentation.showNodeLabels);
-		forceGraph.setDirectedEdges(graph.presentation.showDirectedEdges);
+		forceGraph.setDirectedLinks(graph.presentation.showDirectedLinks);
 	});
 </script>
 

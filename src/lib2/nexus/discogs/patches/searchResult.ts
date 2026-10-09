@@ -1,7 +1,7 @@
-import { discogsPlugin as discogs } from '../../plugins/discogs';
+import { discogsPlugin as discogs } from '../../../plugins/discogs';
 
-import type { GraphPatch } from '../../graph/types';
-import type { SearchResult} from '../../plugins/discogs';
+import type { GraphPatch } from '../../../graph/types';
+import type { SearchResult} from '../../../plugins/discogs';
 
 export function searchResultPatch(result: SearchResult): GraphPatch {
 	return {

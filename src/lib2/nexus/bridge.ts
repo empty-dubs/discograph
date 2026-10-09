@@ -1,6 +1,6 @@
 import { graph } from '../graph/graph';
 import { discogsPlugin as discogs } from '../plugins/discogs';
-import { searchResultPatch } from './patches/searchResult';
+import { searchResultPatch } from './discogs/patches/searchResult';
 
 import { defaultNodePresentation } from '../graph/presentation';
 

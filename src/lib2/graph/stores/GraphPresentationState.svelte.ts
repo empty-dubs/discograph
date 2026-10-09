@@ -8,8 +8,8 @@ class GraphPresentationState {
 	selectedId = $state<string | null>(null);
 	visibleTypes = $state<SvelteSet<string>>(new SvelteSet());
 	showNodeLabels = $state(true);
-	showDirectedEdges = $state(true);
-	highlightedEdgeType = $state<string | null>(null);
+	showDirectedLinks = $state(true);
+	highlightedLinkType = $state<string | null>(null);
 	revisionCounter = $state(0);
 
 	get visibleNodeList(): GraphNode[] {
@@ -42,8 +42,8 @@ class GraphPresentationState {
 		this.selectedId = null;
 		this.visibleTypes = new SvelteSet();
 		this.showNodeLabels = true;
-		this.showDirectedEdges = true;
-		this.highlightedEdgeType = null;
+		this.showDirectedLinks = true;
+		this.highlightedLinkType = null;
 		this.revisionCounter = 0;
 	}
 }

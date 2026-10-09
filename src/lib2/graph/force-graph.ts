@@ -51,9 +51,9 @@ interface ForceGraphOptions {
 }
 
 const LINK_ARROW_PATH = 'M-4,-4 L4,0 L-4,4';
-const MIN_ARROW_EDGE_LENGTH = 14;
+const MIN_ARROW_LINK_LENGTH = 14;
 
-function formatEdgeTooltip(link: SimulationLink): string {
+function formatLinkTooltip(link: SimulationLink): string {
 	const type = link.type.replace(/_/g, ' ');
 
 	return link.label ? `${type} (${link.label})` : type;
@@ -75,9 +75,9 @@ export class ForceGraph {
 	private simulationLinks: SimulationLink[] = [];
 	private tooltipText: string | null = null;
 	private showNodeLabels = true;
-	private directedEdges = true;
+	private directedLinks = true;
 	private selectedId: string | null = null;
-	private highlightedEdgeType: string | null = null;
+	private highlightedLinkType: string | null = null;
 	private lastStructureRevision = -1;
 	private lastVisibilityRevision = -1;
 
@@ -246,7 +246,7 @@ export class ForceGraph {
 				(exit) => exit.remove()
 			)
 			.on('mouseenter', (event, d) => {
-				this.tooltipText = formatEdgeTooltip(d);
+				this.tooltipText = formatLinkTooltip(d);
 				onTooltip({ x: event.clientX, y: event.clientY, text: this.tooltipText });
 			})
 			.on('mousemove', (event) => {
@@ -345,14 +345,14 @@ export class ForceGraph {
 		}
 	}
 
-	setDirectedEdges(show: boolean): void {
-		this.directedEdges = show;
+	setDirectedLinks(show: boolean): void {
+		this.directedLinks = show;
 		this.layoutLinks();
 		this.applyHighlight();
 	}
 
 	private layoutLinks() {
-		const directed = this.directedEdges;
+		const directed = this.directedLinks;
 
 		this.gLinks?.selectAll<SVGGElement, SimulationLink>('g.link').each((d, _index, groups) => {
 			const source = d.source as SimulationNode;
@@ -388,7 +388,7 @@ export class ForceGraph {
 
 			group.selectAll('line').attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2);
 
-			if (!directed || segmentLength < MIN_ARROW_EDGE_LENGTH) {
+			if (!directed || segmentLength < MIN_ARROW_LINK_LENGTH) {
 				arrow.style('display', 'none');
 				return;
 			}
@@ -412,7 +412,7 @@ export class ForceGraph {
 			.attr('stroke', (d) => (d.id === this.selectedId ? '#f2c782' : 'none'))
 			.attr('stroke-width', (d) => (d.id === this.selectedId ? 2 : 0));
 
-		const highlightedType = this.highlightedEdgeType;
+		const highlightedType = this.highlightedLinkType;
 
 		this.gLinks
 			?.selectAll<SVGGElement, SimulationLink>('g.link')
@@ -442,8 +442,8 @@ export class ForceGraph {
 		this.simulation.alpha(0).stop();
 		this.tooltipText = null;
 		this.selectedId = null;
-		this.highlightedEdgeType = null;
-		this.directedEdges = true;
+		this.highlightedLinkType = null;
+		this.directedLinks = true;
 		this.lastStructureRevision = -1;
 		this.lastVisibilityRevision = -1;
 		this.options.onTooltip(null);
