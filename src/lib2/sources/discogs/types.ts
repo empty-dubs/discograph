@@ -1,5 +1,28 @@
 export type SearchType = 'artist' | 'label' | 'release' | 'master';
 
+export type EntityType = 'artist' | 'label' | 'release' | 'master';
+
+export type RelationshipType =
+	| 'member_of'
+	| 'released'
+	| 'on_label'
+	| 'company_on'
+	| 'credited_on'
+	| 'version_of'
+	| 'sublabel_of'
+	| 'alias_of';
+
+export type LoadAction =
+| 'artists'
+| 'labels'
+| 'releases'
+| 'master_releases'
+| 'main_release'
+| 'linked_master'
+| 'companies'
+| 'credited_artists'
+| 'aliases';
+
 export interface Pagination {
 	page: number;
 	pages: number;
