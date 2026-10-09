@@ -3,9 +3,10 @@ import type { GraphLink, GraphNode } from './types';
 export function createNode(
 	id: string,
 	type: string,
-	label: string
+	label: string,
+	externalId: number
 ): GraphNode {
-	return {id, type, label};
+	return { id, type, label, externalId };
 }
 
 export function createLink(

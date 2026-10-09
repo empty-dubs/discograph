@@ -2,6 +2,7 @@ export interface GraphNode {
 	id: string;
 	type: string;
 	label: string;
+	externalId: number;
 }
 
 export interface GraphLink {
