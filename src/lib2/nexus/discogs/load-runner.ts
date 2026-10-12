@@ -1,0 +1,213 @@
+import { graph } from '../../graph/graph';
+import { discogsPlugin as discogs } from '../../plugins/discogs';
+
+import {
+	applyExpansionPaging,
+	LOAD_ACTION_CONFIG,
+	getExpansionPaging
+} from './expansion-config';
+import { markDiscogsExpansionCompleted } from './expansion-session';
+
+import type { EntityType, LoadType, Pagination, SearchType } from '../../plugins/discogs';
+import type { GraphNode } from '../../graph/types';
+import type { LoadAction } from './expansion-config';
+
+// TODO: move request stuff to a more global location
+let requestError: string | null = null;
+
+export function getRequestError(): string | null {
+	return requestError;
+}
+
+function clearRequestError() {
+	requestError = null;
+}
+
+function setRequestError(message: string | null) {
+	requestError = message;
+}
+
+export async function withRequest<T>(
+	fn: () => Promise<T>,
+	errorMessage: string
+): Promise<T | null> {
+	clearRequestError();
+
+	try {
+		return await fn();
+	} catch (err) {
+		setRequestError(err instanceof Error ? err.message : errorMessage);
+
+		return null;
+	}
+}
+
+function loadActionErrorMessage(loadType: LoadType): string {
+	return `Failed to ${discogs.constants.loadTypeLabels[loadType].toLowerCase()}`;
+}
+
+function isBlockedNode(node: GraphNode): boolean {
+	return discogs.isBlocked(node.type as SearchType, node.externalId);
+}
+
+function displayLabelFromDocument(document: {
+	title?: string;
+	name?: string;
+}): string | undefined {
+	return document.title ?? document.name;
+}
+
+export async function loadEntityDocument(node: GraphNode): Promise<'loaded' | 'skipped' | 'failed'> {
+	if (isBlockedNode(node)) {
+		graph.expansion.setPrimaryDocumentStatus(node.id, 'loaded');
+
+		return 'skipped';
+	}
+
+	const status = graph.expansion.primaryDocumentByNodeId.get(node.id);
+
+	if (status === 'loading' || status === 'loaded' || status === 'failed') {
+		return 'skipped';
+	}
+
+	const result = await graph.expansion.withExpansionInFlight(node.id, async () => {
+		graph.expansion.setPrimaryDocumentStatus(node.id, 'loading');
+
+		const payload = await withRequest(
+			() => discogs.fetch.fetchEntityDocument(node.externalId, node.type as EntityType),
+			discogs.fetch.entityFetchErrorMessage(node.type as EntityType)
+		);
+
+		if (!payload) {
+			graph.expansion.setPrimaryDocumentStatus(node.id, 'failed');
+
+			return 'failed';
+		}
+
+		graph.expansion.setPrimaryDocumentStatus(node.id, 'loaded');
+
+		const label = displayLabelFromDocument(payload as { title?: string; name?: string });
+
+		if (label) {
+			graph.data.updateNode(node.id, { label });
+		}
+
+		return 'loaded';
+	});
+
+	return result ?? 'skipped';
+}
+
+async function ensureEntityDocument(node: GraphNode): Promise<boolean> {
+	const status = graph.expansion.primaryDocumentByNodeId.get(node.id);
+
+	if (status === 'loaded') return true;
+
+	const outcome = await loadEntityDocument(node);
+
+	return outcome === 'loaded' || outcome === 'skipped';
+}
+
+function getLoadAction(node: GraphNode, loadType: LoadType): LoadAction | undefined {
+	return LOAD_ACTION_CONFIG[loadType]?.[node.type as EntityType];
+}
+
+async function runDocumentPatchLoadAction(
+	node: GraphNode,
+	loadAction: Extract<LoadAction, { source: 'document' }>,
+	loadType: LoadType
+) {
+	if (!(await ensureEntityDocument(node))) return;
+
+	const document = discogs.documentStore.get(node.id);
+
+	if (!document) return;
+
+	const patch = loadAction.patch(document);
+
+	graph.applyPatchFromExpansion(node.id, patch);
+	graph.expansion.markExpansionCompleted(node.id, loadAction.markCompleted ?? loadType);
+}
+
+async function runReleasesPatchLoadAction(
+	node: GraphNode,
+	loadAction: Extract<LoadAction, { source: 'releases' }>,
+	loadType: LoadType,
+	page: number
+) {
+	const response = await withRequest(
+		() => loadAction.fetch(node.externalId, page),
+		loadActionErrorMessage(loadType)
+	);
+
+	if (!response || typeof response !== 'object' || !('pagination' in response)) return;
+
+	const patch = loadAction.patch(response);
+
+	graph.applyPatchFromExpansion(node.id, patch);
+	applyExpansionPaging(node.id, loadType, response.pagination as Pagination);
+}
+
+// TODO: update this to be more like runDocumentPatchLoadAction
+// or roll into runDocumentPatchLoadAction
+async function runCustomPatchLoadAction(
+	node: GraphNode,
+	loadAction: Extract<LoadAction, { source: 'custom' }>,
+	loadType: LoadType
+) {
+	if (!(await ensureEntityDocument(node))) return;
+
+	const ok = await withRequest(async () => {
+		await loadAction.run(node);
+
+		return true;
+	}, loadActionErrorMessage(loadType));
+
+	if (ok) {
+		markDiscogsExpansionCompleted(node.id, loadType);
+	}
+}
+
+export type LoadActionParams = {
+	page?: number | 'next';
+};
+
+export async function runPatchLoadAction(
+	node: GraphNode,
+	loadType: LoadType,
+	options?: LoadActionParams
+): Promise<void> {
+	if (isBlockedNode(node)) return;
+
+	const loadAction = getLoadAction(node, loadType);
+
+	if (!loadAction) return;
+
+	await graph.expansion.withExpansionInFlight(node.id, async () => {
+		if (loadAction.source === 'custom') {
+			await runCustomPatchLoadAction(node, loadAction, loadType);
+
+			return;
+		}
+
+		if (loadAction.source === 'document') {
+			await runDocumentPatchLoadAction(node, loadAction, loadType);
+
+			return;
+		}
+
+		let page: number;
+
+		if (options?.page === 'next') {
+			const paging = getExpansionPaging(node.id, loadAction.expansionId);
+
+			if (!paging || paging.page >= paging.pages) return;
+
+			page = paging.page + 1;
+		} else {
+			page = options?.page ?? 1;
+		}
+
+		await runReleasesPatchLoadAction(node, loadAction, loadType, page);
+	});
+}
