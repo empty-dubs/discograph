@@ -22,7 +22,6 @@ const FETCH_ERROR_MESSAGE: Record<EntityType, string> = {
 	master: 'Failed to load master details'
 };
 
-
 export function artistReleaseFetchParams(page: number): PagedListParams {
 	return {
 		page,
