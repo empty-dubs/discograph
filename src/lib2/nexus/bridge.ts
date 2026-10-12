@@ -22,7 +22,7 @@ export function seedFromSearchResult(result: SearchResult) {
 	discogs.documentStore.clear();
 	graph.clear();
 
-	const id = discogs.compositions.nodeId(result.type, result.id);
+	const id = discogs.compositions.getEntityId(result.type, result.id);
 
 	discogs.documentStore.set(id, result);
 

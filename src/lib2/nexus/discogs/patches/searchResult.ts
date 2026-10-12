@@ -10,7 +10,7 @@ export function searchResultPatch(result: SearchResult): GraphPatch {
 	return {
 		nodes: [
 			createNode(
-				discogs.compositions.nodeId(type, result.id),
+				discogs.compositions.getEntityId(type, result.id),
 				type,
 				discogs.transformations.entityLabel(result),
 				result.id

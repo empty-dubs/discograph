@@ -1,10 +1,18 @@
 import { documentStore } from '../sources/discogs/document-store.svelte';
 import * as client from '../sources/discogs/client';
 import { isBlocked } from '../sources/discogs/blocked';
-import { linkId, nodeId } from '../sources/discogs/compositions';
-import { LOAD_ACTIONS, LOAD_ACTION_LABELS } from '../sources/discogs/constants';
+import { getRelationshipId, getEntityId } from '../sources/discogs/compositions';
+import { LOAD_TYPES, LOAD_TYPE_LABELS, PATCH_LOAD_TYPES } from '../sources/discogs/constants';
 import { entityLabel } from '../sources/discogs/transformations';
 import { graphPresentation } from '../sources/discogs/presentation';
+import {
+	fetchEntityDocument,
+	entityFetchErrorMessage,
+	artistReleaseFetchParams,
+	labelReleaseFetchParams,
+	masterVersionFetchParams,
+} from '../sources/discogs/fetch';
+
 import type { SearchResult, SearchType } from '../sources/discogs/types';
 
 interface SourcePlugin {
@@ -17,12 +25,20 @@ interface SourcePlugin {
 		entityLabel: (result: Pick<SearchResult, 'title' | 'name' | 'type'>) => string;
 	};
 	compositions: {
-		nodeId: (type: string, externalId: string | number) => string;
-		linkId: (source: string, type: string, target: string) => string;
+		getEntityId: (type: string, externalId: string | number) => string;
+		getRelationshipId: (source: string, type: string, target: string) => string;
 	};
 	constants: {
-		loadActions: typeof LOAD_ACTIONS;
-		loadActionLabels: typeof LOAD_ACTION_LABELS;
+		loadTypes: typeof LOAD_TYPES;
+		loadTypeLabels: typeof LOAD_TYPE_LABELS;
+		patchLoadTypes: typeof PATCH_LOAD_TYPES;
+	};
+	fetch: {
+		fetchEntityDocument: typeof fetchEntityDocument;
+		entityFetchErrorMessage: typeof entityFetchErrorMessage;
+		artistReleaseFetchParams: typeof artistReleaseFetchParams;
+		labelReleaseFetchParams: typeof labelReleaseFetchParams;
+		masterVersionFetchParams: typeof masterVersionFetchParams;
 	};
 }
 
@@ -34,7 +50,7 @@ export type {
 	Label,
 	LabelRelease,
 	LabelReleasesResponse,
-	LoadAction,
+	LoadType,
 	Master,
 	MasterVersion,
 	MasterVersionsResponse,
@@ -57,11 +73,19 @@ export const discogsPlugin = {
 		entityLabel,
 	},
 	compositions: {
-		nodeId,
-		linkId
+		getEntityId,
+		getRelationshipId
 	},
 	constants: {
-		loadActions: LOAD_ACTIONS,
-		loadActionLabels: LOAD_ACTION_LABELS
+		loadTypes: LOAD_TYPES,
+		loadTypeLabels: LOAD_TYPE_LABELS,
+		patchLoadTypes: PATCH_LOAD_TYPES
+	},
+	fetch: {
+		fetchEntityDocument,
+		entityFetchErrorMessage,
+		artistReleaseFetchParams,
+		labelReleaseFetchParams,
+		masterVersionFetchParams
 	}
 } satisfies SourcePlugin;

@@ -7,9 +7,19 @@ class GraphExpansionState {
 	primaryDocumentByNodeId = $state<SvelteMap<string, PrimaryDocumentStatus>>(new SvelteMap());
 	completedExpansionsByNodeId = $state<SvelteMap<string, Set<string>>>(new SvelteMap());
 	expansionInFlightNodeIds = $state<SvelteSet<string>>(new SvelteSet());
-	expansionPagingByNodeId = $state<SvelteMap<string, SvelteMap<string, ExpansionPaging>>>(
-		new SvelteMap()
-	);
+	expansionPagingByNodeId = $state<SvelteMap<string, SvelteMap<string, ExpansionPaging>>>(new SvelteMap());
+
+	async withExpansionInFlight<T>(nodeId: string, fn: () => Promise<T>): Promise<T | null> {
+		if (this.expansionInFlightNodeIds.has(nodeId)) return null;
+	
+		this.expansionInFlightNodeIds.add(nodeId);
+	
+		try {
+			return await fn();
+		} finally {
+			this.expansionInFlightNodeIds.delete(nodeId);
+		}
+	}
 
 	hasMoreExpansionPages(nodeId: string, expansionId: string): boolean {
 		const paging = this.expansionPagingByNodeId.get(nodeId)?.get(expansionId);

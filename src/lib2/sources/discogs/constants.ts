@@ -1,6 +1,6 @@
 import { dev } from '$app/environment';
 
-import type { LoadAction, SearchType } from './types';
+import type { LoadType, SearchType } from './types';
 
 export const DISCOGS_WEB_ORIGIN = 'https://www.discogs.com';
 export const DISCOGS_API_ORIGIN = 'https://api.discogs.com';
@@ -26,14 +26,24 @@ export const BLOCKED_DISCOGS_IDS: Partial<Record<SearchType, ReadonlySet<number>
 	label: new Set([1818])
 };
 
-export const LOAD_ACTIONS: Record<SearchType, LoadAction[]> = {
+export const LOAD_TYPES: Record<SearchType, LoadType[]> = {
 	artist: ['artists', 'aliases', 'releases', 'master_releases'],
 	label: ['labels', 'releases'],
 	release: ['artists', 'labels', 'companies', 'credited_artists', 'linked_master'],
 	master: ['artists', 'releases', 'main_release']
 };
 
-export const LOAD_ACTION_LABELS: Record<LoadAction, string> = {
+export const PATCH_LOAD_TYPES = new Set<LoadType>([
+	'artists',
+	'labels',
+	'aliases',
+	'companies',
+	'credited_artists',
+	'main_release',
+	'linked_master'
+]);
+
+export const LOAD_TYPE_LABELS: Record<LoadType, string> = {
 	artists: 'Load related artists',
 	aliases: 'Load artist aliases',
 	labels: 'Load related labels',

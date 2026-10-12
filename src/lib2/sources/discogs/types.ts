@@ -12,7 +12,7 @@ export type RelationshipType =
 	| 'sublabel_of'
 	| 'alias_of';
 
-export type LoadAction =
+export type LoadType =
 | 'artists'
 | 'labels'
 | 'releases'
