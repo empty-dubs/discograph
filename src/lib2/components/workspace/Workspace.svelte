@@ -1,9 +1,12 @@
 <script lang="ts">
 	import ControlPanel from './control-panel/ControlPanel.svelte';
 	import GraphCanvas from './GraphCanvas.svelte';
+	import SelectionEffects from './SelectionEffects.svelte';
 
 	let controlPanelExpanded = $state(true);
 </script>
+
+<SelectionEffects />
 
 <div class="flex min-h-0 flex-1 flex-col gap-4">
 	<div class="grid min-h-0 flex-[2] grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_280px]">

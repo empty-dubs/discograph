@@ -24,8 +24,6 @@ export function seedFromSearchResult(result: SearchResult) {
 
 	const id = discogs.compositions.getEntityId(result.type, result.id);
 
-	discogs.documentStore.set(id, result);
-
 	const patch = searchResultPatch(result);
 
 	if (!patch.nodes[0]) return;
