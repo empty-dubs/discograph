@@ -26,7 +26,7 @@ export type LoadType =
 export interface Pagination {
 	page: number;
 	pages: number;
-	per_page: number;
+	per_page?: number;
 	items: number;
 	urls?: {
 		first?: string;

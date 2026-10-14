@@ -20,6 +20,7 @@ export function seedFromSearchResult(result: SearchResult) {
 	if (discogs.isBlocked(result.type, result.id)) return;
 
 	discogs.documentStore.clear();
+	discogs.loadProgress.clear();
 	graph.clear();
 
 	const id = discogs.compositions.getEntityId(result.type, result.id);

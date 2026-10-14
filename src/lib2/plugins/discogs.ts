@@ -1,5 +1,15 @@
 import { documentStore } from '../sources/discogs/document-store.svelte';
-import * as client from '../sources/discogs/client';
+import { loadProgress } from '../sources/discogs/load-progress.svelte';
+import {
+	getArtist,
+	getLabel,
+	getRelease,
+	getMaster,
+	getArtistReleases,
+	getLabelReleases,
+	getMasterVersions,
+	search,
+} from '../sources/discogs/client';
 import { isBlocked } from '../sources/discogs/blocked';
 import { getRelationshipId, getEntityId } from '../sources/discogs/compositions';
 import { ENTITY_NEIGHBOR_TYPES, LOAD_TYPE_LABELS, PATCH_LOAD_TYPES } from '../sources/discogs/constants';
@@ -18,7 +28,17 @@ import type { SearchResult, SearchType } from '../sources/discogs/types';
 interface SourcePlugin {
 	id: string;
 	documentStore: typeof documentStore;
-	client: typeof client;
+	loadProgress: typeof loadProgress;
+	client: {
+		getArtist: typeof getArtist;
+		getLabel: typeof getLabel;
+		getRelease: typeof getRelease;
+		getMaster: typeof getMaster;
+		getArtistReleases: typeof getArtistReleases;
+		getLabelReleases: typeof getLabelReleases;
+		getMasterVersions: typeof getMasterVersions;
+		search: typeof search;
+	};
 	isBlocked: (type: SearchType, id: number) => boolean;
 	presentation: typeof graphPresentation;
 	transformations: {
@@ -66,7 +86,17 @@ export type {
 export const discogsPlugin = {
 	id: 'discogs',
 	documentStore,
-	client,
+	loadProgress,
+	client: {
+		getArtist,
+		getLabel,
+		getRelease,
+		getMaster,
+		getArtistReleases,
+		getLabelReleases,
+		getMasterVersions,
+		search
+	},
 	isBlocked,
 	presentation: graphPresentation,
 	transformations: {
