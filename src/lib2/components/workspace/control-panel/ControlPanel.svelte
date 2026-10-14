@@ -1,14 +1,26 @@
 <script lang="ts">
 	import { Icon } from 'svelte-awesome';
-	import { chevronDown, chevronUp, gear } from 'svelte-awesome/icons';
+	import { chevronDown, chevronUp, gear, lightbulbO } from 'svelte-awesome/icons';
 
+	import ControlPanelDiscoverMinimal from './ControlPanelDiscoverMinimal.svelte';
 	import ControlPanelSettings from './ControlPanelSettings.svelte';
+	import LoadingIcon from './LoadingIcon.svelte';
+	import SelectedNodeState from '../../../nexus/discogs/stores/SelectedNodeState.svelte';
+
+	type TabId = 'discover' | 'settings';
 
 	interface Props {
 		isExpanded?: boolean;
 	}
 
 	let { isExpanded = $bindable(true) }: Props = $props();
+
+	let activeTab = $state<TabId>('discover');
+
+	function selectTab(tab: TabId) {
+		activeTab = tab;
+		isExpanded = true;
+	}
 </script>
 
 <div class="flex h-full min-h-0 flex-col">
@@ -35,11 +47,35 @@
 			<button
 				type="button"
 				role="tab"
+				id="control-panel-tab-discover"
+				class="ui-tab pointer-events-auto {activeTab === 'discover'
+					? 'ui-tab-active-bottom'
+					: 'ui-tab-inactive-bottom'}"
+				aria-selected={activeTab === 'discover'}
+				aria-controls="control-panel-panel-discover"
+				onclick={() => selectTab('discover')}
+			>
+				<span class="control-panel-subtab-inner">
+					<span class="control-panel-subtab-icon-slot">
+						{#if SelectedNodeState.hasExpansionInFlight}
+							<LoadingIcon />
+						{:else}
+							<Icon data={lightbulbO} class="inline-block shrink-0" scale={0.875} />
+						{/if}
+					</span>
+					Discover
+				</span>
+			</button>
+			<button
+				type="button"
+				role="tab"
 				id="control-panel-tab-settings"
-				class="ui-tab pointer-events-auto ui-tab-active-bottom"
-				aria-selected={true}
+				class="ui-tab pointer-events-auto {activeTab === 'settings'
+					? 'ui-tab-active-bottom'
+					: 'ui-tab-inactive-bottom'}"
+				aria-selected={activeTab === 'settings'}
 				aria-controls="control-panel-panel-settings"
-				onclick={() => (isExpanded = true)}
+				onclick={() => selectTab('settings')}
 			>
 				<span class="control-panel-subtab-inner">
 					<span class="control-panel-subtab-icon-slot">
@@ -60,10 +96,23 @@
 				<div class="grid h-full min-h-0">
 					<div
 						role="tabpanel"
+						id="control-panel-panel-discover"
+						aria-labelledby="control-panel-tab-discover"
+						aria-hidden={activeTab !== 'discover' || !isExpanded}
+						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'discover' || !isExpanded
+							? 'hidden'
+							: ''}"
+					>
+						<ControlPanelDiscoverMinimal />
+					</div>
+					<div
+						role="tabpanel"
 						id="control-panel-panel-settings"
 						aria-labelledby="control-panel-tab-settings"
-						aria-hidden={!isExpanded}
-						class="col-start-1 row-start-1 h-full min-h-0 {isExpanded ? '' : 'hidden'}"
+						aria-hidden={activeTab !== 'settings' || !isExpanded}
+						class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'settings' || !isExpanded
+							? 'hidden'
+							: ''}"
 					>
 						<ControlPanelSettings />
 					</div>

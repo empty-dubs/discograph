@@ -20,10 +20,6 @@ import {
 	buildMainReleaseFromMaster,
 	buildMasterFromRelease
 } from './patches/releases';
-import {
-	hasMoreDiscogsExpansionPages,
-	setDiscogsExpansionPaging
-} from './expansion-session';
 
 import type {
 	Artist,
@@ -48,7 +44,7 @@ type DocumentPatchAction = {
 type ReleasesPatchAction = {
 	source: 'releases';
 	fetch: (externalId: number, page: number) => Promise<unknown>;
-	patch: (payload: unknown) => GraphPatch;
+	patch: (entity: GraphNode, payload: unknown) => GraphPatch;
 	expansionId: LoadType;
 };
 
@@ -122,19 +118,19 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 			source: 'releases',
 			expansionId: 'releases',
 			fetch: (id, page) => discogs.client.getArtistReleases(id, discogs.fetch.artistReleaseFetchParams(page)),
-			patch: (payload) => buildFromArtistReleases((payload as ArtistReleasesResponse).releases, 'release')
+			patch: (artist, payload) => buildFromArtistReleases(artist, (payload as ArtistReleasesResponse).releases, 'release')
 		},
 		label: {
 			source: 'releases',
 			expansionId: 'releases',
 			fetch: (id, page) => discogs.client.getLabelReleases(id, discogs.fetch.labelReleaseFetchParams(page)),
-			patch: (payload) => buildFromLabelReleases((payload as LabelReleasesResponse).releases, 'release')
+			patch: (label, payload) => buildFromLabelReleases(label, (payload as LabelReleasesResponse).releases, 'release')
 		},
 		master: {
 			source: 'releases',
 			expansionId: 'releases',
 			fetch: (id, page) => discogs.client.getMasterVersions(id, discogs.fetch.masterVersionFetchParams(page)),
-			patch: (payload) => buildFromMasterVersions((payload as MasterVersionsResponse).versions)
+			patch: (master, payload) => buildFromMasterVersions(master, (payload as MasterVersionsResponse).versions)
 		}
 	},
 	master_releases: {
@@ -142,13 +138,13 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 			source: 'releases',
 			expansionId: 'master_releases',
 			fetch: (id, page) => discogs.client.getArtistReleases(id, discogs.fetch.artistReleaseFetchParams(page)),
-			patch: (payload) => buildFromArtistReleases((payload as ArtistReleasesResponse).releases, 'master')
+			patch: (artist, payload) => buildFromArtistReleases(artist, (payload as ArtistReleasesResponse).releases, 'master')
 		},
 		label: {
 			source: 'releases',
 			expansionId: 'master_releases',
 			fetch: (id, page) => discogs.client.getLabelReleases(id, discogs.fetch.labelReleaseFetchParams(page)),
-			patch: (payload) => buildFromLabelReleases((payload as LabelReleasesResponse).releases, 'master')
+			patch: (label, payload) => buildFromLabelReleases(label, (payload as LabelReleasesResponse).releases, 'master')
 		}
 	},
 	main_release: {
@@ -187,19 +183,3 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 		}
 	}
 };
-
-export function getExpansionPaging(nodeId: string, loadType: LoadType) {
-	return graph.expansion.expansionPagingByNodeId.get(nodeId)?.get(loadType);
-}
-
-export function applyExpansionPaging(nodeId: string, loadType: LoadType, pagination: Pagination) {
-	setDiscogsExpansionPaging(nodeId, loadType, pagination.page, pagination.pages, pagination.items);
-
-	if (pagination.page >= pagination.pages) {
-		graph.expansion.markExpansionCompleted(nodeId, loadType);
-	}
-}
-
-export function pagingHasMore(nodeId: string, loadType: LoadType): boolean {
-	return hasMoreDiscogsExpansionPages(nodeId, loadType);
-}

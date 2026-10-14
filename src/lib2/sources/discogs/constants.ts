@@ -26,7 +26,7 @@ export const BLOCKED_DISCOGS_IDS: Partial<Record<SearchType, ReadonlySet<number>
 	label: new Set([1818])
 };
 
-export const LOAD_TYPES: Record<SearchType, LoadType[]> = {
+export const ENTITY_NEIGHBOR_TYPES: Record<SearchType, LoadType[]> = {
 	artist: ['artists', 'aliases', 'releases', 'master_releases'],
 	label: ['labels', 'releases'],
 	release: ['artists', 'labels', 'companies', 'credited_artists', 'linked_master'],

@@ -205,6 +205,7 @@ interface DiscogsTrack {
 	position: string;
 	title: string;
 	duration?: string;
+	extraartists?: ReleaseArtist[];
 }
 
 interface MasterArtist {

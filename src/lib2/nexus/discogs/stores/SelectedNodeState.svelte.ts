@@ -2,10 +2,6 @@ import { graph } from '../../../graph/graph';
 import { collectDescendants } from '../../../graph/operations/crawl';
 import { loadEntityDocument } from '../load-runner';
 import { discogsPlugin as discogs } from '../../../plugins/discogs';
-import {
-	hasMoreDiscogsExpansionPages,
-	isDiscogsExpansionCompleted
-} from '../expansion-session';
 
 import type { LoadType, SearchType } from '../../../plugins/discogs';
 
@@ -14,8 +10,8 @@ class SelectedNodeState {
 	data = $derived(graph.data.nodes.get(this.id!));
 
 	hasChildren = $derived(graph.expansion.parentChildAdjacencyList.has(this.id!));
-	hasMoreReleases = $derived(hasMoreDiscogsExpansionPages(this.id!, 'releases'));
-	hasMoreMasterReleases = $derived(hasMoreDiscogsExpansionPages(this.id!, 'master_releases'));
+	hasMoreReleases = $derived(graph.expansion.hasMoreExpansionPages(this.id!, 'releases'));
+	hasMoreMasterReleases = $derived(graph.expansion.hasMoreExpansionPages(this.id!, 'master_releases'));
 	entityDocumentStatus = $derived(graph.expansion.primaryDocumentByNodeId.get(this.id!));
 	isEntityDocumentLoading = $derived(this.entityDocumentStatus === 'loading');
 	isEntityDocumentLoaded = $derived(this.entityDocumentStatus === 'loaded');
@@ -23,16 +19,16 @@ class SelectedNodeState {
 	hasExpansionInFlight = $derived(graph.expansion.expansionInFlightNodeIds.has(this.id!));
 	isBlocked = $derived(discogs.isBlocked(this.data!.type as SearchType, this.data!.externalId));
 
-	visibleLoadTypes = $derived.by((): LoadType[] => {
+	neighborTypes = $derived.by((): LoadType[] => {
 		if (!this.data || this.isBlocked) return [];
 
-		return discogs.constants.loadTypes[this.data.type as SearchType] ?? [];
+		return discogs.constants.neighborTypes[this.data.type as SearchType] ?? [];
 	});
 
 	isExpansionCompleted(loadType: LoadType): boolean {
 		if (!this.id) return false;
 
-		return isDiscogsExpansionCompleted(this.id, loadType);
+		return graph.expansion.isExpansionCompleted(this.id, loadType);
 	}
 
 	collapseNode() {

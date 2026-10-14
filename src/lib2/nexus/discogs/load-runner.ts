@@ -1,12 +1,7 @@
 import { graph } from '../../graph/graph';
 import { discogsPlugin as discogs } from '../../plugins/discogs';
 
-import {
-	applyExpansionPaging,
-	LOAD_ACTION_CONFIG,
-	getExpansionPaging
-} from './expansion-config';
-import { markDiscogsExpansionCompleted } from './expansion-session';
+import { LOAD_ACTION_CONFIG } from './expansion-config';
 
 import type { EntityType, LoadType, Pagination, SearchType } from '../../plugins/discogs';
 import type { GraphNode } from '../../graph/types';
@@ -142,10 +137,17 @@ async function runReleasesPatchLoadAction(
 
 	if (!response || typeof response !== 'object' || !('pagination' in response)) return;
 
-	const patch = loadAction.patch(response);
+	const patch = loadAction.patch(node, response);
 
 	graph.applyPatchFromExpansion(node.id, patch);
-	applyExpansionPaging(node.id, loadType, response.pagination as Pagination);
+
+	const pagination = response.pagination as Pagination;
+	
+	graph.expansion.setExpansionPaging(node.id, loadType, pagination.page, pagination.pages, pagination.items);
+
+	if (pagination.page >= pagination.pages) {
+		graph.expansion.markExpansionCompleted(node.id, loadType);
+	}
 }
 
 // TODO: update this to be more like runDocumentPatchLoadAction
@@ -164,7 +166,7 @@ async function runCustomPatchLoadAction(
 	}, loadActionErrorMessage(loadType));
 
 	if (ok) {
-		markDiscogsExpansionCompleted(node.id, loadType);
+		graph.expansion.markExpansionCompleted(node.id, loadType);
 	}
 }
 
@@ -199,7 +201,7 @@ export async function runPatchLoadAction(
 		let page: number;
 
 		if (options?.page === 'next') {
-			const paging = getExpansionPaging(node.id, loadAction.expansionId);
+			const paging = graph.expansion.expansionPagingByNodeId.get(node.id)?.get(loadAction.expansionId);
 
 			if (!paging || paging.page >= paging.pages) return;
 

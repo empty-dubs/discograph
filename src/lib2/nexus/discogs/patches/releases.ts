@@ -24,6 +24,7 @@ function listingLabel(item: { title?: string; name?: string; artist?: string }):
 }
 
 export function buildFromArtistReleases(
+	artist: GraphNode,
 	releases: ArtistRelease[],
 	kind: 'master' | 'release'
 ): GraphPatch {
@@ -31,14 +32,14 @@ export function buildFromArtistReleases(
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const linkType: RelationshipType = 'released';
-	const sourceNodeId = discogs.compositions.getEntityId(kind, releases[0].id);
+	const sourceNodeId = artist.id;
 
 	for (const item of filtered) {
-		const nodeType = item.type === 'master' ? 'master' : 'release';
-		const targetNodeId = discogs.compositions.getEntityId(nodeType, item.id);
+		const targetNodeType = item.type === 'master' ? 'master' : 'release';
+		const targetNodeId = discogs.compositions.getEntityId(targetNodeType, item.id);
 		const linkId = discogs.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
 
-		nodes.push(createNode(targetNodeId, nodeType, item.title, item.id));
+		nodes.push(createNode(targetNodeId, targetNodeType, item.title, item.id));
 
 		const role = item.role?.toLowerCase();
 
@@ -57,6 +58,7 @@ export function buildFromArtistReleases(
 }
 
 export function buildFromLabelReleases(
+	label: GraphNode,
 	releases: LabelRelease[],
 	kind: 'master' | 'release'
 ): GraphPatch {
@@ -64,58 +66,56 @@ export function buildFromLabelReleases(
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const linkType: RelationshipType = 'on_label';
-	const sourceNodeId = discogs.compositions.getEntityId(kind, releases[0].id);
+	const sourceNodeId = label.id;
 
 	for (const item of filtered) {
 		const releaseType = labelReleaseKind(item);
-		const nodeType = releaseType === 'master' ? 'master' : 'release';
-		const targetNodeId = discogs.compositions.getEntityId(nodeType, item.id);
+		const targetNodeType = releaseType === 'master' ? 'master' : 'release';
+		const targetNodeId = discogs.compositions.getEntityId(targetNodeType, item.id);
 		const linkId = discogs.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
 
-		nodes.push(createNode(targetNodeId, nodeType, listingLabel(item), item.id));
+		nodes.push(createNode(targetNodeId, targetNodeType, listingLabel(item), item.id));
 		links.push(createLink(linkId, sourceNodeId, targetNodeId, linkType));
 	}
 
 	return { nodes, links };
 }
 
-export function buildFromMasterVersions(versions: MasterVersion[]): GraphPatch {
+export function buildFromMasterVersions(master: GraphNode, versions: MasterVersion[]): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const nodeType: EntityType = 'release';
 	const linkType: RelationshipType = 'version_of';
-	const sourceNodeId = discogs.compositions.getEntityId(nodeType, versions[0].id);
+	const sourceNodeId = master.id;
+	const targetNodeType: EntityType = 'release';
 
 	for (const version of versions) {
-		const targetNodeId = discogs.compositions.getEntityId(nodeType, version.id);
+		const targetNodeId = discogs.compositions.getEntityId(targetNodeType, version.id);
 		const linkId = discogs.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
 
-		nodes.push(createNode(targetNodeId, nodeType, version.title ?? `Release ${version.id}`, version.id));
-		links.push(createLink(linkId, sourceNodeId, targetNodeId, linkType));
+		nodes.push(createNode(targetNodeId, targetNodeType, version.title ?? `Release ${version.id}`, version.id));
+		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
 	}
 
 	return { nodes, links };
 }
 
 export function buildMainReleaseFromMaster(release: Release, master: GraphNode): GraphPatch {
-	const sourceNodeType: EntityType = 'master';
 	const targetNodeType: EntityType = 'release';
 	const linkType: RelationshipType = 'version_of';
-	const sourceNodeId = discogs.compositions.getEntityId(sourceNodeType, master.id);
+	const sourceNodeId =  master.id;
 	const targetNodeId = discogs.compositions.getEntityId(targetNodeType, release.id);
 	const linkId = discogs.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
 
 	return {
 		nodes: [createNode(targetNodeId, targetNodeType, release.title ?? `Release ${release.id}`, release.id)],
-		links: [createLink(linkId, sourceNodeId, targetNodeId, linkType)]
+		links: [createLink(linkId, targetNodeId, sourceNodeId, linkType)]
 	};
 }
 
 export function buildMasterFromRelease(master: Master, release: GraphNode): GraphPatch {
-	const sourceNodeType: EntityType = 'release';
 	const targetNodeType: EntityType = 'master';
 	const linkType: RelationshipType = 'version_of';
-	const sourceNodeId = discogs.compositions.getEntityId(sourceNodeType, release.id);
+	const sourceNodeId = release.id;
 	const targetNodeId = discogs.compositions.getEntityId(targetNodeType, master.id);
 	const linkId = discogs.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
 
