@@ -14,10 +14,10 @@ export function buildFromLabel(label: Label): GraphPatch {
 
 	for (const sublabel of label.sublabels ?? []) {
 		const targetNodeId = discogs.compositions.getEntityId(nodeType, sublabel.id);
-		const linkId = discogs.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
+		const linkId = discogs.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
 
 		nodes.push(createNode(targetNodeId, nodeType, sublabel.name, sublabel.id));
-		links.push(createLink(linkId, sourceNodeId, targetNodeId, linkType));
+		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
 	}
 
 	if (label.parent_label) {
@@ -34,15 +34,16 @@ export function buildFromLabel(label: Label): GraphPatch {
 export function buildLabelsFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const nodeType: EntityType = 'label';
+	const sourceNodeType: EntityType = 'release';
+	const targetNodeType: EntityType = 'label';
 	const linkType: RelationshipType = 'on_label';
-	const sourceNodeId = discogs.compositions.getEntityId(nodeType, release.id);
+	const sourceNodeId = discogs.compositions.getEntityId(sourceNodeType, release.id);
 
 	for (const label of release.labels ?? []) {
-		const targetNodeId = discogs.compositions.getEntityId(nodeType, label.id);
+		const targetNodeId = discogs.compositions.getEntityId(targetNodeType, label.id);
 		const linkId = discogs.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
 
-		nodes.push(createNode(targetNodeId, nodeType, label.name, label.id));
+		nodes.push(createNode(targetNodeId, targetNodeType, label.name, label.id));
 		links.push(createLink(linkId, sourceNodeId, targetNodeId, linkType));
 	}
 
@@ -52,16 +53,17 @@ export function buildLabelsFromRelease(release: Release): GraphPatch {
 export function buildCompaniesFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const nodeType: EntityType = 'label';
+	const sourceNodeType: EntityType = 'release';
+	const targetNodeType: EntityType = 'label';
 	const linkType: RelationshipType = 'company_on';
-	const sourceNodeId = discogs.compositions.getEntityId(nodeType, release.id);
+	const sourceNodeId = discogs.compositions.getEntityId(sourceNodeType, release.id);
 
 	for (const company of release.companies ?? []) {
-		const targetNodeId = discogs.compositions.getEntityId(nodeType, company.id);
-		const linkId = discogs.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
+		const targetNodeId = discogs.compositions.getEntityId(targetNodeType, company.id);
+		const linkId = discogs.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
 
-		nodes.push(createNode(targetNodeId, nodeType, company.name, company.id));
-		links.push(createLink(linkId, sourceNodeId, targetNodeId, linkType, company.entity_type_name?.toLowerCase()));
+		nodes.push(createNode(targetNodeId, targetNodeType, company.name, company.id));
+		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType, company.entity_type_name?.toLowerCase()));
 	}
 
 	return { nodes, links };

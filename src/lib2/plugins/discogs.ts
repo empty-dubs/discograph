@@ -2,7 +2,7 @@ import { documentStore } from '../sources/discogs/document-store.svelte';
 import * as client from '../sources/discogs/client';
 import { isBlocked } from '../sources/discogs/blocked';
 import { getRelationshipId, getEntityId } from '../sources/discogs/compositions';
-import { LOAD_TYPES, LOAD_TYPE_LABELS, PATCH_LOAD_TYPES } from '../sources/discogs/constants';
+import { ENTITY_NEIGHBOR_TYPES, LOAD_TYPE_LABELS, PATCH_LOAD_TYPES } from '../sources/discogs/constants';
 import { entityLabel } from '../sources/discogs/transformations';
 import { graphPresentation } from '../sources/discogs/presentation';
 import {
@@ -29,7 +29,7 @@ interface SourcePlugin {
 		getRelationshipId: (source: string, type: string, target: string) => string;
 	};
 	constants: {
-		loadTypes: typeof LOAD_TYPES;
+		neighborTypes: typeof ENTITY_NEIGHBOR_TYPES;
 		loadTypeLabels: typeof LOAD_TYPE_LABELS;
 		patchLoadTypes: typeof PATCH_LOAD_TYPES;
 	};
@@ -77,7 +77,7 @@ export const discogsPlugin = {
 		getRelationshipId
 	},
 	constants: {
-		loadTypes: LOAD_TYPES,
+		neighborTypes: ENTITY_NEIGHBOR_TYPES,
 		loadTypeLabels: LOAD_TYPE_LABELS,
 		patchLoadTypes: PATCH_LOAD_TYPES
 	},
