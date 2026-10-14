@@ -121,7 +121,7 @@ async function runDocumentPatchLoadAction(
 	const patch = loadAction.patch(document);
 
 	graph.applyPatchFromExpansion(node.id, patch);
-	graph.expansion.markExpansionCompleted(node.id, loadAction.markCompleted ?? loadType);
+	discogs.loadProgress.markLoadTypeCompleted(node.id, loadAction.markCompleted ?? loadType);
 }
 
 async function runReleasesPatchLoadAction(
@@ -142,11 +142,11 @@ async function runReleasesPatchLoadAction(
 	graph.applyPatchFromExpansion(node.id, patch);
 
 	const pagination = response.pagination as Pagination;
-	
-	graph.expansion.setExpansionPaging(node.id, loadType, pagination.page, pagination.pages, pagination.items);
+
+	discogs.loadProgress.setPagedDocument(node.id, loadType, pagination);
 
 	if (pagination.page >= pagination.pages) {
-		graph.expansion.markExpansionCompleted(node.id, loadType);
+		discogs.loadProgress.markLoadTypeCompleted(node.id, loadType);
 	}
 }
 
@@ -166,7 +166,7 @@ async function runCustomPatchLoadAction(
 	}, loadActionErrorMessage(loadType));
 
 	if (ok) {
-		graph.expansion.markExpansionCompleted(node.id, loadType);
+		discogs.loadProgress.markLoadTypeCompleted(node.id, loadType);
 	}
 }
 
@@ -201,7 +201,7 @@ export async function runPatchLoadAction(
 		let page: number;
 
 		if (options?.page === 'next') {
-			const paging = graph.expansion.expansionPagingByNodeId.get(node.id)?.get(loadAction.expansionId);
+			const paging = discogs.loadProgress.getPagedDocument(node.id, loadAction.expansionId);
 
 			if (!paging || paging.page >= paging.pages) return;
 

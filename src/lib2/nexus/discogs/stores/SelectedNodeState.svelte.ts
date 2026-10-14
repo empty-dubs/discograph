@@ -10,8 +10,6 @@ class SelectedNodeState {
 	data = $derived(graph.data.nodes.get(this.id!));
 
 	hasChildren = $derived(graph.expansion.parentChildAdjacencyList.has(this.id!));
-	hasMoreReleases = $derived(graph.expansion.hasMoreExpansionPages(this.id!, 'releases'));
-	hasMoreMasterReleases = $derived(graph.expansion.hasMoreExpansionPages(this.id!, 'master_releases'));
 	entityDocumentStatus = $derived(graph.expansion.primaryDocumentByNodeId.get(this.id!));
 	isEntityDocumentLoading = $derived(this.entityDocumentStatus === 'loading');
 	isEntityDocumentLoaded = $derived(this.entityDocumentStatus === 'loaded');
@@ -25,22 +23,35 @@ class SelectedNodeState {
 		return discogs.constants.neighborTypes[this.data.type as SearchType] ?? [];
 	});
 
-	isExpansionCompleted(loadType: LoadType): boolean {
+	isLoadTypeCompleted(loadType: LoadType): boolean {
 		if (!this.id) return false;
 
-		return graph.expansion.isExpansionCompleted(this.id, loadType);
+		return discogs.loadProgress.isLoadTypeCompleted(this.id, loadType);
 	}
 
 	collapseNode() {
 		if (!this.id || !this.hasChildren) return;
 
-		const descendants = collectDescendants(this.id!, graph.expansion.parentChildAdjacencyList);
+		const descendants = collectDescendants(this.id, graph.expansion.parentChildAdjacencyList);
 
 		if (descendants.size === 0) return;
 
 		graph.data.removeNodes(descendants);
 		graph.expansion.resetForCollapse(new Set([this.id]), descendants);
+		discogs.loadProgress.resetForExpandedNodes(new Set([this.id]));
 		discogs.documentStore.delete(descendants);
+	}
+
+	hasMorePages(loadType: LoadType): boolean {
+		if (!this.id) return false;
+
+		return discogs.loadProgress.hasMorePages(this.id, loadType);
+	}
+
+	hasPagedDocument(loadType: LoadType): boolean {
+		if (!this.id) return false;
+
+		return discogs.loadProgress.hasPagedDocument(this.id, loadType);
 	}
 
 	async loadEntityDocument() {

@@ -30,7 +30,6 @@ import type {
 	LoadType,
 	Master,
 	MasterVersionsResponse,
-	Pagination,
 	Release
 } from '../../plugins/discogs';
 import type { GraphNode, GraphPatch } from '../../graph/types';

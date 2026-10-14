@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { graph } from '../../graph/graph';
 	import { runPatchLoadAction } from '../../nexus/discogs/load-runner';
 	import { discogsPlugin as discogs } from '../../plugins/discogs';
 
@@ -19,23 +18,18 @@
 	const node = $derived(SelectedNodeState);
 
 	function pagedLoadButtonState(loadType: 'releases' | 'master_releases'): LoadButtonState {
-		// TODO: revisit this definition
-		// how does empty nodeID affect stores?
-		const nodeId = node.id ?? '';
-
-		// TODO: is this the best way to check if the node has been searched?
-		const loaded = graph.expansion.expansionPagingByNodeId.get(nodeId)?.has(loadType) ?? false;
+		const loaded = node.hasPagedDocument(loadType);
 		const label = loaded
 			? `Load more ${loadType === 'master_releases' ? 'master releases' : 'releases'}`
 			: discogs.constants.loadTypeLabels[loadType];
 
-		const exhausted = loaded && !graph.expansion.hasMoreExpansionPages(nodeId, loadType);
+		const exhausted = loaded && !node.hasMorePages(loadType);
 
 		return { label, loaded, exhausted };
 	}
 
 	function documentLoadButtonState(loadType: LoadType): LoadButtonState {
-		const loaded = node.isExpansionCompleted(loadType);
+		const loaded = node.isLoadTypeCompleted(loadType);
 		const label = discogs.constants.loadTypeLabels[loadType];
 		const exhausted = loaded;
 
@@ -71,7 +65,6 @@
 			await runPatchLoadAction(node.data, loadType);
 		}
 	}
-	$inspect(getLoadButtonState('releases'))
 </script>
 
 {#if layout === 'menu'}

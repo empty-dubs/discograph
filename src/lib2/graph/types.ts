@@ -19,9 +19,3 @@ export interface GraphPatch {
 }
 
 export type PrimaryDocumentStatus = 'idle' | 'loading' | 'loaded' | 'failed';
-
-export type ExpansionPaging = {
-	page: number;
-	pages: number;
-	items: number;
-};
