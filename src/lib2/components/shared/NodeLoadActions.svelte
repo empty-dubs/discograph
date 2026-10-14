@@ -28,8 +28,6 @@
 		return { label, loaded, exhausted };
 	}
 
-	$inspect(discogs.loadProgress.pagedDocuments)
-
 	function documentLoadButtonState(loadType: LoadType): LoadButtonState {
 		const loaded = node.isLoadTypeCompleted(loadType);
 		const label = discogs.constants.loadTypeLabels[loadType];
