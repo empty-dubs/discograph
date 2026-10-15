@@ -45,10 +45,10 @@ class GraphPresentationState {
 		return !this.hiddenNodeTypes.has(nodeType);
 	}
 
-	toggleNodeTypeVisibility(nodeType: string) {
+	toggleNodeTypeVisibility(nodeType: string, visible: boolean) {
 		const next = new Set(this.hiddenNodeTypes);
 
-		this.hiddenNodeTypes.has(nodeType) ? next.delete(nodeType) : next.add(nodeType);
+		visible ? next.delete(nodeType) : next.add(nodeType);
 
 		this.hiddenNodeTypes = new SvelteSet(next);
 

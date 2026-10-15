@@ -8,7 +8,7 @@ import type { NodePresentation } from '../graph/presentation';
 import type { SearchResult } from '../plugins/discogs';
 
 export function nodePresentation(type: string): NodePresentation {
-	const config = discogs.presentation.nodes.find((entry) => entry.id === type);
+	const config = discogs.presentation.entities.find((entity) => entity.type === type);
 
 	if (config) return { color: config.color, radius: config.radius };
 

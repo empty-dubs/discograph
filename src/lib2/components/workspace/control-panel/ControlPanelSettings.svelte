@@ -3,6 +3,7 @@
 
 	import ControlPanelInfo from './ControlPanelInfo.svelte';
 	import GraphLabelToggle from './GraphLabelToggle.svelte';
+	import GraphNodeFilters from './GraphNodeFilters.svelte';
 
 	type SettingsTabId = 'entities';
 
@@ -37,6 +38,8 @@
 		>
 			<ControlPanelInfo helperText={CONTROL_PANEL_INFO_TEXT.settings.entities}>
 				<div class="ui-stack text-sm text-gray-400">
+					<h4 class="ui-label">Nodes</h4>
+					<GraphNodeFilters />
 					<h4 class="ui-label">Labels</h4>
 					<GraphLabelToggle />
 				</div>
