@@ -33,8 +33,8 @@
 	$effect(() => {
 		if (!forceGraph) return;
 
-		const nodes = graph.presentation.visibleNodeList;
-		const links = graph.presentation.visibleLinkList;
+		const nodes = graph.presentation.visibleNodes;
+		const links = graph.presentation.visibleLinks;
 		const structureRevision = graph.data.revisionCounter;
 		const visibilityRevision = graph.presentation.revisionCounter;
 
@@ -47,7 +47,7 @@
 	});
 
 	$effect(() => {
-		if (!forceGraph || graph.presentation.visibleNodeList.length === 0) return;
+		if (!forceGraph || graph.presentation.visibleNodes.length === 0) return;
 
 		forceGraph.setSelectedId(graph.presentation.selectedId);
 		forceGraph.setShowNodeLabels(graph.presentation.showNodeLabels);
