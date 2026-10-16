@@ -14,7 +14,7 @@ import { isBlocked } from '../sources/discogs/blocked';
 import { getRelationshipId, getEntityId } from '../sources/discogs/compositions';
 import { ENTITY_NEIGHBOR_TYPES, LOAD_TYPE_LABELS, PATCH_LOAD_TYPES } from '../sources/discogs/constants';
 import { entityLabel } from '../sources/discogs/transformations';
-import { graphPresentation } from '../sources/discogs/presentation';
+import { presentation } from '../sources/discogs/presentation';
 import {
 	fetchEntityDocument,
 	entityFetchErrorMessage,
@@ -40,7 +40,7 @@ interface SourcePlugin {
 		search: typeof search;
 	};
 	isBlocked: (type: SearchType, id: number) => boolean;
-	presentation: typeof graphPresentation;
+	presentation: typeof presentation;
 	transformations: {
 		entityLabel: (result: Pick<SearchResult, 'title' | 'name' | 'type'>) => string;
 	};
@@ -98,7 +98,7 @@ export const discogsPlugin = {
 		search
 	},
 	isBlocked,
-	presentation: graphPresentation,
+	presentation,
 	transformations: {
 		entityLabel,
 	},

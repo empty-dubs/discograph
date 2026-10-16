@@ -6,30 +6,71 @@ import type { GraphNode } from '../types';
 
 class GraphPresentationState {
 	selectedId = $state<string | null>(null);
-	visibleTypes = $state<SvelteSet<string>>(new SvelteSet());
+	hiddenNodeTypes = $state<SvelteSet<string>>(new SvelteSet());
 	showNodeLabels = $state(true);
 	showDirectedLinks = $state(true);
 	highlightedLinkType = $state<string | null>(null);
 	revisionCounter = $state(0);
 
-	get visibleNodeList(): GraphNode[] {
+	get visibleNodes(): GraphNode[] {
 		const nodes = GraphDataState.nodeList;
-
-		if (this.visibleTypes.size === 0) return nodes;
-
+		if (this.hiddenNodeTypes.size === 0) return nodes;
 		return nodes.filter(
-			(node) => this.visibleTypes.has(node.type) || (this.selectedId !== null && node.id === this.selectedId)
+			(node) =>
+				!this.hiddenNodeTypes.has(node.type) || (this.selectedId !== null && node.id === this.selectedId)
 		);
 	}
 
-	get visibleLinkList() {
-		const visibleNodeIds = new Set(this.visibleNodeList.map((node) => node.id));
+	get visibleLinks() {
+		const visibleNodeIds = new Set(this.visibleNodes.map((node) => node.id));
 
 		const links = GraphDataState.linkList;
 
 		if (visibleNodeIds.size === 0) return links;
 
 		return links.filter((link) => visibleNodeIds.has(link.source) && visibleNodeIds.has(link.target));
+	}
+
+	get nodeTypeCounts(): Record<string, number> {
+		const counts: Record<string, number> = {};
+
+		for (const node of GraphDataState.nodeList) {
+			counts[node.type] = (counts[node.type] ?? 0) + 1;
+		}
+
+		return counts;
+	}
+
+	get linkTypeCounts(): Record<string, number> {
+		const counts: Record<string, number> = {};
+
+		for (const link of this.visibleLinks) {
+			counts[link.type] = (counts[link.type] ?? 0) + 1;
+		}
+
+		return counts;
+	}
+
+	isNodeTypeVisible(nodeType: string): boolean {
+		return !this.hiddenNodeTypes.has(nodeType);
+	}
+
+	toggleNodeTypeVisibility(nodeType: string, visible: boolean) {
+		const next = new Set(this.hiddenNodeTypes);
+
+		visible ? next.delete(nodeType) : next.add(nodeType);
+
+		this.hiddenNodeTypes = new SvelteSet(next);
+
+		this.revisionCounter++;
+	}
+
+	setHighlightedLinkType(linkType: string) {
+		this.highlightedLinkType = linkType;
+	}
+
+	clearHighlightedLinkType() {
+		this.highlightedLinkType = null;
 	}
 
 	selectNode(id: string | null) {
@@ -40,7 +81,7 @@ class GraphPresentationState {
 
 	clear() {
 		this.selectedId = null;
-		this.visibleTypes = new SvelteSet();
+		this.hiddenNodeTypes = new SvelteSet();
 		this.showNodeLabels = true;
 		this.showDirectedLinks = true;
 		this.highlightedLinkType = null;
