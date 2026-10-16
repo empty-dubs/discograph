@@ -4,8 +4,15 @@ import { searchResultPatch } from './discogs/patches/searchResult';
 
 import { defaultNodePresentation } from '../graph/presentation';
 
+import type { GraphNode } from '../graph/types';
 import type { NodePresentation } from '../graph/presentation';
 import type { SearchResult } from '../plugins/discogs';
+
+export function clearSession() {
+	discogs.documentStore.clear();
+	discogs.loadProgress.clear();
+	graph.clear();
+}
 
 export function nodePresentation(type: string): NodePresentation {
 	const config = discogs.presentation.entities.find((entity) => entity.type === type);
@@ -15,13 +22,10 @@ export function nodePresentation(type: string): NodePresentation {
 	return defaultNodePresentation;
 }
 
-/** Entity write → graph patch → selection (keep synchronous; no await between steps). */
 export function seedFromSearchResult(result: SearchResult) {
 	if (discogs.isBlocked(result.type, result.id)) return;
 
-	discogs.documentStore.clear();
-	discogs.loadProgress.clear();
-	graph.clear();
+	clearSession();
 
 	const id = discogs.compositions.getEntityId(result.type, result.id);
 
@@ -31,4 +35,13 @@ export function seedFromSearchResult(result: SearchResult) {
 
 	graph.data.applyPatch(patch);
 	graph.presentation.selectNode(id);
+}
+
+export function seedFromGraphNode(node: GraphNode) {
+	clearSession();
+
+	const patch = { nodes: [node], links: [] };
+
+	graph.data.applyPatch(patch);
+	graph.presentation.selectNode(node.id);
 }

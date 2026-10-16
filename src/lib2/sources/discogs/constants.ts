@@ -54,3 +54,11 @@ export const LOAD_TYPE_LABELS: Record<LoadType, string> = {
 	companies: 'Load related companies',
 	credited_artists: 'Load credited artists'
 };
+
+export const ARTIST_LOAD_TYPES: LoadType[] = ['artists', 'aliases', 'credited_artists'];
+export const LABEL_LOAD_TYPES: LoadType[] = ['labels', 'companies'];
+export const MASTER_RELEASE_LOAD_TYPES: LoadType[] = ['master_releases', 'releases', 'main_release', 'linked_master'];
+
+export const ARTIST_GROUPS = ['artist'];
+export const MASTER_RELEASE_GROUPS = ['master', 'release'];
+export const LABEL_GROUPS = ['label'];

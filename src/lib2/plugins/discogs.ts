@@ -12,7 +12,17 @@ import {
 } from '../sources/discogs/client';
 import { isBlocked } from '../sources/discogs/blocked';
 import { getRelationshipId, getEntityId } from '../sources/discogs/compositions';
-import { ENTITY_NEIGHBOR_TYPES, LOAD_TYPE_LABELS, PATCH_LOAD_TYPES } from '../sources/discogs/constants';
+import {
+	ARTIST_GROUPS,
+	ARTIST_LOAD_TYPES,
+	ENTITY_NEIGHBOR_TYPES,
+	LABEL_GROUPS,
+	LABEL_LOAD_TYPES,
+	LOAD_TYPE_LABELS,
+	MASTER_RELEASE_GROUPS,
+	MASTER_RELEASE_LOAD_TYPES,
+	PATCH_LOAD_TYPES,
+} from '../sources/discogs/constants';
 import { entityLabel } from '../sources/discogs/transformations';
 import { presentation } from '../sources/discogs/presentation';
 import {
@@ -49,8 +59,14 @@ interface SourcePlugin {
 		getRelationshipId: (source: string, type: string, target: string) => string;
 	};
 	constants: {
-		neighborTypes: typeof ENTITY_NEIGHBOR_TYPES;
+		artistGroups: typeof ARTIST_GROUPS;
+		artistLoadTypes: typeof ARTIST_LOAD_TYPES;
+		labelGroups: typeof LABEL_GROUPS;
+		labelLoadTypes: typeof LABEL_LOAD_TYPES;
 		loadTypeLabels: typeof LOAD_TYPE_LABELS;
+		masterReleaseGroups: typeof MASTER_RELEASE_GROUPS;
+		masterReleaseLoadTypes: typeof MASTER_RELEASE_LOAD_TYPES;
+		neighborTypes: typeof ENTITY_NEIGHBOR_TYPES;
 		patchLoadTypes: typeof PATCH_LOAD_TYPES;
 	};
 	fetch: {
@@ -107,8 +123,14 @@ export const discogsPlugin = {
 		getRelationshipId
 	},
 	constants: {
-		neighborTypes: ENTITY_NEIGHBOR_TYPES,
+		artistGroups: ARTIST_GROUPS,
+		artistLoadTypes: ARTIST_LOAD_TYPES,
+		labelGroups: LABEL_GROUPS,
+		labelLoadTypes: LABEL_LOAD_TYPES,
 		loadTypeLabels: LOAD_TYPE_LABELS,
+		masterReleaseGroups: MASTER_RELEASE_GROUPS,
+		masterReleaseLoadTypes: MASTER_RELEASE_LOAD_TYPES,
+		neighborTypes: ENTITY_NEIGHBOR_TYPES,
 		patchLoadTypes: PATCH_LOAD_TYPES
 	},
 	fetch: {

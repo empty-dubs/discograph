@@ -2,8 +2,8 @@
 	import { CONTROL_PANEL_INFO_TEXT } from './constants';
 
 	import ControlPanelInfo from './ControlPanelInfo.svelte';
+	import ControlPanelExplore from './ControlPanelExplore.svelte';
 	import LoadingIcon from './LoadingIcon.svelte';
-	import NodeLoadActions from '../../shared/NodeLoadActions.svelte';
 	import SelectedNodeState from '../../../nexus/discogs/stores/SelectedNodeState.svelte';
 
 	type DiscoverSubTabId = 'explore' | 'crawl' | 'related-entities' | 'releases';
@@ -94,15 +94,7 @@
 			class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'explore' ? 'hidden' : ''}"
 		>
 			<ControlPanelInfo helperText={CONTROL_PANEL_INFO_TEXT.discover.explore}>
-				<div class="flex h-full min-h-0 flex-col gap-3 overflow-auto p-1">
-					{#if !SelectedNodeState.id || !SelectedNodeState.data}
-						<p class="text-muted text-sm">Select a node on the graph to load related entities.</p>
-					{:else if SelectedNodeState.isBlocked}
-						<p class="text-muted text-sm">This entity cannot be expanded.</p>
-					{:else}
-						<NodeLoadActions />
-					{/if}
-				</div>
+				<ControlPanelExplore />
 			</ControlPanelInfo>
 		</div>
 		<div
