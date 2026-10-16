@@ -335,7 +335,7 @@ export class ForceGraph {
 		this.applyHighlight();
 	}
 
-	setShowNodeLabels(show: boolean): void {
+	toggleNodeLabels(show: boolean): void {
 		this.showNodeLabels = show;
 
 		if (show) {
@@ -345,9 +345,14 @@ export class ForceGraph {
 		}
 	}
 
-	setDirectedLinks(show: boolean): void {
+	toggleDirectedLinks(show: boolean): void {
 		this.directedLinks = show;
 		this.layoutLinks();
+		this.applyHighlight();
+	}
+
+	toggleHighlightedLinkType(type: string | null): void {
+		this.highlightedLinkType = type;
 		this.applyHighlight();
 	}
 

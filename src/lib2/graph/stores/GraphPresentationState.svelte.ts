@@ -41,6 +41,16 @@ class GraphPresentationState {
 		return counts;
 	}
 
+	get linkTypeCounts(): Record<string, number> {
+		const counts: Record<string, number> = {};
+
+		for (const link of this.visibleLinks) {
+			counts[link.type] = (counts[link.type] ?? 0) + 1;
+		}
+
+		return counts;
+	}
+
 	isNodeTypeVisible(nodeType: string): boolean {
 		return !this.hiddenNodeTypes.has(nodeType);
 	}
@@ -53,6 +63,14 @@ class GraphPresentationState {
 		this.hiddenNodeTypes = new SvelteSet(next);
 
 		this.revisionCounter++;
+	}
+
+	setHighlightedLinkType(linkType: string) {
+		this.highlightedLinkType = linkType;
+	}
+
+	clearHighlightedLinkType() {
+		this.highlightedLinkType = null;
 	}
 
 	selectNode(id: string | null) {

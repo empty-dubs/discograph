@@ -50,8 +50,9 @@
 		if (!forceGraph || graph.presentation.visibleNodes.length === 0) return;
 
 		forceGraph.setSelectedId(graph.presentation.selectedId);
-		forceGraph.setShowNodeLabels(graph.presentation.showNodeLabels);
-		forceGraph.setDirectedLinks(graph.presentation.showDirectedLinks);
+		forceGraph.toggleNodeLabels(graph.presentation.showNodeLabels);
+		forceGraph.toggleDirectedLinks(graph.presentation.showDirectedLinks);
+		forceGraph.toggleHighlightedLinkType(graph.presentation.highlightedLinkType);
 	});
 </script>
 
