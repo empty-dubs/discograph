@@ -2,7 +2,7 @@
 	import { Icon } from 'svelte-awesome';
 	import { chevronDown, chevronUp, gear, lightbulbO } from 'svelte-awesome/icons';
 
-	import ControlPanelDiscoverMinimal from './ControlPanelDiscoverMinimal.svelte';
+	import ControlPanelDiscover from './ControlPanelDiscover.svelte';
 	import ControlPanelSettings from './ControlPanelSettings.svelte';
 	import LoadingIcon from './LoadingIcon.svelte';
 	import SelectedNodeState from '../../../nexus/discogs/stores/SelectedNodeState.svelte';
@@ -103,7 +103,7 @@
 							? 'hidden'
 							: ''}"
 					>
-						<ControlPanelDiscoverMinimal />
+						<ControlPanelDiscover />
 					</div>
 					<div
 						role="tabpanel"
