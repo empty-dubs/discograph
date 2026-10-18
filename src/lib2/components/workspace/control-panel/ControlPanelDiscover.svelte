@@ -1,14 +1,39 @@
 <script lang="ts">
+	import { setContext } from 'svelte';
+
+	import { DISCOVER_ENTITIES_ACCORDION_KEY } from '../../shared/accordion';
 	import { CONTROL_PANEL_INFO_TEXT } from './constants';
 
+	import SelectedNodeState from '../../../nexus/discogs/stores/SelectedNodeState.svelte';
 	import ControlPanelInfo from './ControlPanelInfo.svelte';
 	import ControlPanelExplore from './ControlPanelExplore.svelte';
 	import LoadingIcon from './LoadingIcon.svelte';
-	import SelectedNodeState from '../../../nexus/discogs/stores/SelectedNodeState.svelte';
+
+	import type { NodePanelAccordion } from '../../shared/accordion';
 
 	type DiscoverSubTabId = 'explore' | 'crawl' | 'related-entities' | 'releases';
 
 	let activeTab = $state<DiscoverSubTabId>('explore');
+	let openSectionId = $state<string | null>(null);
+
+	const accordion: NodePanelAccordion = {
+		get openSectionId() {
+			return openSectionId;
+		},
+		toggle(id: string) {
+			openSectionId = openSectionId === id ? null : id;
+		},
+		isOpen(id: string) {
+			return openSectionId === id;
+		}
+	};
+
+	setContext(DISCOVER_ENTITIES_ACCORDION_KEY, accordion);
+
+	$effect(() => {
+		SelectedNodeState.id;
+		openSectionId = null;
+	});
 </script>
 
 <div class="flex h-full min-h-0 gap-4">

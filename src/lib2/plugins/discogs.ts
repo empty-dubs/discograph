@@ -11,7 +11,7 @@ import {
 	search,
 } from '../sources/discogs/client';
 import { isBlocked } from '../sources/discogs/blocked';
-import { getRelationshipId, getEntityId } from '../sources/discogs/compositions';
+import { getRelationshipId, getEntityId, getDiscogsWebsiteUrl, getYouTubeSearchUrl } from '../sources/discogs/compositions';
 import {
 	ARTIST_GROUPS,
 	ARTIST_LOAD_TYPES,
@@ -32,51 +32,6 @@ import {
 	labelReleaseFetchParams,
 	masterVersionFetchParams,
 } from '../sources/discogs/fetch';
-
-import type { SearchResult, SearchType } from '../sources/discogs/types';
-
-interface SourcePlugin {
-	id: string;
-	documentStore: typeof documentStore;
-	loadProgress: typeof loadProgress;
-	client: {
-		getArtist: typeof getArtist;
-		getLabel: typeof getLabel;
-		getRelease: typeof getRelease;
-		getMaster: typeof getMaster;
-		getArtistReleases: typeof getArtistReleases;
-		getLabelReleases: typeof getLabelReleases;
-		getMasterVersions: typeof getMasterVersions;
-		search: typeof search;
-	};
-	isBlocked: (type: SearchType, id: number) => boolean;
-	presentation: typeof presentation;
-	transformations: {
-		entityLabel: (result: Pick<SearchResult, 'title' | 'name' | 'type'>) => string;
-	};
-	compositions: {
-		getEntityId: (type: string, externalId: string | number) => string;
-		getRelationshipId: (source: string, type: string, target: string) => string;
-	};
-	constants: {
-		artistGroups: typeof ARTIST_GROUPS;
-		artistLoadTypes: typeof ARTIST_LOAD_TYPES;
-		labelGroups: typeof LABEL_GROUPS;
-		labelLoadTypes: typeof LABEL_LOAD_TYPES;
-		loadTypeLabels: typeof LOAD_TYPE_LABELS;
-		masterReleaseGroups: typeof MASTER_RELEASE_GROUPS;
-		masterReleaseLoadTypes: typeof MASTER_RELEASE_LOAD_TYPES;
-		neighborTypes: typeof ENTITY_NEIGHBOR_TYPES;
-		patchLoadTypes: typeof PATCH_LOAD_TYPES;
-	};
-	fetch: {
-		fetchEntityDocument: typeof fetchEntityDocument;
-		entityFetchErrorMessage: typeof entityFetchErrorMessage;
-		artistReleaseFetchParams: typeof artistReleaseFetchParams;
-		labelReleaseFetchParams: typeof labelReleaseFetchParams;
-		masterVersionFetchParams: typeof masterVersionFetchParams;
-	};
-}
 
 export type {
 	Artist,
@@ -119,8 +74,10 @@ export const discogsPlugin = {
 		entityLabel,
 	},
 	compositions: {
+		getDiscogsWebsiteUrl,
 		getEntityId,
-		getRelationshipId
+		getRelationshipId,
+		getYouTubeSearchUrl
 	},
 	constants: {
 		artistGroups: ARTIST_GROUPS,
@@ -140,4 +97,4 @@ export const discogsPlugin = {
 		labelReleaseFetchParams,
 		masterVersionFetchParams
 	}
-} satisfies SourcePlugin;
+};
