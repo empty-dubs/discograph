@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { runPatchLoadAction } from '../../nexus/discogs/load-runner';
-	import { discogsPlugin as discogs } from '../../plugins/discogs';
+	import { plugin as source } from '../../plugins/discogs';
 
 	import SelectedNodeState from '../../nexus/discogs/stores/SelectedNodeState.svelte';
 	import NodeLoadButton from './NodeLoadButton.svelte';
@@ -26,7 +26,7 @@
 		const loaded = node.hasPagedDocument(loadType);
 		const label = loaded
 			? `Load more ${loadType === 'master_releases' ? 'master releases' : 'releases'}`
-			: discogs.constants.loadTypeLabels[loadType];
+			: source.constants.loadTypeLabels[loadType];
 
 		return {
 			label,
@@ -38,7 +38,7 @@
 
 	function documentLoadButtonState(loadType: LoadType): LoadButtonState {
 		const loaded = node.isLoadTypeCompleted(loadType);
-		const label = discogs.constants.loadTypeLabels[loadType];
+		const label = source.constants.loadTypeLabels[loadType];
 
 		return { label, loaded, exhausted: loaded, type: loadType };
 	}

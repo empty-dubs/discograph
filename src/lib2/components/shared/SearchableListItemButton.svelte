@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { discogsPlugin as discogs } from '../../plugins/discogs';
+	import { plugin as source } from '../../plugins/discogs';
 
 	import SelectedNodeState from '../../nexus/discogs/stores/SelectedNodeState.svelte';
 	import SearchableListContextMenu from './SearchableListContextMenu.svelte';
@@ -20,7 +20,7 @@
 		if (!menu || !item.discogsId || !item.searchType) return null;
 
 		return {
-			id: discogs.compositions.getEntityId(item.searchType, item.discogsId),
+			id: source.compositions.getEntityId(item.searchType, item.discogsId),
 			type: item.searchType,
 			label: (item.label ?? item.query ?? '').trim() || 'Unknown',
 			externalId: item.discogsId
@@ -32,7 +32,7 @@
 			!item.discogsId ||
 			!item.searchType ||
 			SelectedNodeState.hasExpansionInFlight ||
-			discogs.isBlocked(item.searchType, item.discogsId)
+			source.isBlocked(item.searchType, item.discogsId)
 		)
 
 	}

@@ -1,5 +1,5 @@
 import { graph } from '../../graph/graph';
-import { discogsPlugin as discogs } from '../../plugins/discogs';
+import { plugin as source } from '../../plugins/discogs';
 
 import { LOAD_ACTION_CONFIG } from './expansion-config';
 
@@ -38,11 +38,11 @@ export async function withRequest<T>(
 }
 
 function loadActionErrorMessage(loadType: LoadType): string {
-	return `Failed to ${discogs.constants.loadTypeLabels[loadType].toLowerCase()}`;
+	return `Failed to ${source.constants.loadTypeLabels[loadType].toLowerCase()}`;
 }
 
 function isBlockedNode(node: GraphNode): boolean {
-	return discogs.isBlocked(node.type as SearchType, node.externalId);
+	return source.isBlocked(node.type as SearchType, node.externalId);
 }
 
 function displayLabelFromDocument(document: {
@@ -69,8 +69,8 @@ export async function loadEntityDocument(node: GraphNode): Promise<'loaded' | 's
 		graph.expansion.setPrimaryDocumentStatus(node.id, 'loading');
 
 		const payload = await withRequest(
-			() => discogs.fetch.fetchEntityDocument(node.externalId, node.type as EntityType),
-			discogs.fetch.entityFetchErrorMessage(node.type as EntityType)
+			() => source.fetch.fetchEntityDocument(node.externalId, node.type as EntityType),
+			source.fetch.entityFetchErrorMessage(node.type as EntityType)
 		);
 
 		if (!payload) {
@@ -114,14 +114,14 @@ async function runDocumentPatchLoadAction(
 ) {
 	if (!(await ensureEntityDocument(node))) return;
 
-	const document = discogs.documentStore.get(node.id);
+	const document = source.documentStore.get(node.id);
 
 	if (!document) return;
 
 	const patch = loadAction.patch(document);
 
 	graph.applyPatchFromExpansion(node.id, patch);
-	discogs.loadProgress.markLoadTypeCompleted(node.id, loadAction.markCompleted ?? loadType);
+	source.loadProgress.markLoadTypeCompleted(node.id, loadAction.markCompleted ?? loadType);
 }
 
 async function runReleasesPatchLoadAction(
@@ -143,10 +143,10 @@ async function runReleasesPatchLoadAction(
 
 	const pagination = response.pagination as Pagination;
 
-	discogs.loadProgress.setPagedDocument(node.id, loadType, pagination);
+	source.loadProgress.setPagedDocument(node.id, loadType, pagination);
 
 	if (pagination.page >= pagination.pages) {
-		discogs.loadProgress.markLoadTypeCompleted(node.id, loadType);
+		source.loadProgress.markLoadTypeCompleted(node.id, loadType);
 	}
 }
 
@@ -166,7 +166,7 @@ async function runCustomPatchLoadAction(
 	}, loadActionErrorMessage(loadType));
 
 	if (ok) {
-		discogs.loadProgress.markLoadTypeCompleted(node.id, loadType);
+		source.loadProgress.markLoadTypeCompleted(node.id, loadType);
 	}
 }
 
@@ -201,7 +201,7 @@ export async function runPatchLoadAction(
 		let page: number;
 
 		if (options?.page === 'next') {
-			const paging = discogs.loadProgress.getPagedDocument(node.id, loadAction.expansionId);
+			const paging = source.loadProgress.getPagedDocument(node.id, loadAction.expansionId);
 
 			if (!paging || paging.page >= paging.pages) return;
 

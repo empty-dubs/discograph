@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { seedFromSearchResult } from '../../nexus/bridge';
-	import { discogsPlugin as discogs } from '../../plugins/discogs';
+	import { plugin as source } from '../../plugins/discogs';
 
 	import type { SearchResult, SearchType } from '../../plugins/discogs';
 
@@ -21,7 +21,7 @@
 		error = null;
 
 		try {
-			const response = await discogs.client.search(trimmed, searchType || undefined);
+			const response = await source.client.search(trimmed, searchType || undefined);
 
 			results = response.results;
 		} catch (err) {
@@ -33,7 +33,7 @@
 	}
 
 	function pick(result: SearchResult) {
-		if (discogs.isBlocked(result.type, result.id)) return;
+		if (source.isBlocked(result.type, result.id)) return;
 
 		seedFromSearchResult(result);
 		results = [];
@@ -74,11 +74,11 @@
 					<button
 						type="button"
 						class="ui-list-button"
-						disabled={discogs.isBlocked(result.type, result.id)}
+						disabled={source.isBlocked(result.type, result.id)}
 						onclick={() => pick(result)}
 					>
 						<span class="text-muted mr-2 uppercase">{result.type}</span>
-						{discogs.transformations.entityLabel(result)}
+						{source.transformations.entityLabel(result)}
 						{#if result.year}
 							<span class="text-muted"> {result.year}</span>
 						{/if}

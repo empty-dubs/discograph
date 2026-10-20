@@ -55,7 +55,7 @@ export type {
 	SearchType
 } from '../sources/discogs/types';
 
-export const discogsPlugin = {
+export const plugin = {
 	id: 'discogs',
 	documentStore,
 	loadProgress,

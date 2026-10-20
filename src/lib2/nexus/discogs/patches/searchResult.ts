@@ -1,4 +1,4 @@
-import { discogsPlugin as discogs } from '../../../plugins/discogs';
+import { plugin as source } from '../../../plugins/discogs';
 import { createNode } from '../../../graph/factory';
 
 import type { GraphPatch } from '../../../graph/types';
@@ -10,9 +10,9 @@ export function searchResultPatch(result: SearchResult): GraphPatch {
 	return {
 		nodes: [
 			createNode(
-				discogs.compositions.getEntityId(type, result.id),
+				source.compositions.getEntityId(type, result.id),
 				type,
-				discogs.transformations.entityLabel(result),
+				source.transformations.entityLabel(result),
 				result.id
 			)
 		],
