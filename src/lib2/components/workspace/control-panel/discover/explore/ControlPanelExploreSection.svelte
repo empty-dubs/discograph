@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 
-	import { graph } from '../../../graph/graph';
-	import { defaultNodePresentation } from '../../../graph/presentation';
-	import { discogsPlugin as discogs } from '../../../plugins/discogs';
+	import { graph } from '../../../../../graph/graph';
+	import { defaultNodePresentation } from '../../../../../graph/presentation';
+	import { discogsPlugin as discogs } from '../../../../../plugins/discogs';
 
 	interface Props {
 		title: string;

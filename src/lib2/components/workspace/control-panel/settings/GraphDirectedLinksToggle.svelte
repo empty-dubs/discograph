@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { graph } from '../../../graph/graph';
+	import { graph } from '../../../../graph/graph';
 </script>
 
 <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-400">

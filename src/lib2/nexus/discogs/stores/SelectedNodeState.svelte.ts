@@ -8,6 +8,7 @@ import type { LoadType, SearchType } from '../../../plugins/discogs';
 class SelectedNodeState {
 	id = $derived(graph.presentation.selectedId);
 	data = $derived(graph.data.nodes.get(this.id!));
+	document = $derived(discogs.documentStore.get(this.id!));
 
 	hasChildren = $derived(graph.expansion.parentChildAdjacencyList.has(this.id!));
 	entityDocumentStatus = $derived(graph.expansion.primaryDocumentByNodeId.get(this.id!));

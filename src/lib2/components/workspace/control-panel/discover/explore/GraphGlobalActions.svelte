@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { clearSession, seedFromGraphNode } from '../../../nexus/bridge';
-	import { graph } from '../../../graph/graph';
+	import { clearSession, seedFromGraphNode } from '../../../../../nexus/bridge';
+	import { graph } from '../../../../../graph/graph';
 
-	import NodeLoadButton from '../../shared/NodeLoadButton.svelte';
-	import SelectedNodeState from '../../../nexus/discogs/stores/SelectedNodeState.svelte';
+	import NodeLoadButton from '../../../../shared/NodeLoadButton.svelte';
+	import SelectedNodeState from '../../../../../nexus/discogs/stores/SelectedNodeState.svelte';
 
 	const node = $derived(SelectedNodeState);
 

@@ -1,7 +1,7 @@
 export const NODE_PANEL_ACCORDION_KEY = Symbol('nodePanelAccordion');
-export const DISCOVER_ENTITIES_ACCORDION_KEY = Symbol('discoverEntitiesAccordion');
+export const RELATED_ENTITIES_ACCORDION_KEY = Symbol('relatedEntitiesAccordion');
 
-export interface NodePanelAccordion {
+export interface Accordion {
 	readonly openSectionId: string | null;
 	toggle: (id: string) => void;
 	isOpen: (id: string) => boolean;

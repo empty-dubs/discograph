@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { graph } from '../../../graph/graph';
-	import { discogsPlugin as discogs } from '../../../plugins/discogs';
+	import { graph } from '../../../../graph/graph';
+	import { discogsPlugin as discogs } from '../../../../plugins/discogs';
 </script>
 
 <div class="flex flex-col">

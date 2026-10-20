@@ -47,6 +47,7 @@ export type {
 	MasterVersionsResponse,
 	PagedListParams,
 	Pagination,
+	RelatedEntityType,
 	RelationshipType,
 	Release,
 	SearchResponse,

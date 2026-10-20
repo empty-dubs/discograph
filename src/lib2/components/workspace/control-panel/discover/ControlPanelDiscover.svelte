@@ -1,22 +1,23 @@
 <script lang="ts">
 	import { setContext } from 'svelte';
 
-	import { DISCOVER_ENTITIES_ACCORDION_KEY } from '../../shared/accordion';
-	import { CONTROL_PANEL_INFO_TEXT } from './constants';
+	import { RELATED_ENTITIES_ACCORDION_KEY } from '../../../shared/accordion-context';
+	import { CONTROL_PANEL_INFO_TEXT } from '../constants';
 
-	import SelectedNodeState from '../../../nexus/discogs/stores/SelectedNodeState.svelte';
-	import ControlPanelInfo from './ControlPanelInfo.svelte';
-	import ControlPanelExplore from './ControlPanelExplore.svelte';
-	import LoadingIcon from './LoadingIcon.svelte';
+	import SelectedNodeState from '../../../../nexus/discogs/stores/SelectedNodeState.svelte';
+	import ControlPanelInfo from '../ControlPanelInfo.svelte';
+	import LoadingIcon from '../LoadingIcon.svelte';
+	import ControlPanelExplore from './explore/ControlPanelExplore.svelte';
+	import ControlPanelRelatedEntities from './related-entities/ControlPanelRelatedEntities.svelte';
 
-	import type { NodePanelAccordion } from '../../shared/accordion';
+	import type { Accordion } from '../../../shared/accordion-context';
 
 	type DiscoverSubTabId = 'explore' | 'crawl' | 'related-entities' | 'releases';
 
 	let activeTab = $state<DiscoverSubTabId>('explore');
 	let openSectionId = $state<string | null>(null);
 
-	const accordion: NodePanelAccordion = {
+	const accordion: Accordion = {
 		get openSectionId() {
 			return openSectionId;
 		},
@@ -28,7 +29,7 @@
 		}
 	};
 
-	setContext(DISCOVER_ENTITIES_ACCORDION_KEY, accordion);
+	setContext(RELATED_ENTITIES_ACCORDION_KEY, accordion);
 
 	$effect(() => {
 		SelectedNodeState.id;
@@ -143,7 +144,7 @@
 				: ''}"
 		>
 			<ControlPanelInfo helperText={CONTROL_PANEL_INFO_TEXT.discover.related}>
-				<p class="text-muted m-0 text-sm">Related entity sections will be added in a later phase.</p>
+				<ControlPanelRelatedEntities />
 			</ControlPanelInfo>
 		</div>
 		<div

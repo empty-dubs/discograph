@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { discogsPlugin as discogs } from '../../../plugins/discogs';
-	import NodeLoadActions from '../../shared/NodeLoadActions.svelte';
+	import { discogsPlugin as discogs } from '../../../../../plugins/discogs';
+
+	import NodeLoadActions from '../../../../shared/NodeLoadActions.svelte';
 	import ControlPanelExploreSection from './ControlPanelExploreSection.svelte';
 	import GraphGlobalActions from './GraphGlobalActions.svelte';
 </script>

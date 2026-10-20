@@ -12,6 +12,19 @@ export type RelationshipType =
 	| 'sublabel_of'
 	| 'alias_of';
 
+export type RelatedEntityType =
+	| 'aliases'
+	| 'members'
+	| 'groups'
+	| 'parent_label'
+	| 'sublabels'
+	| 'main_release'
+	| 'linked_master'
+	| 'artists'
+	| 'labels'
+	| 'credits'
+	| 'companies';
+
 export type LoadType =
 | 'artists'
 | 'labels'
