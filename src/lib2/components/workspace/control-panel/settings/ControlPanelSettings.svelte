@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { CONTROL_PANEL_INFO_TEXT } from './constants';
+	import { CONTROL_PANEL_INFO_TEXT } from '../constants';
 
-	import ControlPanelInfo from './ControlPanelInfo.svelte';
+	import ControlPanelInfo from '../ControlPanelInfo.svelte';
 	import GraphDirectedLinksToggle from './GraphDirectedLinksToggle.svelte';
 	import GraphLinkFilters from './GraphLinkFilters.svelte';
 	import GraphLabelToggle from './GraphLabelToggle.svelte';

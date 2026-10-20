@@ -5,15 +5,20 @@
 	import SelectedNodeState from '../../nexus/discogs/stores/SelectedNodeState.svelte';
 	import NodeLoadButton from './NodeLoadButton.svelte';
 
-	import type { LoadType } from'../../plugins/discogs';
+	import type { LoadType } from '../../plugins/discogs';
 	import type { LoadButtonState } from './types';
 
 	interface Props {
 		layout?: 'menu' | 'stack';
 		buttonVariant?: 'ghost' | 'standard';
+		loadTypes?: LoadType[];
 	}
 
-	let { layout = 'stack', buttonVariant = 'ghost' }: Props = $props();
+	let {
+		layout = 'stack',
+		buttonVariant = 'ghost',
+		loadTypes
+	}: Props = $props();
 
 	const node = $derived(SelectedNodeState);
 
@@ -23,17 +28,19 @@
 			? `Load more ${loadType === 'master_releases' ? 'master releases' : 'releases'}`
 			: discogs.constants.loadTypeLabels[loadType];
 
-		const exhausted = loaded && !node.hasMorePages(loadType);
-
-		return { label, loaded, exhausted };
+		return {
+			label,
+			loaded,
+			exhausted: loaded && !node.hasMorePages(loadType),
+			type: loadType
+		};
 	}
 
 	function documentLoadButtonState(loadType: LoadType): LoadButtonState {
 		const loaded = node.isLoadTypeCompleted(loadType);
 		const label = discogs.constants.loadTypeLabels[loadType];
-		const exhausted = loaded;
 
-		return { label, loaded, exhausted };
+		return { label, loaded, exhausted: loaded, type: loadType };
 	}
 
 	function getLoadButtonState(loadType: LoadType): LoadButtonState {
@@ -46,46 +53,45 @@
 	function isButtonDisabled(buttonState: LoadButtonState): boolean {
 		if (!node.id || !node.data) return true;
 		if (node.isBlocked || node.hasExpansionInFlight || !node.isEntityDocumentLoaded) return true;
+		if (!node.neighborTypes.includes(buttonState.type as LoadType)) return true;
 
 		return buttonState.exhausted;
 	}
 
-	async function runAction(loadType: LoadType) {
+	async function handleClick(buttonState: LoadButtonState) {
 		if (!node.data || node.isBlocked) return;
 
-		const buttonState = getLoadButtonState(loadType);
-
-		if (loadType === 'releases' || loadType === 'master_releases') {
+		if (buttonState.type === 'releases' || buttonState.type === 'master_releases') {
 			await runPatchLoadAction(
 				node.data,
-				loadType,
+				buttonState.type,
 				buttonState.loaded ? { page: 'next' } : undefined
 			);
 		} else {
-			await runPatchLoadAction(node.data, loadType);
+			await runPatchLoadAction(node.data, buttonState.type as LoadType);
 		}
 	}
 </script>
 
 {#if layout === 'menu'}
-	{#each node.neighborTypes as neighborType (neighborType)}
-		{const buttonState = $derived(getLoadButtonState(neighborType));}
+	{#each loadTypes as loadType (loadType)}
+		{const buttonState = $derived(getLoadButtonState(loadType));}
 		<button
 			type="button"
 			class="ui-list-button"
 			disabled={isButtonDisabled(buttonState)}
-			onclick={() => runAction(neighborType)}
+			onclick={() => handleClick(buttonState)}
 		>
 			{buttonState.label}
 		</button>
 	{/each}
 {:else}
-	{#each node.neighborTypes as neighborType (neighborType)}
-		{const buttonState = $derived(getLoadButtonState(neighborType));}
+	{#each loadTypes as loadType (loadType)}
+		{const buttonState = $derived(getLoadButtonState(loadType));}
 		<NodeLoadButton
 			variant={buttonVariant}
 			disabled={isButtonDisabled(buttonState)}
-			onclick={() => runAction(neighborType)}
+			onclick={() => handleClick(buttonState)}
 		>
 			{buttonState.label}
 		</NodeLoadButton>

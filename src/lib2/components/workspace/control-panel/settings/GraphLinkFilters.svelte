@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { graph } from '../../../graph/graph';
-	import { discogsPlugin as discogs } from '../../../plugins/discogs';
+	import { graph } from '../../../../graph/graph';
+	import { discogsPlugin as discogs } from '../../../../plugins/discogs';
 
 	const RELATIONSHIP_HIGHLIGHT_COLUMNS: string[][] = [
 		['member_of', 'alias_of', 'credited_on'],
