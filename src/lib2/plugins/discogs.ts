@@ -51,8 +51,7 @@ export type {
 	RelationshipType,
 	Release,
 	SearchResponse,
-	SearchResult,
-	SearchType
+	SearchResult
 } from '../sources/discogs/types';
 
 export const plugin = {

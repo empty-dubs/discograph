@@ -3,7 +3,7 @@ import { collectDescendants } from '../../../graph/operations/crawl';
 import { loadEntityDocument } from '../load-runner';
 import { plugin as source } from '../../../plugins/discogs';
 
-import type { LoadType, SearchType } from '../../../plugins/discogs';
+import type { EntityType, LoadType } from '../../../plugins/discogs';
 
 class SelectedNodeState {
 	id = $derived(graph.presentation.selectedId);
@@ -16,12 +16,12 @@ class SelectedNodeState {
 	isEntityDocumentLoaded = $derived(this.entityDocumentStatus === 'loaded');
 	isEntityDocumentFailed = $derived(this.entityDocumentStatus === 'failed');
 	hasExpansionInFlight = $derived(graph.expansion.expansionInFlightNodeIds.has(this.id!));
-	isBlocked = $derived(source.isBlocked(this.data!.type as SearchType, this.data!.externalId));
+	isBlocked = $derived(source.isBlocked(this.data!.type as EntityType, this.data!.externalId));
 
 	neighborTypes = $derived.by((): LoadType[] => {
 		if (!this.data || this.isBlocked) return [];
 
-		return source.constants.neighborTypes[this.data.type as SearchType] ?? [];
+		return source.constants.neighborTypes[this.data.type as EntityType] ?? [];
 	});
 
 	isLoadTypeCompleted(loadType: LoadType): boolean {

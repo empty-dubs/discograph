@@ -17,11 +17,11 @@
 	let menu = $state<{ x: number; y: number } | null>(null);
 
 	const node = $derived.by((): GraphNode | null => {
-		if (!menu || !item.discogsId || !item.searchType) return null;
+		if (!menu || !item.discogsId || !item.entityType) return null;
 
 		return {
-			id: source.compositions.getEntityId(item.searchType, item.discogsId),
-			type: item.searchType,
+			id: source.compositions.getEntityId(item.entityType, item.discogsId),
+			type: item.entityType,
 			label: (item.label ?? item.query ?? '').trim() || 'Unknown',
 			externalId: item.discogsId
 		};
@@ -30,9 +30,9 @@
 	function isRowDisabled(item: SearchableListItem): boolean {
 		return (
 			!item.discogsId ||
-			!item.searchType ||
+			!item.entityType ||
 			SelectedNodeState.hasExpansionInFlight ||
-			source.isBlocked(item.searchType, item.discogsId)
+			source.isBlocked(item.entityType, item.discogsId)
 		)
 
 	}

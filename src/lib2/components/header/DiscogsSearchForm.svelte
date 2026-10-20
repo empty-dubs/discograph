@@ -2,10 +2,10 @@
 	import { seedFromSearchResult } from '../../nexus/bridge';
 	import { plugin as source } from '../../plugins/discogs';
 
-	import type { SearchResult, SearchType } from '../../plugins/discogs';
+	import type { EntityType, SearchResult } from '../../plugins/discogs';
 
 	let query = $state('');
-	let searchType = $state<SearchType | ''>('');
+	let entityType = $state<EntityType | ''>('');
 	let results = $state<SearchResult[]>([]);
 	let error = $state<string | null>(null);
 	let searching = $state(false);
@@ -21,7 +21,7 @@
 		error = null;
 
 		try {
-			const response = await source.client.search(trimmed, searchType || undefined);
+			const response = await source.client.search(trimmed, entityType || undefined);
 
 			results = response.results;
 		} catch (err) {
@@ -50,7 +50,7 @@
 		bind:value={query}
 		autocomplete="off"
 	/>
-	<select class="ui-field w-28" aria-label="Entity type" bind:value={searchType}>
+	<select class="ui-field w-28" aria-label="Entity type" bind:value={entityType}>
 		<option value="">All</option>
 		<option value="artist">Artist</option>
 		<option value="label">Label</option>

@@ -6,7 +6,7 @@
 	import NavigationButton from './NavigationButton.svelte';
 
 	import type { GraphNode } from '../../graph/types';
-	import type { SearchType } from '../../plugins/discogs';
+	import type { EntityType } from '../../plugins/discogs';
 
 	interface Props {
 		node: GraphNode;
@@ -19,17 +19,17 @@
 	const isResetDisabled = $derived(
 		!node ||
 		!node.externalId ||
-		source.isBlocked(node.type as SearchType, node.externalId) ||
+		source.isBlocked(node.type as EntityType, node.externalId) ||
 		SelectedNodeState.hasExpansionInFlight
 	);
 
-	const discogsUrl = $derived(source.compositions.getDiscogsWebsiteUrl(node.type as SearchType, node.externalId));
+	const discogsUrl = $derived(source.compositions.getDiscogsWebsiteUrl(node.type as EntityType, node.externalId));
 
 	const youtubeUrl = $derived(
 		source.compositions.getYouTubeSearchUrl({
 			label: node.label,
 			query: node.label,
-			searchType: node.type as SearchType
+			entityType: node.type as EntityType
 		})
 	);
 

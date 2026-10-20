@@ -3,7 +3,7 @@ import { plugin as source } from '../../plugins/discogs';
 
 import { LOAD_ACTION_CONFIG } from './expansion-config';
 
-import type { EntityType, LoadType, Pagination, SearchType } from '../../plugins/discogs';
+import type { EntityType, LoadType, Pagination } from '../../plugins/discogs';
 import type { GraphNode } from '../../graph/types';
 import type { LoadAction } from './expansion-config';
 
@@ -42,7 +42,7 @@ function loadActionErrorMessage(loadType: LoadType): string {
 }
 
 function isBlockedNode(node: GraphNode): boolean {
-	return source.isBlocked(node.type as SearchType, node.externalId);
+	return source.isBlocked(node.type as EntityType, node.externalId);
 }
 
 function displayLabelFromDocument(document: {
