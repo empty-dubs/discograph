@@ -1,11 +1,11 @@
 import { BLOCKED_DISCOGS_IDS, DISCOGS_WEB_ORIGIN, DISCOGS_WEB_SEGMENTS, YOUTUBE_SEARCH_BASE } from './constants';
 
-import type { SearchType } from './types';
+import type { EntityType } from './types';
 
 type YouTubeSearchPayload = {
 	label?: string;
 	query?: string;
-	searchType?: SearchType;
+	entityType?: EntityType;
 	artists?: { id: number; name: string }[];
 	meta?: { year?: number | string };
 };
@@ -22,7 +22,7 @@ function stripDiscogsDisambiguation(name: string): string {
 	return name.replace(/\s*\(\d+\)$/, '').trim();
 }
 
-export function getDiscogsWebsiteUrl(type: SearchType, externalId: number): string | undefined {
+export function getDiscogsWebsiteUrl(type: EntityType, externalId: number): string | undefined {
 	if (!externalId || !type) return undefined;
 
 	return `${DISCOGS_WEB_ORIGIN}/${DISCOGS_WEB_SEGMENTS[type]}/${externalId}`;
@@ -35,11 +35,11 @@ export function getYouTubeSearchUrl(payload: YouTubeSearchPayload): string | und
 
 	const parts: string[] = [displayName];
 
-	if (payload.searchType === 'artist') {
+	if (payload.entityType === 'artist') {
 		parts.push('music');
-	} else if (payload.searchType === 'label') {
+	} else if (payload.entityType === 'label') {
 		parts.push('record label');
-	} else if (payload.searchType === 'release' || payload.searchType === 'master') {
+	} else if (payload.entityType === 'release' || payload.entityType === 'master') {
 		const artist = payload.artists?.[0];
 		const year = payload.meta?.year;
 

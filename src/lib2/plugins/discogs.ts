@@ -51,11 +51,10 @@ export type {
 	RelationshipType,
 	Release,
 	SearchResponse,
-	SearchResult,
-	SearchType
+	SearchResult
 } from '../sources/discogs/types';
 
-export const discogsPlugin = {
+export const plugin = {
 	id: 'discogs',
 	documentStore,
 	loadProgress,

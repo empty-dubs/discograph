@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { seedFromGraphNode } from '../../nexus/bridge';
-	import { discogsPlugin as discogs } from '../../plugins/discogs';
+	import { plugin as source } from '../../plugins/discogs';
 
 	import SelectedNodeState from '../../nexus/discogs/stores/SelectedNodeState.svelte';
 	import NavigationButton from './NavigationButton.svelte';
 
 	import type { GraphNode } from '../../graph/types';
-	import type { SearchType } from '../../plugins/discogs';
+	import type { EntityType } from '../../plugins/discogs';
 
 	interface Props {
 		node: GraphNode;
@@ -19,17 +19,17 @@
 	const isResetDisabled = $derived(
 		!node ||
 		!node.externalId ||
-		discogs.isBlocked(node.type as SearchType, node.externalId) ||
+		source.isBlocked(node.type as EntityType, node.externalId) ||
 		SelectedNodeState.hasExpansionInFlight
 	);
 
-	const discogsUrl = $derived(discogs.compositions.getDiscogsWebsiteUrl(node.type as SearchType, node.externalId));
+	const discogsUrl = $derived(source.compositions.getDiscogsWebsiteUrl(node.type as EntityType, node.externalId));
 
 	const youtubeUrl = $derived(
-		discogs.compositions.getYouTubeSearchUrl({
+		source.compositions.getYouTubeSearchUrl({
 			label: node.label,
 			query: node.label,
-			searchType: node.type as SearchType
+			entityType: node.type as EntityType
 		})
 	);
 

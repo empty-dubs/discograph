@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { discogsPlugin as discogs } from '../../../../../plugins/discogs';
+	import { plugin as source } from '../../../../../plugins/discogs';
 
 	import NodeLoadActions from '../../../../shared/NodeLoadActions.svelte';
 	import ControlPanelExploreSection from './ControlPanelExploreSection.svelte';
@@ -11,15 +11,15 @@
 		<GraphGlobalActions />
 	</ControlPanelExploreSection>
 
-	<ControlPanelExploreSection title="Artists" nodeTypes={discogs.constants.artistGroups}>
-		<NodeLoadActions loadTypes={discogs.constants.artistLoadTypes} />
+	<ControlPanelExploreSection title="Artists" nodeTypes={source.constants.artistGroups}>
+		<NodeLoadActions loadTypes={source.constants.artistLoadTypes} />
 	</ControlPanelExploreSection>
 
-	<ControlPanelExploreSection title="Masters/Releases" nodeTypes={discogs.constants.masterReleaseGroups}>
-		<NodeLoadActions loadTypes={discogs.constants.masterReleaseLoadTypes} />
+	<ControlPanelExploreSection title="Masters/Releases" nodeTypes={source.constants.masterReleaseGroups}>
+		<NodeLoadActions loadTypes={source.constants.masterReleaseLoadTypes} />
 	</ControlPanelExploreSection>
 
-	<ControlPanelExploreSection title="Labels" nodeTypes={discogs.constants.labelGroups}>
-		<NodeLoadActions loadTypes={discogs.constants.labelLoadTypes} />
+	<ControlPanelExploreSection title="Labels" nodeTypes={source.constants.labelGroups}>
+		<NodeLoadActions loadTypes={source.constants.labelLoadTypes} />
 	</ControlPanelExploreSection>
 </div>

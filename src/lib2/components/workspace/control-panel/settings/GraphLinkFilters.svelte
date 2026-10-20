@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { graph } from '../../../../graph/graph';
-	import { discogsPlugin as discogs } from '../../../../plugins/discogs';
+	import { plugin as source } from '../../../../plugins/discogs';
 
 	const RELATIONSHIP_HIGHLIGHT_COLUMNS: string[][] = [
 		['member_of', 'alias_of', 'credited_on'],
@@ -9,7 +9,7 @@
 	];
 
 	const labels = Object.fromEntries(
-		discogs.presentation.relationships.map((relationship) => [relationship.type, relationship.label])
+		source.presentation.relationships.map((relationship) => [relationship.type, relationship.label])
 	) as Record<string, string>;
 
 	function isEnabled(type: string): boolean {

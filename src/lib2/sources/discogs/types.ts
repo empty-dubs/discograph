@@ -1,5 +1,3 @@
-export type SearchType = 'artist' | 'label' | 'release' | 'master';
-
 export type EntityType = 'artist' | 'label' | 'release' | 'master';
 
 export type RelationshipType =
@@ -61,7 +59,7 @@ export interface SearchResult {
 	name?: string;
 	resource_url?: string;
 	title?: string;
-	type: SearchType;
+	type: EntityType;
 	uri?: string;
 	year?: string;
 }

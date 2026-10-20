@@ -1,14 +1,14 @@
 import { graph } from '../../../graph/graph';
 import { collectDescendants } from '../../../graph/operations/crawl';
 import { loadEntityDocument } from '../load-runner';
-import { discogsPlugin as discogs } from '../../../plugins/discogs';
+import { plugin as source } from '../../../plugins/discogs';
 
-import type { LoadType, SearchType } from '../../../plugins/discogs';
+import type { EntityType, LoadType } from '../../../plugins/discogs';
 
 class SelectedNodeState {
 	id = $derived(graph.presentation.selectedId);
 	data = $derived(graph.data.nodes.get(this.id!));
-	document = $derived(discogs.documentStore.get(this.id!));
+	document = $derived(source.documentStore.get(this.id!));
 
 	hasChildren = $derived(graph.expansion.parentChildAdjacencyList.has(this.id!));
 	entityDocumentStatus = $derived(graph.expansion.primaryDocumentByNodeId.get(this.id!));
@@ -16,18 +16,18 @@ class SelectedNodeState {
 	isEntityDocumentLoaded = $derived(this.entityDocumentStatus === 'loaded');
 	isEntityDocumentFailed = $derived(this.entityDocumentStatus === 'failed');
 	hasExpansionInFlight = $derived(graph.expansion.expansionInFlightNodeIds.has(this.id!));
-	isBlocked = $derived(discogs.isBlocked(this.data!.type as SearchType, this.data!.externalId));
+	isBlocked = $derived(source.isBlocked(this.data!.type as EntityType, this.data!.externalId));
 
 	neighborTypes = $derived.by((): LoadType[] => {
 		if (!this.data || this.isBlocked) return [];
 
-		return discogs.constants.neighborTypes[this.data.type as SearchType] ?? [];
+		return source.constants.neighborTypes[this.data.type as EntityType] ?? [];
 	});
 
 	isLoadTypeCompleted(loadType: LoadType): boolean {
 		if (!this.id) return false;
 
-		return discogs.loadProgress.isLoadTypeCompleted(this.id, loadType);
+		return source.loadProgress.isLoadTypeCompleted(this.id, loadType);
 	}
 
 	collapseNode() {
@@ -39,20 +39,20 @@ class SelectedNodeState {
 
 		graph.data.removeNodes(descendants);
 		graph.expansion.resetForCollapse(new Set([this.id]), descendants);
-		discogs.loadProgress.resetForExpandedNodes(new Set([this.id]));
-		discogs.documentStore.delete(descendants);
+		source.loadProgress.resetForExpandedNodes(new Set([this.id]));
+		source.documentStore.delete(descendants);
 	}
 
 	hasMorePages(loadType: LoadType): boolean {
 		if (!this.id) return false;
 
-		return discogs.loadProgress.hasMorePages(this.id, loadType);
+		return source.loadProgress.hasMorePages(this.id, loadType);
 	}
 
 	hasPagedDocument(loadType: LoadType): boolean {
 		if (!this.id) return false;
 
-		return discogs.loadProgress.hasPagedDocument(this.id, loadType);
+		return source.loadProgress.hasPagedDocument(this.id, loadType);
 	}
 
 	async loadEntityDocument() {

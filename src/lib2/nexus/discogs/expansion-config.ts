@@ -1,5 +1,5 @@
 import { graph } from '../../graph/graph';
-import { discogsPlugin as discogs } from '../../plugins/discogs';
+import { plugin as source } from '../../plugins/discogs';
 
 import {
 	buildAliasesFromArtist,
@@ -116,19 +116,19 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 		artist: {
 			source: 'releases',
 			expansionId: 'releases',
-			fetch: (id, page) => discogs.client.getArtistReleases(id, discogs.fetch.artistReleaseFetchParams(page)),
+			fetch: (id, page) => source.client.getArtistReleases(id, source.fetch.artistReleaseFetchParams(page)),
 			patch: (artist, payload) => buildFromArtistReleases(artist, (payload as ArtistReleasesResponse).releases, 'release')
 		},
 		label: {
 			source: 'releases',
 			expansionId: 'releases',
-			fetch: (id, page) => discogs.client.getLabelReleases(id, discogs.fetch.labelReleaseFetchParams(page)),
+			fetch: (id, page) => source.client.getLabelReleases(id, source.fetch.labelReleaseFetchParams(page)),
 			patch: (label, payload) => buildFromLabelReleases(label, (payload as LabelReleasesResponse).releases, 'release')
 		},
 		master: {
 			source: 'releases',
 			expansionId: 'releases',
-			fetch: (id, page) => discogs.client.getMasterVersions(id, discogs.fetch.masterVersionFetchParams(page)),
+			fetch: (id, page) => source.client.getMasterVersions(id, source.fetch.masterVersionFetchParams(page)),
 			patch: (master, payload) => buildFromMasterVersions(master, (payload as MasterVersionsResponse).versions)
 		}
 	},
@@ -136,13 +136,13 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 		artist: {
 			source: 'releases',
 			expansionId: 'master_releases',
-			fetch: (id, page) => discogs.client.getArtistReleases(id, discogs.fetch.artistReleaseFetchParams(page)),
+			fetch: (id, page) => source.client.getArtistReleases(id, source.fetch.artistReleaseFetchParams(page)),
 			patch: (artist, payload) => buildFromArtistReleases(artist, (payload as ArtistReleasesResponse).releases, 'master')
 		},
 		label: {
 			source: 'releases',
 			expansionId: 'master_releases',
-			fetch: (id, page) => discogs.client.getLabelReleases(id, discogs.fetch.labelReleaseFetchParams(page)),
+			fetch: (id, page) => source.client.getLabelReleases(id, source.fetch.labelReleaseFetchParams(page)),
 			patch: (label, payload) => buildFromLabelReleases(label, (payload as LabelReleasesResponse).releases, 'master')
 		}
 	},
@@ -150,7 +150,7 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 		master: {
 			source: 'custom',
 			run: async (node) => {
-				const document = discogs.documentStore.get(node.id);
+				const document = source.documentStore.get(node.id);
 				const master: Master = document as Master;
 				const mainReleaseId = master.main_release;
 
@@ -158,7 +158,7 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 					throw new Error('This master has no main release');
 				}
 
-				const release = await discogs.client.getRelease(mainReleaseId);
+				const release = await source.client.getRelease(mainReleaseId);
 
 				graph.applyPatchFromExpansion(node.id, buildMainReleaseFromMaster(release, node));
 			}
@@ -168,14 +168,14 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 		release: {
 			source: 'custom',
 			run: async (node) => {
-				const document = discogs.documentStore.get(node.id);
+				const document = source.documentStore.get(node.id);
 				const release: Release = document as Release;
 				const masterId = release.master_id;
 
 				if (!masterId) {
 					throw new Error('This release has no linked master');
 				}
-				const master = await discogs.client.getMaster(masterId);
+				const master = await source.client.getMaster(masterId);
 
 				graph.applyPatchFromExpansion(node.id, buildMasterFromRelease(master, node));
 			}

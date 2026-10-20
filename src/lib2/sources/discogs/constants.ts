@@ -1,6 +1,6 @@
 import { dev } from '$app/environment';
 
-import type { LoadType, SearchType } from './types';
+import type { EntityType, LoadType } from './types';
 
 export const DISCOGS_API_ORIGIN = 'https://api.discogs.com';
 export const DISCOGS_WEB_ORIGIN = 'https://www.discogs.com';
@@ -8,28 +8,28 @@ export const YOUTUBE_SEARCH_BASE = 'https://www.youtube.com/results';
 
 export const API_BASE = dev ? '/api/discogs' : DISCOGS_API_ORIGIN;
 
-export const DISCOGS_API_SEGMENTS: Record<SearchType, string> = {
+export const DISCOGS_API_SEGMENTS: Record<EntityType, string> = {
 	artist: 'artists',
 	label: 'labels',
 	release: 'releases',
 	master: 'masters'
 };
 
-export const DISCOGS_WEB_SEGMENTS: Record<SearchType, string> = {
+export const DISCOGS_WEB_SEGMENTS: Record<EntityType, string> = {
 	artist: 'artist',
 	label: 'label',
 	release: 'release',
 	master: 'master'
 };
 
-export const BLOCKED_DISCOGS_IDS: Record<SearchType, ReadonlySet<number>> = {
+export const BLOCKED_DISCOGS_IDS: Record<EntityType, ReadonlySet<number>> = {
 	artist: new Set([0, 194, 355]),
 	label: new Set([1818]),
 	release: new Set(),
 	master: new Set()
 };
 
-export const ENTITY_NEIGHBOR_TYPES: Record<SearchType, LoadType[]> = {
+export const ENTITY_NEIGHBOR_TYPES: Record<EntityType, LoadType[]> = {
 	artist: ['artists', 'aliases', 'releases', 'master_releases'],
 	label: ['labels', 'releases'],
 	release: ['artists', 'labels', 'companies', 'credited_artists', 'linked_master'],

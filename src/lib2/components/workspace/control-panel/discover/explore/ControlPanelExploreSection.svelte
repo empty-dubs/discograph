@@ -3,7 +3,7 @@
 
 	import { graph } from '../../../../../graph/graph';
 	import { defaultNodePresentation } from '../../../../../graph/presentation';
-	import { discogsPlugin as discogs } from '../../../../../plugins/discogs';
+	import { plugin as source } from '../../../../../plugins/discogs';
 
 	interface Props {
 		title: string;
@@ -14,7 +14,7 @@
 	let { title, nodeTypes, children }: Props = $props();
 
 	function entityColor(type: string): string {
-		return discogs.presentation.entities.find((entity) => entity.type === type)?.color
+		return source.presentation.entities.find((entity) => entity.type === type)?.color
 				?? defaultNodePresentation.color;
 	}
 </script>

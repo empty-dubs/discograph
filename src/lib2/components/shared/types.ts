@@ -1,4 +1,4 @@
-import type { SearchType } from '../../plugins/discogs';
+import type { EntityType } from '../../plugins/discogs';
 
 export type LoadButtonState = {
 	label: string;
@@ -12,7 +12,7 @@ export type SearchableListItem = {
 	label?: string;
 	query?: string;
 	discogsId?: number;
-	searchType?: SearchType;
+	entityType?: EntityType;
 	artists?: { id: number; name: string }[];
 	meta?: { year?: number | string; genres?: string[]; styles?: string[] };
 };

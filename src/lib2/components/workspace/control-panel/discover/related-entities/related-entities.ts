@@ -89,7 +89,7 @@ export function getRelatedEntityItems(
 						label: alias.name,
 						query: alias.name,
 						discogsId: alias.id,
-						searchType: 'artist'
+						entityType: 'artist'
 					}));
 				case 'members':
 					return (artist.members ?? []).map((member) => ({
@@ -97,7 +97,7 @@ export function getRelatedEntityItems(
 						label: member.active === false ? `${member.name} (inactive)` : member.name,
 						query: member.name,
 						discogsId: member.id,
-						searchType: 'artist'
+						entityType: 'artist'
 					}));
 				case 'groups':
 					return (artist.groups ?? []).map((group) => ({
@@ -105,7 +105,7 @@ export function getRelatedEntityItems(
 						label: group.name,
 						query: group.name,
 						discogsId: group.id,
-						searchType: 'artist'
+						entityType: 'artist'
 					}));
 				default:
 					return [];
@@ -121,7 +121,7 @@ export function getRelatedEntityItems(
 						label: label.parent_label.name,
 						query: label.parent_label.name,
 						discogsId: label.parent_label.id,
-						searchType: 'label'
+						entityType: 'label'
 					}
 				];
 			}
@@ -132,7 +132,7 @@ export function getRelatedEntityItems(
 					label: sublabel.name,
 					query: sublabel.name,
 					discogsId: sublabel.id,
-					searchType: 'label'
+					entityType: 'label'
 				}));
 			}
 
@@ -155,7 +155,7 @@ export function getRelatedEntityItems(
 						label,
 						query,
 						discogsId: master.main_release,
-						searchType: 'release',
+						entityType: 'release',
 						artists: master.artists?.map((artist) => ({ id: artist.id, name: artist.name })),
 						meta: { year: master.year, genres: master.genres, styles: master.styles }
 					}
@@ -168,7 +168,7 @@ export function getRelatedEntityItems(
 					label: artist.name,
 					query: artist.name,
 					discogsId: artist.id,
-					searchType: 'artist'
+					entityType: 'artist'
 				}));
 			}
 
@@ -196,7 +196,7 @@ export function getRelatedEntityItems(
 						label,
 						query,
 						discogsId: release.master_id,
-						searchType: 'master',
+						entityType: 'master',
 						artists,
 						meta
 					}
@@ -209,7 +209,7 @@ export function getRelatedEntityItems(
 					label: artist.name,
 					query: artist.name,
 					discogsId: artist.id,
-					searchType: 'artist'
+					entityType: 'artist'
 				}));
 			}
 
@@ -219,7 +219,7 @@ export function getRelatedEntityItems(
 					label: labelRef.catno ? `${labelRef.name} (${labelRef.catno})` : labelRef.name,
 					query: labelRef.name,
 					discogsId: labelRef.id,
-					searchType: 'label'
+					entityType: 'label'
 				}));
 			}
 
@@ -231,7 +231,7 @@ export function getRelatedEntityItems(
 					label: credit.role ? `${credit.name} — ${credit.role}` : credit.name,
 					query: credit.name,
 					discogsId: credit.id,
-					searchType: 'artist'
+					entityType: 'artist'
 				}));
 			}
 
@@ -247,7 +247,7 @@ export function getRelatedEntityItems(
 								: company.name,
 					query: company.name,
 					discogsId: company.id,
-					searchType: 'label'
+					entityType: 'label'
 				}));
 			}
 

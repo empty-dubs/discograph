@@ -6,6 +6,7 @@ import { acquireRateLimitSlot } from './rate-limiter';
 import type {
 	Artist,
 	ArtistReleasesResponse,
+	EntityType,
 	Label,
 	LabelReleasesResponse,
 	Master,
@@ -13,7 +14,6 @@ import type {
 	PagedListParams,
 	Release,
 	SearchResponse,
-	SearchType
 } from './types';
 
 class DiscogsClientError extends Error {
@@ -66,7 +66,7 @@ async function request<T>(
 	return response.json() as Promise<T>;
 }
 
-export function search(query: string, type?: SearchType, page: number = 1) {
+export function search(query: string, type?: EntityType, page: number = 1) {
 	return request<SearchResponse>('database/search', { q: query, type, page, per_page: 25 });
 }
 
