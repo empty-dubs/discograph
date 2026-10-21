@@ -11,7 +11,13 @@ import {
 	search,
 } from '../sources/discogs/client';
 import { isBlocked } from '../sources/discogs/blocked';
-import { getRelationshipId, getEntityId, getDiscogsWebsiteUrl, getYouTubeSearchUrl } from '../sources/discogs/compositions';
+import {
+	getRelationshipId,
+	getEntityId,
+	getDiscogsWebsiteUrl,
+	getYouTubeSearchUrl,
+	releaseRowDisplay,
+} from '../sources/discogs/compositions';
 import {
 	ARTIST_GROUPS,
 	ARTIST_LOAD_TYPES,
@@ -22,6 +28,7 @@ import {
 	MASTER_RELEASE_GROUPS,
 	MASTER_RELEASE_LOAD_TYPES,
 	PATCH_LOAD_TYPES,
+	RELEASES_TAB_LOAD_TYPES,
 } from '../sources/discogs/constants';
 import { entityLabel } from '../sources/discogs/transformations';
 import { presentation } from '../sources/discogs/presentation';
@@ -77,7 +84,8 @@ export const plugin = {
 		getDiscogsWebsiteUrl,
 		getEntityId,
 		getRelationshipId,
-		getYouTubeSearchUrl
+		getYouTubeSearchUrl,
+		releaseRowDisplay,
 	},
 	constants: {
 		artistGroups: ARTIST_GROUPS,
@@ -87,6 +95,7 @@ export const plugin = {
 		loadTypeLabels: LOAD_TYPE_LABELS,
 		masterReleaseGroups: MASTER_RELEASE_GROUPS,
 		masterReleaseLoadTypes: MASTER_RELEASE_LOAD_TYPES,
+		releasesTabLoadTypes: RELEASES_TAB_LOAD_TYPES,
 		neighborTypes: ENTITY_NEIGHBOR_TYPES,
 		patchLoadTypes: PATCH_LOAD_TYPES
 	},

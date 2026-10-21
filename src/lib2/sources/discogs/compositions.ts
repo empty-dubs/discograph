@@ -2,6 +2,11 @@ import { BLOCKED_DISCOGS_IDS, DISCOGS_WEB_ORIGIN, DISCOGS_WEB_SEGMENTS, YOUTUBE_
 
 import type { EntityType } from './types';
 
+type ReleasePayload = {
+	title: string;
+	artist?: string;
+	year?: number | string;
+}
 type YouTubeSearchPayload = {
 	label?: string;
 	query?: string;
@@ -51,4 +56,20 @@ export function getYouTubeSearchUrl(payload: YouTubeSearchPayload): string | und
 	}
 
 	return `${YOUTUBE_SEARCH_BASE}?search_query=${encodeURIComponent(parts.join(' '))}`;
+}
+
+function releaseRowLabel(payload: ReleasePayload): string {
+	const artistName = payload.artist?.trim();
+	const releaseYear = payload.year != null && payload.year !== '' && payload.year !== '0' ? payload.year : null;
+
+	return `${artistName ? `${artistName} - ` : ''}${payload.title}${releaseYear ? ` (${releaseYear})` : ''}`;
+}
+
+export function releaseRowDisplay(payload: ReleasePayload): { label: string; query: string } {
+	const title = payload.title.trim() || 'Unknown';
+
+	return {
+		label: releaseRowLabel({title, artist: payload.artist, year: payload.year}),
+		query: title
+	};
 }

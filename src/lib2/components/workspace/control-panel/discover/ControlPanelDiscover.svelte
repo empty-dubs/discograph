@@ -9,6 +9,7 @@
 	import LoadingIcon from '../LoadingIcon.svelte';
 	import ControlPanelExplore from './explore/ControlPanelExplore.svelte';
 	import ControlPanelRelatedEntities from './related-entities/ControlPanelRelatedEntities.svelte';
+	import ControlPanelReleases from './related-entities/ControlPanelReleases.svelte';
 
 	import type { Accordion } from '../../../shared/accordion-context';
 
@@ -155,7 +156,7 @@
 			class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'releases' ? 'hidden' : ''}"
 		>
 			<ControlPanelInfo helperText={CONTROL_PANEL_INFO_TEXT.discover.releases}>
-				<p class="text-muted m-0 text-sm">Release lists will be added in a later phase.</p>
+				<ControlPanelReleases />
 			</ControlPanelInfo>
 		</div>
 	</div>
