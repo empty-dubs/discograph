@@ -72,10 +72,10 @@ export function buildFromLabelReleases(
 		const releaseType = labelReleaseKind(item);
 		const targetNodeType = releaseType === 'master' ? 'master' : 'release';
 		const targetNodeId = source.compositions.getEntityId(targetNodeType, item.id);
-		const linkId = source.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
+		const linkId = source.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
 
 		nodes.push(createNode(targetNodeId, targetNodeType, listingLabel(item), item.id));
-		links.push(createLink(linkId, sourceNodeId, targetNodeId, linkType));
+		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
 	}
 
 	return { nodes, links };

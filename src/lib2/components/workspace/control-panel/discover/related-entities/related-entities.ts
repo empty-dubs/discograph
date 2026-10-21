@@ -1,4 +1,4 @@
-import { releaseRowDisplay } from './releases';
+import { plugin as source } from '../../../../../plugins/discogs';
 
 import type { SearchableListItem } from '../../../../shared/types';
 import type { Artist, EntityType, Label, Master, RelatedEntityType, Release } from '../../../../../plugins/discogs';
@@ -143,7 +143,7 @@ export function getRelatedEntityItems(
 
 			if (relatedEntityType === 'main_release' && master.main_release) {
 				const artistName = master.artists?.[0]?.name;
-				const { label, query } = releaseRowDisplay({
+				const { label, query } = source.compositions.releaseRowDisplay({
 					title: master.title,
 					artist: artistName,
 					year: master.year
@@ -184,7 +184,7 @@ export function getRelatedEntityItems(
 			};
 
 			if (relatedEntityType === 'linked_master' && release.master_id) {
-				const { label, query } = releaseRowDisplay({
+				const { label, query } = source.compositions.releaseRowDisplay({
 					title: release.title,
 					artist: artists?.[0]?.name,
 					year: release.year
