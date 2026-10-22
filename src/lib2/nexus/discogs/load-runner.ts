@@ -54,19 +54,19 @@ function displayLabelFromDocument(document: {
 
 export async function loadEntityDocument(node: GraphNode): Promise<'loaded' | 'skipped' | 'failed'> {
 	if (isBlockedNode(node)) {
-		graph.expansion.setPrimaryDocumentStatus(node.id, 'loaded');
+		source.loadProgress.setStatus(node.id, 'loaded');
 
 		return 'skipped';
 	}
 
-	const status = graph.expansion.primaryDocumentByNodeId.get(node.id);
+	const status = source.loadProgress.getStatus(node.id);
 
 	if (status === 'loading' || status === 'loaded' || status === 'failed') {
 		return 'skipped';
 	}
 
-	const result = await graph.expansion.withExpansionInFlight(node.id, async () => {
-		graph.expansion.setPrimaryDocumentStatus(node.id, 'loading');
+	const result = await source.loadProgress.withInFlight(node.id, async () => {
+		source.loadProgress.setStatus(node.id, 'loading');
 
 		const payload = await withRequest(
 			() => source.fetch.fetchEntityDocument(node.externalId, node.type as EntityType),
@@ -74,12 +74,12 @@ export async function loadEntityDocument(node: GraphNode): Promise<'loaded' | 's
 		);
 
 		if (!payload) {
-			graph.expansion.setPrimaryDocumentStatus(node.id, 'failed');
+			source.loadProgress.setStatus(node.id, 'failed');
 
 			return 'failed';
 		}
 
-		graph.expansion.setPrimaryDocumentStatus(node.id, 'loaded');
+		source.loadProgress.setStatus(node.id, 'loaded');
 
 		const label = displayLabelFromDocument(payload as { title?: string; name?: string });
 
@@ -94,7 +94,7 @@ export async function loadEntityDocument(node: GraphNode): Promise<'loaded' | 's
 }
 
 async function ensureEntityDocument(node: GraphNode): Promise<boolean> {
-	const status = graph.expansion.primaryDocumentByNodeId.get(node.id);
+	const status = source.loadProgress.getStatus(node.id);
 
 	if (status === 'loaded') return true;
 
@@ -185,7 +185,7 @@ export async function runPatchLoadAction(
 
 	if (!loadAction) return;
 
-	await graph.expansion.withExpansionInFlight(node.id, async () => {
+	await source.loadProgress.withInFlight(node.id, async () => {
 		if (loadAction.source === 'custom') {
 			await runCustomPatchLoadAction(node, loadAction, loadType);
 

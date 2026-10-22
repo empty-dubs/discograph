@@ -17,5 +17,3 @@ export interface GraphPatch {
 	nodes: GraphNode[];
 	links: GraphLink[];
 }
-
-export type PrimaryDocumentStatus = 'idle' | 'loading' | 'loaded' | 'failed';

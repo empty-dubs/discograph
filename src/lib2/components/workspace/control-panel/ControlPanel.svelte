@@ -58,7 +58,7 @@
 			>
 				<span class="control-panel-subtab-inner">
 					<span class="control-panel-subtab-icon-slot">
-						{#if SelectedNodeState.hasExpansionInFlight}
+						{#if SelectedNodeState.isLoading}
 							<LoadingIcon />
 						{:else}
 							<Icon data={lightbulbO} class="inline-block shrink-0" scale={0.875} />

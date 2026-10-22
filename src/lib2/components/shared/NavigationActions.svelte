@@ -20,7 +20,7 @@
 		!node ||
 		!node.externalId ||
 		source.isBlocked(node.type as EntityType, node.externalId) ||
-		SelectedNodeState.hasExpansionInFlight
+		SelectedNodeState.isLoading
 	);
 
 	const discogsUrl = $derived(source.compositions.getDiscogsWebsiteUrl(node.type as EntityType, node.externalId));

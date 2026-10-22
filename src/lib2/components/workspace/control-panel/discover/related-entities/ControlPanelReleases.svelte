@@ -28,7 +28,7 @@
 			<p>Select an artist, label, or master and load masters or releases to begin.</p>
 		{:else if !isReleaseParentType(node.data.type)}
 			<p>Selected node must be an artist, label, or master.</p>
-		{:else if node.hasExpansionInFlight && releaseListItems.length === 0}
+		{:else if node.isLoading && releaseListItems.length === 0}
 			<p>Loading releases...</p>
 		{:else if releaseListItems.length === 0}
 			<p>Use Load master releases or Load releases above to fetch release data.</p>

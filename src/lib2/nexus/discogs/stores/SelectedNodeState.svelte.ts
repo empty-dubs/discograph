@@ -11,11 +11,11 @@ class SelectedNodeState {
 	document = $derived(source.documentStore.get(this.id!));
 
 	hasChildren = $derived(graph.expansion.parentChildAdjacencyList.has(this.id!));
-	entityDocumentStatus = $derived(graph.expansion.primaryDocumentByNodeId.get(this.id!));
+	entityDocumentStatus = $derived(source.loadProgress.getStatus(this.id!));
 	isEntityDocumentLoading = $derived(this.entityDocumentStatus === 'loading');
 	isEntityDocumentLoaded = $derived(this.entityDocumentStatus === 'loaded');
 	isEntityDocumentFailed = $derived(this.entityDocumentStatus === 'failed');
-	hasExpansionInFlight = $derived(graph.expansion.expansionInFlightNodeIds.has(this.id!));
+	isLoading = $derived(source.loadProgress.isInFlight(this.id!));
 	isBlocked = $derived(source.isBlocked(this.data!.type as EntityType, this.data!.externalId));
 
 	neighborTypes = $derived.by((): LoadType[] => {
@@ -39,6 +39,8 @@ class SelectedNodeState {
 
 		graph.data.removeNodes(descendants);
 		graph.expansion.resetForCollapse(new Set([this.id]), descendants);
+		source.loadProgress.deleteDocumentStatuses(descendants);
+		source.loadProgress.delete(descendants);
 		source.loadProgress.resetForExpandedNodes(new Set([this.id]));
 		source.documentStore.delete(descendants);
 	}

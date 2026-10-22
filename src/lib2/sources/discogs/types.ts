@@ -69,6 +69,8 @@ export interface SearchResponse {
 	results: SearchResult[];
 }
 
+export type SourceDocumentStatus = 'idle' | 'loading' | 'loaded' | 'failed';
+
 interface ArtistMember {
 	id: number;
 	name: string;

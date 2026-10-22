@@ -55,7 +55,7 @@
 		>
 			<span class="control-panel-subtab-inner">
 				<span class="control-panel-subtab-icon-slot">
-					{#if SelectedNodeState.hasExpansionInFlight}
+					{#if SelectedNodeState.isLoading}
 						<LoadingIcon />
 					{/if}
 				</span>
@@ -103,7 +103,7 @@
 		>
 			<span class="control-panel-subtab-inner">
 				<span class="control-panel-subtab-icon-slot">
-					{#if SelectedNodeState.hasExpansionInFlight}
+					{#if SelectedNodeState.isLoading}
 						<LoadingIcon />
 					{/if}
 				</span>

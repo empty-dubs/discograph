@@ -31,7 +31,7 @@
 		return (
 			!item.discogsId ||
 			!item.entityType ||
-			SelectedNodeState.hasExpansionInFlight ||
+			SelectedNodeState.isLoading ||
 			source.isBlocked(item.entityType, item.discogsId)
 		)
 

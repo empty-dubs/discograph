@@ -52,7 +52,7 @@
 
 	function isButtonDisabled(buttonState: LoadButtonState): boolean {
 		if (!node.id || !node.data) return true;
-		if (node.isBlocked || node.hasExpansionInFlight || !node.isEntityDocumentLoaded) return true;
+		if (node.isBlocked || node.isLoading || !node.isEntityDocumentLoaded) return true;
 		if (!node.neighborTypes.includes(buttonState.type as LoadType)) return true;
 
 		return buttonState.exhausted;
