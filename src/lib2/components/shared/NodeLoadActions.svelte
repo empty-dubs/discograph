@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { runPatchLoadAction } from '../../nexus/discogs/load-runner';
 	import { plugin as source } from '../../plugins/discogs';
 
 	import SelectedNodeState from '../../nexus/discogs/stores/SelectedNodeState.svelte';
@@ -68,13 +67,12 @@
 		if (!node.data || node.isBlocked) return;
 
 		if (buttonState.type === 'releases' || buttonState.type === 'master_releases') {
-			await runPatchLoadAction(
-				node.data,
+			await node.runLoadAction(
 				buttonState.type,
 				buttonState.loaded ? { page: 'next' } : undefined
 			);
 		} else {
-			await runPatchLoadAction(node.data, buttonState.type as LoadType);
+			await node.runLoadAction(buttonState.type as LoadType);
 		}
 	}
 </script>

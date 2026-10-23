@@ -1,9 +1,10 @@
 import { graph } from '../../../graph/graph';
 import { collectDescendants } from '../../../graph/operations/crawl';
-import { loadEntityDocument } from '../load-runner';
+import { loadEntityDocument, runPatchLoadAction } from '../load-runner';
 import { plugin as source } from '../../../plugins/discogs';
 import { getReleaseListItems } from '../discover/releases';
 
+import type { LoadActionParams } from '../load-runner';
 import type { EntityType, LoadType, RelatedEntityType, SearchableListItem } from '../../../plugins/discogs';
 
 class SelectedNodeState {
@@ -122,11 +123,15 @@ class SelectedNodeState {
 	}
 
 	async loadEntityDocument() {
-		const node = this.data;
+		if (!this.data) return;
 
-		if (!node) return;
+		await loadEntityDocument(this.data);
+	}
 
-		await loadEntityDocument(node);
+	async runLoadAction(loadType: LoadType, options?: LoadActionParams) {
+		if (!this.data) return;
+
+		await runPatchLoadAction(this.data, loadType, options);
 	}
 }
 
