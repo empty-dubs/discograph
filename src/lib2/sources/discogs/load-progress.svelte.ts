@@ -3,7 +3,7 @@ import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import type { LoadType, Pagination, SourceDocumentStatus } from './types';
 
 class LoadProgressStore {
-	pagedDocuments = $state<SvelteMap<string, Map<LoadType, Pagination>>>(new SvelteMap());
+	pagination = $state<SvelteMap<string, Map<LoadType, Pagination>>>(new SvelteMap());
 	completedLoadTypes = $state<SvelteMap<string, Set<LoadType>>>(new SvelteMap());
 	documentStatuses = $state<SvelteMap<string, SourceDocumentStatus>>(new SvelteMap());
 
@@ -45,28 +45,28 @@ class LoadProgressStore {
 		}
 	}
 
-	setPagedDocument(id: string, loadType: LoadType, pagination: Pagination) {
-		const nextPagedDocument = new SvelteMap(this.pagedDocuments.get(id) ?? []);
+	setPagination(id: string, loadType: LoadType, pagination: Pagination) {
+		const nextPagionation = new SvelteMap(this.pagination.get(id) ?? []);
 
-		nextPagedDocument.set(loadType, {
+		nextPagionation.set(loadType, {
 			page: pagination.page,
 			pages: pagination.pages,
 			items: pagination.items
 		});
 
-		this.pagedDocuments.set(id, nextPagedDocument);
+		this.pagination.set(id, nextPagionation);
 	}
 
-	getPagedDocument(id: string, loadType: LoadType): Pagination | undefined {
-		return this.pagedDocuments.get(id)?.get(loadType);
+	getPagination(id: string, loadType: LoadType): Pagination | undefined {
+		return this.pagination.get(id)?.get(loadType);
 	}
 
 	hasPagedDocument(id: string, loadType: LoadType): boolean {
-		return this.pagedDocuments.get(id)?.has(loadType) ?? false;
+		return this.pagination.get(id)?.has(loadType) ?? false;
 	}
 
 	hasMorePages(id: string, loadType: LoadType): boolean {
-		const paging = this.getPagedDocument(id, loadType);
+		const paging = this.getPagination(id, loadType);
 
 		return paging ? paging.page < paging.pages : false;
 	}
@@ -85,7 +85,7 @@ class LoadProgressStore {
 	resetForExpandedNodes(ids: Set<string>) {
 		if (ids.size === 0) return;
 
-		const nextPaging = new SvelteMap(this.pagedDocuments);
+		const nextPaging = new SvelteMap(this.pagination);
 		const nextCompleted = new SvelteMap(this.completedLoadTypes);
 
 		for (const id of ids) {
@@ -93,12 +93,12 @@ class LoadProgressStore {
 			nextCompleted.delete(id);
 		}
 
-		this.pagedDocuments = nextPaging;
+		this.pagination = nextPaging;
 		this.completedLoadTypes = nextCompleted;
 	}
 
 	clear() {
-		this.pagedDocuments = new SvelteMap();
+		this.pagination = new SvelteMap();
 		this.completedLoadTypes = new SvelteMap();
 		this.documentsInFlight = new SvelteSet();
 		this.documentStatuses = new SvelteMap();

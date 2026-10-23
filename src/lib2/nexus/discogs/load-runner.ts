@@ -143,7 +143,7 @@ async function runReleasesPatchLoadAction(
 
 	const pagination = response.pagination as Pagination;
 
-	source.loadProgress.setPagedDocument(node.id, loadType, pagination);
+	source.loadProgress.setPagination(node.id, loadType, pagination);
 
 	if (pagination.page >= pagination.pages) {
 		source.loadProgress.markLoadTypeCompleted(node.id, loadType);
@@ -201,7 +201,7 @@ export async function runPatchLoadAction(
 		let page: number;
 
 		if (options?.page === 'next') {
-			const paging = source.loadProgress.getPagedDocument(node.id, loadAction.expansionId);
+			const paging = source.loadProgress.getPagination(node.id, loadAction.expansionId);
 
 			if (!paging || paging.page >= paging.pages) return;
 

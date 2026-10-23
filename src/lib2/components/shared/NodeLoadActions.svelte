@@ -6,7 +6,13 @@
 	import NodeLoadButton from './NodeLoadButton.svelte';
 
 	import type { LoadType } from '../../plugins/discogs';
-	import type { LoadButtonState } from './types';
+
+	type LoadButtonState = {
+		label: string;
+		loaded: boolean;
+		exhausted: boolean;
+		type: string;
+	};
 
 	interface Props {
 		layout?: 'menu' | 'stack';
