@@ -6,8 +6,17 @@ import type { GraphNode } from '../../../graph/types';
 
 function collectReleaseNeighbors(parent: GraphNode): GraphNode[] {
 	const neighborIds = graph.expansion.parentChildAdjacencyList.get(parent.id);
+	const neighbors: GraphNode[] = [];
 
-	return [...(neighborIds ?? [])].filter((id) => id.includes('release') || id.includes('master')).map(id => graph.data.nodes.get(id)!);
+	for (const id of neighborIds ?? []) {
+		const node = graph.data.nodes.get(id);
+
+		if (node && (node.type === 'release' || node.type === 'master')) {
+			neighbors.push(node);
+		}
+	}
+
+	return neighbors;
 }
 
 function parseYearForSort(node: GraphNode): number {
@@ -88,9 +97,6 @@ function neighborToListItem(neighbor: GraphNode): SearchableListItem {
 
 export function getReleaseListItems(parent: GraphNode): SearchableListItem[] {
 	if (!source.relatedEntities.isReleaseParentType(parent.type)) return [];
-
-	void source.loadProgress.pagination;
-	void source.documentStore.documents;
 
 	if (!source.loadProgress.hasPagedDocument(parent.id, 'releases')
 		&& !source.loadProgress.hasPagedDocument(parent.id, 'master_releases')) return [];

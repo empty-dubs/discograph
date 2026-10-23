@@ -8,27 +8,72 @@ import type { EntityType, LoadType, RelatedEntityType, SearchableListItem } from
 
 class SelectedNodeState {
 	id = $derived(graph.presentation.selectedId);
-	data = $derived(graph.data.nodes.get(this.id!));
-	document = $derived(source.documentStore.get(this.id!));
-
-	entityDocumentStatus = $derived(source.loadProgress.getStatus(this.id!));
 	isEntityDocumentLoading = $derived(this.entityDocumentStatus === 'loading');
 	isEntityDocumentLoaded = $derived(this.entityDocumentStatus === 'loaded');
 	isEntityDocumentFailed = $derived(this.entityDocumentStatus === 'failed');
-	isLoading = $derived(source.loadProgress.isInFlight(this.id!));
-	isBlocked = $derived(source.isBlocked(this.data!.type as EntityType, this.data!.externalId));
-	hasReleaseParentType = $derived(source.relatedEntities.isReleaseParentType(this.data!.type));
-	hasChildren = $derived(graph.expansion.parentChildAdjacencyList.has(this.id!));
-	releaseListItems = $derived(getReleaseListItems(this.data!));
 
-	get relatedEntityGroups(): { id: RelatedEntityType; title: string }[] {
+	get data() {
+		if (!this.id) return undefined;
+
+		return graph.data.nodes.get(this.id);
+	}
+	
+	get document() {
+		if (!this.id) return undefined;
+
+		return source.documentStore.get(this.id);
+	}
+
+	get entityDocumentStatus() {
+		if (!this.id) return undefined;
+
+		return source.loadProgress.getStatus(this.id);
+	}
+
+	get isLoading() {
+		if (!this.id) return false;
+
+		return source.loadProgress.isInFlight(this.id);
+	}
+
+	get isBlocked() {
+		if (!this.data) return false;
+
+		return source.isBlocked(this.data.type as EntityType, this.data.externalId);
+	}
+
+	get hasReleaseParentType() {
+		if (!this.data) return false;
+
+		return source.relatedEntities.isReleaseParentType(this.data.type);
+	}
+
+	get hasChildren() {
+		if (!this.id) return false;
+
+		return graph.expansion.parentChildAdjacencyList.has(this.id);
+	}
+
+	get releaseListItems() {
+		if (!this.data) return [];
+
+		return getReleaseListItems(this.data);
+	}
+
+	get relatedEntityGroups() {
 		if (!this.data || !this.document) return [];
 
 		return source.relatedEntities.getRelatedEntityGroups(this.document, this.data.type as EntityType);
 	}
 
+	get neighborTypes() {
+		if (!this.data || this.isBlocked) return [];
+
+		return source.constants.neighborTypes[this.data.type as EntityType] ?? [];
+	}
+
 	relatedEntityCount(relatedEntityType: RelatedEntityType): number | undefined {
-		if (!this.data || !this.document) return 0;
+		if (!this.data || !this.document) return undefined;
 
 		return source.relatedEntities.getRelatedEntityCount(this.document, relatedEntityType);
 	}
@@ -36,14 +81,12 @@ class SelectedNodeState {
 	relatedEntityItems(relatedEntityType: RelatedEntityType): SearchableListItem[] {
 		if (!this.data || !this.document) return [];
 
-		return source.relatedEntities.getRelatedEntityItems(this.document, this.data.type as EntityType, relatedEntityType);
+		return source.relatedEntities.getRelatedEntityItems(
+			this.document,
+			this.data.type as EntityType,
+			relatedEntityType
+		);
 	}
-
-	neighborTypes = $derived.by((): LoadType[] => {
-		if (!this.data || this.isBlocked) return [];
-
-		return source.constants.neighborTypes[this.data.type as EntityType] ?? [];
-	});
 
 	isLoadTypeCompleted(loadType: LoadType): boolean {
 		if (!this.id) return false;
