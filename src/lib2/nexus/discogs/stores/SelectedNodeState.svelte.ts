@@ -9,69 +9,87 @@ import type { EntityType, LoadType, RelatedEntityType, SearchableListItem } from
 
 class SelectedNodeState {
 	id = $derived(graph.presentation.selectedId);
+
+	data = $derived.by(() => {
+		if (!this.id) return undefined;
+
+		void graph.data.nodes;
+
+		return graph.data.nodes.get(this.id);
+	});
+
+	document = $derived.by(() => {
+		if (!this.id) return undefined;
+
+		void source.documentStore.documents;
+
+		return source.documentStore.get(this.id);
+	});
+
+	entityDocumentStatus = $derived.by(() => {
+		if (!this.id) return undefined;
+
+		void source.loadProgress.documentStatuses;
+
+		return source.loadProgress.getStatus(this.id);
+	});
+
 	isEntityDocumentLoading = $derived(this.entityDocumentStatus === 'loading');
 	isEntityDocumentLoaded = $derived(this.entityDocumentStatus === 'loaded');
 	isEntityDocumentFailed = $derived(this.entityDocumentStatus === 'failed');
 
-	get data() {
-		if (!this.id) return undefined;
-
-		return graph.data.nodes.get(this.id);
-	}
-	
-	get document() {
-		if (!this.id) return undefined;
-
-		return source.documentStore.get(this.id);
-	}
-
-	get entityDocumentStatus() {
-		if (!this.id) return undefined;
-
-		return source.loadProgress.getStatus(this.id);
-	}
-
-	get isLoading() {
+	isLoading = $derived.by(() => {
 		if (!this.id) return false;
+
+		void source.loadProgress.documentsInFlight;
 
 		return source.loadProgress.isInFlight(this.id);
-	}
+	});
 
-	get isBlocked() {
-		if (!this.data) return false;
+	isBlocked = $derived(
+		this.data
+			? source.isBlocked(this.data.type as EntityType, this.data.externalId)
+			: false
+	);
 
-		return source.isBlocked(this.data.type as EntityType, this.data.externalId);
-	}
+	hasReleaseParentType = $derived(
+		this.data ? source.relatedEntities.isReleaseParentType(this.data.type) : false
+	);
 
-	get hasReleaseParentType() {
-		if (!this.data) return false;
+	hasReleaseListing = $derived(this.id ? source.relatedEntities.hasReleaseData(this.id) : false);
 
-		return source.relatedEntities.isReleaseParentType(this.data.type);
-	}
-
-	get hasChildren() {
+	hasChildren = $derived.by(() => {
 		if (!this.id) return false;
 
-		return graph.expansion.parentChildAdjacencyList.has(this.id);
-	}
+		void graph.expansion.parentChildAdjacencyList;
 
-	get releaseListItems() {
+		return graph.expansion.parentChildAdjacencyList.has(this.id);
+	});
+
+	releaseListItems = $derived.by((): SearchableListItem[] => {
 		if (!this.data) return [];
 
-		return getReleaseListItems(this.data);
-	}
+		void source.loadProgress.pagination;
+		void graph.expansion.parentChildAdjacencyList;
+		void source.documentStore.documents;
 
-	get relatedEntityGroups() {
+		return getReleaseListItems(this.data);
+	});
+
+	relatedEntityGroups = $derived.by((): { id: RelatedEntityType; title: string }[] => {
 		if (!this.data || !this.document) return [];
 
-		return source.relatedEntities.getRelatedEntityGroups(this.document, this.data.type as EntityType);
-	}
+		return source.relatedEntities.getRelatedEntityGroups(
+			this.document,
+			this.data.type as EntityType
+		);
+	});
 
-	get neighborTypes() {
+	neighborTypes = $derived.by((): LoadType[] => {
 		if (!this.data || this.isBlocked) return [];
 
 		return source.constants.neighborTypes[this.data.type as EntityType] ?? [];
-	}
+	});
 
 	relatedEntityCount(relatedEntityType: RelatedEntityType): number | undefined {
 		if (!this.data || !this.document) return undefined;

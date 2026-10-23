@@ -18,14 +18,18 @@
 	</div>
 
 	<div class="text-muted m-0 min-h-0 flex-1 overflow-y-auto text-sm">
-		{#if !node.id || !node.data}
+		{#if !node.data}
 			<p>Select an artist, label, or master and load masters or releases to begin.</p>
 		{:else if !node.hasReleaseParentType}
 			<p>Selected node must be an artist, label, or master.</p>
 		{:else if node.isLoading && node.releaseListItems.length === 0}
 			<p>Loading releases...</p>
 		{:else if node.releaseListItems.length === 0}
-			<p>Use Load master releases or Load releases above to fetch release data.</p>
+			{#if node.hasReleaseListing}
+				<p>No release or master versions appear on the graph for this node yet.</p>
+			{:else}
+				<p>Use buttons above to fetch release data.</p>
+			{/if}
 		{:else}
 			<SearchableList items={node.releaseListItems} />
 		{/if}

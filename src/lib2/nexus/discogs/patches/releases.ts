@@ -2,6 +2,8 @@ import { plugin as source } from '../../../plugins/discogs';
 
 import { createLink, createNode } from '../../../graph/factory';
 
+import { dedupePatch } from './dedupe';
+
 import type {
 	ArtistRelease,
 	EntityType,
@@ -54,7 +56,7 @@ export function buildFromArtistReleases(
 		);
 	}
 
-	return { nodes, links };
+	return dedupePatch({ nodes, links });
 }
 
 export function buildFromLabelReleases(
@@ -78,7 +80,7 @@ export function buildFromLabelReleases(
 		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
 	}
 
-	return { nodes, links };
+	return dedupePatch({ nodes, links });
 }
 
 export function buildFromMasterVersions(master: GraphNode, versions: MasterVersion[]): GraphPatch {
@@ -96,7 +98,7 @@ export function buildFromMasterVersions(master: GraphNode, versions: MasterVersi
 		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
 	}
 
-	return { nodes, links };
+	return dedupePatch({ nodes, links });
 }
 
 export function buildMainReleaseFromMaster(release: Release, master: GraphNode): GraphPatch {

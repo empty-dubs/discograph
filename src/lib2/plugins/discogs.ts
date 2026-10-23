@@ -36,7 +36,13 @@ import {
 	masterVersionFetchParams,
 } from '../sources/discogs/fetch';
 import { presentation } from '../sources/discogs/presentation';
-import { getRelatedEntityCount, getRelatedEntityGroups, getRelatedEntityItems, isReleaseParentType } from '../sources/discogs/related-entities';
+import {
+	getRelatedEntityCount,
+	getRelatedEntityGroups,
+	getRelatedEntityItems,
+	hasReleaseData,
+	isReleaseParentType
+} from '../sources/discogs/related-entities';
 import { entityLabel } from '../sources/discogs/transformations';
 
 import { documentStore } from '../sources/discogs/document-store.svelte';
@@ -113,6 +119,7 @@ export const plugin = {
 		getRelatedEntityCount,
 		getRelatedEntityGroups,
 		getRelatedEntityItems,
+		hasReleaseData,
 		isReleaseParentType
 	}
 };
