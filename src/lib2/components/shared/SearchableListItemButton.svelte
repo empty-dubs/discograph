@@ -4,7 +4,7 @@
 	import SelectedNodeState from '../../nexus/discogs/stores/SelectedNodeState.svelte';
 	import SearchableListContextMenu from './SearchableListContextMenu.svelte';
 
-	import type { SearchableListItem } from './types';
+	import type { SearchableListItem } from '../../plugins/discogs';
 	import type { GraphNode } from '../../graph/types';
 
 	interface Props {
@@ -17,22 +17,22 @@
 	let menu = $state<{ x: number; y: number } | null>(null);
 
 	const node = $derived.by((): GraphNode | null => {
-		if (!menu || !item.discogsId || !item.entityType) return null;
+		if (!menu || !item.externalId || !item.entityType) return null;
 
 		return {
-			id: source.compositions.getEntityId(item.entityType, item.discogsId),
+			id: source.compositions.getEntityId(item.entityType, item.externalId),
 			type: item.entityType,
 			label: (item.label ?? item.query ?? '').trim() || 'Unknown',
-			externalId: item.discogsId
+			externalId: item.externalId
 		};
 	});
 
 	function isRowDisabled(item: SearchableListItem): boolean {
 		return (
-			!item.discogsId ||
+			!item.externalId ||
 			!item.entityType ||
-			SelectedNodeState.hasExpansionInFlight ||
-			source.isBlocked(item.entityType, item.discogsId)
+			SelectedNodeState.isLoading ||
+			source.isBlocked(item.entityType, item.externalId)
 		)
 
 	}

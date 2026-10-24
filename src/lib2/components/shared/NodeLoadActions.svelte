@@ -1,12 +1,17 @@
 <script lang="ts">
-	import { runPatchLoadAction } from '../../nexus/discogs/load-runner';
 	import { plugin as source } from '../../plugins/discogs';
 
 	import SelectedNodeState from '../../nexus/discogs/stores/SelectedNodeState.svelte';
 	import NodeLoadButton from './NodeLoadButton.svelte';
 
 	import type { LoadType } from '../../plugins/discogs';
-	import type { LoadButtonState } from './types';
+
+	type LoadButtonState = {
+		label: string;
+		loaded: boolean;
+		exhausted: boolean;
+		type: string;
+	};
 
 	interface Props {
 		layout?: 'menu' | 'stack';
@@ -52,7 +57,7 @@
 
 	function isButtonDisabled(buttonState: LoadButtonState): boolean {
 		if (!node.id || !node.data) return true;
-		if (node.isBlocked || node.hasExpansionInFlight || !node.isEntityDocumentLoaded) return true;
+		if (node.isBlocked || node.isLoading || !node.isEntityDocumentLoaded) return true;
 		if (!node.neighborTypes.includes(buttonState.type as LoadType)) return true;
 
 		return buttonState.exhausted;
@@ -62,13 +67,12 @@
 		if (!node.data || node.isBlocked) return;
 
 		if (buttonState.type === 'releases' || buttonState.type === 'master_releases') {
-			await runPatchLoadAction(
-				node.data,
+			await node.runLoadAction(
 				buttonState.type,
 				buttonState.loaded ? { page: 'next' } : undefined
 			);
 		} else {
-			await runPatchLoadAction(node.data, buttonState.type as LoadType);
+			await node.runLoadAction(buttonState.type as LoadType);
 		}
 	}
 </script>

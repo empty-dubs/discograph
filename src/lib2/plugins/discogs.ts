@@ -1,5 +1,4 @@
-import { documentStore } from '../sources/discogs/document-store.svelte';
-import { loadProgress } from '../sources/discogs/load-progress.svelte';
+import { isBlocked } from '../sources/discogs/blocked';
 import {
 	getArtist,
 	getLabel,
@@ -10,7 +9,6 @@ import {
 	getMasterVersions,
 	search,
 } from '../sources/discogs/client';
-import { isBlocked } from '../sources/discogs/blocked';
 import {
 	getRelationshipId,
 	getEntityId,
@@ -30,8 +28,6 @@ import {
 	PATCH_LOAD_TYPES,
 	RELEASES_TAB_LOAD_TYPES,
 } from '../sources/discogs/constants';
-import { entityLabel } from '../sources/discogs/transformations';
-import { presentation } from '../sources/discogs/presentation';
 import {
 	fetchEntityDocument,
 	entityFetchErrorMessage,
@@ -39,6 +35,18 @@ import {
 	labelReleaseFetchParams,
 	masterVersionFetchParams,
 } from '../sources/discogs/fetch';
+import { presentation } from '../sources/discogs/presentation';
+import {
+	getRelatedEntityCount,
+	getRelatedEntityGroups,
+	getRelatedEntityItems,
+	hasReleaseData,
+	isReleaseParentType
+} from '../sources/discogs/related-entities';
+import { entityLabel } from '../sources/discogs/transformations';
+
+import { documentStore } from '../sources/discogs/document-store.svelte';
+import { loadProgress } from '../sources/discogs/load-progress.svelte';
 
 export type {
 	Artist,
@@ -58,7 +66,8 @@ export type {
 	RelationshipType,
 	Release,
 	SearchResponse,
-	SearchResult
+	SearchResult,
+	SearchableListItem
 } from '../sources/discogs/types';
 
 export const plugin = {
@@ -105,5 +114,12 @@ export const plugin = {
 		artistReleaseFetchParams,
 		labelReleaseFetchParams,
 		masterVersionFetchParams
+	},
+	relatedEntities: {
+		getRelatedEntityCount,
+		getRelatedEntityGroups,
+		getRelatedEntityItems,
+		hasReleaseData,
+		isReleaseParentType
 	}
 };

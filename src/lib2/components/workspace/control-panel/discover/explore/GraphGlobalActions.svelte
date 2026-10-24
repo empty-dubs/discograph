@@ -11,14 +11,14 @@
 		!node.isEntityDocumentLoaded
 		|| node.isBlocked
 		|| !node.hasChildren
-		|| node.hasExpansionInFlight
+		|| node.isLoading
 	);
 
 	const resetDisabled = $derived(
-		!node.isEntityDocumentLoaded || node.isBlocked || !node.data || node.hasExpansionInFlight
+		!node.isEntityDocumentLoaded || node.isBlocked || !node.data || node.isLoading
 	);
 
-	const clearDisabled = $derived(graph.data.isEmpty || node.hasExpansionInFlight);
+	const clearDisabled = $derived(graph.data.isEmpty || node.isLoading);
 </script>
 
 <div class="flex flex-col gap-2" role="group" aria-label="Global graph actions">

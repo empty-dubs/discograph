@@ -10,19 +10,13 @@ class Graph {
 	readonly expansion = GraphExpansionState;
 
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch) {
-		const prePatchNodeIds = new Set(this.data.nodes.keys());
-
 		this.data.applyPatch(patch);
 
-		const postPatchNodeIds = new Set(this.data.nodes.keys());
-
-		const newNodeIds = postPatchNodeIds.difference(prePatchNodeIds);
-
-		if (newNodeIds.size === 0) return;
+		if (patch.nodes.length === 0 && patch.links.length === 0) return;
 
 		const childNodeIds = new Set(this.expansion.parentChildAdjacencyList.get(parentNodeId) ?? []);
 
-		for (const id of newNodeIds) childNodeIds.add(id);
+		for (const node of patch.nodes) childNodeIds.add(node.id);
 
 		this.expansion.parentChildAdjacencyList.set(parentNodeId, childNodeIds);
 	}

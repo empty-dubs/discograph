@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SearchableListItemButton from './SearchableListItemButton.svelte';
 
-	import type { SearchableListItem } from './types';
+	import type { SearchableListItem } from '../../plugins/discogs';
 
 	interface Props {
 		items: SearchableListItem[];

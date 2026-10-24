@@ -69,6 +69,18 @@ export interface SearchResponse {
 	results: SearchResult[];
 }
 
+export type SearchableListItem = {
+	key: string;
+	label?: string;
+	query?: string;
+	externalId?: number;
+	entityType?: EntityType;
+	artists?: { id: number; name: string }[];
+	meta?: { year?: number | string; genres?: string[]; styles?: string[] };
+};
+
+export type SourceDocumentStatus = 'idle' | 'loading' | 'loaded' | 'failed';
+
 interface ArtistMember {
 	id: number;
 	name: string;

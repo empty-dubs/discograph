@@ -1,28 +1,111 @@
 import { graph } from '../../../graph/graph';
 import { collectDescendants } from '../../../graph/operations/crawl';
-import { loadEntityDocument } from '../load-runner';
+import { loadEntityDocument, runPatchLoadAction } from '../load-runner';
 import { plugin as source } from '../../../plugins/discogs';
+import { getReleaseListItems } from '../discover/releases';
 
-import type { EntityType, LoadType } from '../../../plugins/discogs';
+import type { LoadActionParams } from '../load-runner';
+import type { EntityType, LoadType, RelatedEntityType, SearchableListItem } from '../../../plugins/discogs';
 
 class SelectedNodeState {
 	id = $derived(graph.presentation.selectedId);
-	data = $derived(graph.data.nodes.get(this.id!));
-	document = $derived(source.documentStore.get(this.id!));
 
-	hasChildren = $derived(graph.expansion.parentChildAdjacencyList.has(this.id!));
-	entityDocumentStatus = $derived(graph.expansion.primaryDocumentByNodeId.get(this.id!));
+	data = $derived.by(() => {
+		if (!this.id) return undefined;
+
+		void graph.data.nodes;
+
+		return graph.data.nodes.get(this.id);
+	});
+
+	document = $derived.by(() => {
+		if (!this.id) return undefined;
+
+		void source.documentStore.documents;
+
+		return source.documentStore.get(this.id);
+	});
+
+	entityDocumentStatus = $derived.by(() => {
+		if (!this.id) return undefined;
+
+		void source.loadProgress.documentStatuses;
+
+		return source.loadProgress.getStatus(this.id);
+	});
+
 	isEntityDocumentLoading = $derived(this.entityDocumentStatus === 'loading');
 	isEntityDocumentLoaded = $derived(this.entityDocumentStatus === 'loaded');
 	isEntityDocumentFailed = $derived(this.entityDocumentStatus === 'failed');
-	hasExpansionInFlight = $derived(graph.expansion.expansionInFlightNodeIds.has(this.id!));
-	isBlocked = $derived(source.isBlocked(this.data!.type as EntityType, this.data!.externalId));
+
+	isLoading = $derived.by(() => {
+		if (!this.id) return false;
+
+		void source.loadProgress.documentsInFlight;
+
+		return source.loadProgress.isInFlight(this.id);
+	});
+
+	isBlocked = $derived(
+		this.data
+			? source.isBlocked(this.data.type as EntityType, this.data.externalId)
+			: false
+	);
+
+	hasReleaseParentType = $derived(
+		this.data ? source.relatedEntities.isReleaseParentType(this.data.type) : false
+	);
+
+	hasReleaseListing = $derived(this.id ? source.relatedEntities.hasReleaseData(this.id) : false);
+
+	hasChildren = $derived.by(() => {
+		if (!this.id) return false;
+
+		void graph.expansion.parentChildAdjacencyList;
+
+		return graph.expansion.parentChildAdjacencyList.has(this.id);
+	});
+
+	releaseListItems = $derived.by((): SearchableListItem[] => {
+		if (!this.data) return [];
+
+		void source.loadProgress.pagination;
+		void graph.expansion.parentChildAdjacencyList;
+		void source.documentStore.documents;
+
+		return getReleaseListItems(this.data);
+	});
+
+	relatedEntityGroups = $derived.by((): { id: RelatedEntityType; title: string }[] => {
+		if (!this.data || !this.document) return [];
+
+		return source.relatedEntities.getRelatedEntityGroups(
+			this.document,
+			this.data.type as EntityType
+		);
+	});
 
 	neighborTypes = $derived.by((): LoadType[] => {
 		if (!this.data || this.isBlocked) return [];
 
 		return source.constants.neighborTypes[this.data.type as EntityType] ?? [];
 	});
+
+	relatedEntityCount(relatedEntityType: RelatedEntityType): number | undefined {
+		if (!this.data || !this.document) return undefined;
+
+		return source.relatedEntities.getRelatedEntityCount(this.document, relatedEntityType);
+	}
+
+	relatedEntityItems(relatedEntityType: RelatedEntityType): SearchableListItem[] {
+		if (!this.data || !this.document) return [];
+
+		return source.relatedEntities.getRelatedEntityItems(
+			this.document,
+			this.data.type as EntityType,
+			relatedEntityType
+		);
+	}
 
 	isLoadTypeCompleted(loadType: LoadType): boolean {
 		if (!this.id) return false;
@@ -39,6 +122,8 @@ class SelectedNodeState {
 
 		graph.data.removeNodes(descendants);
 		graph.expansion.resetForCollapse(new Set([this.id]), descendants);
+		source.loadProgress.deleteDocumentStatuses(descendants);
+		source.loadProgress.delete(descendants);
 		source.loadProgress.resetForExpandedNodes(new Set([this.id]));
 		source.documentStore.delete(descendants);
 	}
@@ -56,11 +141,15 @@ class SelectedNodeState {
 	}
 
 	async loadEntityDocument() {
-		const node = this.data;
+		if (!this.data) return;
 
-		if (!node) return;
+		await loadEntityDocument(this.data);
+	}
 
-		await loadEntityDocument(node);
+	async runLoadAction(loadType: LoadType, options?: LoadActionParams) {
+		if (!this.data) return;
+
+		await runPatchLoadAction(this.data, loadType, options);
 	}
 }
 

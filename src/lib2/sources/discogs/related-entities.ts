@@ -1,7 +1,15 @@
-import { plugin as source } from '../../../../../plugins/discogs';
+import { releaseRowDisplay } from './compositions';
+import { loadProgress } from './load-progress.svelte';
 
-import type { SearchableListItem } from '../../../../shared/types';
-import type { Artist, EntityType, Label, Master, RelatedEntityType, Release } from '../../../../../plugins/discogs';
+import type {
+	Artist,
+	EntityType,
+	Label,
+	Master,
+	Release,
+	RelatedEntityType,
+	SearchableListItem
+} from './types';
 
 const RELATED_ENTITY_GROUPS: { id: RelatedEntityType; title: string }[] = [
 	{ id: 'aliases', title: 'Aliases' },
@@ -16,6 +24,21 @@ const RELATED_ENTITY_GROUPS: { id: RelatedEntityType; title: string }[] = [
 	{ id: 'credits', title: 'Credits' },
 	{ id: 'companies', title: 'Companies' }
 ];
+
+function releaseCreditsLength(release: Release): number {
+	return (release.extraartists ?? release.credits)?.length ?? 0;
+}
+
+export function isReleaseParentType(type: string): boolean {
+	return type === 'artist' || type === 'label' || type === 'master';
+}
+
+export function hasReleaseData(nodeId: string): boolean {
+	return (
+		loadProgress.hasPagedDocument(nodeId, 'releases')
+		|| loadProgress.hasPagedDocument(nodeId, 'master_releases')
+	);
+}
 
 export function getRelatedEntityCount(
 	document: unknown,
@@ -35,7 +58,7 @@ export function getRelatedEntityCount(
 		case 'labels':
 			return (document as Release).labels?.length;
 		case 'credits':
-			return (document as Release).credits?.length;
+			return releaseCreditsLength(document as Release) || undefined;
 		case 'companies':
 			return (document as Release).companies?.length;
 		default:
@@ -48,19 +71,20 @@ function hasRelatedEntityMap(
 	entityType: EntityType
 ): Record<RelatedEntityType, boolean> {
 	const isMasterOrRelease = entityType === 'master' || entityType === 'release';
+	const release = document as Release;
 
 	return {
-		aliases: entityType === 'artist' && ((document as Artist).aliases?.length ?? 0) > 0,
-		members: entityType === 'artist' && ((document as Artist).members?.length ?? 0) > 0,
-		groups: entityType === 'artist' && ((document as Artist).groups?.length ?? 0) > 0,
+		aliases: entityType === 'artist' && (getRelatedEntityCount(document, 'aliases') ?? 0) > 0,
+		members: entityType === 'artist' && (getRelatedEntityCount(document, 'members') ?? 0) > 0,
+		groups: entityType === 'artist' && (getRelatedEntityCount(document, 'groups') ?? 0) > 0,
 		parent_label: entityType === 'label' && Boolean((document as Label).parent_label),
-		sublabels: entityType === 'label' && ((document as Label).sublabels?.length ?? 0) > 0,
+		sublabels: entityType === 'label' && (getRelatedEntityCount(document, 'sublabels') ?? 0) > 0,
 		main_release: entityType === 'master' && Boolean((document as Master).main_release),
-		linked_master: entityType === 'release' && Boolean((document as Release).master_id),
-		artists: isMasterOrRelease && ((document as Master | Release).artists?.length ?? 0) > 0,
-		labels: entityType === 'release' && ((document as Release).labels?.length ?? 0) > 0,
-		credits: entityType === 'release' && ((document as Release).credits?.length ?? 0) > 0,
-		companies: entityType === 'release' && ((document as Release).companies?.length ?? 0) > 0
+		linked_master: entityType === 'release' && Boolean(release.master_id),
+		artists: isMasterOrRelease && (getRelatedEntityCount(document, 'artists') ?? 0) > 0,
+		labels: entityType === 'release' && (getRelatedEntityCount(document, 'labels') ?? 0) > 0,
+		credits: entityType === 'release' && (getRelatedEntityCount(document, 'credits') ?? 0) > 0,
+		companies: entityType === 'release' && (getRelatedEntityCount(document, 'companies') ?? 0) > 0
 	};
 }
 
@@ -88,7 +112,7 @@ export function getRelatedEntityItems(
 						key: String(alias.id),
 						label: alias.name,
 						query: alias.name,
-						discogsId: alias.id,
+						externalId: alias.id,
 						entityType: 'artist'
 					}));
 				case 'members':
@@ -96,7 +120,7 @@ export function getRelatedEntityItems(
 						key: String(member.id),
 						label: member.active === false ? `${member.name} (inactive)` : member.name,
 						query: member.name,
-						discogsId: member.id,
+						externalId: member.id,
 						entityType: 'artist'
 					}));
 				case 'groups':
@@ -104,7 +128,7 @@ export function getRelatedEntityItems(
 						key: String(group.id),
 						label: group.name,
 						query: group.name,
-						discogsId: group.id,
+						externalId: group.id,
 						entityType: 'artist'
 					}));
 				default:
@@ -120,7 +144,7 @@ export function getRelatedEntityItems(
 						key: String(label.parent_label.id),
 						label: label.parent_label.name,
 						query: label.parent_label.name,
-						discogsId: label.parent_label.id,
+						externalId: label.parent_label.id,
 						entityType: 'label'
 					}
 				];
@@ -131,7 +155,7 @@ export function getRelatedEntityItems(
 					key: String(sublabel.id),
 					label: sublabel.name,
 					query: sublabel.name,
-					discogsId: sublabel.id,
+					externalId: sublabel.id,
 					entityType: 'label'
 				}));
 			}
@@ -143,7 +167,7 @@ export function getRelatedEntityItems(
 
 			if (relatedEntityType === 'main_release' && master.main_release) {
 				const artistName = master.artists?.[0]?.name;
-				const { label, query } = source.compositions.releaseRowDisplay({
+				const { label, query } = releaseRowDisplay({
 					title: master.title,
 					artist: artistName,
 					year: master.year
@@ -154,7 +178,7 @@ export function getRelatedEntityItems(
 						key: `main-release-${master.main_release}`,
 						label,
 						query,
-						discogsId: master.main_release,
+						externalId: master.main_release,
 						entityType: 'release',
 						artists: master.artists?.map((artist) => ({ id: artist.id, name: artist.name })),
 						meta: { year: master.year, genres: master.genres, styles: master.styles }
@@ -167,7 +191,7 @@ export function getRelatedEntityItems(
 					key: String(artist.id),
 					label: artist.name,
 					query: artist.name,
-					discogsId: artist.id,
+					externalId: artist.id,
 					entityType: 'artist'
 				}));
 			}
@@ -184,7 +208,7 @@ export function getRelatedEntityItems(
 			};
 
 			if (relatedEntityType === 'linked_master' && release.master_id) {
-				const { label, query } = source.compositions.releaseRowDisplay({
+				const { label, query } = releaseRowDisplay({
 					title: release.title,
 					artist: artists?.[0]?.name,
 					year: release.year
@@ -195,7 +219,7 @@ export function getRelatedEntityItems(
 						key: `linked-master-${release.master_id}`,
 						label,
 						query,
-						discogsId: release.master_id,
+						externalId: release.master_id,
 						entityType: 'master',
 						artists,
 						meta
@@ -208,7 +232,7 @@ export function getRelatedEntityItems(
 					key: String(artist.id),
 					label: artist.name,
 					query: artist.name,
-					discogsId: artist.id,
+					externalId: artist.id,
 					entityType: 'artist'
 				}));
 			}
@@ -218,7 +242,7 @@ export function getRelatedEntityItems(
 					key: `${labelRef.id}-${labelRef.catno ?? ''}`,
 					label: labelRef.catno ? `${labelRef.name} (${labelRef.catno})` : labelRef.name,
 					query: labelRef.name,
-					discogsId: labelRef.id,
+					externalId: labelRef.id,
 					entityType: 'label'
 				}));
 			}
@@ -230,7 +254,7 @@ export function getRelatedEntityItems(
 					key: `${credit.id}-${credit.role ?? ''}-${index}`,
 					label: credit.role ? `${credit.name} — ${credit.role}` : credit.name,
 					query: credit.name,
-					discogsId: credit.id,
+					externalId: credit.id,
 					entityType: 'artist'
 				}));
 			}
@@ -246,7 +270,7 @@ export function getRelatedEntityItems(
 								? `${company.name} (${company.catno})`
 								: company.name,
 					query: company.name,
-					discogsId: company.id,
+					externalId: company.id,
 					entityType: 'label'
 				}));
 			}
