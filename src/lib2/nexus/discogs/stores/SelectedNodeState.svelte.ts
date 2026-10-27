@@ -110,7 +110,7 @@ class SelectedNodeState {
 
 		const descendants = collectDescendants(this.id, graph.expansion.parentChildAdjacencyList);
 
-		if (descendants.size === 0) return;	
+		if (descendants.size === 0) return;
 
 		graph.data.removeNodes(descendants);
 		graph.expansion.resetForCollapse(new Set([this.id]), descendants);
