@@ -9,8 +9,10 @@ import type { NodePresentation } from '../graph/presentation';
 import type { SearchResult } from '../plugins/discogs';
 
 export function clearSession() {
-	source.documentStore.clear();
-	source.loadProgress.clear();
+	source.stores.documentStore.clear();
+	source.stores.loadProgress.clear();
+	source.stores.pagedDocumentStore.clear();
+	source.stores.releasesStore.clear();
 	graph.clear();
 }
 

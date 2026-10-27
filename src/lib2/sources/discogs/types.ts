@@ -34,7 +34,7 @@ export type LoadType =
 | 'credited_artists'
 | 'aliases';
 
-export interface Pagination {
+interface Pagination {
 	page: number;
 	pages: number;
 	per_page?: number;
@@ -75,8 +75,8 @@ export type SearchableListItem = {
 	query?: string;
 	externalId?: number;
 	entityType?: EntityType;
-	artists?: { id: number; name: string }[];
-	meta?: { year?: number | string; genres?: string[]; styles?: string[] };
+	artist?: string;
+	year?: number | string;
 };
 
 export type SourceDocumentStatus = 'idle' | 'loading' | 'loaded' | 'failed';
@@ -266,6 +266,16 @@ export interface MasterVersionsResponse {
 	pagination: Pagination;
 	versions: MasterVersion[];
 }
+
+export type PagedDocument =
+	| ArtistReleasesResponse
+	| LabelReleasesResponse
+	| MasterVersionsResponse;
+
+export type PagedReleaseItem = 
+	| ArtistRelease
+	| LabelRelease
+	| MasterVersion;
 
 export interface RateLimitInfo {
 	limit: number | null;

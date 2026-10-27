@@ -25,7 +25,7 @@
 		{:else if node.isLoading && node.releaseListItems.length === 0}
 			<p>Loading releases...</p>
 		{:else if node.releaseListItems.length === 0}
-			{#if node.hasReleaseListing}
+			{#if node.hasReleaseData}
 				<p>No release or master versions appear on the graph for this node yet.</p>
 			{:else}
 				<p>Use buttons above to fetch release data.</p>

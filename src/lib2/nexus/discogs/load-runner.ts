@@ -3,7 +3,7 @@ import { plugin as source } from '../../plugins/discogs';
 
 import { LOAD_ACTION_CONFIG } from './expansion-config';
 
-import type { EntityType, LoadType, Pagination } from '../../plugins/discogs';
+import type { EntityType, LoadType, PagedDocument } from '../../plugins/discogs';
 import type { GraphNode } from '../../graph/types';
 import type { LoadAction } from './expansion-config';
 
@@ -54,19 +54,19 @@ function displayLabelFromDocument(document: {
 
 export async function loadEntityDocument(node: GraphNode): Promise<'loaded' | 'skipped' | 'failed'> {
 	if (isBlockedNode(node)) {
-		source.loadProgress.setStatus(node.id, 'loaded');
+		source.stores.loadProgress.setStatus(node.id, 'loaded');
 
 		return 'skipped';
 	}
 
-	const status = source.loadProgress.getStatus(node.id);
+	const status = source.stores.loadProgress.getStatus(node.id);
 
 	if (status === 'loading' || status === 'loaded' || status === 'failed') {
 		return 'skipped';
 	}
 
-	const result = await source.loadProgress.withInFlight(node.id, async () => {
-		source.loadProgress.setStatus(node.id, 'loading');
+	const result = await source.stores.loadProgress.withInFlight(node.id, async () => {
+		source.stores.loadProgress.setStatus(node.id, 'loading');
 
 		const payload = await withRequest(
 			() => source.fetch.fetchEntityDocument(node.externalId, node.type as EntityType),
@@ -74,12 +74,12 @@ export async function loadEntityDocument(node: GraphNode): Promise<'loaded' | 's
 		);
 
 		if (!payload) {
-			source.loadProgress.setStatus(node.id, 'failed');
+			source.stores.loadProgress.setStatus(node.id, 'failed');
 
 			return 'failed';
 		}
 
-		source.loadProgress.setStatus(node.id, 'loaded');
+		source.stores.loadProgress.setStatus(node.id, 'loaded');
 
 		const label = displayLabelFromDocument(payload as { title?: string; name?: string });
 
@@ -94,7 +94,7 @@ export async function loadEntityDocument(node: GraphNode): Promise<'loaded' | 's
 }
 
 async function ensureEntityDocument(node: GraphNode): Promise<boolean> {
-	const status = source.loadProgress.getStatus(node.id);
+	const status = source.stores.loadProgress.getStatus(node.id);
 
 	if (status === 'loaded') return true;
 
@@ -114,14 +114,14 @@ async function runDocumentPatchLoadAction(
 ) {
 	if (!(await ensureEntityDocument(node))) return;
 
-	const document = source.documentStore.get(node.id);
+	const document = source.stores.documentStore.get(node.id);
 
 	if (!document) return;
 
 	const patch = loadAction.patch(document);
 
 	graph.applyPatchFromExpansion(node.id, patch);
-	source.loadProgress.markLoadTypeCompleted(node.id, loadAction.markCompleted ?? loadType);
+	source.stores.loadProgress.markLoadTypeCompleted(node.id, loadAction.markCompleted ?? loadType);
 }
 
 async function runReleasesPatchLoadAction(
@@ -137,16 +137,17 @@ async function runReleasesPatchLoadAction(
 
 	if (!response || typeof response !== 'object' || !('pagination' in response)) return;
 
+	const document = response as PagedDocument;
+
+	source.stores.pagedDocumentStore.set(node.id, document, loadType);
+	source.stores.releasesStore.set(node.id, document, loadType);
+
 	const patch = loadAction.patch(node, response);
 
 	graph.applyPatchFromExpansion(node.id, patch);
 
-	const pagination = response.pagination as Pagination;
-
-	source.loadProgress.setPagination(node.id, loadType, pagination);
-
-	if (pagination.page >= pagination.pages) {
-		source.loadProgress.markLoadTypeCompleted(node.id, loadType);
+	if (document.pagination.page >= document.pagination.pages) {
+		source.stores.loadProgress.markLoadTypeCompleted(node.id, loadType);
 	}
 }
 
@@ -166,7 +167,7 @@ async function runCustomPatchLoadAction(
 	}, loadActionErrorMessage(loadType));
 
 	if (ok) {
-		source.loadProgress.markLoadTypeCompleted(node.id, loadType);
+		source.stores.loadProgress.markLoadTypeCompleted(node.id, loadType);
 	}
 }
 
@@ -185,7 +186,7 @@ export async function runPatchLoadAction(
 
 	if (!loadAction) return;
 
-	await source.loadProgress.withInFlight(node.id, async () => {
+	await source.stores.loadProgress.withInFlight(node.id, async () => {
 		if (loadAction.source === 'custom') {
 			await runCustomPatchLoadAction(node, loadAction, loadType);
 
@@ -201,11 +202,11 @@ export async function runPatchLoadAction(
 		let page: number;
 
 		if (options?.page === 'next') {
-			const paging = source.loadProgress.getPagination(node.id, loadAction.expansionId);
+			const document = source.stores.pagedDocumentStore.get(node.id, loadAction.expansionId);
 
-			if (!paging || paging.page >= paging.pages) return;
+			if (!document || document.pagination.page >= document.pagination.pages) return;
 
-			page = paging.page + 1;
+			page = document.pagination.page + 1;
 		} else {
 			page = options?.page ?? 1;
 		}

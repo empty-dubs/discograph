@@ -3,15 +3,20 @@ import { SvelteMap } from 'svelte/reactivity';
 class DocumentStore {
 	documents = $state<SvelteMap<string, unknown>>(new SvelteMap());
 
-	get(id: string): unknown {
+	get(id: string) {
 		return this.documents.get(id);
 	}
 
-	set(id: string, document: unknown) {
-		const next = new SvelteMap(this.documents);
+	has(id: string) {
+		return this.documents.has(id);
+	}
 
-		next.set(id, document);
-		this.documents = next;
+	set(id: string, document: unknown) {
+		const existing = new SvelteMap(this.documents);
+
+		existing.set(id, document);
+
+		this.documents = existing;
 	}
 
 	delete(ids: Set<string>) {

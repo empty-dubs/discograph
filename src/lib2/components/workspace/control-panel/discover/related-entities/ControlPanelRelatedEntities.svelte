@@ -3,8 +3,7 @@
 	import SearchableList from '../../../../shared/SearchableList.svelte';
 	import SelectedNodeState from '../../../../../nexus/discogs/stores/SelectedNodeState.svelte';
 
-	const node = $derived(SelectedNodeState);	
-
+	const node = $derived(SelectedNodeState);
 </script>
 
 {#if !node.data || !node.document}
@@ -17,12 +16,11 @@
 	<p class="text-muted m-0 text-sm">No entity groups for this node.</p>
 {:else}
 	{#each node.relatedEntityGroups as group (group.id)}
-		{const count = $derived(node.relatedEntityCount(group.id))}
-		{const items = $derived(node.relatedEntityItems(group.id));}
+		{const items = $derived(node.relatedEntityItems(group.id))}
 		<Accordion
 			id={group.id}
 			title={group.title}
-			{count}
+			count={items.length}
 			useRelatedEntitiesAccordion
 		>
 			<SearchableList {items} />

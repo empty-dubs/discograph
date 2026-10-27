@@ -1,5 +1,5 @@
-import { releaseRowDisplay } from './compositions';
-import { loadProgress } from './load-progress.svelte';
+import { getReleaseItemLabel } from './releases';
+import { dedupeById } from './transformations';
 
 import type {
 	Artist,
@@ -29,18 +29,7 @@ function releaseCreditsLength(release: Release): number {
 	return (release.extraartists ?? release.credits)?.length ?? 0;
 }
 
-export function isReleaseParentType(type: string): boolean {
-	return type === 'artist' || type === 'label' || type === 'master';
-}
-
-export function hasReleaseData(nodeId: string): boolean {
-	return (
-		loadProgress.hasPagedDocument(nodeId, 'releases')
-		|| loadProgress.hasPagedDocument(nodeId, 'master_releases')
-	);
-}
-
-export function getRelatedEntityCount(
+function getRelatedEntityCount(
 	document: unknown,
 	relatedEntityType: RelatedEntityType
 ): number | undefined {
@@ -166,8 +155,8 @@ export function getRelatedEntityItems(
 			const master = document as Master;
 
 			if (relatedEntityType === 'main_release' && master.main_release) {
-				const artistName = master.artists?.[0]?.name;
-				const { label, query } = releaseRowDisplay({
+				const artistName = master.artists?.map(artist => artist.name).join(' / ');
+				const label = getReleaseItemLabel({
 					title: master.title,
 					artist: artistName,
 					year: master.year
@@ -177,11 +166,11 @@ export function getRelatedEntityItems(
 					{
 						key: `main-release-${master.main_release}`,
 						label,
-						query,
+						query: master.title.trim(),
 						externalId: master.main_release,
 						entityType: 'release',
-						artists: master.artists?.map((artist) => ({ id: artist.id, name: artist.name })),
-						meta: { year: master.year, genres: master.genres, styles: master.styles }
+						artist: artistName,
+						year: master.year
 					}
 				];
 			}
@@ -200,17 +189,13 @@ export function getRelatedEntityItems(
 		}
 		case 'release': {
 			const release = document as Release;
-			const artists = release.artists?.map((artist) => ({ id: artist.id, name: artist.name }));
-			const meta = {
-				year: release.year,
-				genres: release.genres,
-				styles: release.styles
-			};
 
 			if (relatedEntityType === 'linked_master' && release.master_id) {
-				const { label, query } = releaseRowDisplay({
+				const artistName = release.artists?.map(artist => artist.name).join(' / ');
+
+				const label = getReleaseItemLabel({
 					title: release.title,
-					artist: artists?.[0]?.name,
+					artist: artistName,
 					year: release.year
 				});
 
@@ -218,11 +203,11 @@ export function getRelatedEntityItems(
 					{
 						key: `linked-master-${release.master_id}`,
 						label,
-						query,
+						query: release.title.trim(),
 						externalId: release.master_id,
 						entityType: 'master',
-						artists,
-						meta
+						artist: artistName,
+						year: release.year
 					}
 				];
 			}
@@ -238,17 +223,35 @@ export function getRelatedEntityItems(
 			}
 
 			if (relatedEntityType === 'labels') {
-				return (release.labels ?? []).map((labelRef) => ({
-					key: `${labelRef.id}-${labelRef.catno ?? ''}`,
-					label: labelRef.catno ? `${labelRef.name} (${labelRef.catno})` : labelRef.name,
-					query: labelRef.name,
-					externalId: labelRef.id,
-					entityType: 'label'
-				}));
+				return (release.labels ?? []).map((labelRef) => {
+					const catno = labelRef.catno == null || labelRef.catno === '' || labelRef.catno === 'none' ? '' : labelRef.catno;
+
+					return {
+					key: `${labelRef.id}${catno ? `-${catno}` : ''}`,
+					label: catno ? `${labelRef.name} (${catno})` : labelRef.name,
+						query: labelRef.name,
+						externalId: labelRef.id,
+						entityType: 'label'
+					};
+				});
 			}
 
 			if (relatedEntityType === 'credits') {
-				const credits = release.extraartists ?? release.credits ?? [];
+				const credits = [];
+				const trackArtists = release.tracklist?.flatMap((track) =>
+					(track.extraartists ?? []).map((artist) => ({
+						...artist,
+						role: `Track appearance`
+					}))
+				) ?? [];
+
+				credits.push(
+					...dedupeById([
+						...(release.extraartists ?? []),
+						...(release.credits ?? []),
+						...trackArtists
+					])
+				);
 
 				return credits.map((credit, index) => ({
 					key: `${credit.id}-${credit.role ?? ''}-${index}`,
@@ -260,19 +263,23 @@ export function getRelatedEntityItems(
 			}
 
 			if (relatedEntityType === 'companies') {
-				return (release.companies ?? []).map((company, index) => ({
-					key: `${company.id}-${company.entity_type_name ?? ''}-${index}`,
-					label: company.entity_type_name && company.catno
-						? `${company.name} — ${company.entity_type_name} (${company.catno})`
-						: company.entity_type_name
-							? `${company.name} — ${company.entity_type_name}`
-							: company.catno
-								? `${company.name} (${company.catno})`
-								: company.name,
-					query: company.name,
-					externalId: company.id,
-					entityType: 'label'
-				}));
+				return (release.companies ?? []).map((company, index) => {
+					const catno = company.catno == null || company.catno === '' || company.catno === 'none' ? '' : company.catno;
+
+					return {
+						key: `${company.id}-${company.entity_type_name ?? ''}-${index}`,
+						label: company.entity_type_name && catno
+							? `${company.name} (${catno}) — ${company.entity_type_name}`
+							: company.entity_type_name
+								? `${company.name} — ${company.entity_type_name}`
+								: company.catno
+									? `${company.name} (${catno})`
+									: company.name,
+						query: company.name,
+						externalId: company.id,
+						entityType: 'label'
+					};
+				});
 			}
 
 			return [];
