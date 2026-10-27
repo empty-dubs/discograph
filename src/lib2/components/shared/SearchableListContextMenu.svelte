@@ -3,18 +3,18 @@
 
 	import NavigationActions from './NavigationActions.svelte';
 
-	import type { GraphNode } from '../../graph/types';
-
-	const VIEWPORT_PAD = 8;
+	import type { SearchableListItem } from '../../plugins/discogs';
 
 	interface Props {
-		node: GraphNode;
+		item: SearchableListItem;
 		x: number;
 		y: number;
 		onClose: () => void;
 	}
 
-	let { node, x, y, onClose }: Props = $props();
+	let { item, x, y, onClose }: Props = $props();
+
+	const VIEWPORT_PAD = 8;
 
 	let menu = $state<HTMLDivElement | null>(null);
 	let menuLeft = $state(0);
@@ -73,5 +73,5 @@
 	style:top="{menuTop}px"
 	role="menu"
 >
-	<NavigationActions {node} layout="menu" onAction={onClose} />
+	<NavigationActions {item} layout="menu" onAction={onClose} />
 </div>

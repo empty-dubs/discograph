@@ -14,7 +14,6 @@ import {
 	getEntityId,
 	getDiscogsWebsiteUrl,
 	getYouTubeSearchUrl,
-	releaseRowDisplay,
 } from '../sources/discogs/compositions';
 import {
 	ARTIST_GROUPS,
@@ -37,16 +36,16 @@ import {
 } from '../sources/discogs/fetch';
 import { presentation } from '../sources/discogs/presentation';
 import {
-	getRelatedEntityCount,
 	getRelatedEntityGroups,
 	getRelatedEntityItems,
-	hasReleaseData,
-	isReleaseParentType
 } from '../sources/discogs/related-entities';
+import { getReleaseListItems, hasReleaseData, isReleaseParentType } from '../sources/discogs/releases';
 import { entityLabel } from '../sources/discogs/transformations';
 
-import { documentStore } from '../sources/discogs/document-store.svelte';
-import { loadProgress } from '../sources/discogs/load-progress.svelte';
+import { documentStore } from '../sources/discogs/stores/document-store.svelte';
+import { loadProgress } from '../sources/discogs/stores/load-progress.svelte';
+import { pagedDocumentStore } from '../sources/discogs/stores/paged-document-store.svelte';
+import { releasesStore } from '../sources/discogs/stores/releases-store.svelte';
 
 export type {
 	Artist,
@@ -60,20 +59,22 @@ export type {
 	Master,
 	MasterVersion,
 	MasterVersionsResponse,
-	PagedListParams,
-	Pagination,
+	PagedDocument,
 	RelatedEntityType,
 	RelationshipType,
 	Release,
-	SearchResponse,
 	SearchResult,
 	SearchableListItem
 } from '../sources/discogs/types';
 
 export const plugin = {
 	id: 'discogs',
-	documentStore,
-	loadProgress,
+	stores: {
+		documentStore,
+		loadProgress,
+		pagedDocumentStore,
+		releasesStore,
+	},
 	client: {
 		getArtist,
 		getLabel,
@@ -94,7 +95,6 @@ export const plugin = {
 		getEntityId,
 		getRelationshipId,
 		getYouTubeSearchUrl,
-		releaseRowDisplay,
 	},
 	constants: {
 		artistGroups: ARTIST_GROUPS,
@@ -116,9 +116,11 @@ export const plugin = {
 		masterVersionFetchParams
 	},
 	relatedEntities: {
-		getRelatedEntityCount,
 		getRelatedEntityGroups,
 		getRelatedEntityItems,
+	},
+	releases: {
+		getReleaseListItems,
 		hasReleaseData,
 		isReleaseParentType
 	}

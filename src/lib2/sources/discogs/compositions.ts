@@ -1,18 +1,12 @@
-import { BLOCKED_DISCOGS_IDS, DISCOGS_WEB_ORIGIN, DISCOGS_WEB_SEGMENTS, YOUTUBE_SEARCH_BASE } from './constants';
+import { DISCOGS_WEB_ORIGIN, DISCOGS_WEB_SEGMENTS, YOUTUBE_SEARCH_BASE } from './constants';
 
 import type { EntityType } from './types';
 
-type ReleasePayload = {
-	title: string;
-	artist?: string;
-	year?: number | string;
-}
 type YouTubeSearchPayload = {
-	label?: string;
 	query?: string;
 	entityType?: EntityType;
-	artists?: { id: number; name: string }[];
-	meta?: { year?: number | string };
+	artist?: string;
+	year?: number | string;
 };
 
 export function getEntityId(type: string, externalId: number | string): string {
@@ -34,7 +28,7 @@ export function getDiscogsWebsiteUrl(type: EntityType, externalId: number): stri
 }
 
 export function getYouTubeSearchUrl(payload: YouTubeSearchPayload): string | undefined {
-	const displayName = stripDiscogsDisambiguation((payload.query ?? payload.label ?? '').trim());
+	const displayName = stripDiscogsDisambiguation((payload.query ?? '').trim());
 
 	if (!displayName) return undefined;
 
@@ -45,31 +39,14 @@ export function getYouTubeSearchUrl(payload: YouTubeSearchPayload): string | und
 	} else if (payload.entityType === 'label') {
 		parts.push('record label');
 	} else if (payload.entityType === 'release' || payload.entityType === 'master') {
-		const artist = payload.artists?.[0];
-		const year = payload.meta?.year;
-
-		if (artist?.name && artist.id && !BLOCKED_DISCOGS_IDS['artist']?.has(artist.id)) {
-			parts.unshift(stripDiscogsDisambiguation(artist.name));
+		if (payload.artist) {
+			parts.unshift(stripDiscogsDisambiguation(payload.artist));
 		}
 
-		if (year != null && year !== '' && year !== '0') parts.push(String(year));
+		if (payload.year != null && payload.year !== '' && payload.year !== '0' && payload.year !== 0) {
+			parts.push(String(payload.year));
+		}
 	}
 
 	return `${YOUTUBE_SEARCH_BASE}?search_query=${encodeURIComponent(parts.join(' '))}`;
-}
-
-function releaseRowLabel(payload: ReleasePayload): string {
-	const artistName = payload.artist?.trim();
-	const releaseYear = payload.year != null && payload.year !== '' && payload.year !== '0' ? payload.year : null;
-
-	return `${artistName ? `${artistName} - ` : ''}${payload.title}${releaseYear ? ` (${releaseYear})` : ''}`;
-}
-
-export function releaseRowDisplay(payload: ReleasePayload): { label: string; query: string } {
-	const title = payload.title.trim() || 'Unknown';
-
-	return {
-		label: releaseRowLabel({title, artist: payload.artist, year: payload.year}),
-		query: title
-	};
 }

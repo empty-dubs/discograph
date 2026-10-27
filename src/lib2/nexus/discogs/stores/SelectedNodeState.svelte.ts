@@ -2,7 +2,6 @@ import { graph } from '../../../graph/graph';
 import { collectDescendants } from '../../../graph/operations/crawl';
 import { loadEntityDocument, runPatchLoadAction } from '../load-runner';
 import { plugin as source } from '../../../plugins/discogs';
-import { getReleaseListItems } from '../discover/releases';
 
 import type { LoadActionParams } from '../load-runner';
 import type { EntityType, LoadType, RelatedEntityType, SearchableListItem } from '../../../plugins/discogs';
@@ -21,17 +20,17 @@ class SelectedNodeState {
 	document = $derived.by(() => {
 		if (!this.id) return undefined;
 
-		void source.documentStore.documents;
+		void source.stores.documentStore.documents;
 
-		return source.documentStore.get(this.id);
+		return source.stores.documentStore.get(this.id);
 	});
 
 	entityDocumentStatus = $derived.by(() => {
 		if (!this.id) return undefined;
 
-		void source.loadProgress.documentStatuses;
+		void source.stores.loadProgress.documentStatuses;
 
-		return source.loadProgress.getStatus(this.id);
+		return source.stores.loadProgress.getStatus(this.id);
 	});
 
 	isEntityDocumentLoading = $derived(this.entityDocumentStatus === 'loading');
@@ -41,9 +40,9 @@ class SelectedNodeState {
 	isLoading = $derived.by(() => {
 		if (!this.id) return false;
 
-		void source.loadProgress.documentsInFlight;
+		void source.stores.loadProgress.documentsInFlight;
 
-		return source.loadProgress.isInFlight(this.id);
+		return source.stores.loadProgress.isInFlight(this.id);
 	});
 
 	isBlocked = $derived(
@@ -53,10 +52,10 @@ class SelectedNodeState {
 	);
 
 	hasReleaseParentType = $derived(
-		this.data ? source.relatedEntities.isReleaseParentType(this.data.type) : false
+		this.data ? source.releases.isReleaseParentType(this.data.type) : false
 	);
 
-	hasReleaseListing = $derived(this.id ? source.relatedEntities.hasReleaseData(this.id) : false);
+	hasReleaseData = $derived(this.id ? source.releases.hasReleaseData(this.id) : false);
 
 	hasChildren = $derived.by(() => {
 		if (!this.id) return false;
@@ -67,13 +66,12 @@ class SelectedNodeState {
 	});
 
 	releaseListItems = $derived.by((): SearchableListItem[] => {
-		if (!this.data) return [];
+		if (!this.id || !this.data) return [];
 
-		void source.loadProgress.pagination;
-		void graph.expansion.parentChildAdjacencyList;
-		void source.documentStore.documents;
+		void source.stores.pagedDocumentStore.pagedDocuments;
+		void source.stores.documentStore.documents;
 
-		return getReleaseListItems(this.data);
+		return source.releases.getReleaseListItems(this.id, this.data.type as EntityType);
 	});
 
 	relatedEntityGroups = $derived.by((): { id: RelatedEntityType; title: string }[] => {
@@ -91,12 +89,6 @@ class SelectedNodeState {
 		return source.constants.neighborTypes[this.data.type as EntityType] ?? [];
 	});
 
-	relatedEntityCount(relatedEntityType: RelatedEntityType): number | undefined {
-		if (!this.data || !this.document) return undefined;
-
-		return source.relatedEntities.getRelatedEntityCount(this.document, relatedEntityType);
-	}
-
 	relatedEntityItems(relatedEntityType: RelatedEntityType): SearchableListItem[] {
 		if (!this.data || !this.document) return [];
 
@@ -110,7 +102,7 @@ class SelectedNodeState {
 	isLoadTypeCompleted(loadType: LoadType): boolean {
 		if (!this.id) return false;
 
-		return source.loadProgress.isLoadTypeCompleted(this.id, loadType);
+		return source.stores.loadProgress.isLoadTypeCompleted(this.id, loadType);
 	}
 
 	collapseNode() {
@@ -122,22 +114,26 @@ class SelectedNodeState {
 
 		graph.data.removeNodes(descendants);
 		graph.expansion.resetForCollapse(new Set([this.id]), descendants);
-		source.loadProgress.deleteDocumentStatuses(descendants);
-		source.loadProgress.delete(descendants);
-		source.loadProgress.resetForExpandedNodes(new Set([this.id]));
-		source.documentStore.delete(descendants);
+		source.stores.loadProgress.deleteDocumentStatuses(descendants);
+		source.stores.loadProgress.delete(descendants);
+		source.stores.loadProgress.resetForExpandedNodes(new Set([this.id]));
+		source.stores.documentStore.delete(descendants);
 	}
 
 	hasMorePages(loadType: LoadType): boolean {
 		if (!this.id) return false;
 
-		return source.loadProgress.hasMorePages(this.id, loadType);
+		const document = source.stores.pagedDocumentStore.get(this.id, loadType);
+
+		if (!document) return false;
+
+		return document.pagination ? document.pagination.page < document.pagination.pages : false;
 	}
 
 	hasPagedDocument(loadType: LoadType): boolean {
 		if (!this.id) return false;
 
-		return source.loadProgress.hasPagedDocument(this.id, loadType);
+		return source.stores.pagedDocumentStore.has(this.id, loadType);
 	}
 
 	async loadEntityDocument() {

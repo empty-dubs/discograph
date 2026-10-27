@@ -5,7 +5,6 @@
 	import SearchableListContextMenu from './SearchableListContextMenu.svelte';
 
 	import type { SearchableListItem } from '../../plugins/discogs';
-	import type { GraphNode } from '../../graph/types';
 
 	interface Props {
 		item: SearchableListItem;
@@ -16,18 +15,7 @@
 
 	let menu = $state<{ x: number; y: number } | null>(null);
 
-	const node = $derived.by((): GraphNode | null => {
-		if (!menu || !item.externalId || !item.entityType) return null;
-
-		return {
-			id: source.compositions.getEntityId(item.entityType, item.externalId),
-			type: item.entityType,
-			label: (item.label ?? item.query ?? '').trim() || 'Unknown',
-			externalId: item.externalId
-		};
-	});
-
-	function isRowDisabled(item: SearchableListItem): boolean {
+	function isDisabled(item: SearchableListItem): boolean {
 		return (
 			!item.externalId ||
 			!item.entityType ||
@@ -38,7 +26,7 @@
 	}
 
 	function openMenu(event: MouseEvent) {
-		if (isRowDisabled(item)) return;
+		if (isDisabled(item)) return;
 
 		event.preventDefault();
 
@@ -53,14 +41,14 @@
 <button
 	type="button"
 	class="ui-list-button flex items-center gap-2 {className}"
-	disabled={isRowDisabled(item)}
+	disabled={isDisabled(item)}
 	aria-haspopup="menu"
 	onclick={openMenu}
 	oncontextmenu={openMenu}
 >
-	<span class="min-w-0 truncate">{item.label ?? item.query}</span>
+	<span class="min-w-0 truncate">{item.label}</span>
 </button>
 
-{#if menu && node}
-	<SearchableListContextMenu {node} x={menu.x} y={menu.y} onClose={closeMenu} />
+{#if menu}
+	<SearchableListContextMenu {item} x={menu.x} y={menu.y} onClose={closeMenu} />
 {/if}

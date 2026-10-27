@@ -150,7 +150,7 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 		master: {
 			source: 'custom',
 			run: async (node) => {
-				const document = source.documentStore.get(node.id);
+				const document = source.stores.documentStore.get(node.id);
 				const master: Master = document as Master;
 				const mainReleaseId = master.main_release;
 
@@ -168,7 +168,7 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 		release: {
 			source: 'custom',
 			run: async (node) => {
-				const document = source.documentStore.get(node.id);
+				const document = source.stores.documentStore.get(node.id);
 				const release: Release = document as Release;
 				const masterId = release.master_id;
 

@@ -1,6 +1,6 @@
 import { getArtist, getLabel, getRelease, getMaster } from './client';
 import { getEntityId } from './compositions';
-import { documentStore } from './document-store.svelte';
+import { documentStore } from './stores/document-store.svelte';
 
 import type { EntityType, PagedListParams } from './types';
 
