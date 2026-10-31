@@ -119,7 +119,7 @@ async function runReleasesPatchLoadAction(
 	const document = response as PagedDocument;
 
 	source.stores.pagedDocumentStore.set(node.id, document, loadType);
-	source.stores.releasesStore.set(node.id, document, loadType);
+	source.stores.releasesStore.set(node.id, document, loadType, node.type as EntityType);
 
 	const patch = loadAction.patch(node, response);
 

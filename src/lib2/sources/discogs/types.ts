@@ -162,7 +162,6 @@ export interface Label {
 export interface LabelRelease {
 	id: number;
 	title: string;
-	type?: 'release' | 'master';
 	year?: string;
 	artist?: string;
 	resource_url?: string;

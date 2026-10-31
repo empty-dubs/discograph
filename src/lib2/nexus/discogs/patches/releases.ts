@@ -15,12 +15,6 @@ import type {
 } from '../../../plugins/discogs';
 import type { GraphLink, GraphNode, GraphPatch } from '../../../graph/types';
 
-function labelReleaseKind(item: LabelRelease): 'master' | 'release' {
-	if (item.type) return item.type;
-
-	return item.resource_url?.includes('/masters/') ? 'master' : 'release';
-}
-
 function listingLabel(item: { title?: string; name?: string; artist?: string }): string {
 	return item.title || item.name || item.artist || 'Unknown release';
 }
@@ -61,20 +55,14 @@ export function buildFromArtistReleases(
 	return dedupePatch({ nodes, links });
 }
 
-export function buildFromLabelReleases(
-	label: GraphNode,
-	releases: LabelRelease[],
-	kind: 'master' | 'release'
-): GraphPatch {
-	const filtered = releases.filter((item) => labelReleaseKind(item) === kind);
+export function buildFromLabelReleases(label: GraphNode, releases: LabelRelease[]): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const linkType: RelationshipType = 'on_label';
 	const parentNodeId = label.id;
+	const nodeType: EntityType = 'release';
 
-	for (const item of filtered) {
-		const releaseType = labelReleaseKind(item);
-		const nodeType = releaseType === 'master' ? 'master' : 'release';
+	for (const item of releases) {
 		const nodeId = source.compositions.getEntityId(nodeType, item.id);
 		const linkId = source.compositions.getRelationshipId(nodeId, linkType, parentNodeId);
 
