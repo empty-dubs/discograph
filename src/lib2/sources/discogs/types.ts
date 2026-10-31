@@ -20,19 +20,19 @@ export type RelatedEntityType =
 	| 'linked_master'
 	| 'artists'
 	| 'labels'
-	| 'credits'
+	| 'credited_artists'
 	| 'companies';
 
 export type LoadType =
-| 'artists'
-| 'labels'
-| 'releases'
-| 'master_releases'
-| 'main_release'
-| 'linked_master'
-| 'companies'
-| 'credited_artists'
-| 'aliases';
+	| 'artists'
+	| 'labels'
+	| 'releases'
+	| 'master_releases'
+	| 'main_release'
+	| 'linked_master'
+	| 'companies'
+	| 'credited_artists'
+	| 'aliases';
 
 interface Pagination {
 	page: number;
@@ -267,6 +267,14 @@ export interface MasterVersionsResponse {
 	versions: MasterVersion[];
 }
 
+interface LinkedMaster {
+	id: number;
+}
+
+interface MainRelease {
+	id: number;
+}
+
 export type PagedDocument =
 	| ArtistReleasesResponse
 	| LabelReleasesResponse
@@ -287,14 +295,21 @@ export interface RateLimitInfo {
 export type NodePayload =
 	| SearchResult
 	| Artist
-	| Label
-	| Release
-	| MasterVersion
-	| ReleaseArtist
-	| LabelRelease
+	| ArtistAlias
 	| ArtistMember
 	| ArtistGroup
-	| MasterArtist;
+	| Label
+	| Sublabel
+	| LabelRef
+	| Release
+	| Master
+	| MasterVersion
+	| ReleaseArtist
+	| ReleaseCompany
+	| LabelRelease
+	| MasterArtist
+	| LinkedMaster
+	| MainRelease;
 
 export type ArtistNodePayload =
 	| SearchResult

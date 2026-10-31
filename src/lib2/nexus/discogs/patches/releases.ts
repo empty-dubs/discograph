@@ -34,23 +34,25 @@ export function buildFromArtistReleases(
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const linkType: RelationshipType = 'released';
-	const sourceNodeId = artist.id;
+	const parentNodeId = artist.id;
 
 	for (const item of filtered) {
-		const targetNodeType = item.type === 'master' ? 'master' : 'release';
-		const targetNodeId = source.compositions.getEntityId(targetNodeType, item.id);
-		const linkId = source.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
+		const nodeType = item.type === 'master' ? 'master' : 'release';
+		const nodeId = source.compositions.getEntityId(nodeType, item.id);
+		const linkId = source.compositions.getRelationshipId(parentNodeId, linkType, nodeId);
 
-		nodes.push(createNode(targetNodeId, targetNodeType, item.title, item.id));
+		nodes.push(createNode(nodeId, nodeType, item.title, item.id));
 
 		const role = item.role?.toLowerCase();
 
 		links.push(
 			createLink(
 				linkId,
-				sourceNodeId,
-				targetNodeId,
+				parentNodeId,
+				nodeId,
 				linkType,
+				undefined,
+				undefined,
 				role && role !== 'main' ? role : undefined
 			)
 		);
@@ -68,16 +70,16 @@ export function buildFromLabelReleases(
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const linkType: RelationshipType = 'on_label';
-	const sourceNodeId = label.id;
+	const parentNodeId = label.id;
 
 	for (const item of filtered) {
 		const releaseType = labelReleaseKind(item);
-		const targetNodeType = releaseType === 'master' ? 'master' : 'release';
-		const targetNodeId = source.compositions.getEntityId(targetNodeType, item.id);
-		const linkId = source.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
+		const nodeType = releaseType === 'master' ? 'master' : 'release';
+		const nodeId = source.compositions.getEntityId(nodeType, item.id);
+		const linkId = source.compositions.getRelationshipId(nodeId, linkType, parentNodeId);
 
-		nodes.push(createNode(targetNodeId, targetNodeType, listingLabel(item), item.id));
-		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
+		nodes.push(createNode(nodeId, nodeType, listingLabel(item), item.id));
+		links.push(createLink(linkId, parentNodeId, nodeId, linkType, nodeId, parentNodeId));
 	}
 
 	return dedupePatch({ nodes, links });
@@ -87,42 +89,42 @@ export function buildFromMasterVersions(master: GraphNode, versions: MasterVersi
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
 	const linkType: RelationshipType = 'version_of';
-	const sourceNodeId = master.id;
-	const targetNodeType: EntityType = 'release';
+	const parentNodeId = master.id;
+	const nodeType: EntityType = 'release';
 
 	for (const version of versions) {
-		const targetNodeId = source.compositions.getEntityId(targetNodeType, version.id);
-		const linkId = source.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
+		const nodeId = source.compositions.getEntityId(nodeType, version.id);
+		const linkId = source.compositions.getRelationshipId(parentNodeId, linkType, nodeId);
 
-		nodes.push(createNode(targetNodeId, targetNodeType, version.title ?? `Release ${version.id}`, version.id));
-		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
+		nodes.push(createNode(nodeId, nodeType, version.title ?? `Release ${version.id}`, version.id));
+		links.push(createLink(linkId, parentNodeId, nodeId, linkType));
 	}
 
 	return dedupePatch({ nodes, links });
 }
 
 export function buildMainReleaseFromMaster(release: Release, master: GraphNode): GraphPatch {
-	const targetNodeType: EntityType = 'release';
+	const nodeType: EntityType = 'release';
 	const linkType: RelationshipType = 'version_of';
-	const sourceNodeId =  master.id;
-	const targetNodeId = source.compositions.getEntityId(targetNodeType, release.id);
-	const linkId = source.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
+	const parentNodeId =  master.id;
+	const nodeId = source.compositions.getEntityId(nodeType, release.id);
+	const linkId = source.compositions.getRelationshipId(nodeId, linkType, parentNodeId);
 
 	return {
-		nodes: [createNode(targetNodeId, targetNodeType, release.title ?? `Release ${release.id}`, release.id)],
-		links: [createLink(linkId, targetNodeId, sourceNodeId, linkType)]
+		nodes: [createNode(nodeId, nodeType, release.title ?? `Release ${release.id}`, release.id)],
+		links: [createLink(linkId, parentNodeId, nodeId, linkType, nodeId, parentNodeId)]
 	};
 }
 
 export function buildMasterFromRelease(master: Master, release: GraphNode): GraphPatch {
-	const targetNodeType: EntityType = 'master';
+	const nodeType: EntityType = 'master';
 	const linkType: RelationshipType = 'version_of';
-	const sourceNodeId = release.id;
-	const targetNodeId = source.compositions.getEntityId(targetNodeType, master.id);
-	const linkId = source.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
+	const parentNodeId = release.id;
+	const nodeId = source.compositions.getEntityId(nodeType, master.id);
+	const linkId = source.compositions.getRelationshipId(parentNodeId, linkType, nodeId);
 
 	return {
-		nodes: [createNode(targetNodeId, targetNodeType, master.title ?? `Master ${master.id}`, master.id)],
-		links: [createLink(linkId, sourceNodeId, targetNodeId, linkType)]
+		nodes: [createNode(nodeId, nodeType, master.title ?? `Master ${master.id}`, master.id)],
+		links: [createLink(linkId, parentNodeId, nodeId, linkType)]
 	};
 }

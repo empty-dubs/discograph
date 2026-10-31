@@ -36,6 +36,9 @@ class GraphDataState {
 		}
 
 		for (const link of patch.links) {
+			// prevent link overwrites
+			if (nextLinks.has(link.id)) continue;
+
 			nextLinks.set(link.id, link);
 		}
 
@@ -60,6 +63,16 @@ class GraphDataState {
 		this.nodes = nextNodes;
 	}
 
+	removeChildLinks(parentNodeId: string) {
+		const nextLinks = new SvelteMap(this.links);
+
+		for (const [linkId, link] of nextLinks) {
+			if (link.parent && link.parent === parentNodeId) nextLinks.delete(linkId);
+		}
+
+		this.links = nextLinks;
+	}
+
 	removeNodes(nodeIds: Set<string>) {
 		if (nodeIds.size === 0) return;
 
@@ -71,7 +84,7 @@ class GraphDataState {
 		}
 
 		for (const [linkId, link] of nextLinks) {
-			if (nodeIds.has(link.source) || nodeIds.has(link.target)) {
+			if (nodeIds.has(link.parent) || nodeIds.has(link.child)) {
 				nextLinks.delete(linkId);
 			}
 		}

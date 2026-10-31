@@ -207,7 +207,11 @@ export class ForceGraph {
 			};
 		});
 
-		this.simulationLinks = links.map((link) => ({ ...link }));
+		this.simulationLinks = links.map((link) => ({
+			...link,
+			source: link.head ?? link.parent,
+			target: link.tail ?? link.child,
+		}));
 
 		const { onNodeClick, onTooltip } = this.options;
 

@@ -5,6 +5,7 @@ import { plugin as source } from '../../../plugins/discogs';
 
 import type { LoadActionParams } from '../load-runner';
 import type { EntityType, LoadType, RelatedEntityType, SearchableListItem } from '../../../plugins/discogs';
+import { patchState } from './patch-state.svelte';
 
 class SelectedNodeState {
 	id = $derived(graph.presentation.selectedId);
@@ -28,9 +29,9 @@ class SelectedNodeState {
 	entityDocumentStatus = $derived.by(() => {
 		if (!this.id) return undefined;
 
-		void source.stores.loadProgress.documentStatuses;
+		void source.stores.fetchState.fetchState;
 
-		return source.stores.loadProgress.getStatus(this.id);
+		return source.stores.fetchState.get(this.id) ?? 'idle';
 	});
 
 	isEntityDocumentLoading = $derived(this.entityDocumentStatus === 'loading');
@@ -47,8 +48,8 @@ class SelectedNodeState {
 
 	isBlocked = $derived(
 		this.data
-			? source.isBlocked(this.data.type as EntityType, this.data.externalId)
-			: false
+		? source.isBlocked(this.data.type as EntityType, this.data.externalId)
+		: false
 	);
 
 	hasReleaseParentType = $derived(
@@ -60,16 +61,13 @@ class SelectedNodeState {
 	hasChildren = $derived.by(() => {
 		if (!this.id) return false;
 
-		void graph.expansion.parentChildAdjacencyList;
+		const childNodes = graph.expansion.parentChildAdjacencyList.get(this.id) ?? new Set();
 
-		return graph.expansion.parentChildAdjacencyList.has(this.id);
+		return childNodes.size > 0;
 	});
 
 	releaseListItems = $derived.by((): SearchableListItem[] => {
 		if (!this.id || !this.data) return [];
-
-		void source.stores.pagedDocumentStore.pagedDocuments;
-		void source.stores.documentStore.documents;
 
 		return source.releases.getReleaseListItems(this.id, this.data.type as EntityType);
 	});
@@ -100,24 +98,46 @@ class SelectedNodeState {
 	}
 
 	isLoadTypeCompleted(loadType: LoadType): boolean {
-		if (!this.id) return false;
+		if (!this.id || !this.document || !this.data) return true;
 
-		return source.stores.loadProgress.isLoadTypeCompleted(this.id, loadType);
+		const relatedEntities = source.relatedEntities.getRelatedEntities(this.document, this.data.type as EntityType, loadType as RelatedEntityType);
+		const relatedEntityType = source.constants.relatedEntityTypeMap[loadType];
+
+		if (!relatedEntities || !relatedEntityType) return true;
+
+		const eligibleNeighbors = relatedEntities.filter((entity) => {
+			const relatedEntityId = source.compositions.getEntityId(relatedEntityType, entity.id);
+
+			return (
+				!graph.expansion.parentChildAdjacencyList.get(this.id!)?.has(relatedEntityId) &&
+				!graph.expansion.parentChildAdjacencyList.get(relatedEntityId)?.has(this.id!) &&
+				!source.isBlocked(relatedEntityType as EntityType, entity.id)
+			);
+		});
+
+		return (patchState.get(this.id)?.get(loadType) ?? 0) >= (eligibleNeighbors?.length ?? 0);
 	}
 
 	collapseNode() {
 		if (!this.id || !this.hasChildren) return;
 
-		const descendants = collectDescendants(this.id, graph.expansion.parentChildAdjacencyList);
+		const descendants = collectDescendants(this.id, graph.expansion.parentChildAdjacencyList, graph.expansion.childParentAdjacencyList);
 
 		if (descendants.size === 0) return;
 
 		graph.data.removeNodes(descendants);
-		graph.expansion.resetForCollapse(new Set([this.id]), descendants);
-		source.stores.loadProgress.deleteDocumentStatuses(descendants);
-		source.stores.loadProgress.delete(descendants);
-		source.stores.loadProgress.resetForExpandedNodes(new Set([this.id]));
+		graph.data.removeChildLinks(this.id);
+		graph.expansion.collapse(this.id, descendants);
+
+		source.stores.releasesStore.delete(descendants);
+		source.stores.pagedDocumentStore.delete(descendants);
 		source.stores.documentStore.delete(descendants);
+		source.stores.fetchState.delete(descendants);
+		patchState.delete(descendants);
+
+		source.stores.pagedDocumentStore.delete(new Set([this.id]));
+		source.stores.releasesStore.delete(new Set([this.id]));
+		patchState.delete(new Set([this.id]));
 	}
 
 	hasMorePages(loadType: LoadType): boolean {

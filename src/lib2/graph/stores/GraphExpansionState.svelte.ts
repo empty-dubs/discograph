@@ -2,17 +2,22 @@ import { SvelteMap } from 'svelte/reactivity';
 
 class GraphExpansionState {
 	parentChildAdjacencyList = $state<SvelteMap<string, Set<string>>>(new SvelteMap());
+	childParentAdjacencyList = $state<SvelteMap<string, Set<string>>>(new SvelteMap());
 
-	resetForCollapse(expandedNodeIds: Set<string>, _removedDescendantIds: Set<string>) {
-		if (expandedNodeIds.size === 0) return;
+	collapse(nodeId: string, descendantIds: Set<string>) {
+		if (!nodeId || descendantIds.size === 0) return;
 
-		for (const id of expandedNodeIds) {
+		for (const id of descendantIds) {
 			this.parentChildAdjacencyList.delete(id);
+			this.childParentAdjacencyList.delete(id);
 		}
+
+		this.parentChildAdjacencyList.delete(nodeId);
 	}
 
 	clear() {
 		this.parentChildAdjacencyList = new SvelteMap();
+		this.childParentAdjacencyList = new SvelteMap();
 	}
 }
 

@@ -7,8 +7,10 @@ export interface GraphNode {
 
 export interface GraphLink {
 	id: string;
-	source: string;
-	target: string;
+	parent: string;
+	child: string;
+	head?: string;
+	tail?: string;
 	type: string;
 	label?: string;
 }

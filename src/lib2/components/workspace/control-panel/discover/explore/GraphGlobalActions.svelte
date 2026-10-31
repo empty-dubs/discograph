@@ -6,21 +6,11 @@
 	import SelectedNodeState from '../../../../../nexus/discogs/stores/SelectedNodeState.svelte';
 
 	const node = $derived(SelectedNodeState);
-
-	const collapseDisabled = $derived(
-		!node.isEntityDocumentLoaded
-		|| node.isBlocked
-		|| !node.hasChildren
-		|| node.isLoading
-	);
-
-	const resetDisabled = $derived(
-		!node.isEntityDocumentLoaded || node.isBlocked || !node.data || node.isLoading
-	);
-
-	const clearDisabled = $derived(graph.data.isEmpty || node.isLoading);
 </script>
 
+{ const collapseDisabled = $derived(!node.isEntityDocumentLoaded || node.isBlocked || !node.hasChildren || node.isLoading) }
+{ const resetDisabled = $derived(!node.isEntityDocumentLoaded || node.isBlocked || !node.data || node.isLoading) }
+{ const clearDisabled = $derived(graph.data.isEmpty || node.isLoading) }
 <div class="flex flex-col gap-2" role="group" aria-label="Global graph actions">
 	<NodeLoadButton disabled={collapseDisabled} onclick={() => node.collapseNode()}>
 		Collapse children

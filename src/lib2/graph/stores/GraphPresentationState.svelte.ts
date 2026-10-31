@@ -28,7 +28,7 @@ class GraphPresentationState {
 
 		if (visibleNodeIds.size === 0) return links;
 
-		return links.filter((link) => visibleNodeIds.has(link.source) && visibleNodeIds.has(link.target));
+		return links.filter((link) => visibleNodeIds.has(link.parent) && visibleNodeIds.has(link.child));
 	}
 
 	get nodeTypeCounts(): Record<string, number> {

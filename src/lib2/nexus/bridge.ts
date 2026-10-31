@@ -3,16 +3,19 @@ import { plugin as source } from '../plugins/discogs';
 import { searchResultPatch } from './discogs/patches/searchResult';
 
 import { defaultNodePresentation } from '../graph/presentation';
+import { patchState } from './discogs/stores/patch-state.svelte';
 
 import type { GraphNode } from '../graph/types';
 import type { NodePresentation } from '../graph/presentation';
 import type { SearchResult } from '../plugins/discogs';
 
 export function clearSession() {
+	source.stores.releasesStore.clear();
+	source.stores.pagedDocumentStore.clear();
+	source.stores.fetchState.clear();
 	source.stores.documentStore.clear();
 	source.stores.loadProgress.clear();
-	source.stores.pagedDocumentStore.clear();
-	source.stores.releasesStore.clear();
+	patchState.clear();
 	graph.clear();
 }
 
