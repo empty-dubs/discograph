@@ -2,7 +2,37 @@ import { SvelteMap } from 'svelte/reactivity';
 
 import { dedupeById } from '../transformations';
 
-import type { LoadType, PagedDocument, PagedReleaseItem } from '../types';
+import type { EntityType, LoadType, PagedDocument, PagedReleaseItem } from '../types';
+
+function itemsFromPagedDocument(
+	document: PagedDocument,
+	loadType: LoadType,
+	parentType: EntityType
+): PagedReleaseItem[] {
+	if ('versions' in document) {
+		if (parentType !== 'master' || loadType !== 'releases') {
+			throw new Error('Invalid load type for master versions');
+		}
+
+		return document.versions;
+	}
+
+	if (!('releases' in document)) {
+		throw new Error('Invalid document type');
+	}
+
+	if (parentType === 'label') {
+		return loadType === 'releases' ? document.releases : [];
+	}
+
+	if (parentType === 'artist') {
+		const kind = loadType === 'master_releases' ? 'master' : 'release';
+
+		return document.releases.filter((release) => 'type' in release && release.type === kind);
+	}
+
+	throw new Error(`Invalid parent type for paged releases: ${parentType}`);
+}
 
 class ReleasesStore {
 	releases = $state<SvelteMap<string, Map<LoadType,Array<PagedReleaseItem>>>>(new SvelteMap());
@@ -11,32 +41,14 @@ class ReleasesStore {
 		return this.releases.get(id)?.get(loadType) ?? [];
 	}
 
-	set(id: string, document: PagedDocument, loadType: LoadType) {
+	set(id: string, document: PagedDocument, loadType: LoadType, parentType: EntityType) {
 		const existing = new SvelteMap(this.releases);
 
 		const releaseGroups = new Map(existing.get(id) ?? []);
 
 		const existingReleases = releaseGroups.get(loadType) ?? [];
 
-		const newReleases = [];
-
-		if ('releases' in document) {
-			if (loadType === 'master_releases') {
-				newReleases.push(...document.releases.filter(release => 'type' in release ? release.type === 'master' : false));
-			} else if (loadType === 'releases') {
-				newReleases.push(...document.releases.filter(release => 'type' in release ? release.type === 'release' : true));
-			} else {
-				throw new Error('Invalid load type');
-			}
-		} else if ('versions' in document) {
-			if (loadType === 'releases') {
-				newReleases.push(...document.versions);
-			} else {
-				throw new Error('Invalid load type');
-			}
-		} else {
-			throw new Error('Invalid document type');
-		}
+		const newReleases = itemsFromPagedDocument(document, loadType, parentType);
 
 		const releases = dedupeById([...existingReleases, ...newReleases]);
 

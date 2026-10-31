@@ -114,7 +114,7 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 			source: 'releases',
 			expansionId: 'releases',
 			fetch: (id, page) => source.client.getLabelReleases(id, source.fetch.labelReleaseFetchParams(page)),
-			patch: (label, payload) => buildFromLabelReleases(label, (payload as LabelReleasesResponse).releases, 'release')
+			patch: (label, payload) => buildFromLabelReleases(label, (payload as LabelReleasesResponse).releases)
 		},
 		master: {
 			source: 'releases',
@@ -129,12 +129,6 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 			expansionId: 'master_releases',
 			fetch: (id, page) => source.client.getArtistReleases(id, source.fetch.artistReleaseFetchParams(page)),
 			patch: (artist, payload) => buildFromArtistReleases(artist, (payload as ArtistReleasesResponse).releases, 'master')
-		},
-		label: {
-			source: 'releases',
-			expansionId: 'master_releases',
-			fetch: (id, page) => source.client.getLabelReleases(id, source.fetch.labelReleaseFetchParams(page)),
-			patch: (label, payload) => buildFromLabelReleases(label, (payload as LabelReleasesResponse).releases, 'master')
 		}
 	},
 	main_release: {
