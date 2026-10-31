@@ -6,6 +6,7 @@ import type {
 	EntityType,
 	Label,
 	Master,
+	NodePayload,
 	Release,
 	RelatedEntityType,
 	SearchableListItem
@@ -21,37 +22,84 @@ const RELATED_ENTITY_GROUPS: { id: RelatedEntityType; title: string }[] = [
 	{ id: 'linked_master', title: 'Master' },
 	{ id: 'artists', title: 'Artists' },
 	{ id: 'labels', title: 'Labels' },
-	{ id: 'credits', title: 'Credits' },
+	{ id: 'credited_artists', title: 'Credited artists' },
 	{ id: 'companies', title: 'Companies' }
 ];
 
-function releaseCreditsLength(release: Release): number {
-	return (release.extraartists ?? release.credits)?.length ?? 0;
-}
-
-function getRelatedEntityCount(
+export function getRelatedEntities(
 	document: unknown,
+	entityType: EntityType,
 	relatedEntityType: RelatedEntityType
-): number | undefined {
-	switch (relatedEntityType) {
-		case 'aliases':
-			return (document as Artist).aliases?.length;
-		case 'members':
-			return (document as Artist).members?.length;
-		case 'groups':
-			return (document as Artist).groups?.length;
-		case 'sublabels':
-			return (document as Label).sublabels?.length;
-		case 'artists':
-			return (document as Master | Release).artists?.length;
-		case 'labels':
-			return (document as Release).labels?.length;
-		case 'credits':
-			return releaseCreditsLength(document as Release) || undefined;
-		case 'companies':
-			return (document as Release).companies?.length;
+): Array<NodePayload> {
+	switch (entityType) {
+		case 'artist':
+			const artist = document as Artist;
+			const aliases = artist.aliases ?? [];
+			const members = artist.members ?? [];
+			const groups = artist.groups ?? [];
+			switch (relatedEntityType) {
+				case 'aliases':
+					return dedupeById(aliases);
+				case 'artists':
+					return dedupeById(members.concat(groups));
+				case 'groups':
+					return dedupeById(groups);
+				case 'members':
+					return dedupeById(members);
+				default:
+					return [];
+			}
+		case 'label':
+			const label = document as Label;
+			const sublabels = label.sublabels ?? [];
+			const parentLabel = label.parent_label;
+			switch (relatedEntityType) {
+				case 'labels':
+					return dedupeById(sublabels.concat(parentLabel ? [parentLabel] : []));
+				case 'parent_label':
+					return parentLabel ? [parentLabel] : [];
+				case 'sublabels':
+					return dedupeById(sublabels);
+				default:
+					return [];
+			}
+		case 'master':
+			const master = document as Master;
+			const masterArtists = master.artists ?? [];
+			const mainRelease = master.main_release;
+			switch (relatedEntityType) {
+				case 'artists':
+					return dedupeById(masterArtists);
+				case 'main_release':
+					return mainRelease ? [{ id: mainRelease }] : [];
+				default:
+					return [];
+			}
+		case 'release':
+			const release = document as Release;
+			const releaseArtists = release.artists ?? [];
+			const linkedMaster = release.master_id;
+			const labels = release.labels ?? [];
+			const companies = release.companies ?? [];
+			const credits = release.credits ?? [];
+			const extraArtists = release.extraartists ?? [];
+			const trackArtists = release.tracklist?.flatMap((track) => (track.extraartists ?? []))?? [];
+			switch (relatedEntityType) {
+				case 'artists':
+					return dedupeById(releaseArtists);
+				case 'labels':
+					return dedupeById(labels);
+				case 'credited_artists':
+					return dedupeById([...extraArtists, ...credits, ...trackArtists]);
+				case 'companies':
+					return dedupeById(companies);
+				case 'linked_master':
+					return linkedMaster ? [{ id: linkedMaster }] : [];
+				default:
+					return [];
+			}
 		default:
-			return undefined;
+			return [];
 	}
 }
 
@@ -60,20 +108,19 @@ function hasRelatedEntityMap(
 	entityType: EntityType
 ): Record<RelatedEntityType, boolean> {
 	const isMasterOrRelease = entityType === 'master' || entityType === 'release';
-	const release = document as Release;
 
 	return {
-		aliases: entityType === 'artist' && (getRelatedEntityCount(document, 'aliases') ?? 0) > 0,
-		members: entityType === 'artist' && (getRelatedEntityCount(document, 'members') ?? 0) > 0,
-		groups: entityType === 'artist' && (getRelatedEntityCount(document, 'groups') ?? 0) > 0,
-		parent_label: entityType === 'label' && Boolean((document as Label).parent_label),
-		sublabels: entityType === 'label' && (getRelatedEntityCount(document, 'sublabels') ?? 0) > 0,
-		main_release: entityType === 'master' && Boolean((document as Master).main_release),
-		linked_master: entityType === 'release' && Boolean(release.master_id),
-		artists: isMasterOrRelease && (getRelatedEntityCount(document, 'artists') ?? 0) > 0,
-		labels: entityType === 'release' && (getRelatedEntityCount(document, 'labels') ?? 0) > 0,
-		credits: entityType === 'release' && (getRelatedEntityCount(document, 'credits') ?? 0) > 0,
-		companies: entityType === 'release' && (getRelatedEntityCount(document, 'companies') ?? 0) > 0
+		aliases: (getRelatedEntities(document, entityType, 'aliases')?.length ?? 0) > 0,
+		members: (getRelatedEntities(document, entityType, 'members')?.length ?? 0) > 0,
+		groups: (getRelatedEntities(document, entityType, 'groups')?.length ?? 0) > 0,
+		parent_label: (getRelatedEntities(document, entityType, 'parent_label')?.length ?? 0) > 0,
+		sublabels: (getRelatedEntities(document, entityType, 'sublabels')?.length ?? 0) > 0,
+		main_release: (getRelatedEntities(document, entityType, 'main_release')?.length ?? 0) > 0,
+		linked_master: (getRelatedEntities(document, entityType, 'linked_master')?.length ?? 0) > 0,
+		artists: isMasterOrRelease && (getRelatedEntities(document, entityType, 'artists')?.length ?? 0) > 0,
+		labels: isMasterOrRelease && (getRelatedEntities(document, entityType, 'labels')?.length ?? 0) > 0,
+		credited_artists: (getRelatedEntities(document, entityType, 'credited_artists')?.length ?? 0) > 0,
+		companies: (getRelatedEntities(document, entityType, 'companies')?.length ?? 0) > 0
 	};
 }
 
@@ -236,21 +283,19 @@ export function getRelatedEntityItems(
 				});
 			}
 
-			if (relatedEntityType === 'credits') {
+			if (relatedEntityType === 'credited_artists') {
 				const credits = [];
-				const trackArtists = release.tracklist?.flatMap((track) =>
+				const trackArtists = release.tracklist?.flatMap((track, index) => 
 					(track.extraartists ?? []).map((artist) => ({
 						...artist,
-						role: `Track appearance`
+						role: `Track ${index + 1}`
 					}))
 				) ?? [];
 
 				credits.push(
-					...dedupeById([
-						...(release.extraartists ?? []),
-						...(release.credits ?? []),
-						...trackArtists
-					])
+					...(release.extraartists ?? []),
+					...(release.credits ?? []),
+					...trackArtists
 				);
 
 				return credits.map((credit, index) => ({

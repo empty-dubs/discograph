@@ -11,10 +11,12 @@ export function createNode(
 
 export function createLink(
 	id: string,
-	source: string,
-	target: string,
+	parent: string,
+	child: string,
 	type: string,
-	label?: string
+	head?: string,
+	tail?: string,
+	label?: string,
 ): GraphLink {
-	return {id, source, target, type, label};
+	return {id, parent, child, type,head, tail, label};
 }

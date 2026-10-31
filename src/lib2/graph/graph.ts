@@ -10,15 +10,32 @@ class Graph {
 	readonly expansion = GraphExpansionState;
 
 	applyPatchFromExpansion(parentNodeId: string, patch: GraphPatch) {
-		this.data.applyPatch(patch);
-
 		if (patch.nodes.length === 0 && patch.links.length === 0) return;
 
-		const childNodeIds = new Set(this.expansion.parentChildAdjacencyList.get(parentNodeId) ?? []);
+		const prePatchLinkIds = new Set(this.data.links.keys());
+		
+		this.data.applyPatch(patch);
 
-		for (const node of patch.nodes) childNodeIds.add(node.id);
+		const postPatchLinkIds = new Set(this.data.links.keys());
 
-		this.expansion.parentChildAdjacencyList.set(parentNodeId, childNodeIds);
+		const newLinkIds = postPatchLinkIds.difference(prePatchLinkIds);
+
+		const parentChildAdjacencyList = new Set(this.expansion.parentChildAdjacencyList.get(parentNodeId) ?? []);
+
+		for (const linkId of newLinkIds) {
+			const link = this.data.links.get(linkId);
+
+			if (!link) continue;
+
+			const childParentAdjacencyList = new Set(this.expansion.childParentAdjacencyList.get(link.child) ?? []);
+
+			childParentAdjacencyList.add(link.parent);
+			parentChildAdjacencyList.add(link.child);
+
+			this.expansion.childParentAdjacencyList.set(link.child, childParentAdjacencyList);
+		}
+
+		this.expansion.parentChildAdjacencyList.set(parentNodeId, parentChildAdjacencyList);
 	}
 
 	clear() {

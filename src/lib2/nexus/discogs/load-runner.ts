@@ -1,7 +1,7 @@
 import { graph } from '../../graph/graph';
 import { plugin as source } from '../../plugins/discogs';
-
 import { LOAD_ACTION_CONFIG } from './expansion-config';
+import { patchState } from './stores/patch-state.svelte';
 
 import type { EntityType, LoadType, PagedDocument } from '../../plugins/discogs';
 import type { GraphNode } from '../../graph/types';
@@ -52,55 +52,35 @@ function displayLabelFromDocument(document: {
 	return document.title ?? document.name;
 }
 
-export async function loadEntityDocument(node: GraphNode): Promise<'loaded' | 'skipped' | 'failed'> {
+export async function loadEntityDocument(node: GraphNode): Promise<void> {
 	if (isBlockedNode(node)) {
-		source.stores.loadProgress.setStatus(node.id, 'loaded');
+		source.stores.fetchState.set(node.id, 'loaded');
 
-		return 'skipped';
+		return;
 	}
 
-	const status = source.stores.loadProgress.getStatus(node.id);
+	const status = source.stores.fetchState.get(node.id);
 
-	if (status === 'loading' || status === 'loaded' || status === 'failed') {
-		return 'skipped';
+	if (status === 'loading' || status === 'loaded' || status === 'failed') return;
+
+	source.stores.fetchState.set(node.id, 'loading');
+
+	const payload = await withRequest(
+		() => source.fetch.fetchEntityDocument(node.externalId, node.type as EntityType),
+		source.fetch.entityFetchErrorMessage(node.type as EntityType)
+	);
+
+	if (!payload) {
+		source.stores.fetchState.set(node.id, 'failed');
+
+		return;
 	}
 
-	const result = await source.stores.loadProgress.withInFlight(node.id, async () => {
-		source.stores.loadProgress.setStatus(node.id, 'loading');
+	source.stores.fetchState.set(node.id, 'loaded');
 
-		const payload = await withRequest(
-			() => source.fetch.fetchEntityDocument(node.externalId, node.type as EntityType),
-			source.fetch.entityFetchErrorMessage(node.type as EntityType)
-		);
+	const label = displayLabelFromDocument(payload as { title?: string; name?: string });
 
-		if (!payload) {
-			source.stores.loadProgress.setStatus(node.id, 'failed');
-
-			return 'failed';
-		}
-
-		source.stores.loadProgress.setStatus(node.id, 'loaded');
-
-		const label = displayLabelFromDocument(payload as { title?: string; name?: string });
-
-		if (label) {
-			graph.data.updateNode(node.id, { label });
-		}
-
-		return 'loaded';
-	});
-
-	return result ?? 'skipped';
-}
-
-async function ensureEntityDocument(node: GraphNode): Promise<boolean> {
-	const status = source.stores.loadProgress.getStatus(node.id);
-
-	if (status === 'loaded') return true;
-
-	const outcome = await loadEntityDocument(node);
-
-	return outcome === 'loaded' || outcome === 'skipped';
+	if (label) graph.data.updateNode(node.id, { label });
 }
 
 function getLoadAction(node: GraphNode, loadType: LoadType): LoadAction | undefined {
@@ -112,8 +92,6 @@ async function runDocumentPatchLoadAction(
 	loadAction: Extract<LoadAction, { source: 'document' }>,
 	loadType: LoadType
 ) {
-	if (!(await ensureEntityDocument(node))) return;
-
 	const document = source.stores.documentStore.get(node.id);
 
 	if (!document) return;
@@ -121,7 +99,8 @@ async function runDocumentPatchLoadAction(
 	const patch = loadAction.patch(document);
 
 	graph.applyPatchFromExpansion(node.id, patch);
-	source.stores.loadProgress.markLoadTypeCompleted(node.id, loadAction.markCompleted ?? loadType);
+
+	for (const _ of patch.nodes) patchState.update(node.id, loadType);
 }
 
 async function runReleasesPatchLoadAction(
@@ -135,7 +114,7 @@ async function runReleasesPatchLoadAction(
 		loadActionErrorMessage(loadType)
 	);
 
-	if (!response || typeof response !== 'object' || !('pagination' in response)) return;
+	if (!response) return;
 
 	const document = response as PagedDocument;
 
@@ -146,9 +125,7 @@ async function runReleasesPatchLoadAction(
 
 	graph.applyPatchFromExpansion(node.id, patch);
 
-	if (document.pagination.page >= document.pagination.pages) {
-		source.stores.loadProgress.markLoadTypeCompleted(node.id, loadType);
-	}
+	for (const _ of patch.nodes) patchState.update(node.id, loadType);
 }
 
 // TODO: update this to be more like runDocumentPatchLoadAction
@@ -158,16 +135,18 @@ async function runCustomPatchLoadAction(
 	loadAction: Extract<LoadAction, { source: 'custom' }>,
 	loadType: LoadType
 ) {
-	if (!(await ensureEntityDocument(node))) return;
-
-	const ok = await withRequest(async () => {
-		await loadAction.run(node);
-
-		return true;
+	const response = await withRequest(async () => {
+		return await loadAction.fetch(node);
 	}, loadActionErrorMessage(loadType));
 
-	if (ok) {
-		source.stores.loadProgress.markLoadTypeCompleted(node.id, loadType);
+	if (!response) return;
+
+	const patch = loadAction.patch(node, response);
+
+	graph.applyPatchFromExpansion(node.id, patch);
+
+	for (const _ of patch.nodes) {
+		patchState.update(node.id, loadType);
 	}
 }
 

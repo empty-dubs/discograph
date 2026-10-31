@@ -10,22 +10,22 @@ export function buildFromArtist(artist: Artist): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: EntityType = 'artist';
 	const linkType: RelationshipType = 'member_of';
-	const sourceNodeId = source.compositions.getEntityId(nodeType, artist.id);
+	const parentNodeId = source.compositions.getEntityId(nodeType, artist.id);
 
 	for (const member of artist.members ?? []) {
-		const targetNodeId = source.compositions.getEntityId(nodeType, member.id);
-		const linkId = source.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
+		const nodeId = source.compositions.getEntityId(nodeType, member.id);
+		const linkId = source.compositions.getRelationshipId(nodeId, linkType, parentNodeId);
 
-		nodes.push(createNode(targetNodeId, nodeType, member.name, member.id));
-		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
+		nodes.push(createNode(nodeId, nodeType, member.name, member.id));
+		links.push(createLink(linkId, parentNodeId, nodeId, linkType, nodeId, parentNodeId));
 	}
 
 	for (const group of artist.groups ?? []) {
-		const targetNodeId = source.compositions.getEntityId(nodeType, group.id);
-		const linkId = source.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
+		const nodeId = source.compositions.getEntityId(nodeType, group.id);
+		const linkId = source.compositions.getRelationshipId(parentNodeId, linkType, nodeId);
 
-		nodes.push(createNode(targetNodeId, nodeType, group.name, group.id));
-		links.push(createLink(linkId, sourceNodeId, targetNodeId, linkType));
+		nodes.push(createNode(nodeId, nodeType, group.name, group.id));
+		links.push(createLink(linkId, parentNodeId, nodeId, linkType));
 	}
 
 	return { nodes, links };
@@ -36,14 +36,14 @@ export function buildAliasesFromArtist(artist: Artist): GraphPatch {
 	const links: GraphLink[] = [];
 	const nodeType: EntityType = 'artist';
 	const linkType: RelationshipType = 'alias_of';
-		const sourceNodeId = source.compositions.getEntityId(nodeType, artist.id);
+		const parentNodeId = source.compositions.getEntityId(nodeType, artist.id);
 
 	for (const alias of artist.aliases ?? []) {
-		const targetNodeId = source.compositions.getEntityId(nodeType, alias.id);
-		const linkId = source.compositions.getRelationshipId(sourceNodeId, linkType, targetNodeId);
+		const nodeId = source.compositions.getEntityId(nodeType, alias.id);
+		const linkId = source.compositions.getRelationshipId(parentNodeId, linkType, nodeId);
 
-		nodes.push(createNode(targetNodeId, nodeType, alias.name, alias.id));
-		links.push(createLink(linkId, sourceNodeId, targetNodeId, linkType));
+		nodes.push(createNode(nodeId, nodeType, alias.name, alias.id));
+		links.push(createLink(linkId, parentNodeId, nodeId, linkType));
 	}
 
 	return { nodes, links };
@@ -52,17 +52,17 @@ export function buildAliasesFromArtist(artist: Artist): GraphPatch {
 export function buildArtistsFromMaster(master: Master): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const sourceNodeType: EntityType = 'master';
-	const targetNodeType: EntityType = 'artist';
+	const parentNodeType: EntityType = 'master';
+	const nodeType: EntityType = 'artist';
 	const linkType: RelationshipType = 'released';
-	const sourceNodeId = source.compositions.getEntityId(sourceNodeType, master.id);
+	const parentNodeId = source.compositions.getEntityId(parentNodeType, master.id);
 
 	for (const artist of master.artists ?? []) {
-		const targetNodeId = source.compositions.getEntityId(targetNodeType, artist.id);
-		const linkId = source.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
+		const nodeId = source.compositions.getEntityId(nodeType, artist.id);
+		const linkId = source.compositions.getRelationshipId(nodeId, linkType, parentNodeId);
 
-		nodes.push(createNode(targetNodeId, targetNodeType, artist.name, artist.id));
-		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
+		nodes.push(createNode(nodeId, nodeType, artist.name, artist.id));
+		links.push(createLink(linkId, parentNodeId, nodeId, linkType, nodeId, parentNodeId));
 	}
 
 	return { nodes, links };
@@ -71,17 +71,17 @@ export function buildArtistsFromMaster(master: Master): GraphPatch {
 export function buildArtistsFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const sourceNodeType: EntityType = 'release';
-	const targetNodeType: EntityType = 'artist';
+	const parentNodeType: EntityType = 'release';
+	const nodeType: EntityType = 'artist';
 	const linkType: RelationshipType = 'released';
-	const sourceNodeId = source.compositions.getEntityId(sourceNodeType, release.id);
+	const parentNodeId = source.compositions.getEntityId(parentNodeType, release.id);
 
 	for (const artist of release.artists ?? []) {
-		const targetNodeId = source.compositions.getEntityId(targetNodeType, artist.id);
-		const linkId = source.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
+		const nodeId = source.compositions.getEntityId(nodeType, artist.id);
+		const linkId = source.compositions.getRelationshipId(nodeId, linkType, parentNodeId);
 
-		nodes.push(createNode(targetNodeId, targetNodeType, artist.name, artist.id));
-		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType));
+		nodes.push(createNode(nodeId, nodeType, artist.name, artist.id));
+		links.push(createLink(linkId, parentNodeId, nodeId, linkType, nodeId, parentNodeId));
 	}
 
 	return { nodes, links };
@@ -90,40 +90,40 @@ export function buildArtistsFromRelease(release: Release): GraphPatch {
 export function buildCreditedArtistsFromRelease(release: Release): GraphPatch {
 	const nodes: GraphNode[] = [];
 	const links: GraphLink[] = [];
-	const sourceNodeType: EntityType = 'release';
-	const targetNodeType: EntityType = 'artist';
+	const parentNodeType: EntityType = 'release';
+	const nodeType: EntityType = 'artist';
 	const linkType: RelationshipType = 'credited_on';
-	const sourceNodeId = source.compositions.getEntityId(sourceNodeType, release.id);
+	const parentNodeId = source.compositions.getEntityId(parentNodeType, release.id);
 
 	for (const artist of release.credits ?? []) {
 		if (artist.id === undefined) continue;
 
-		const targetNodeId = source.compositions.getEntityId(targetNodeType, artist.id);
-		const linkId = source.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
+		const nodeId = source.compositions.getEntityId(nodeType, artist.id);
+		const linkId = source.compositions.getRelationshipId(nodeId, linkType, parentNodeId);
 
-		nodes.push(createNode(targetNodeId, targetNodeType, artist.name, artist.id));
-		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType, artist.role?.toLowerCase()));
+		nodes.push(createNode(nodeId, nodeType, artist.name, artist.id));
+		links.push(createLink(linkId, parentNodeId, nodeId, linkType, nodeId, parentNodeId, artist.role?.toLowerCase()));
 	}
 
 	for (const artist of release.extraartists ?? []) {
 		if (artist.id === undefined) continue;
 
-		const targetNodeId = source.compositions.getEntityId(targetNodeType, artist.id);
-		const linkId = source.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
+		const nodeId = source.compositions.getEntityId(nodeType, artist.id);
+		const linkId = source.compositions.getRelationshipId(nodeId, linkType, parentNodeId);
 
-		nodes.push(createNode(targetNodeId, targetNodeType, artist.name, artist.id));
-		links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType, artist.role?.toLowerCase()));
+		nodes.push(createNode(nodeId, nodeType, artist.name, artist.id));
+		links.push(createLink(linkId, parentNodeId, nodeId, linkType, nodeId, parentNodeId, artist.role?.toLowerCase()));
 	}
 
 	for (const track of release.tracklist ?? []) {
 		for (const artist of track.extraartists ?? []) {
 			if (artist.id === undefined) continue;
 
-			const targetNodeId = source.compositions.getEntityId(targetNodeType, artist.id);
-			const linkId = source.compositions.getRelationshipId(targetNodeId, linkType, sourceNodeId);
+			const nodeId = source.compositions.getEntityId(nodeType, artist.id);
+			const linkId = source.compositions.getRelationshipId(nodeId, linkType, parentNodeId);
 
-			nodes.push(createNode(targetNodeId, targetNodeType, artist.name, artist.id));
-			links.push(createLink(linkId, targetNodeId, sourceNodeId, linkType, 'track appearance'));
+			nodes.push(createNode(nodeId, nodeType, artist.name, artist.id));
+			links.push(createLink(linkId, parentNodeId, nodeId, linkType, nodeId, parentNodeId, 'track appearance'));
 		}
 	}
 

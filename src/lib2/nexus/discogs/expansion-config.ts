@@ -1,4 +1,3 @@
-import { graph } from '../../graph/graph';
 import { plugin as source } from '../../plugins/discogs';
 
 import {
@@ -37,7 +36,6 @@ import type { GraphNode, GraphPatch } from '../../graph/types';
 type DocumentPatchAction = {
 	source: 'document';
 	patch: (payload: unknown) => GraphPatch;
-	markCompleted?: LoadType;
 };
 
 type ReleasesPatchAction = {
@@ -50,7 +48,8 @@ type ReleasesPatchAction = {
 // TODO: maybe roll this behavior into DocumentPatchAction?
 type CustomPatchAction = {
 	source: 'custom';
-	run: (node: GraphNode) => Promise<void>;
+	fetch: (node: GraphNode) => Promise<unknown>;
+	patch: (node: GraphNode, payload: unknown) => GraphPatch;
 };
 
 export type LoadAction = DocumentPatchAction | ReleasesPatchAction | CustomPatchAction;
@@ -66,50 +65,42 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 		artist: {
 			source: 'document',
 			patch: (payload) => buildFromArtist(payload as Artist),
-			markCompleted: 'artists'
 		},
 		release: {
 			source: 'document',
 			patch: (payload) => buildArtistsFromRelease(payload as Release),
-			markCompleted: 'artists'
 		},
 		master: {
 			source: 'document',
 			patch: (payload) => buildArtistsFromMaster(payload as Master),
-			markCompleted: 'artists'
 		}
 	},
 	aliases: {
 		artist: {
 			source: 'document',
 			patch: (payload) => buildAliasesFromArtist(payload as Artist),
-			markCompleted: 'aliases'
 		}
 	},
 	labels: {
 		label: {
 			source: 'document',
 			patch: (payload) => buildFromLabel(payload as Label),
-			markCompleted: 'labels'
 		},
 		release: {
 			source: 'document',
 			patch: (payload) => buildLabelsFromRelease(payload as Release),
-			markCompleted: 'labels'
 		}
 	},
 	companies: {
 		release: {
 			source: 'document',
 			patch: (payload) => buildCompaniesFromRelease(payload as Release),
-			markCompleted: 'companies'
 		}
 	},
 	credited_artists: {
 		release: {
 			source: 'document',
 			patch: (payload) => buildCreditedArtistsFromRelease(payload as Release),
-			markCompleted: 'credited_artists'
 		}
 	},
 	releases: {
@@ -149,7 +140,7 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 	main_release: {
 		master: {
 			source: 'custom',
-			run: async (node) => {
+			fetch: async (node) => {
 				const document = source.stores.documentStore.get(node.id);
 				const master: Master = document as Master;
 				const mainReleaseId = master.main_release;
@@ -158,16 +149,15 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 					throw new Error('This master has no main release');
 				}
 
-				const release = await source.client.getRelease(mainReleaseId);
-
-				graph.applyPatchFromExpansion(node.id, buildMainReleaseFromMaster(release, node));
-			}
+				return await source.client.getRelease(mainReleaseId);
+			},
+			patch: (node, payload) => buildMainReleaseFromMaster(payload as Release, node)
 		}
 	},
 	linked_master: {
 		release: {
 			source: 'custom',
-			run: async (node) => {
+			fetch: async (node) => {
 				const document = source.stores.documentStore.get(node.id);
 				const release: Release = document as Release;
 				const masterId = release.master_id;
@@ -175,10 +165,10 @@ export const LOAD_ACTION_CONFIG: Partial<Record<
 				if (!masterId) {
 					throw new Error('This release has no linked master');
 				}
-				const master = await source.client.getMaster(masterId);
 
-				graph.applyPatchFromExpansion(node.id, buildMasterFromRelease(master, node));
-			}
+				return await source.client.getMaster(masterId);
+			},
+			patch: (node, payload) => buildMasterFromRelease(payload as Master, node)
 		}
 	}
 };

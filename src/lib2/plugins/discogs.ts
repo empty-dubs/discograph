@@ -25,6 +25,7 @@ import {
 	MASTER_RELEASE_GROUPS,
 	MASTER_RELEASE_LOAD_TYPES,
 	PATCH_LOAD_TYPES,
+	RELATED_ENTITY_TYPE_MAP,
 	RELEASES_TAB_LOAD_TYPES,
 } from '../sources/discogs/constants';
 import {
@@ -36,6 +37,7 @@ import {
 } from '../sources/discogs/fetch';
 import { presentation } from '../sources/discogs/presentation';
 import {
+	getRelatedEntities,
 	getRelatedEntityGroups,
 	getRelatedEntityItems,
 } from '../sources/discogs/related-entities';
@@ -43,6 +45,7 @@ import { getReleaseListItems, hasReleaseData, isReleaseParentType } from '../sou
 import { entityLabel } from '../sources/discogs/transformations';
 
 import { documentStore } from '../sources/discogs/stores/document-store.svelte';
+import { fetchState } from '../sources/discogs/stores/fetch-state.svelte';
 import { loadProgress } from '../sources/discogs/stores/load-progress.svelte';
 import { pagedDocumentStore } from '../sources/discogs/stores/paged-document-store.svelte';
 import { releasesStore } from '../sources/discogs/stores/releases-store.svelte';
@@ -71,6 +74,7 @@ export const plugin = {
 	id: 'discogs',
 	stores: {
 		documentStore,
+		fetchState,
 		loadProgress,
 		pagedDocumentStore,
 		releasesStore,
@@ -106,7 +110,8 @@ export const plugin = {
 		masterReleaseLoadTypes: MASTER_RELEASE_LOAD_TYPES,
 		releasesTabLoadTypes: RELEASES_TAB_LOAD_TYPES,
 		neighborTypes: ENTITY_NEIGHBOR_TYPES,
-		patchLoadTypes: PATCH_LOAD_TYPES
+		patchLoadTypes: PATCH_LOAD_TYPES,
+		relatedEntityTypeMap: RELATED_ENTITY_TYPE_MAP
 	},
 	fetch: {
 		fetchEntityDocument,
@@ -116,6 +121,7 @@ export const plugin = {
 		masterVersionFetchParams
 	},
 	relatedEntities: {
+		getRelatedEntities,
 		getRelatedEntityGroups,
 		getRelatedEntityItems,
 	},

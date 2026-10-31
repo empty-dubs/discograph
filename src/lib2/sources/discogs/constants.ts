@@ -36,6 +36,18 @@ export const ENTITY_NEIGHBOR_TYPES: Record<EntityType, LoadType[]> = {
 	master: ['artists', 'releases', 'main_release']
 };
 
+export const RELATED_ENTITY_TYPE_MAP: Record<LoadType, EntityType> = {
+	artists: 'artist',
+	aliases: 'artist',
+	labels: 'label',
+	releases: 'release',
+	master_releases: 'master',
+	main_release: 'release',
+	linked_master: 'master',
+	companies: 'label',
+	credited_artists: 'artist'
+};
+
 export const PATCH_LOAD_TYPES = new Set<LoadType>([
 	'artists',
 	'labels',
