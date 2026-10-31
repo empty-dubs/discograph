@@ -1,5 +1,4 @@
 import { getReleaseItemLabel } from './releases';
-import { getEntityId } from './compositions';
 import { dedupeById } from './transformations';
 
 import type {
