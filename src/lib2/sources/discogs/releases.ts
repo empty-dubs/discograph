@@ -1,7 +1,7 @@
 import { RELEASES_TAB_LOAD_TYPES } from './constants';
 import { getEntityId } from './compositions';
-import { documentStore } from './stores/document-store.svelte';
-import { releasesStore } from './stores/releases-store.svelte';
+import { documentStore } from './stores/documents.svelte';
+import { releasesStore } from './stores/releases.svelte';
 
 import type { EntityType, Master, PagedReleaseItem, SearchableListItem } from './types';
 

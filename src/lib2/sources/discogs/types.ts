@@ -291,7 +291,7 @@ export interface RateLimitInfo {
 	queueClearTimeMs: number | null;
 }
 
-export type NodePayload =
+export type EntityPayload =
 	| SearchResult
 	| Artist
 	| ArtistAlias
@@ -309,6 +309,12 @@ export type NodePayload =
 	| MasterArtist
 	| LinkedMaster
 	| MainRelease;
+
+export type EntityDocumentPayload =
+	| Artist
+	| Label
+	| Master
+	| Release;
 
 export type ArtistNodePayload =
 	| SearchResult

@@ -29,9 +29,7 @@ class SelectedNodeState {
 	entityDocumentStatus = $derived.by(() => {
 		if (!this.id) return undefined;
 
-		void source.stores.fetchState.fetchState;
-
-		return source.stores.fetchState.get(this.id) ?? 'idle';
+		return source.stores.fetchStatus.get(this.id) ?? 'idle';
 	});
 
 	isEntityDocumentLoading = $derived(this.entityDocumentStatus === 'loading');
@@ -68,6 +66,9 @@ class SelectedNodeState {
 
 	releaseListItems = $derived.by((): SearchableListItem[] => {
 		if (!this.id || !this.data) return [];
+
+		void source.stores.releasesStore.releases;
+		void source.stores.documentStore.documents;
 
 		return source.releases.getReleaseListItems(this.id, this.data.type as EntityType);
 	});
@@ -132,7 +133,7 @@ class SelectedNodeState {
 		source.stores.releasesStore.delete(descendants);
 		source.stores.pagedDocumentStore.delete(descendants);
 		source.stores.documentStore.delete(descendants);
-		source.stores.fetchState.delete(descendants);
+		source.stores.fetchStatus.delete(descendants);
 		patchState.delete(descendants);
 
 		source.stores.pagedDocumentStore.delete(new Set([this.id]));

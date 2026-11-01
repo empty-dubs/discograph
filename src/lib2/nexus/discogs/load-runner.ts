@@ -7,42 +7,8 @@ import type { EntityType, LoadType, PagedDocument } from '../../plugins/discogs'
 import type { GraphNode } from '../../graph/types';
 import type { LoadAction } from './expansion-config';
 
-// TODO: move request stuff to a more global location
-let requestError: string | null = null;
-
-export function getRequestError(): string | null {
-	return requestError;
-}
-
-function clearRequestError() {
-	requestError = null;
-}
-
-function setRequestError(message: string | null) {
-	requestError = message;
-}
-
-export async function withRequest<T>(
-	fn: () => Promise<T>,
-	errorMessage: string
-): Promise<T | null> {
-	clearRequestError();
-
-	try {
-		return await fn();
-	} catch (err) {
-		setRequestError(err instanceof Error ? err.message : errorMessage);
-
-		return null;
-	}
-}
-
 function loadActionErrorMessage(loadType: LoadType): string {
 	return `Failed to ${source.constants.loadTypeLabels[loadType].toLowerCase()}`;
-}
-
-function isBlockedNode(node: GraphNode): boolean {
-	return source.isBlocked(node.type as EntityType, node.externalId);
 }
 
 function displayLabelFromDocument(document: {
@@ -53,32 +19,14 @@ function displayLabelFromDocument(document: {
 }
 
 export async function loadEntityDocument(node: GraphNode): Promise<void> {
-	if (isBlockedNode(node)) {
-		source.stores.fetchState.set(node.id, 'loaded');
-
-		return;
-	}
-
-	const status = source.stores.fetchState.get(node.id);
-
-	if (status === 'loading' || status === 'loaded' || status === 'failed') return;
-
-	source.stores.fetchState.set(node.id, 'loading');
-
-	const payload = await withRequest(
+	const payload = await source.fetch.withFetch(
 		() => source.fetch.fetchEntityDocument(node.externalId, node.type as EntityType),
 		source.fetch.entityFetchErrorMessage(node.type as EntityType)
 	);
 
-	if (!payload) {
-		source.stores.fetchState.set(node.id, 'failed');
+	if (!payload) return;
 
-		return;
-	}
-
-	source.stores.fetchState.set(node.id, 'loaded');
-
-	const label = displayLabelFromDocument(payload as { title?: string; name?: string });
+	const label = displayLabelFromDocument(payload);
 
 	if (label) graph.data.updateNode(node.id, { label });
 }
@@ -109,7 +57,7 @@ async function runReleasesPatchLoadAction(
 	loadType: LoadType,
 	page: number
 ) {
-	const response = await withRequest(
+	const response = await source.fetch.withFetch(
 		() => loadAction.fetch(node.externalId, page),
 		loadActionErrorMessage(loadType)
 	);
@@ -135,7 +83,7 @@ async function runCustomPatchLoadAction(
 	loadAction: Extract<LoadAction, { source: 'custom' }>,
 	loadType: LoadType
 ) {
-	const response = await withRequest(async () => {
+	const response = await source.fetch.withFetch(async () => {
 		return await loadAction.fetch(node);
 	}, loadActionErrorMessage(loadType));
 
@@ -159,7 +107,7 @@ export async function runPatchLoadAction(
 	loadType: LoadType,
 	options?: LoadActionParams
 ): Promise<void> {
-	if (isBlockedNode(node)) return;
+	if (source.isBlocked(node.type as EntityType, node.externalId)) return;
 
 	const loadAction = getLoadAction(node, loadType);
 
@@ -173,6 +121,7 @@ export async function runPatchLoadAction(
 		}
 
 		if (loadAction.source === 'document') {
+			await loadEntityDocument(node);
 			await runDocumentPatchLoadAction(node, loadAction, loadType);
 
 			return;

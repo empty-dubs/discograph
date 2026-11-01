@@ -3,10 +3,11 @@ import { dedupeById } from './transformations';
 
 import type {
 	Artist,
+	EntityPayload,
+	EntityDocumentPayload,
 	EntityType,
 	Label,
 	Master,
-	NodePayload,
 	Release,
 	RelatedEntityType,
 	SearchableListItem
@@ -27,10 +28,10 @@ const RELATED_ENTITY_GROUPS: { id: RelatedEntityType; title: string }[] = [
 ];
 
 export function getRelatedEntities(
-	document: unknown,
+	document: EntityDocumentPayload,
 	entityType: EntityType,
 	relatedEntityType: RelatedEntityType
-): Array<NodePayload> {
+): Array<EntityPayload> {
 	switch (entityType) {
 		case 'artist':
 			const artist = document as Artist;
@@ -104,7 +105,7 @@ export function getRelatedEntities(
 }
 
 function hasRelatedEntityMap(
-	document: unknown,
+	document: EntityDocumentPayload,
 	entityType: EntityType
 ): Record<RelatedEntityType, boolean> {
 	const isMasterOrRelease = entityType === 'master' || entityType === 'release';
@@ -125,7 +126,7 @@ function hasRelatedEntityMap(
 }
 
 export function getRelatedEntityGroups(
-	document: unknown,
+	document: EntityDocumentPayload,
 	entityType: EntityType
 ): { id: RelatedEntityType; title: string }[] {
 	const isVisible = hasRelatedEntityMap(document, entityType);
@@ -134,7 +135,7 @@ export function getRelatedEntityGroups(
 }
 
 export function getRelatedEntityItems(
-	document: unknown,
+	document: EntityDocumentPayload,
 	entityType: EntityType,
 	relatedEntityType: RelatedEntityType
 ): SearchableListItem[] {

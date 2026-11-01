@@ -13,7 +13,7 @@ class Graph {
 		if (patch.nodes.length === 0 && patch.links.length === 0) return;
 
 		const prePatchLinkIds = new Set(this.data.links.keys());
-		
+
 		this.data.applyPatch(patch);
 
 		const postPatchLinkIds = new Set(this.data.links.keys());
