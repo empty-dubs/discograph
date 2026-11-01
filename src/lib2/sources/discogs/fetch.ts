@@ -1,10 +1,13 @@
+import { isBlocked } from './blocked';
 import { getArtist, getLabel, getRelease, getMaster } from './client';
 import { getEntityId } from './compositions';
-import { documentStore } from './stores/document-store.svelte';
+import { documentStore } from './stores/documents.svelte';
+import { fetchError } from './stores/fetch-error.svelte';
+import { fetchStatus } from './stores/fetch-statuses.svelte';
 
-import type { EntityType, PagedListParams } from './types';
+import type { EntityDocumentPayload, EntityType, PagedListParams } from './types';
 
-type FetchMethod = (id: number) => Promise<unknown>;
+type FetchMethod = (id: number) => Promise<EntityDocumentPayload>;
 
 const DEFAULT_PER_PAGE = 50;
 
@@ -49,16 +52,51 @@ export function entityFetchErrorMessage(type: EntityType): string {
 	return FETCH_ERROR_MESSAGE[type] ?? 'Failed to load document';
 }
 
-export async function fetchEntityDocument(entityExternalId: number, entityType: EntityType): Promise<unknown | null> {
+export async function fetchEntityDocument(entityExternalId: number, entityType: EntityType): Promise<EntityDocumentPayload | null> {
 	const fetch = FETCH_METHOD[entityType];
 
 	if (!fetch) return null;
+	
+	const entityId = getEntityId(entityType, entityExternalId);
+
+	if (isBlocked(entityType, entityExternalId)) {
+		fetchStatus.set(entityId, 'loaded');
+
+		return null;
+	}
+
+	const status = fetchStatus.get(entityId);
+
+	if (status === 'loading' || status === 'loaded' || status === 'failed') return null;
+
+	fetchStatus.set(entityId, 'loading');
 
 	const payload = await fetch(entityExternalId);
 
-    const entityId = getEntityId(entityType, entityExternalId);
+	if (!payload) {
+		fetchStatus.set(entityId, 'failed');
+
+		return null;
+	}
 
 	documentStore.set(entityId, payload);
 
+	fetchStatus.set(entityId, 'loaded');
+
 	return payload;
+}
+
+export async function withFetch<T>(
+	fn: () => Promise<T>,
+	errorMessage: string
+): Promise<T | null> {
+	fetchError.clear();
+
+	try {
+		return await fn();
+	} catch (err) {
+		fetchError.set(err instanceof Error ? err.message : errorMessage);
+
+		return null;
+	}
 }

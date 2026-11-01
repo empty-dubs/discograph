@@ -34,6 +34,7 @@ import {
 	artistReleaseFetchParams,
 	labelReleaseFetchParams,
 	masterVersionFetchParams,
+	withFetch,
 } from '../sources/discogs/fetch';
 import { presentation } from '../sources/discogs/presentation';
 import {
@@ -44,11 +45,12 @@ import {
 import { getReleaseListItems, hasReleaseData, isReleaseParentType } from '../sources/discogs/releases';
 import { entityLabel } from '../sources/discogs/transformations';
 
-import { documentStore } from '../sources/discogs/stores/document-store.svelte';
-import { fetchState } from '../sources/discogs/stores/fetch-state.svelte';
+import { documentStore } from '../sources/discogs/stores/documents.svelte';
+import { fetchError } from '../sources/discogs/stores/fetch-error.svelte';
+import { fetchStatus } from '../sources/discogs/stores/fetch-statuses.svelte';
 import { loadProgress } from '../sources/discogs/stores/load-progress.svelte';
-import { pagedDocumentStore } from '../sources/discogs/stores/paged-document-store.svelte';
-import { releasesStore } from '../sources/discogs/stores/releases-store.svelte';
+import { pagedDocumentStore } from '../sources/discogs/stores/paged-documents.svelte';
+import { releasesStore } from '../sources/discogs/stores/releases.svelte';
 
 export type {
 	Artist,
@@ -74,7 +76,8 @@ export const plugin = {
 	id: 'discogs',
 	stores: {
 		documentStore,
-		fetchState,
+		fetchError,
+		fetchStatus,
 		loadProgress,
 		pagedDocumentStore,
 		releasesStore,
@@ -118,7 +121,8 @@ export const plugin = {
 		entityFetchErrorMessage,
 		artistReleaseFetchParams,
 		labelReleaseFetchParams,
-		masterVersionFetchParams
+		masterVersionFetchParams,
+		withFetch
 	},
 	relatedEntities: {
 		getRelatedEntities,

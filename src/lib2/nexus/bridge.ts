@@ -12,7 +12,8 @@ import type { SearchResult } from '../plugins/discogs';
 export function clearSession() {
 	source.stores.releasesStore.clear();
 	source.stores.pagedDocumentStore.clear();
-	source.stores.fetchState.clear();
+	source.stores.fetchStatus.clear();
+	source.stores.fetchError.clear();
 	source.stores.documentStore.clear();
 	source.stores.loadProgress.clear();
 	patchState.clear();
