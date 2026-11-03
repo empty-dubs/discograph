@@ -3,17 +3,13 @@ import { collectDescendants } from '../../../graph/operations/crawl';
 import { loadEntityDocument, runPatchLoadAction } from '../load-runner';
 import { plugin as source } from '../../../plugins/discogs';
 
-import type { LoadActionParams } from '../load-runner';
 import type { EntityType, LoadType, RelatedEntityType, SearchableListItem } from '../../../plugins/discogs';
-import { patchState } from './patch-state.svelte';
 
 class SelectedNodeState {
 	id = $derived(graph.presentation.selectedId);
 
-	data = $derived.by(() => {
+	attributes = $derived.by(() => {
 		if (!this.id) return undefined;
-
-		void graph.data.nodes;
 
 		return graph.data.nodes.get(this.id);
 	});
@@ -45,13 +41,13 @@ class SelectedNodeState {
 	});
 
 	isBlocked = $derived(
-		this.data
-		? source.isBlocked(this.data.type as EntityType, this.data.externalId)
+		this.attributes
+		? source.fetch.isBlocked(this.attributes.type as EntityType, this.attributes.externalId)
 		: false
 	);
 
 	hasReleaseParentType = $derived(
-		this.data ? source.releases.isReleaseParentType(this.data.type) : false
+		this.attributes ? source.releases.isReleaseParentType(this.attributes.type) : false
 	);
 
 	hasReleaseData = $derived(this.id ? source.releases.hasReleaseData(this.id) : false);
@@ -65,43 +61,43 @@ class SelectedNodeState {
 	});
 
 	releaseListItems = $derived.by((): SearchableListItem[] => {
-		if (!this.id || !this.data) return [];
+		if (!this.id || !this.attributes) return [];
 
 		void source.stores.releasesStore.releases;
 		void source.stores.documentStore.documents;
 
-		return source.releases.getReleaseListItems(this.id, this.data.type as EntityType);
+		return source.releases.getReleaseListItems(this.id, this.attributes.type as EntityType);
 	});
 
 	relatedEntityGroups = $derived.by((): { id: RelatedEntityType; title: string }[] => {
-		if (!this.data || !this.document) return [];
+		if (!this.attributes || !this.document) return [];
 
 		return source.relatedEntities.getRelatedEntityGroups(
 			this.document,
-			this.data.type as EntityType
+			this.attributes.type as EntityType
 		);
 	});
 
 	neighborTypes = $derived.by((): LoadType[] => {
-		if (!this.data || this.isBlocked) return [];
+		if (!this.attributes || this.isBlocked) return [];
 
-		return source.constants.neighborTypes[this.data.type as EntityType] ?? [];
+		return source.constants.neighborTypes[this.attributes.type as EntityType] ?? [];
 	});
 
 	relatedEntityItems(relatedEntityType: RelatedEntityType): SearchableListItem[] {
-		if (!this.data || !this.document) return [];
+		if (!this.attributes || !this.document) return [];
 
 		return source.relatedEntities.getRelatedEntityItems(
 			this.document,
-			this.data.type as EntityType,
+			this.attributes.type as EntityType,
 			relatedEntityType
 		);
 	}
 
 	isLoadTypeCompleted(loadType: LoadType): boolean {
-		if (!this.id || !this.document || !this.data) return true;
+		if (!this.id || !this.document || !this.attributes) return true;
 
-		const relatedEntities = source.relatedEntities.getRelatedEntities(this.document, this.data.type as EntityType, loadType as RelatedEntityType);
+		const relatedEntities = source.relatedEntities.getRelatedEntities(this.document, this.attributes.type as EntityType, loadType as RelatedEntityType);
 		const relatedEntityType = source.constants.relatedEntityTypeMap[loadType];
 
 		if (!relatedEntities || !relatedEntityType) return true;
@@ -112,11 +108,11 @@ class SelectedNodeState {
 			return (
 				!graph.expansion.parentChildAdjacencyList.get(this.id!)?.has(relatedEntityId) &&
 				!graph.expansion.parentChildAdjacencyList.get(relatedEntityId)?.has(this.id!) &&
-				!source.isBlocked(relatedEntityType as EntityType, entity.id)
+				!source.fetch.isBlocked(relatedEntityType as EntityType, entity.id)
 			);
 		});
 
-		return (patchState.get(this.id)?.get(loadType) ?? 0) >= (eligibleNeighbors?.length ?? 0);
+		return eligibleNeighbors.length === 0;
 	}
 
 	collapseNode() {
@@ -134,11 +130,9 @@ class SelectedNodeState {
 		source.stores.pagedDocumentStore.delete(descendants);
 		source.stores.documentStore.delete(descendants);
 		source.stores.fetchStatus.delete(descendants);
-		patchState.delete(descendants);
 
 		source.stores.pagedDocumentStore.delete(new Set([this.id]));
 		source.stores.releasesStore.delete(new Set([this.id]));
-		patchState.delete(new Set([this.id]));
 	}
 
 	hasMorePages(loadType: LoadType): boolean {
@@ -158,15 +152,15 @@ class SelectedNodeState {
 	}
 
 	async loadEntityDocument() {
-		if (!this.data) return;
+		if (!this.attributes) return;
 
-		await loadEntityDocument(this.data);
+		await loadEntityDocument(this.attributes);
 	}
 
-	async runLoadAction(loadType: LoadType, options?: LoadActionParams) {
-		if (!this.data) return;
+	async runLoadAction(loadType: LoadType) {
+		if (!this.attributes) return;
 
-		await runPatchLoadAction(this.data, loadType, options);
+		await runPatchLoadAction(this.attributes, loadType);
 	}
 }
 

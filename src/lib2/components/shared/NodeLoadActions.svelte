@@ -56,24 +56,11 @@
 	}
 
 	function isButtonDisabled(buttonState: LoadButtonState): boolean {
-		if (!node.id || !node.data) return true;
+		if (!node.id || !node.attributes) return true;
 		if (node.isBlocked || node.isLoading || !node.isEntityDocumentLoaded) return true;
 		if (!node.neighborTypes.includes(buttonState.type as LoadType)) return true;
 
 		return buttonState.exhausted;
-	}
-
-	async function handleClick(buttonState: LoadButtonState) {
-		if (!node.data || node.isBlocked) return;
-
-		if (buttonState.type === 'releases' || buttonState.type === 'master_releases') {
-			await node.runLoadAction(
-				buttonState.type,
-				buttonState.loaded ? { page: 'next' } : undefined
-			);
-		} else {
-			await node.runLoadAction(buttonState.type as LoadType);
-		}
 	}
 </script>
 
@@ -84,7 +71,7 @@
 			type="button"
 			class="ui-list-button"
 			disabled={isButtonDisabled(buttonState)}
-			onclick={() => handleClick(buttonState)}
+			onclick={() => node.runLoadAction(loadType)}
 		>
 			{buttonState.label}
 		</button>
@@ -95,7 +82,7 @@
 		<NodeLoadButton
 			variant={buttonVariant}
 			disabled={isButtonDisabled(buttonState)}
-			onclick={() => handleClick(buttonState)}
+			onclick={() => node.runLoadAction(loadType)}
 		>
 			{buttonState.label}
 		</NodeLoadButton>

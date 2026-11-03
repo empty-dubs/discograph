@@ -4,7 +4,7 @@ import { dedupeById } from './transformations';
 import type {
 	Artist,
 	EntityPayload,
-	EntityDocumentPayload,
+	EntityDocument,
 	EntityType,
 	Label,
 	Master,
@@ -28,7 +28,7 @@ const RELATED_ENTITY_GROUPS: { id: RelatedEntityType; title: string }[] = [
 ];
 
 export function getRelatedEntities(
-	document: EntityDocumentPayload,
+	document: EntityDocument,
 	entityType: EntityType,
 	relatedEntityType: RelatedEntityType
 ): Array<EntityPayload> {
@@ -105,7 +105,7 @@ export function getRelatedEntities(
 }
 
 function hasRelatedEntityMap(
-	document: EntityDocumentPayload,
+	document: EntityDocument,
 	entityType: EntityType
 ): Record<RelatedEntityType, boolean> {
 	const isMasterOrRelease = entityType === 'master' || entityType === 'release';
@@ -126,7 +126,7 @@ function hasRelatedEntityMap(
 }
 
 export function getRelatedEntityGroups(
-	document: EntityDocumentPayload,
+	document: EntityDocument,
 	entityType: EntityType
 ): { id: RelatedEntityType; title: string }[] {
 	const isVisible = hasRelatedEntityMap(document, entityType);
@@ -135,7 +135,7 @@ export function getRelatedEntityGroups(
 }
 
 export function getRelatedEntityItems(
-	document: EntityDocumentPayload,
+	document: EntityDocument,
 	entityType: EntityType,
 	relatedEntityType: RelatedEntityType
 ): SearchableListItem[] {

@@ -47,7 +47,7 @@ interface Pagination {
 	};
 }
 
-export type PagedListParams = {
+export type PagedFetchParams = {
 	page?: number;
 	per_page?: number;
 	sort?: string;
@@ -310,7 +310,7 @@ export type EntityPayload =
 	| LinkedMaster
 	| MainRelease;
 
-export type EntityDocumentPayload =
+export type EntityDocument =
 	| Artist
 	| Label
 	| Master

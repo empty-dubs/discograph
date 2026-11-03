@@ -36,7 +36,7 @@
 
 <div class={layout === 'panel' ? 'flex flex-col gap-2' : ''}>
 	{const menuRole = $derived(layout === 'menu' ? 'menuitem' : undefined)}
-	{const isBlocked = $derived(source.isBlocked(item.entityType as EntityType, item.externalId as number))}
+	{const isBlocked = $derived(source.fetch.isBlocked(item.entityType as EntityType, item.externalId as number))}
 
 	<NavigationButton
 		{layout}
