@@ -33,7 +33,7 @@
 	}
 
 	function pick(result: SearchResult) {
-		if (source.isBlocked(result.type, result.id)) return;
+		if (source.fetch.isBlocked(result.type, result.id)) return;
 
 		seedFromSearchResult(result);
 		results = [];
@@ -74,7 +74,7 @@
 					<button
 						type="button"
 						class="ui-list-button"
-						disabled={source.isBlocked(result.type, result.id)}
+						disabled={source.fetch.isBlocked(result.type, result.id)}
 						onclick={() => pick(result)}
 					>
 						<span class="text-muted mr-2 uppercase">{result.type}</span>

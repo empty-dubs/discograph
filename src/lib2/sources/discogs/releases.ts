@@ -76,7 +76,7 @@ export function getReleaseItemLabel(payload: ReleaseItemPayload): string {
 		? payload.year
 		: null;
 	
-	return `${artistName ? `${artistName} - ` : ''}${releaseTitle}${releaseYear ? ` (${releaseYear})` : ''}${releaseCountry ? ` (${releaseCountry})` : ''}${releaseFormat ? ` (${releaseFormat})` : ''}`;
+	return `${artistName ? `${artistName} - ` : ''}${releaseTitle}${releaseCountry ? ` (${releaseCountry})` : ''}${releaseFormat ? ` (${releaseFormat})` : ''}${releaseYear ? ` (${releaseYear})` : ''}`;
 }
 
 function getReleaseListItem(id: string, item: PagedReleaseItem): SearchableListItem {

@@ -1,9 +1,9 @@
 import { SvelteMap } from 'svelte/reactivity';
 
-import type { EntityDocumentPayload } from '../types';
+import type { EntityDocument } from '../types';
 
 class DocumentStore {
-	documents = $state<SvelteMap<string, EntityDocumentPayload>>(new SvelteMap());
+	documents = $state<SvelteMap<string, EntityDocument>>(new SvelteMap());
 
 	get(id: string) {
 		return this.documents.get(id);
@@ -13,7 +13,7 @@ class DocumentStore {
 		return this.documents.has(id);
 	}
 
-	set(id: string, document: EntityDocumentPayload) {
+	set(id: string, document: EntityDocument) {
 		const existing = new SvelteMap(this.documents);
 
 		existing.set(id, document);

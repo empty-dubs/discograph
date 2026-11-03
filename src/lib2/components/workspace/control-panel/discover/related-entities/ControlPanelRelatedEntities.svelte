@@ -6,7 +6,7 @@
 	const node = $derived(SelectedNodeState);
 </script>
 
-{#if !node.data || !node.document}
+{#if !node.attributes || !node.document}
 	<p class="text-muted m-0 text-sm">Select a node to browse related entities.</p>
 {:else if node.isEntityDocumentLoading}
 	<p class="text-muted m-0 text-sm">Loading...</p>

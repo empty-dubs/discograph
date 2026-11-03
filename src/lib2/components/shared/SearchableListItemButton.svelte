@@ -20,7 +20,7 @@
 			!item.externalId ||
 			!item.entityType ||
 			SelectedNodeState.isLoading ||
-			source.isBlocked(item.entityType, item.externalId)
+			source.fetch.isBlocked(item.entityType, item.externalId)
 		)
 
 	}

@@ -11,7 +11,7 @@ import type {
 	LabelReleasesResponse,
 	Master,
 	MasterVersionsResponse,
-	PagedListParams,
+	PagedFetchParams,
 	Release,
 	SearchResponse,
 } from './types';
@@ -74,7 +74,7 @@ export function getArtist(id: number) {
 	return request<Artist>(`artists/${id}`);
 }
 
-export function getArtistReleases(id: number, params: PagedListParams = {}) {
+export function getArtistReleases(id: number, params: PagedFetchParams = {}) {
 	return request<ArtistReleasesResponse>(`artists/${id}/releases`, {
 		page: params.page ?? 1,
 		per_page: params.per_page,
@@ -86,7 +86,7 @@ export function getLabel(id: number) {
 	return request<Label>(`labels/${id}`);
 }
 
-export function getLabelReleases(id: number, params: PagedListParams = {}) {
+export function getLabelReleases(id: number, params: PagedFetchParams = {}) {
 	return request<LabelReleasesResponse>(`labels/${id}/releases`, {
 		page: params.page ?? 1,
 		per_page: params.per_page
@@ -101,7 +101,7 @@ export function getMaster(id: number) {
 	return request<Master>(`masters/${id}`);
 }
 
-export function getMasterVersions(id: number, params: PagedListParams = {}) {
+export function getMasterVersions(id: number, params: PagedFetchParams = {}) {
 	return request<MasterVersionsResponse>(`masters/${id}/versions`, {
 		page: params.page ?? 1,
 		per_page: params.per_page,

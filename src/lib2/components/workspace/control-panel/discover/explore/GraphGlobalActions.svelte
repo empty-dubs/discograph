@@ -9,14 +9,14 @@
 </script>
 
 { const collapseDisabled = $derived(!node.isEntityDocumentLoaded || node.isBlocked || !node.hasChildren || node.isLoading) }
-{ const resetDisabled = $derived(!node.isEntityDocumentLoaded || node.isBlocked || !node.data || node.isLoading) }
+{ const resetDisabled = $derived(!node.isEntityDocumentLoaded || node.isBlocked || !node.attributes || node.isLoading) }
 { const clearDisabled = $derived(graph.data.isEmpty || node.isLoading) }
 <div class="flex flex-col gap-2" role="group" aria-label="Global graph actions">
 	<NodeLoadButton disabled={collapseDisabled} onclick={() => node.collapseNode()}>
 		Collapse children
 	</NodeLoadButton>
 
-	<NodeLoadButton disabled={resetDisabled} onclick={() => seedFromGraphNode(node.data!)}>
+	<NodeLoadButton disabled={resetDisabled} onclick={() => seedFromGraphNode(node.attributes!)}>
 		Reset graph to this node
 	</NodeLoadButton>
 

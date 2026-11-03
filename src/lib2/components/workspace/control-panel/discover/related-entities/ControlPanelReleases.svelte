@@ -18,7 +18,7 @@
 	</div>
 
 	<div class="text-muted m-0 min-h-0 flex-1 overflow-y-auto text-sm">
-		{#if !node.data}
+		{#if !node.attributes}
 			<p>Select an artist, label, or master and load masters or releases to begin.</p>
 		{:else if !node.hasReleaseParentType}
 			<p>Selected node must be an artist, label, or master.</p>

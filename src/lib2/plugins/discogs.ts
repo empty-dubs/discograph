@@ -1,14 +1,4 @@
-import { isBlocked } from '../sources/discogs/blocked';
-import {
-	getArtist,
-	getLabel,
-	getRelease,
-	getMaster,
-	getArtistReleases,
-	getLabelReleases,
-	getMasterVersions,
-	search,
-} from '../sources/discogs/client';
+import { search } from '../sources/discogs/client';
 import {
 	getRelationshipId,
 	getEntityId,
@@ -24,17 +14,15 @@ import {
 	LOAD_TYPE_LABELS,
 	MASTER_RELEASE_GROUPS,
 	MASTER_RELEASE_LOAD_TYPES,
-	PATCH_LOAD_TYPES,
 	RELATED_ENTITY_TYPE_MAP,
 	RELEASES_TAB_LOAD_TYPES,
 } from '../sources/discogs/constants';
 import {
 	fetchEntityDocument,
-	entityFetchErrorMessage,
-	artistReleaseFetchParams,
-	labelReleaseFetchParams,
-	masterVersionFetchParams,
-	withFetch,
+	fetchLinkedMasterDocument,
+	fetchMainReleaseDocument,
+	fetchPagedDocument,
+	isBlocked
 } from '../sources/discogs/fetch';
 import { presentation } from '../sources/discogs/presentation';
 import {
@@ -43,6 +31,7 @@ import {
 	getRelatedEntityItems,
 } from '../sources/discogs/related-entities';
 import { getReleaseListItems, hasReleaseData, isReleaseParentType } from '../sources/discogs/releases';
+import { clear } from '../sources/discogs/session';
 import { entityLabel } from '../sources/discogs/transformations';
 
 import { documentStore } from '../sources/discogs/stores/documents.svelte';
@@ -56,6 +45,7 @@ export type {
 	Artist,
 	ArtistRelease,
 	ArtistReleasesResponse,
+	EntityDocument,
 	EntityType,
 	Label,
 	LabelRelease,
@@ -83,16 +73,8 @@ export const plugin = {
 		releasesStore,
 	},
 	client: {
-		getArtist,
-		getLabel,
-		getRelease,
-		getMaster,
-		getArtistReleases,
-		getLabelReleases,
-		getMasterVersions,
 		search
 	},
-	isBlocked,
 	presentation,
 	transformations: {
 		entityLabel,
@@ -113,16 +95,14 @@ export const plugin = {
 		masterReleaseLoadTypes: MASTER_RELEASE_LOAD_TYPES,
 		releasesTabLoadTypes: RELEASES_TAB_LOAD_TYPES,
 		neighborTypes: ENTITY_NEIGHBOR_TYPES,
-		patchLoadTypes: PATCH_LOAD_TYPES,
 		relatedEntityTypeMap: RELATED_ENTITY_TYPE_MAP
 	},
 	fetch: {
 		fetchEntityDocument,
-		entityFetchErrorMessage,
-		artistReleaseFetchParams,
-		labelReleaseFetchParams,
-		masterVersionFetchParams,
-		withFetch
+		fetchPagedDocument,
+		fetchMainReleaseDocument,
+		fetchLinkedMasterDocument,
+		isBlocked
 	},
 	relatedEntities: {
 		getRelatedEntities,
@@ -133,5 +113,8 @@ export const plugin = {
 		getReleaseListItems,
 		hasReleaseData,
 		isReleaseParentType
+	},
+	session: {
+		clear
 	}
 };
