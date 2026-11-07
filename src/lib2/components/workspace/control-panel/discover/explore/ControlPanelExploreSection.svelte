@@ -14,8 +14,7 @@
 	let { title, nodeTypes, children }: Props = $props();
 
 	function entityColor(type: string): string {
-		return source.presentation.entities.find((entity) => entity.type === type)?.color
-				?? defaultNodePresentation.color;
+		return source.presentation.entities[type]?.color ?? defaultNodePresentation.color;
 	}
 </script>
 

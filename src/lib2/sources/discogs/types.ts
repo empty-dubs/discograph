@@ -200,6 +200,13 @@ export interface ReleaseFormat {
 	text?: string;
 }
 
+export interface Track {
+	position: string;
+	title: string;
+	duration?: string;
+	extraartists?: ReleaseArtist[];
+}
+
 export interface Release {
 	id: number;
 	title: string;
@@ -219,15 +226,8 @@ export interface Release {
 	styles?: string[];
 	country?: string;
 	notes?: string;
-	tracklist?: DiscogsTrack[];
+	tracklist?: Track[];
 	formats?: ReleaseFormat[];
-}
-
-interface DiscogsTrack {
-	position: string;
-	title: string;
-	duration?: string;
-	extraartists?: ReleaseArtist[];
 }
 
 interface MasterArtist {
@@ -258,7 +258,7 @@ export interface Master {
 	versions_url?: string;
 	main_release?: number;
 	main_release_url?: string;
-	tracklist?: DiscogsTrack[];
+	tracklist?: Track[];
 }
 
 export interface MasterVersionsResponse {
@@ -316,29 +316,23 @@ export type EntityDocument =
 	| Master
 	| Release;
 
-export type ArtistNodePayload =
-	| SearchResult
-	| Artist
-	| ReleaseArtist
-	| ArtistMember
-	| ArtistGroup
-	| ArtistAlias
-	| MasterArtist;
-
-export type LabelNodePayload =
-	| SearchResult
-	| Label
-	| Sublabel
-	| LabelRef
-	| ReleaseCompany;
-
-export type MasterNodePayload =
-	| SearchResult
-	| MasterVersion
-	| Master;
-
-export type ReleaseNodePayload =
-	| SearchResult
-	| Release
-	| LabelRelease
-	| MasterVersion;
+export type EntityInformation = {
+	entityType: EntityType;
+	externalId: number;
+	displayName: string;
+	typeLabel: string;
+	discogsUrl?: string;
+	profile?: string;
+	urls? : { href: string; display: string }[];
+	realname?: string | null;
+	namevariations?: string[];
+	primaryArtist?: SearchableListItem | null;
+	year?: number | string;
+	released?: string;
+	country?: string;
+	format?: string;
+	genres?: string[];
+	styles?: string[];
+	notes?: string;
+	tracklist?: Track[];
+};

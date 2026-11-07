@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ControlPanel from './control-panel/ControlPanel.svelte';
 	import GraphCanvas from './GraphCanvas.svelte';
+	import NodePanel from './node-panel/NodePanel.svelte';
 	import SelectionEffects from './SelectionEffects.svelte';
 
 	let controlPanelExpanded = $state(true);
@@ -13,7 +14,9 @@
 		<div class="min-h-0 h-full overflow-hidden">
 			<GraphCanvas />
 		</div>
-		<div class="bg-panel border-border min-h-50 overflow-hidden rounded-md border md:h-full md:min-h-0"></div>
+		<div class="min-h-50 overflow-hidden md:h-full md:min-h-0">
+			<NodePanel />
+		</div>
 	</div>
 
 	<div class="min-h-0 overflow-hidden {controlPanelExpanded ? 'flex-1' : 'shrink-0'}">

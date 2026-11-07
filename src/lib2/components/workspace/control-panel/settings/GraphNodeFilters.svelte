@@ -4,7 +4,7 @@
 </script>
 
 <div class="flex flex-col">
-	{#each source.presentation.entities as entity (entity.type)}
+	{#each Array.from(Object.values(source.presentation.entities)) as entity (entity.type)}
 		{const visible = graph.presentation.isNodeTypeVisible(entity.type)}
 		{const count = $derived(graph.presentation.nodeTypeCounts[entity.type] ?? 0)}
 		<label class="flex cursor-pointer items-center gap-2 text-sm text-gray-400">
