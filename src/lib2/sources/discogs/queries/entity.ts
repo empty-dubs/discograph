@@ -1,30 +1,29 @@
 import { getDiscogsWebsiteUrl, getEntityDisplayName, getEntityId } from '../compositions';
 import { presentation } from '../presentation';
+import { getArtistNavigationPayload } from './related-entities';
 import { parseDiscogsExternalUrl } from '../wiki-markup';
-
-import type { EntityInformation } from '../types';
 
 import type {
 	Artist,
 	EntityDocument,
+	EntityInformation,
 	EntityType,
 	Label,
 	Master,
 	Release,
-    ReleaseFormat,
-	SearchableListItem
+    ReleaseFormat
 } from '../types';
 
-function entityTypeLabel(entityType: EntityType): string {
+function getEntityTypeLabel(entityType: EntityType): string {
 	return presentation.entities[entityType]?.label ?? entityType;
 }
 
-function formatReleaseFormats(formats?: ReleaseFormat[]): string | undefined {
+function getReleaseFormats(formats?: ReleaseFormat[]): string | undefined {
 	if (!formats?.length) return;
 
 	return formats
 		.map((format) => {
-			// filter join non-empty format descriptions, separated by comma
+			// join non-empty format descriptions, separated by comma
 			// the Boolean filter is used to remove undefined and null values
 			const descriptions = format.descriptions?.filter(Boolean).join(', ');
 
@@ -33,24 +32,7 @@ function formatReleaseFormats(formats?: ReleaseFormat[]): string | undefined {
 		.join(', ');
 }
 
-function primaryArtistItem(
-	artists: { id: number; name: string }[] | undefined
-): SearchableListItem | null {
-	const first = artists?.[0];
-	const name = first?.name?.trim();
-
-	if (!first?.id || !name) return null;
-
-	return {
-		key: getEntityId('artist', first.id),
-		label: name,
-		query: name,
-		externalId: first.id,
-		entityType: 'artist'
-	};
-}
-
-function commonFields(
+function getCommonFields(
 	entityType: EntityType,
 	externalId: number,
 	displayName: string
@@ -62,14 +44,14 @@ function commonFields(
 		entityType,
 		externalId,
 		displayName,
-		typeLabel: entityTypeLabel(entityType),
+		typeLabel: getEntityTypeLabel(entityType),
 		discogsUrl: getDiscogsWebsiteUrl(entityType, externalId),
 	};
 }
 
 function getArtistInformation(artist: Artist): EntityInformation {
 	return {
-		...commonFields(
+		...getCommonFields(
 			'artist',
 			artist.id,
 			getEntityDisplayName(artist, 'artist')
@@ -83,7 +65,7 @@ function getArtistInformation(artist: Artist): EntityInformation {
 
 function getLabelInformation(label: Label): EntityInformation {
 	return {
-		...commonFields(
+		...getCommonFields(
 			'label',
 			label.id,
 			getEntityDisplayName(label, 'label')
@@ -94,13 +76,17 @@ function getLabelInformation(label: Label): EntityInformation {
 }
 
 function getMasterInformation(master: Master): EntityInformation {
+	const primaryArtist = master.artists?.[0] as Artist;
+
+	const navigationKey = getEntityId('artist', primaryArtist.id);
+
 	return {
-		...commonFields(
+		...getCommonFields(
 			'master',
 			master.id,
 			getEntityDisplayName(master, 'master')
 		),
-		primaryArtist: primaryArtistItem(master.artists),
+		primaryArtist: getArtistNavigationPayload(primaryArtist, navigationKey),
 		year: master.year,
 		genres: master.genres,
 		styles: master.styles,
@@ -114,18 +100,21 @@ function getMasterInformation(master: Master): EntityInformation {
 
 function getReleaseInformation(release: Release): EntityInformation {
 	const released = release.released ?? release.released_formatted;
+	const primaryArtist = release.artists?.[0] as Artist;
+
+	const navigationKey = getEntityId('artist', primaryArtist.id);
 
 	return {
-		...commonFields(
+		...getCommonFields(
 			'release',
 			release.id,
 			getEntityDisplayName(release, 'release')
 		),
-		primaryArtist: primaryArtistItem(release.artists),
+		primaryArtist: getArtistNavigationPayload(primaryArtist, navigationKey),
 		year: release.year,
 		released,
 		country: release.country,
-		format: formatReleaseFormats(release.formats),
+		format: getReleaseFormats(release.formats),
 		genres: release.genres,
 		styles: release.styles,
 		notes: release.notes,

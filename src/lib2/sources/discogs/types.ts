@@ -69,11 +69,11 @@ export interface SearchResponse {
 	results: SearchResult[];
 }
 
-export type SearchableListItem = {
+export type NavigationPayload = {
 	key: string;
+	externalId: number;
 	label?: string;
 	query?: string;
-	externalId?: number;
 	entityType?: EntityType;
 	artist?: string;
 	year?: number | string;
@@ -252,7 +252,7 @@ export interface Master {
 	year?: number;
 	uri?: string;
 	resource_url?: string;
-	artists?: MasterArtist[];
+	artists?: Artist[];
 	genres?: string[];
 	styles?: string[];
 	versions_url?: string;
@@ -279,7 +279,7 @@ export type PagedDocument =
 	| LabelReleasesResponse
 	| MasterVersionsResponse;
 
-export type PagedReleaseItem = 
+export type PagedRelease = 
 	| ArtistRelease
 	| LabelRelease
 	| MasterVersion;
@@ -326,7 +326,7 @@ export type EntityInformation = {
 	urls? : { href: string; display: string }[];
 	realname?: string | null;
 	namevariations?: string[];
-	primaryArtist?: SearchableListItem | null;
+	primaryArtist?: NavigationPayload | null;
 	year?: number | string;
 	released?: string;
 	country?: string;

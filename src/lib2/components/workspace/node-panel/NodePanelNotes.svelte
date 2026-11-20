@@ -9,17 +9,17 @@
 {const showProfile = $derived(Boolean(node.entityInfo?.profile))}
 
 {#if showProfile}
-	<div class="text-muted whitespace-pre-wrap text-sm">
+	<div class="m-0 text-sm">
 		{#if node.isProfileLoading}
-			<p class="text-muted m-0 text-sm">Loading profile…</p>
+			<p class="text-muted">Loading profile…</p>
 		{:else if node.isProfileFailed}
-			<p class="text-muted m-0 text-sm">Could not load profile.</p>
+			<p class="text-muted">Could not load profile.</p>
 		{:else}
-			{node.profileText}
+			<p class="whitespace-pre-wrap">{node.profileText}</p>
 		{/if}
 	</div>
 {/if}
 
 {#if showNotes}
-	<div class="text-gray-200 whitespace-pre-wrap text-sm">{notes}</div>
+	<p class="m-0 text-sm whitespace-pre-wrap">{notes}</p>
 {/if}

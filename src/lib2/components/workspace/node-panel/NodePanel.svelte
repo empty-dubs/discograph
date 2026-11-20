@@ -37,9 +37,9 @@
 		</div>
 	{/if}
 
-	{#if node.navigationItem}
+	{#if node.navigation}
 		<div class="border-border/50 mt-3 shrink-0 border-t pt-3">
-			<NavigationActions item={node.navigationItem} layout="panel" />
+			<NavigationActions item={node.navigation} layout="panel" />
 		</div>
 	{/if}
 </aside>

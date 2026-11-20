@@ -28,9 +28,8 @@ import { presentation } from '../sources/discogs/presentation';
 import {
 	getRelatedEntities,
 	getRelatedEntityGroups,
-	getRelatedEntityItems,
-} from '../sources/discogs/related-entities';
-import { getReleaseListItems, hasReleaseData, isReleaseParentType } from '../sources/discogs/releases';
+} from '../sources/discogs/queries/related-entities';
+import { getReleases, getTotalReleasesCount, hasReleaseData, isReleaseParentType } from '../sources/discogs/queries/releases';
 import { clear } from '../sources/discogs/session';
 import { entityLabel } from '../sources/discogs/transformations';
 import { stripDiscogsWikiMarkup } from '../sources/discogs/wiki-markup';
@@ -51,6 +50,7 @@ export type {
 	EntityDocument,
 	EntityInformation,
 	EntityType,
+	NavigationPayload,
 	Label,
 	LabelRelease,
 	LabelReleasesResponse,
@@ -63,7 +63,6 @@ export type {
 	RelationshipType,
 	Release,
 	SearchResult,
-	SearchableListItem,
 	Track
 } from '../sources/discogs/types';
 
@@ -116,10 +115,10 @@ export const plugin = {
 	relatedEntities: {
 		getRelatedEntities,
 		getRelatedEntityGroups,
-		getRelatedEntityItems,
 	},
 	releases: {
-		getReleaseListItems,
+		getReleases,
+		getTotalReleasesCount,
 		hasReleaseData,
 		isReleaseParentType
 	},

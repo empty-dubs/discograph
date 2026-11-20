@@ -2,13 +2,13 @@ import { SvelteMap } from 'svelte/reactivity';
 
 import { dedupeById } from '../transformations';
 
-import type { EntityType, LoadType, PagedDocument, PagedReleaseItem } from '../types';
+import type { EntityType, LoadType, PagedDocument, PagedRelease } from '../types';
 
-function itemsFromPagedDocument(
+function getReleases(
 	document: PagedDocument,
 	loadType: LoadType,
 	parentType: EntityType
-): PagedReleaseItem[] {
+): PagedRelease[] {
 	if ('versions' in document) {
 		if (parentType !== 'master' || loadType !== 'releases') {
 			throw new Error('Invalid load type for master versions');
@@ -35,7 +35,7 @@ function itemsFromPagedDocument(
 }
 
 class ReleasesStore {
-	releases = $state<SvelteMap<string, Map<LoadType,Array<PagedReleaseItem>>>>(new SvelteMap());
+	releases = $state<SvelteMap<string, Map<LoadType,Array<PagedRelease>>>>(new SvelteMap());
 
 	get(id: string, loadType: LoadType) {
 		return this.releases.get(id)?.get(loadType) ?? [];
@@ -48,7 +48,7 @@ class ReleasesStore {
 
 		const existingReleases = releaseGroups.get(loadType) ?? [];
 
-		const newReleases = itemsFromPagedDocument(document, loadType, parentType);
+		const newReleases = getReleases(document, loadType, parentType);
 
 		const releases = dedupeById([...existingReleases, ...newReleases]);
 
