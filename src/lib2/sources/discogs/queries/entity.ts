@@ -1,13 +1,14 @@
 import { getDiscogsWebsiteUrl, getEntityDisplayName, getEntityId } from '../compositions';
 import { presentation } from '../presentation';
 import { getArtistNavigationPayload } from './related-entities';
-import { parseDiscogsExternalUrl } from '../wiki-markup';
+import { normalizeExternalUrl } from '../transformations';
 
 import type {
 	Artist,
 	EntityDocument,
 	EntityInformation,
 	EntityType,
+	ExternalUrl,
 	Label,
 	Master,
 	Release,
@@ -57,7 +58,7 @@ function getArtistInformation(artist: Artist): EntityInformation {
 			getEntityDisplayName(artist, 'artist')
 		),
 		profile: artist.profile,
-		urls: artist.urls?.map(parseDiscogsExternalUrl).filter(Boolean) as { href: string; display: string }[],
+		urls: artist.urls?.map(normalizeExternalUrl).filter(Boolean) as ExternalUrl[],
 		realname: artist.realname,
 		namevariations: artist.namevariations
 	};
@@ -71,7 +72,7 @@ function getLabelInformation(label: Label): EntityInformation {
 			getEntityDisplayName(label, 'label')
 		),
 		profile: label.profile,
-		urls: label.urls?.map(parseDiscogsExternalUrl).filter(Boolean) as { href: string; display: string }[],
+		urls: label.urls?.map(normalizeExternalUrl).filter(Boolean) as ExternalUrl[],
 	};
 }
 

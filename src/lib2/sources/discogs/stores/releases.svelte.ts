@@ -1,6 +1,6 @@
 import { SvelteMap } from 'svelte/reactivity';
 
-import { dedupeById } from '../transformations';
+import { dedupeById } from '../filters';
 
 import type { EntityType, LoadType, PagedDocument, PagedRelease } from '../types';
 

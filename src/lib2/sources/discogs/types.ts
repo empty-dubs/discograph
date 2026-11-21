@@ -79,6 +79,11 @@ export type NavigationPayload = {
 	year?: number | string;
 };
 
+export type ExternalUrl = {
+	href: string;
+	label: string;
+};
+
 export type SourceDocumentStatus = 'idle' | 'loading' | 'loaded' | 'failed';
 
 interface ArtistMember {
@@ -323,7 +328,7 @@ export type EntityInformation = {
 	typeLabel: string;
 	discogsUrl?: string;
 	profile?: string;
-	urls? : { href: string; display: string }[];
+	urls? : ExternalUrl[];
 	realname?: string | null;
 	namevariations?: string[];
 	primaryArtist?: NavigationPayload | null;

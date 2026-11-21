@@ -1,5 +1,5 @@
 import { getReleaseNavigationLabel } from './releases';
-import { dedupeById } from '../transformations';
+import { dedupeById } from '../filters';
 
 import type {
 	Artist,

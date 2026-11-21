@@ -207,24 +207,20 @@ class SelectedNodeState {
 	}
 
 	async fetchProfile() {
-		const nodeId = this.id;
-		const rawProfile = this.entityInfo?.profile;
+		if (!this.id || !this.entityInfo?.profile) return;
 
-		if (!nodeId || !rawProfile) return;
+		const status = profileState.getStatus(this.id);
 
-		const status = profileState.getStatus(nodeId);
+		if (status === 'fetched' || status === 'loading' || this.isEntityDocumentLoading) return;
 
-		if (status === 'fetched' || status === 'loading') return;
-		if (this.isEntityDocumentLoading) return;
-
-		profileState.setLoading(nodeId);
+		profileState.setLoading(this.id);
 
 		try {
-			const processed = await source.transformations.stripDiscogsWikiMarkup(rawProfile);
+			const profileText = await source.transformations.normalizeProfileText(this.entityInfo.profile);
 
-			profileState.setFetched(nodeId, processed);
+			profileState.setFetched(this.id, profileText);
 		} catch {
-			profileState.setFailed(nodeId);
+			profileState.setFailed(this.id);
 		}
 	}
 }

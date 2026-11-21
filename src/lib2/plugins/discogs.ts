@@ -31,8 +31,7 @@ import {
 } from '../sources/discogs/queries/related-entities';
 import { getReleases, getTotalReleasesCount, hasReleaseData, isReleaseParentType } from '../sources/discogs/queries/releases';
 import { clear } from '../sources/discogs/session';
-import { entityLabel } from '../sources/discogs/transformations';
-import { stripDiscogsWikiMarkup } from '../sources/discogs/wiki-markup';
+import { entityLabel, normalizeProfileText } from '../sources/discogs/transformations';
 
 import { documentStore } from '../sources/discogs/stores/documents.svelte';
 import { fetchError } from '../sources/discogs/stores/fetch-error.svelte';
@@ -85,7 +84,7 @@ export const plugin = {
 	presentation,
 	transformations: {
 		entityLabel,
-		stripDiscogsWikiMarkup
+		normalizeProfileText
 	},
 	compositions: {
 		getDiscogsWebsiteUrl,

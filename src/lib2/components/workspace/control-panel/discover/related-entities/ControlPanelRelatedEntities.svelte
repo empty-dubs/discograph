@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Accordion from '../../../../shared/Accordion.svelte';
+	import CollapsibleSection from '../../../../shared/CollapsibleSection.svelte';
 	import NavigationList from '../../../../shared/NavigationList.svelte';
 	import SelectedNodeState from '../../../../../nexus/discogs/stores/SelectedNodeState.svelte';
 
@@ -17,13 +17,13 @@
 {:else}
 	{#each node.relatedEntityGroups as group (group.id)}
 		{const items = $derived(node.relatedEntities(group.id))}
-		<Accordion
+		<CollapsibleSection
 			id={group.id}
 			title={group.title}
 			count={items.length}
 			useRelatedEntitiesAccordion
 		>
 			<NavigationList {items} />
-		</Accordion>
+		</CollapsibleSection>
 	{/each}
 {/if}
