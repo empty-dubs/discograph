@@ -3,10 +3,10 @@
 
 	import NavigationActions from './NavigationActions.svelte';
 
-	import type { SearchableListItem } from '../../plugins/discogs';
+	import type { NavigationPayload } from '../../plugins/discogs';
 
 	interface Props {
-		item: SearchableListItem;
+		item: NavigationPayload;
 		x: number;
 		y: number;
 		onClose: () => void;

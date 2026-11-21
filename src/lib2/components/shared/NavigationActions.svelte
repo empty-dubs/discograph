@@ -5,10 +5,10 @@
 	import SelectedNodeState from '../../nexus/discogs/stores/SelectedNodeState.svelte';
 	import NavigationButton from './NavigationButton.svelte';
 
-	import type { EntityType, SearchableListItem } from '../../plugins/discogs';
+	import type { EntityType, NavigationPayload } from '../../plugins/discogs';
 
 	interface Props {
-		item: SearchableListItem;
+		item: NavigationPayload;
 		layout?: 'panel' | 'menu';
 		onAction?: () => void;
 	}

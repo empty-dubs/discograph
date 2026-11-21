@@ -28,11 +28,10 @@ import { presentation } from '../sources/discogs/presentation';
 import {
 	getRelatedEntities,
 	getRelatedEntityGroups,
-	getRelatedEntityItems,
-} from '../sources/discogs/related-entities';
-import { getReleaseListItems, hasReleaseData, isReleaseParentType } from '../sources/discogs/releases';
+} from '../sources/discogs/queries/related-entities';
+import { getReleases, getTotalReleasesCount, hasReleaseData, isReleaseParentType } from '../sources/discogs/queries/releases';
 import { clear } from '../sources/discogs/session';
-import { entityLabel } from '../sources/discogs/transformations';
+import { entityLabel, normalizeProfileText } from '../sources/discogs/transformations';
 
 import { documentStore } from '../sources/discogs/stores/documents.svelte';
 import { fetchError } from '../sources/discogs/stores/fetch-error.svelte';
@@ -41,12 +40,16 @@ import { loadProgress } from '../sources/discogs/stores/load-progress.svelte';
 import { pagedDocumentStore } from '../sources/discogs/stores/paged-documents.svelte';
 import { releasesStore } from '../sources/discogs/stores/releases.svelte';
 
+import { getEntityInformation } from '../sources/discogs/queries/entity';
+
 export type {
 	Artist,
 	ArtistRelease,
 	ArtistReleasesResponse,
 	EntityDocument,
+	EntityInformation,
 	EntityType,
+	NavigationPayload,
 	Label,
 	LabelRelease,
 	LabelReleasesResponse,
@@ -59,7 +62,7 @@ export type {
 	RelationshipType,
 	Release,
 	SearchResult,
-	SearchableListItem
+	Track
 } from '../sources/discogs/types';
 
 export const plugin = {
@@ -72,12 +75,16 @@ export const plugin = {
 		pagedDocumentStore,
 		releasesStore,
 	},
+	queries: {
+		getEntityInformation
+	},
 	client: {
 		search
 	},
 	presentation,
 	transformations: {
 		entityLabel,
+		normalizeProfileText
 	},
 	compositions: {
 		getDiscogsWebsiteUrl,
@@ -107,10 +114,10 @@ export const plugin = {
 	relatedEntities: {
 		getRelatedEntities,
 		getRelatedEntityGroups,
-		getRelatedEntityItems,
 	},
 	releases: {
-		getReleaseListItems,
+		getReleases,
+		getTotalReleasesCount,
 		hasReleaseData,
 		isReleaseParentType
 	},

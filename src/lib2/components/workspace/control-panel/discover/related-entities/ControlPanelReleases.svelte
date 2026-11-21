@@ -2,7 +2,7 @@
 	import { plugin as source } from '../../../../../plugins/discogs';
 
 	import NodeLoadActions from '../../../../shared/NodeLoadActions.svelte';
-	import SearchableList from '../../../../shared/SearchableList.svelte';
+	import NavigationList from '../../../../shared/NavigationList.svelte';
 	import SelectedNodeState from '../../../../../nexus/discogs/stores/SelectedNodeState.svelte';
 
 	const node = $derived(SelectedNodeState);
@@ -22,16 +22,12 @@
 			<p>Select an artist, label, or master and load masters or releases to begin.</p>
 		{:else if !node.hasReleaseParentType}
 			<p>Selected node must be an artist, label, or master.</p>
-		{:else if node.isLoading && node.releaseListItems.length === 0}
+		{:else if node.isLoading && !node.hasReleaseData}
 			<p>Loading releases...</p>
-		{:else if node.releaseListItems.length === 0}
-			{#if node.hasReleaseData}
-				<p>Masters or releases for this node have not been loaded yet.</p>
-			{:else}
-				<p>Use buttons above to fetch release data.</p>
-			{/if}
+		{:else if !node.hasReleaseData}
+			<p>Use buttons above to fetch releases.</p>
 		{:else}
-			<SearchableList items={node.releaseListItems} />
+			<NavigationList items={node.releases} />
 		{/if}
 	</div>
 </div>

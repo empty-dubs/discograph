@@ -11,15 +11,15 @@
 		<GraphGlobalActions />
 	</ControlPanelExploreSection>
 
-	<ControlPanelExploreSection title="Artists" nodeTypes={source.constants.artistGroups}>
+	<ControlPanelExploreSection title="Artists" entityTypes={source.constants.artistGroups}>
 		<NodeLoadActions loadTypes={source.constants.artistLoadTypes} />
 	</ControlPanelExploreSection>
 
-	<ControlPanelExploreSection title="Masters/Releases" nodeTypes={source.constants.masterReleaseGroups}>
+	<ControlPanelExploreSection title="Masters/Releases" entityTypes={source.constants.masterReleaseGroups}>
 		<NodeLoadActions loadTypes={source.constants.masterReleaseLoadTypes} />
 	</ControlPanelExploreSection>
 
-	<ControlPanelExploreSection title="Labels" nodeTypes={source.constants.labelGroups}>
+	<ControlPanelExploreSection title="Labels" entityTypes={source.constants.labelGroups}>
 		<NodeLoadActions loadTypes={source.constants.labelLoadTypes} />
 	</ControlPanelExploreSection>
 </div>

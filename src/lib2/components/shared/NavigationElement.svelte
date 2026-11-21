@@ -2,12 +2,12 @@
 	import { plugin as source } from '../../plugins/discogs';
 
 	import SelectedNodeState from '../../nexus/discogs/stores/SelectedNodeState.svelte';
-	import SearchableListContextMenu from './SearchableListContextMenu.svelte';
+	import NavigationElementContextMenu from './NavigationElementContextMenu.svelte';
 
-	import type { SearchableListItem } from '../../plugins/discogs';
+	import type { NavigationPayload } from '../../plugins/discogs';
 
 	interface Props {
-		item: SearchableListItem;
+		item: NavigationPayload;
 		class?: string;
 	}
 
@@ -15,7 +15,7 @@
 
 	let menu = $state<{ x: number; y: number } | null>(null);
 
-	function isDisabled(item: SearchableListItem): boolean {
+	function isDisabled(item: NavigationPayload): boolean {
 		return (
 			!item.externalId ||
 			!item.entityType ||
@@ -50,5 +50,5 @@
 </button>
 
 {#if menu}
-	<SearchableListContextMenu {item} x={menu.x} y={menu.y} onClose={closeMenu} />
+	<NavigationElementContextMenu {item} x={menu.x} y={menu.y} onClose={closeMenu} />
 {/if}

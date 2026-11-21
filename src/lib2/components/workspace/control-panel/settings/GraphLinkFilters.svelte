@@ -8,10 +8,6 @@
 		['sublabel_of', 'company_on']
 	];
 
-	const labels = Object.fromEntries(
-		source.presentation.relationships.map((relationship) => [relationship.type, relationship.label])
-	) as Record<string, string>;
-
 	function isEnabled(type: string): boolean {
 		return !graph.data.isEmpty && (graph.presentation.linkTypeCounts[type] ?? 0) > 0;
 	}
@@ -25,6 +21,7 @@
 				{const active = $derived(graph.presentation.highlightedLinkType !== null)}
 				{const count = $derived(graph.presentation.linkTypeCounts[type] ?? 0)}
 				{const enabled = $derived(isEnabled(type))}
+				{const relationshipPresentation = $derived(source.presentation.relationships[type])}
 				<span
 					role="presentation"
 					class="ui-list-item {enabled ? 'hover:bg-panel' : 'cursor-not-allowed opacity-50'}"
@@ -36,7 +33,7 @@
 					}}
 				>
 					<span class:opacity-45={active && !highlighted}>
-						{labels[type] ?? type}
+						{relationshipPresentation?.label ?? type}
 					</span>
 
 					{#if count > 0}

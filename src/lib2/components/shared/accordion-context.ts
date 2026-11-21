@@ -5,4 +5,5 @@ export interface Accordion {
 	readonly openSectionId: string | null;
 	toggle: (id: string) => void;
 	isOpen: (id: string) => boolean;
+	setOpenSectionId?: (id: string | null) => void;
 }

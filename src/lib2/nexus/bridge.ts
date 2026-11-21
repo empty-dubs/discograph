@@ -13,7 +13,7 @@ export function clearSession() {
 }
 
 export function nodePresentation(type: string): NodePresentation {
-	const config = source.presentation.entities.find((entity) => entity.type === type);
+	const config = source.presentation.entities[type];
 
 	if (config) return { color: config.color, radius: config.radius };
 

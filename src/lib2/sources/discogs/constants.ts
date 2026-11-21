@@ -24,9 +24,9 @@ export const DISCOGS_WEB_SEGMENTS: Record<EntityType, string> = {
 
 export const BLOCKED_DISCOGS_IDS: Record<EntityType, ReadonlySet<number>> = {
 	artist: new Set([0, 194, 355]),
-	label: new Set([1818]),
-	release: new Set(),
-	master: new Set()
+	label: new Set([0, 1818]),
+	release: new Set([0]),
+	master: new Set([0])
 };
 
 export const ENTITY_NEIGHBOR_TYPES: Record<EntityType, LoadType[]> = {

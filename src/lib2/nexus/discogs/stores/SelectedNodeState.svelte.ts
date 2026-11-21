@@ -2,8 +2,9 @@ import { graph } from '../../../graph/graph';
 import { collectDescendants } from '../../../graph/operations/crawl';
 import { loadEntityDocument, runPatchLoadAction } from '../load-runner';
 import { plugin as source } from '../../../plugins/discogs';
+import { profileState } from '../../../sources/discogs/stores/profile-state.svelte';
 
-import type { EntityType, LoadType, RelatedEntityType, SearchableListItem } from '../../../plugins/discogs';
+import type { EntityInformation, EntityType, LoadType, RelatedEntityType, NavigationPayload } from '../../../plugins/discogs';
 
 class SelectedNodeState {
 	id = $derived(graph.presentation.selectedId);
@@ -21,6 +22,12 @@ class SelectedNodeState {
 
 		return source.stores.documentStore.get(this.id);
 	});
+
+	isBlocked = $derived(
+		this.attributes
+		? source.fetch.isBlocked(this.attributes.type as EntityType, this.attributes.externalId)
+		: false
+	);
 
 	entityDocumentStatus = $derived.by(() => {
 		if (!this.id) return undefined;
@@ -40,17 +47,54 @@ class SelectedNodeState {
 		return source.stores.loadProgress.isInFlight(this.id);
 	});
 
-	isBlocked = $derived(
-		this.attributes
-		? source.fetch.isBlocked(this.attributes.type as EntityType, this.attributes.externalId)
-		: false
-	);
+
+	entityInfo = $derived.by((): EntityInformation | undefined => {
+		if (!this.document || !this.attributes) return undefined;
+
+		return source.queries.getEntityInformation(this.document, this.attributes.type as EntityType);
+	});
+
+	profileStatus = $derived.by(() => {
+		if (!this.id) return undefined;
+
+		return profileState.getStatus(this.id);
+	});
+
+	profileText = $derived.by((): string | undefined => {
+		if (!this.id) return undefined;
+
+		return profileState.getText(this.id) ?? this.entityInfo?.profile;
+	});
+
+	isProfileLoading = $derived(this.profileStatus === 'loading');
+	isProfileFetched = $derived(this.profileStatus === 'fetched');
+	isProfileFailed = $derived(this.profileStatus === 'failed');
 
 	hasReleaseParentType = $derived(
 		this.attributes ? source.releases.isReleaseParentType(this.attributes.type) : false
 	);
 
 	hasReleaseData = $derived(this.id ? source.releases.hasReleaseData(this.id) : false);
+
+	totalReleasesCount = $derived.by((): number | null => {
+		if (!this.id || !this.attributes) return null;
+
+		return source.releases.getTotalReleasesCount(this.id, this.attributes.type as EntityType);
+	});
+
+	navigation = $derived.by((): NavigationPayload | null => {
+		if (!this.attributes || !this.entityInfo) return null;
+
+		return {
+			key: this.attributes.id,
+			label: this.entityInfo.displayName, // this.attributes.label
+			query: this.entityInfo.displayName, // this.attributes.label
+			externalId: this.entityInfo.externalId, // this.attributes.externalId
+			entityType: this.entityInfo.entityType, // this.attributes.type
+			artist: this.entityInfo.primaryArtist?.label, // this.attributes.primaryArtist
+			year: this.entityInfo.year // this.attributes.year
+		};
+	});
 
 	hasChildren = $derived.by(() => {
 		if (!this.id) return false;
@@ -60,13 +104,10 @@ class SelectedNodeState {
 		return childNodes.size > 0;
 	});
 
-	releaseListItems = $derived.by((): SearchableListItem[] => {
+	releases = $derived.by((): NavigationPayload[] => {
 		if (!this.id || !this.attributes) return [];
 
-		void source.stores.releasesStore.releases;
-		void source.stores.documentStore.documents;
-
-		return source.releases.getReleaseListItems(this.id, this.attributes.type as EntityType);
+		return source.releases.getReleases(this.id, this.attributes.type as EntityType);
 	});
 
 	relatedEntityGroups = $derived.by((): { id: RelatedEntityType; title: string }[] => {
@@ -84,10 +125,10 @@ class SelectedNodeState {
 		return source.constants.neighborTypes[this.attributes.type as EntityType] ?? [];
 	});
 
-	relatedEntityItems(relatedEntityType: RelatedEntityType): SearchableListItem[] {
+	relatedEntities(relatedEntityType: RelatedEntityType): NavigationPayload[] {
 		if (!this.attributes || !this.document) return [];
 
-		return source.relatedEntities.getRelatedEntityItems(
+		return source.relatedEntities.getRelatedEntities(
 			this.document,
 			this.attributes.type as EntityType,
 			relatedEntityType
@@ -103,12 +144,12 @@ class SelectedNodeState {
 		if (!relatedEntities || !relatedEntityType) return true;
 
 		const eligibleNeighbors = relatedEntities.filter((entity) => {
-			const relatedEntityId = source.compositions.getEntityId(relatedEntityType, entity.id);
+			const relatedEntityId = source.compositions.getEntityId(relatedEntityType, entity.externalId);
 
 			return (
 				!graph.expansion.parentChildAdjacencyList.get(this.id!)?.has(relatedEntityId) &&
 				!graph.expansion.parentChildAdjacencyList.get(relatedEntityId)?.has(this.id!) &&
-				!source.fetch.isBlocked(relatedEntityType as EntityType, entity.id)
+				!source.fetch.isBlocked(relatedEntityType as EntityType, entity.externalId)
 			);
 		});
 
@@ -130,9 +171,11 @@ class SelectedNodeState {
 		source.stores.pagedDocumentStore.delete(descendants);
 		source.stores.documentStore.delete(descendants);
 		source.stores.fetchStatus.delete(descendants);
+		profileState.delete(descendants);
 
 		source.stores.pagedDocumentStore.delete(new Set([this.id]));
 		source.stores.releasesStore.delete(new Set([this.id]));
+		profileState.delete(new Set([this.id]));
 	}
 
 	hasMorePages(loadType: LoadType): boolean {
@@ -161,6 +204,24 @@ class SelectedNodeState {
 		if (!this.attributes) return;
 
 		await runPatchLoadAction(this.attributes, loadType);
+	}
+
+	async fetchProfile() {
+		if (!this.id || !this.entityInfo?.profile) return;
+
+		const status = profileState.getStatus(this.id);
+
+		if (status === 'fetched' || status === 'loading' || this.isEntityDocumentLoading) return;
+
+		profileState.setLoading(this.id);
+
+		try {
+			const profileText = await source.transformations.normalizeProfileText(this.entityInfo.profile);
+
+			profileState.setFetched(this.id, profileText);
+		} catch {
+			profileState.setFailed(this.id);
+		}
 	}
 }
 

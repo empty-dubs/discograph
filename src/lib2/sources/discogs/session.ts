@@ -1,4 +1,5 @@
 import { documentStore } from './stores/documents.svelte';
+import { profileState } from './stores/profile-state.svelte';
 import { fetchError } from './stores/fetch-error.svelte';
 import { fetchStatus } from './stores/fetch-statuses.svelte';
 import { loadProgress } from './stores/load-progress.svelte';
@@ -12,4 +13,5 @@ export function clear() {
 	fetchError.clear();
 	documentStore.clear();
 	loadProgress.clear();
+	profileState.clear();
 }

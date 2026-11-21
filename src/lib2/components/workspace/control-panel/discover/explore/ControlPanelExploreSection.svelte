@@ -7,15 +7,14 @@
 
 	interface Props {
 		title: string;
-		nodeTypes?: readonly string[];
+		entityTypes?: readonly string[];
 		children: Snippet;
 	}
 
-	let { title, nodeTypes, children }: Props = $props();
+	let { title, entityTypes, children }: Props = $props();
 
 	function entityColor(type: string): string {
-		return source.presentation.entities.find((entity) => entity.type === type)?.color
-				?? defaultNodePresentation.color;
+		return source.presentation.entities[type]?.color ?? defaultNodePresentation.color;
 	}
 </script>
 
@@ -39,7 +38,7 @@
 		<!-- section title -->
 		<h3 class="ui-label">{title}</h3>
 		<!-- node type counts -->
-		{#each nodeTypes ?? [] as type (type)}
+		{#each entityTypes ?? [] as type (type)}
 			{const count = $derived(graph.presentation.nodeTypeCounts[type] ?? 0)}
 			{#if count > 0}
 				<span class="text-sm text-gray-500">{count}</span>
