@@ -12,6 +12,7 @@ import { getEntityId } from './compositions';
 
 import { documentStore } from './stores/documents.svelte';
 import { fetchError } from './stores/fetch-error.svelte';
+import { fetchSettings } from './stores/fetch-settings.svelte';
 import { fetchStatus } from './stores/fetch-statuses.svelte';
 import { pagedDocumentStore } from './stores/paged-documents.svelte';
 import { releasesStore } from './stores/releases.svelte';
@@ -29,8 +30,6 @@ import type {
 type DocumentFetchMethod = (id: number) => Promise<EntityDocument>;
 type PagedDocumentFetchMethod = (id: number, params: PagedFetchParams) => Promise<PagedDocument>;
 type PagedDocumentFetchParams = (page: number) => PagedFetchParams;
-
-const DEFAULT_PER_PAGE = 50;
 
 const DOCUMENT_FETCH_METHOD: Record<EntityType, DocumentFetchMethod> = {
 	artist: (id) => getArtist(id),
@@ -61,16 +60,16 @@ const PAGED_DOCUMENT_FETCH_ERROR_MESSAGE: Partial<Record<EntityType, string>> = 
 const PAGED_DOCUMENT_FETCH_PARAMS: Partial<Record<EntityType, PagedDocumentFetchParams>> = {
 	artist: (page) => ({
 		page,
-		per_page: DEFAULT_PER_PAGE,
+		per_page: fetchSettings.fetchCount,
 		sort: 'year'
 	}),
 	label: (page) => ({
 		page,
-		per_page: DEFAULT_PER_PAGE
+		per_page: fetchSettings.fetchCount
 	}),
 	master: (page) => ({
 		page,
-		per_page: DEFAULT_PER_PAGE,
+		per_page: fetchSettings.fetchCount,
 		sort: 'released'
 	}),
 };

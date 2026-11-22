@@ -6,6 +6,7 @@
 	import GraphLinkFilters from './GraphLinkFilters.svelte';
 	import GraphLabelToggle from './GraphLabelToggle.svelte';
 	import GraphNodeFilters from './GraphNodeFilters.svelte';
+	import ControlPanelFetchSettings from './ControlPanelFetchSettings.svelte';
 
 	type SettingsTabId = 'entities' | 'relationships' | 'fetch';
 
@@ -103,7 +104,9 @@
 			class="col-start-1 row-start-1 h-full min-h-0 {activeTab !== 'fetch' ? 'hidden' : ''}"
 		>
 			<ControlPanelInfo helperText={CONTROL_PANEL_INFO_TEXT.settings.fetch}>
-				<p class="text-sm text-gray-500">Fetch and crawl settings will be added in a later phase.</p>
+				<div class="max-w-xs">
+					<ControlPanelFetchSettings />
+				</div>
 			</ControlPanelInfo>
 		</div>
 	</div>
